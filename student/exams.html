@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Exams & Assessments — Smart Student</title>
+  <link rel="stylesheet" href="../css/main.css">
+  <link rel="stylesheet" href="../css/dashboard.css">
+  <link rel="stylesheet" href="../css/responsive.css">
+  <script src="../js/auth-guard.js"></script>
+</head>
+
+<body>
+  <div id="toast-container"></div>
+  <div class="sidebar-backdrop"></div>
+  <div class="app-container">
+    <aside class="app-sidebar" aria-label="Main Navigation">
+      <div class="sidebar-header">
+        <a href="dashboard.html" class="sidebar-brand">
+          <div class="sidebar-brand-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2">
+              <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
+              <path d="M6 12v5c3 3 9 3 12 0v-5" />
+            </svg></div>
+          <div class="sidebar-brand-text">
+            <h2>Smart Student</h2><span>Student Portal</span>
+          </div>
+        </a>
+      </div>
+      <nav class="sidebar-nav-container">
+        <div class="nav-section-label">Academic Core</div>
+        <a href="dashboard.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18"
+              viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="3" width="7" height="7" />
+              <rect x="14" y="3" width="7" height="7" />
+              <rect x="14" y="14" width="7" height="7" />
+              <rect x="3" y="14" width="7" height="7" />
+            </svg></span><span>Overview</span></a>
+        <a href="courses.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18"
+              viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+              <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+            </svg></span><span>My Courses</span></a>
+        <a href="assignments.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18"
+              viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" />
+              <rect x="8" y="2" width="8" height="4" rx="1" ry="1" />
+            </svg></span><span>Assignments</span><span class="nav-badge">3</span></a>
+        <a href="exams.html" class="nav-link active"><span class="nav-link-icon"><svg width="18" height="18"
+              viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10" />
+              <polyline points="12 6 12 12 14 14" />
+            </svg></span><span>Exams</span><span class="nav-badge"
+            style="background-color: var(--status-danger);">2</span></a>
+        <a href="attendance.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18"
+              viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+              <polyline points="22 4 12 14.01 9 11.01" />
+            </svg></span><span>Attendance</span></a>
+        <a href="results.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18"
+              viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="18" y1="20" x2="18" y2="10" />
+              <line x1="12" y1="20" x2="12" y2="4" />
+              <line x1="6" y1="20" x2="6" y2="14" />
+            </svg></span><span>Results</span></a>
+        <div class="nav-section-label">Productivity & Resources</div>
+        <a href="materials.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18"
+              viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+            </svg></span><span>Learning Materials</span></a>
+        <a href="tasks.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18"
+              viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="9 11 12 14 22 4" />
+              <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
+            </svg></span><span>Tasks</span></a>
+        <a href="calendar.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18"
+              viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+              <line x1="16" y1="2" x2="16" y2="6" />
+              <line x1="8" y1="2" x2="8" y2="6" />
+              <line x1="3" y1="10" x2="21" y2="10" />
+            </svg></span><span>Calendar</span></a>
+        <a href="ai-doubts.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18"
+              viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10" />
+              <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+              <line x1="12" y1="17" x2="12.01" y2="17" />
+            </svg></span><span>AI Doubts</span></a>
+        <a href="study-groups.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18"
+              viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+              <circle cx="9" cy="7" r="4" />
+            </svg></span><span>Study Groups</span></a>
+        <div class="nav-divider"></div>
+        <a href="settings.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18"
+              viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="3" />
+              <path
+                d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
+            </svg></span><span>Settings</span></a>
+      </nav>
+      <div class="sidebar-footer">
+        <a href="profile.html" class="sidebar-user-card">
+          <div class="user-avatar"><span class="user-avatar-initials">RZ</span></div>
+          <div class="user-info-text">
+            <div class="user-name" id="sidebar-user-name">Riddhi Zunjarrao</div><span class="user-role-tag"
+              id="sidebar-user-role">Sem 4 • Sec A</span>
+          </div>
+        </a>
+      </div>
+    </aside>
+
+    <div class="app-main">
+      <header class="app-topbar">
+        <div class="topbar-left">
+          <button type="button" class="mobile-nav-toggle" id="mobile-nav-toggle" aria-label="Open Navigation">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="3" y1="12" x2="21" y2="12" />
+              <line x1="3" y1="6" x2="21" y2="6" />
+              <line x1="3" y1="18" x2="21" y2="18" />
+            </svg>
+          </button>
+          <div class="topbar-page-title">
+            <h1>Exams & Assessments</h1>
+          </div>
+        </div>
+
+        <div class="topbar-search-box">
+          <svg class="topbar-search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8" />
+            <line x1="21" y1="21" x2="16.65" y2="16.65" />
+          </svg>
+          <input type="search" id="global-search-input" class="topbar-search-input"
+            placeholder="Search exams, venues, timetables..." aria-label="Global Search">
+        </div>
+
+        <div class="topbar-right">
+          <div class="dropdown-container">
+            <button type="button" class="user-menu-btn" data-dropdown-toggle="user-dropdown-menu" aria-label="User Menu">
+              <div class="user-avatar-sm"><span class="user-avatar-initials">RZ</span></div>
+              <div class="user-menu-info">
+                <div class="user-menu-name" id="topbar-user-name">Riddhi Zunjarrao</div>
+                <div class="user-menu-sub">B.Tech CSE</div>
+              </div>
+            </button>
+            <div id="user-dropdown-menu" class="menu-dropdown profile-dropdown-menu">
+              <a href="profile.html">My Profile</a>
+              <a href="settings.html">Settings</a>
+              <a href="../login.html" class="logout-action">Sign Out</a>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <main class="app-content">
+        <!-- Page Header -->
+        <div class="page-header-block">
+          <div class="page-header-content">
+            <div class="page-header-context">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10" />
+                <polyline points="12 6 12 12 14 14" />
+              </svg>
+              <span>Semester 4 • Controller of Examinations</span>
+            </div>
+            <div class="page-title-row">
+              <h1>Official Examination Timetable & Hall Allocations</h1>
+            </div>
+            <p class="page-header-desc">View verified examination schedules, seat allocations, hall tickets, syllabus weightage, and guidelines.</p>
+          </div>
+          <div class="page-header-actions">
+            <button type="button" class="btn btn-primary btn-sm" onclick="downloadAllHallTickets()">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              <span>Download Hall Ticket (PDF)</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Academic Notice Box -->
+        <div class="notice-box-yellow">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10" />
+            <line x1="12" y1="8" x2="12" y2="12" />
+            <line x1="12" y1="16" x2="12.01" y2="16" />
+          </svg>
+          <div>
+            <strong>Mid-Term Examination Protocols:</strong> Candidates must occupy their allocated desk 15 minutes before the session starts. Physical university ID card and verified Hall Ticket are mandatory for entry.
+          </div>
+        </div>
+
+        <!-- Filter & Search Toolbar -->
+        <div class="filter-toolbar">
+          <div class="filter-left-cluster">
+            <div class="filter-search-box">
+              <svg class="filter-search-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="11" cy="11" r="8" />
+                <line x1="21" y1="21" x2="16.65" y2="16.65" />
+              </svg>
+              <input type="text" id="exam-search-input" class="filter-search-input" placeholder="Search by subject or exam type...">
+            </div>
+            <select id="exam-type-filter" class="filter-select" aria-label="Filter by Assessment Type">
+              <option value="all">All Assessment Types</option>
+              <option value="Mid-Term">Mid-Term Examinations</option>
+              <option value="Internal Assessment">Internal Assessments</option>
+              <option value="Lab Assessment">Practical Lab Exams</option>
+            </select>
+          </div>
+
+          <div class="segment-tab-group" id="view-mode-tabs" role="tablist">
+            <button type="button" class="segment-tab-btn active" data-view="cards">Grid View</button>
+            <button type="button" class="segment-tab-btn" data-view="table">Table View</button>
+          </div>
+        </div>
+
+        <!-- Grid Container -->
+        <div class="exam-schedule-grid" id="exams-cards-container">
+          <!-- Populated by JS -->
+        </div>
+
+        <!-- Table Container (Alternate View) -->
+        <div class="academic-table-card hidden" id="exams-table-container">
+          <div class="academic-table-responsive">
+            <table class="academic-table">
+              <thead>
+                <tr>
+                  <th>Date & Time</th>
+                  <th>Subject & Code</th>
+                  <th>Assessment Type</th>
+                  <th>Venue & Seat</th>
+                  <th>Total Marks</th>
+                  <th style="text-align: right;">Action</th>
+                </tr>
+              </thead>
+              <tbody id="exams-table-body">
+                <!-- Injected via JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- Exam Details & Hall Ticket Modal -->
+  <div class="modal-overlay" id="exam-detail-modal" role="dialog" aria-modal="true" aria-labelledby="modal-exam-title">
+    <div class="modal-dialog" style="max-width: 680px;">
+      <div class="modal-header">
+        <div>
+          <span class="badge badge-neutral mb-1" id="modal-exam-type-badge">Mid-Term Examination</span>
+          <h3 class="modal-title" id="modal-exam-title">Machine Learning (CS403)</h3>
+        </div>
+        <button type="button" class="btn-icon modal-close-btn" onclick="UI.closeModal('exam-detail-modal')" aria-label="Close modal">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <!-- Printable Admit Slip Sheet Container -->
+        <div class="admit-slip-sheet">
+          <div class="admit-watermark">CONFIDENTIAL</div>
+          
+          <div class="admit-header">
+            <div class="admit-univ-title">State Technical University</div>
+            <div class="admit-univ-sub">Controller of Examinations • Spring Term 2026</div>
+            <div class="admit-title-pill" id="modal-slip-heading">OFFICIAL EXAMINATION ADMIT CARD</div>
+          </div>
+
+          <div class="admit-student-grid">
+            <div class="admit-fields">
+              <div>
+                <div class="admit-field-label">Candidate Name</div>
+                <div class="admit-field-val">Riddhi Zunjarrao</div>
+              </div>
+              <div>
+                <div class="admit-field-label">Roll Number</div>
+                <div class="admit-field-val">CS24-042</div>
+              </div>
+              <div>
+                <div class="admit-field-label">Degree & Branch</div>
+                <div class="admit-field-val">B.Tech (CSE) • Sem 4</div>
+              </div>
+              <div>
+                <div class="admit-field-label">Admit Card No</div>
+                <div class="admit-field-val" id="modal-ht-number">HT-2026-CS4-042</div>
+              </div>
+              <div>
+                <div class="admit-field-label">Allocated Center</div>
+                <div class="admit-field-val" id="modal-exam-venue">Exam Hall A (Block 2)</div>
+              </div>
+              <div>
+                <div class="admit-field-label">Assigned Desk</div>
+                <div class="admit-field-val" style="color: #6D28D9;" id="modal-exam-seat">Row 4 • Desk 18</div>
+              </div>
+            </div>
+            <div class="admit-photo-box">
+              <div style="font-size: 1.5rem; font-weight: 800; color: #6D28D9; margin-bottom: 0.15rem;">RZ</div>
+              <span>PHOTO</span>
+            </div>
+          </div>
+
+          <div style="margin-bottom: 0.75rem;">
+            <div style="font-size: 0.75rem; font-weight: 700; color: #475569; text-transform: uppercase; margin-bottom: 0.35rem;">Assessment Schedule</div>
+            <table class="admit-timetable-table">
+              <thead>
+                <tr>
+                  <th>Course Code</th>
+                  <th>Course Title</th>
+                  <th>Date & Time</th>
+                  <th>Duration</th>
+                </tr>
+              </thead>
+              <tbody id="modal-admit-table-body">
+                <!-- Injected dynamically -->
+              </tbody>
+            </table>
+          </div>
+
+          <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 6px; padding: 0.65rem 0.85rem; font-size: 0.75rem; color: #475569; margin-bottom: 0.85rem;">
+            <strong>Mandatory Protocols:</strong> Candidates must occupy their allotted seats at least 15 minutes before the exam commences. Possession of electronic communication devices is strictly prohibited.
+          </div>
+
+          <div class="admit-barcode-row">
+            <div>
+              <div class="admit-barcode-sim">|||| ||| ||||| || |||||||</div>
+              <div style="font-size: 0.6875rem; color: #64748B; margin-top: 0.15rem;">QR / Barcode Verified Admit Record</div>
+            </div>
+            <div style="display: flex; gap: 1.5rem;">
+              <div class="admit-sig-box">
+                <div class="admit-sig-line"></div>
+                <span>Candidate Sign</span>
+              </div>
+              <div class="admit-sig-box">
+                <div class="admit-sig-line"></div>
+                <span>Invigilator Sign</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <a href="materials.html" class="btn btn-secondary btn-sm">Revision Notes</a>
+        <button type="button" class="btn btn-secondary btn-sm" onclick="window.print()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+          <span>Print Admit Card</span>
+        </button>
+        <button type="button" class="btn btn-primary btn-sm" onclick="downloadSingleHallTicket()">Download PDF</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../data/mock-student.js"></script>
+  <script src="../data/mock-exams.js"></script>
+  <script src="../js/firebase-config.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/exam-service.js"></script>
+  <script src="../js/ui.js"></script>
+  <script>
+    let examsList = [];
+    let currentExam = null;
+    let isConsolidatedSlip = false;
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      UI.syncStudentIdentity();
+      examsList = await ExamService.getUpcomingExams();
+      renderExams(examsList);
+
+      const searchInput = document.getElementById('exam-search-input');
+      const typeFilter = document.getElementById('exam-type-filter');
+      const viewTabs = document.querySelectorAll('#view-mode-tabs .segment-tab-btn');
+
+      function filterExams() {
+        const q = (searchInput.value || '').toLowerCase().trim();
+        const type = typeFilter.value;
+
+        let filtered = examsList.filter(e => {
+          const matchQ = !q || e.subject.toLowerCase().includes(q) || e.subjectCode.toLowerCase().includes(q) || (e.venue && e.venue.toLowerCase().includes(q));
+          const matchType = type === 'all' || e.type === type;
+          return matchQ && matchType;
+        });
+
+        renderExams(filtered);
+      }
+
+      searchInput.addEventListener('input', filterExams);
+      typeFilter.addEventListener('change', filterExams);
+
+      viewTabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+          viewTabs.forEach(t => t.classList.remove('active'));
+          tab.classList.add('active');
+          const view = tab.dataset.view;
+          if (view === 'table') {
+            document.getElementById('exams-cards-container').classList.add('hidden');
+            document.getElementById('exams-table-container').classList.remove('hidden');
+          } else {
+            document.getElementById('exams-cards-container').classList.remove('hidden');
+            document.getElementById('exams-table-container').classList.add('hidden');
+          }
+        });
+      });
+    });
+
+    function renderExams(exams) {
+      const cardsContainer = document.getElementById('exams-cards-container');
+      const tableBody = document.getElementById('exams-table-body');
+
+      if (!exams.length) {
+        const emptyHtml = `
+          <div class="academic-empty-state" style="grid-column: 1 / -1;">
+            <div class="academic-empty-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 14 14"/></svg>
+            </div>
+            <h3>No exams found</h3>
+            <p>No assessments match the selected search or filter.</p>
+          </div>
+        `;
+        cardsContainer.innerHTML = emptyHtml;
+        tableBody.innerHTML = `<tr><td colspan="6">${emptyHtml}</td></tr>`;
+        return;
+      }
+
+      // Render Cards
+      cardsContainer.innerHTML = exams.map(e => `
+        <div class="exam-card-detailed">
+          <div>
+            <div class="exam-card-header">
+              <div class="exam-calendar-date-box">
+                <span class="month">${e.month}</span>
+                <span class="day">${e.day}</span>
+              </div>
+              <div class="exam-info-main">
+                <span class="exam-badge-type">${e.type || 'Examination'}</span>
+                <h3 style="font-size: 1.05rem; font-weight: 700; color: var(--navy-900); margin-bottom: 0.2rem;">${e.subject}</h3>
+                <span class="text-secondary" style="font-size: 0.78125rem;">Course Code: <strong>${e.subjectCode}</strong> • Max: ${e.totalMarks} Pts</span>
+              </div>
+            </div>
+
+            <div class="exam-details-list">
+              <div class="flex-between">
+                <span><strong>Timing:</strong> ${e.time}</span>
+                <span class="text-muted">(${e.duration || '2 Hours'})</span>
+              </div>
+              <div><strong>Venue:</strong> ${e.venue}</div>
+              ${e.seatNumber ? `<div><strong>Seat:</strong> <span style="color: var(--blue-600); font-weight: 700;">${e.seatNumber}</span></div>` : ''}
+              <div style="font-size: 0.75rem; color: var(--text-tertiary); margin-top: 0.25rem;">
+                <strong>Syllabus:</strong> ${e.syllabus}
+              </div>
+            </div>
+          </div>
+
+          <div class="flex-between" style="border-top: 1px solid var(--border-light); padding-top: 0.875rem;">
+            <button type="button" class="btn btn-secondary btn-sm" onclick="openExamModal('${e.id}')" style="flex: 1; margin-right: 0.5rem;">
+              Hall Ticket & Slip
+            </button>
+            <a href="materials.html" class="btn btn-secondary btn-sm" title="Course Revision Notes">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            </a>
+          </div>
+        </div>
+      `).join('');
+
+      // Render Table View
+      tableBody.innerHTML = exams.map(e => `
+        <tr>
+          <td>
+            <div style="font-weight: 700; color: var(--navy-900);">${e.date}</div>
+            <div class="text-muted" style="font-size: 0.75rem;">${e.time} (${e.duration || '2h'})</div>
+          </td>
+          <td>
+            <div style="font-weight: 600; color: var(--text-primary);">${e.subject}</div>
+            <div class="text-tertiary" style="font-size: 0.75rem;">${e.subjectCode}</div>
+          </td>
+          <td><span class="badge badge-info">${e.type || 'Mid-Term'}</span></td>
+          <td>
+            <div>${e.venue}</div>
+            <div style="font-size: 0.75rem; color: var(--blue-600); font-weight: 600;">${e.seatNumber || 'Desk Assigned'}</div>
+          </td>
+          <td><strong>${e.totalMarks} Marks</strong></td>
+          <td style="text-align: right;">
+            <button type="button" class="btn btn-secondary btn-sm" onclick="openExamModal('${e.id}')">View Slip</button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    window.openExamModal = function(id) {
+      currentExam = examsList.find(e => e.id === id);
+      if (!currentExam) return;
+      isConsolidatedSlip = false;
+
+      document.getElementById('modal-exam-type-badge').textContent = currentExam.type || 'Examination';
+      document.getElementById('modal-exam-title').textContent = `${currentExam.subject} (${currentExam.subjectCode})`;
+      document.getElementById('modal-slip-heading').textContent = 'OFFICIAL COURSE EXAMINATION ADMIT CARD';
+      document.getElementById('modal-ht-number').textContent = currentExam.hallTicketNo || 'HT-2026-CS4-042';
+      document.getElementById('modal-exam-venue').textContent = currentExam.venue;
+      document.getElementById('modal-exam-seat').textContent = currentExam.seatNumber || 'Standard Allocation';
+
+      const tbody = document.getElementById('modal-admit-table-body');
+      tbody.innerHTML = `
+        <tr>
+          <td><strong>${currentExam.subjectCode}</strong></td>
+          <td>${currentExam.subject}</td>
+          <td>${currentExam.date} • ${currentExam.time}</td>
+          <td>${currentExam.duration || '2 Hours'}</td>
+        </tr>
+      `;
+
+      UI.openModal('exam-detail-modal');
+    };
+
+    window.downloadAllHallTickets = function() {
+      isConsolidatedSlip = true;
+      document.getElementById('modal-exam-type-badge').textContent = 'Semester 4 Consolidated';
+      document.getElementById('modal-exam-title').textContent = 'All Examinations Timetable Admit Card';
+      document.getElementById('modal-slip-heading').textContent = 'CONSOLIDATED SEMESTER EXAMINATION ADMIT CARD';
+      document.getElementById('modal-ht-number').textContent = 'HT-2026-CS4-FULL';
+      document.getElementById('modal-exam-venue').textContent = 'Main Campus Block 2';
+      document.getElementById('modal-exam-seat').textContent = 'Desk CS24-042 (All Halls)';
+
+      const tbody = document.getElementById('modal-admit-table-body');
+      tbody.innerHTML = examsList.map(e => `
+        <tr>
+          <td><strong>${e.subjectCode}</strong></td>
+          <td>${e.subject}</td>
+          <td>${e.date} • ${e.time}</td>
+          <td>${e.duration || '2 Hours'}</td>
+        </tr>
+      `).join('');
+
+      UI.openModal('exam-detail-modal');
+      UI.showToast('info', 'Consolidated Admit Card', 'Official Semester 4 Hall Ticket Package ready to print/save.');
+    };
+
+    window.downloadSingleHallTicket = function() {
+      UI.closeModal('exam-detail-modal');
+      const label = isConsolidatedSlip ? 'Consolidated Semester Hall Ticket' : (currentExam ? `${currentExam.subjectCode} Admit Card` : 'Hall Ticket');
+      UI.showToast('success', 'Hall Ticket Ready', `${label} (PDF) has been prepared.`);
+    };
+  </script>
+</body>
+
+</html>

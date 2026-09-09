@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login — Smart Student Portal</title>
+  <meta name="description"
+    content="Official university student portal sign-in for the Smart Student Productivity Platform.">
+
+  <!-- Fonts & Stylesheets -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/login.css">
+  <link rel="stylesheet" href="css/responsive.css">
+</head>
+
+<body>
+
+  <!-- Toast Notification Container -->
+  <div id="toast-container" aria-live="polite"></div>
+
+  <!-- Main Floating Login Card Shell -->
+  <div class="login-screen-card">
+
+    <section class="illustration-panel" aria-label="Student Learning Portal">
+      <!-- Left Brand Header -->
+      <header class="panel-brand-header">
+        <div class="panel-brand-icon" aria-hidden="true">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+            <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
+            <path d="M6 12v5c3 3 9 3 12 0v-5" />
+          </svg>
+        </div>
+        <div class="panel-brand-text">
+          <span class="panel-brand-title">Smart Student</span>
+          <span class="panel-brand-sub">Academic Platform</span>
+        </div>
+      </header>
+
+      <!-- Center Illustration (Modern Student Study Workspace) -->
+      <div class="illustration-art-wrapper">
+        <img src="images/student-study.jpg" alt="University student studying with laptop and course materials" class="student-illustration-img" loading="eager">
+      </div>
+
+
+    </section>
+
+    <!-- ====================================================================
+         Right Panel: Clean Neumorphic Login Form
+         ==================================================================== -->
+    <section class="form-panel" aria-label="Sign In">
+      <div class="form-panel-inner">
+
+        <h1 class="form-greeting">Welcome Back !</h1>
+
+        <!-- Quick Demo Switcher -->
+        <div class="demo-auth-bar" aria-label="Demo Credentials">
+          <div class="demo-bar-label">Quick-Fill Demo Account:</div>
+          <div class="demo-chip-group">
+            <button type="button" class="demo-btn" id="demo-student-btn" data-email="student@university.edu" data-pass="Student@2026">
+              student@university.edu
+            </button>
+            <button type="button" class="demo-btn" id="demo-student2-btn" data-email="riddhi.z@university.edu" data-pass="Student@2026">
+              riddhi.z@university.edu
+            </button>
+          </div>
+        </div>
+
+        <!-- Inline Error Alert Box -->
+        <div id="login-alert" class="auth-alert hidden" role="alert" aria-live="assertive">
+          <svg class="alert-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10" />
+            <line x1="12" y1="8" x2="12" y2="12" />
+            <line x1="12" y1="16" x2="12.01" y2="16" />
+          </svg>
+          <div class="alert-content">
+            <strong id="login-alert-title">Invalid credentials</strong>
+            <span id="login-alert-text">The email or password you entered is incorrect.</span>
+          </div>
+        </div>
+
+        <!-- The Authentication Form -->
+        <form id="login-form" class="login-form-body" novalidate>
+
+          <!-- Email Input Field -->
+          <div class="form-group-custom">
+            <label for="institutional-email" class="form-label-caps">EMAIL ID</label>
+            <div class="input-pill-wrapper">
+              <input type="email" id="institutional-email" name="email" class="pill-input"
+                placeholder="kunal@bvp.com" required autocomplete="email" spellcheck="false">
+            </div>
+            <span id="email-error" class="field-error-msg">Please enter a valid institutional email.</span>
+          </div>
+
+          <!-- Password Input Field -->
+          <div class="form-group-custom" style="margin-bottom: 0.75rem;">
+            <label for="institutional-password" class="form-label-caps">PASSWORD</label>
+            <div class="input-pill-wrapper">
+              <input type="password" id="institutional-password" name="password" class="pill-input"
+                placeholder="••••••••••••" required autocomplete="current-password">
+              <button type="button" class="password-toggle-pill" id="toggle-password"
+                aria-label="Toggle password visibility" title="Show or hide password">
+                <svg id="eye-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                  stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                  <circle cx="12" cy="12" r="3" />
+                </svg>
+              </button>
+            </div>
+            <span id="password-error" class="field-error-msg">Please enter your password.</span>
+          </div>
+
+          <!-- Forgot Password Link -->
+          <div class="forgot-row">
+            <a href="#" id="forgot-password-trigger" class="forgot-link-btn" tabindex="0">Forgot Password ?</a>
+          </div>
+
+          <!-- Soft Pill Log In Button -->
+          <button type="submit" id="login-submit-btn" class="btn-login-pill">
+            <span id="btn-text">Log In</span>
+            <span id="btn-spinner" class="spinner-login hidden" aria-hidden="true"></span>
+          </button>
+
+        </form>
+
+        <!-- Small Trust Footnote -->
+        <div class="login-security-tag">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+            <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+          </svg>
+          <span>Encrypted Institutional Portal Sign-In</span>
+        </div>
+
+      </div>
+    </section>
+
+  </div>
+
+  <!-- Forgot Password Modal -->
+  <div id="forgot-password-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-title-fp"
+    aria-hidden="true">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 id="modal-title-fp" class="modal-title">Reset Password</h3>
+        <button type="button" class="modal-close-btn" id="close-fp-modal" aria-label="Close dialog">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p class="modal-instruction" style="font-size: 0.84375rem; color: #475569; margin-bottom: 1rem; line-height: 1.5;">
+          Enter your registered institutional email address. A password reset link will be sent to your inbox.
+        </p>
+        <div class="form-group-custom" style="margin-bottom: 0;">
+          <label for="reset-email" class="form-label-caps">EMAIL ID</label>
+          <input type="email" id="reset-email" class="pill-input" placeholder="Enter your registered email" autocomplete="email">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn-modal-secondary" id="cancel-fp-btn">Cancel</button>
+        <button type="button" class="btn-modal-primary" id="send-reset-btn">Send Reset Link</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Firebase SDKs (Compat v10) -->
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+
+  <!-- Application Services -->
+  <script src="data/mock-student.js"></script>
+  <script src="js/firebase-config.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/ui.js"></script>
+
+  <!-- Login Controller Script -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const loginForm = document.getElementById('login-form');
+      const emailInput = document.getElementById('institutional-email');
+      const passwordInput = document.getElementById('institutional-password');
+      const submitBtn = document.getElementById('login-submit-btn');
+      const btnText = document.getElementById('btn-text');
+      const btnSpinner = document.getElementById('btn-spinner');
+      const alertBox = document.getElementById('login-alert');
+      const alertTitle = document.getElementById('login-alert-title');
+      const alertText = document.getElementById('login-alert-text');
+      const emailError = document.getElementById('email-error');
+      const passwordError = document.getElementById('password-error');
+      const togglePasswordBtn = document.getElementById('toggle-password');
+
+      // Autofill remembered email if present
+      const remembered = AuthService.getRememberedEmail();
+      if (remembered) {
+        emailInput.value = remembered;
+      }
+
+      // Password visibility toggle with SVG icon update
+      togglePasswordBtn.addEventListener('click', () => {
+        const isPassword = passwordInput.getAttribute('type') === 'password';
+        passwordInput.setAttribute('type', isPassword ? 'text' : 'password');
+        togglePasswordBtn.setAttribute('aria-label', isPassword ? 'Hide password' : 'Show password');
+        
+        togglePasswordBtn.innerHTML = isPassword ? `
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>
+            <line x1="1" y1="1" x2="23" y2="23"/>
+          </svg>
+        ` : `
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+            <circle cx="12" cy="12" r="3" />
+          </svg>
+        `;
+      });
+
+      // Clear field errors on input
+      emailInput.addEventListener('input', () => {
+        emailInput.classList.remove('has-error');
+        emailError.classList.remove('visible');
+        hideAlert();
+      });
+
+      passwordInput.addEventListener('input', () => {
+        passwordInput.classList.remove('has-error');
+        passwordError.classList.remove('visible');
+        hideAlert();
+      });
+
+      // Demo quick-fill buttons
+      document.querySelectorAll('.demo-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          emailInput.value = btn.getAttribute('data-email');
+          passwordInput.value = btn.getAttribute('data-pass');
+          hideAlert();
+          emailInput.classList.remove('has-error');
+          passwordInput.classList.remove('has-error');
+          emailError.classList.remove('visible');
+          passwordError.classList.remove('visible');
+          UI.showToast('info', 'Credentials Loaded', `Selected ${btn.getAttribute('data-email')}`);
+        });
+      });
+
+      function showAlert(title, msg) {
+        if (alertTitle) alertTitle.textContent = title || 'Invalid credentials';
+        if (alertText) alertText.textContent = msg || 'The email or password you entered is incorrect.';
+        alertBox.classList.remove('hidden');
+      }
+
+      function hideAlert() {
+        alertBox.classList.add('hidden');
+      }
+
+      // Handle Login Form Submission
+      loginForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        hideAlert();
+        emailError.classList.remove('visible');
+        passwordError.classList.remove('visible');
+        emailInput.classList.remove('has-error');
+        passwordInput.classList.remove('has-error');
+
+        const email = emailInput.value.trim();
+        const password = passwordInput.value.trim();
+
+        let hasError = false;
+        if (!email) {
+          emailError.textContent = "Please enter your email address.";
+          emailError.classList.add('visible');
+          emailInput.classList.add('has-error');
+          hasError = true;
+        } else if (!email.includes('@') || !email.includes('.')) {
+          emailError.textContent = "Please enter a valid institutional email.";
+          emailError.classList.add('visible');
+          emailInput.classList.add('has-error');
+          hasError = true;
+        }
+
+        if (!password) {
+          passwordError.textContent = "Please enter your password.";
+          passwordError.classList.add('visible');
+          passwordInput.classList.add('has-error');
+          hasError = true;
+        }
+
+        if (hasError) return;
+
+        // UI Loading State ("Signing in...")
+        submitBtn.disabled = true;
+        btnText.textContent = "Logging in...";
+        btnSpinner.classList.remove('hidden');
+
+        try {
+          const user = await AuthService.login(email, password, true);
+
+          UI.showToast('success', 'Log In Successful', `Welcome back, ${user.name}`);
+
+          // Role-based portal redirection
+          setTimeout(() => {
+            if (user.role === 'student') {
+              window.location.href = 'student/dashboard.html';
+            } else {
+              window.location.href = 'student/dashboard.html';
+            }
+          }, 350);
+
+        } catch (err) {
+          showAlert('Invalid credentials', err.message || 'The email or password you entered is incorrect. Please try again.');
+          submitBtn.disabled = false;
+          btnText.textContent = "Log In";
+          btnSpinner.classList.add('hidden');
+        }
+      });
+
+      // Forgot Password Modal Handlers
+      const fpTrigger = document.getElementById('forgot-password-trigger');
+      const fpModal = document.getElementById('forgot-password-modal');
+      const closeFpBtn = document.getElementById('close-fp-modal');
+      const cancelFpBtn = document.getElementById('cancel-fp-btn');
+      const sendResetBtn = document.getElementById('send-reset-btn');
+      const resetEmailInput = document.getElementById('reset-email');
+
+      fpTrigger.addEventListener('click', (e) => {
+        e.preventDefault();
+        resetEmailInput.value = emailInput.value || '';
+        fpModal.classList.add('active');
+        fpModal.setAttribute('aria-hidden', 'false');
+      });
+
+      function closeForgotModal() {
+        fpModal.classList.remove('active');
+        fpModal.setAttribute('aria-hidden', 'true');
+      }
+
+      closeFpBtn.addEventListener('click', closeForgotModal);
+      cancelFpBtn.addEventListener('click', closeForgotModal);
+      fpModal.addEventListener('click', (e) => {
+        if (e.target === fpModal) closeForgotModal();
+      });
+
+      sendResetBtn.addEventListener('click', async () => {
+        const resetEmail = resetEmailInput.value.trim();
+        if (!resetEmail || !resetEmail.includes('@')) {
+          UI.showToast('warning', 'Invalid Email', 'Please enter a valid institutional email address.');
+          return;
+        }
+
+        sendResetBtn.disabled = true;
+        sendResetBtn.textContent = 'Sending...';
+
+        try {
+          await AuthService.resetPassword(resetEmail);
+          closeForgotModal();
+          UI.showToast('success', 'Instructions Sent', `Password reset instructions sent to ${resetEmail}.`);
+        } catch (e) {
+          UI.showToast('error', 'Reset Failed', e.message);
+        } finally {
+          sendResetBtn.disabled = false;
+          sendResetBtn.textContent = 'Send Reset Link';
+        }
+      });
+    });
+  </script>
+</body>
+
+</html>

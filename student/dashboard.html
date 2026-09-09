@@ -1,0 +1,1714 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Dashboard — Smart Student</title>
+  <meta name="description"
+    content="Centralized academic dashboard for university students. Track schedule, assignments, attendance, exams, and AI study tools.">
+
+  <!-- Core Design System & Stylesheets -->
+  <link rel="stylesheet" href="../css/main.css">
+  <link rel="stylesheet" href="../css/dashboard.css">
+  <link rel="stylesheet" href="../css/responsive.css">
+
+  <!-- Synchronous Route Guard -->
+  <script src="../js/auth-guard.js"></script>
+</head>
+
+<body>
+
+  <!-- Toast Notification Container -->
+  <div id="toast-container"></div>
+
+  <!-- Mobile Drawer Backdrop -->
+  <div class="sidebar-backdrop"></div>
+
+  <div class="app-container">
+    <!-- ====================================================================
+         Sidebar Navigation
+         ==================================================================== -->
+    <aside class="app-sidebar" aria-label="Main Navigation">
+      <div class="sidebar-header">
+        <a href="dashboard.html" class="sidebar-brand">
+          <div class="sidebar-brand-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
+              <path d="M6 12v5c3 3 9 3 12 0v-5" />
+            </svg>
+          </div>
+          <div class="sidebar-brand-text">
+            <h2>Smart Student</h2>
+            <span>Student Portal</span>
+          </div>
+        </a>
+      </div>
+
+      <nav class="sidebar-nav-container">
+        <div class="nav-section-label">Academic Core</div>
+
+        <a href="dashboard.html" class="nav-link active">
+          <span class="nav-link-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="3" width="7" height="7" />
+              <rect x="14" y="3" width="7" height="7" />
+              <rect x="14" y="14" width="7" height="7" />
+              <rect x="3" y="14" width="7" height="7" />
+            </svg>
+          </span>
+          <span>Overview</span>
+        </a>
+
+        <a href="courses.html" class="nav-link">
+          <span class="nav-link-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+              <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+            </svg>
+          </span>
+          <span>My Courses</span>
+        </a>
+
+        <a href="assignments.html" class="nav-link">
+          <span class="nav-link-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" />
+              <rect x="8" y="2" width="8" height="4" rx="1" ry="1" />
+            </svg>
+          </span>
+          <span>Assignments</span>
+          <span class="nav-badge" id="nav-badge-assignments">3</span>
+        </a>
+
+        <a href="exams.html" class="nav-link">
+          <span class="nav-link-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10" />
+              <polyline points="12 6 12 12 14 14" />
+            </svg>
+          </span>
+          <span>Exams</span>
+          <span class="nav-badge" style="background-color: var(--status-danger);">2</span>
+        </a>
+
+        <a href="attendance.html" class="nav-link">
+          <span class="nav-link-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+              <polyline points="22 4 12 14.01 9 11.01" />
+            </svg>
+          </span>
+          <span>Attendance</span>
+        </a>
+
+        <a href="results.html" class="nav-link">
+          <span class="nav-link-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="18" y1="20" x2="18" y2="10" />
+              <line x1="12" y1="20" x2="12" y2="4" />
+              <line x1="6" y1="20" x2="6" y2="14" />
+            </svg>
+          </span>
+          <span>Results</span>
+        </a>
+
+        <div class="nav-section-label">Productivity & Resources</div>
+
+        <a href="materials.html" class="nav-link">
+          <span class="nav-link-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+              <polyline points="14 2 14 8 20 8" />
+            </svg>
+          </span>
+          <span>Learning Materials</span>
+        </a>
+
+        <a href="tasks.html" class="nav-link">
+          <span class="nav-link-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="9 11 12 14 22 4" />
+              <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
+            </svg>
+          </span>
+          <span>Tasks</span>
+        </a>
+
+        <a href="calendar.html" class="nav-link">
+          <span class="nav-link-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+              <line x1="16" y1="2" x2="16" y2="6" />
+              <line x1="8" y1="2" x2="8" y2="6" />
+              <line x1="3" y1="10" x2="21" y2="10" />
+            </svg>
+          </span>
+          <span>Calendar</span>
+        </a>
+
+        <a href="ai-doubts.html" class="nav-link">
+          <span class="nav-link-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10" />
+              <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+              <line x1="12" y1="17" x2="12.01" y2="17" />
+            </svg>
+          </span>
+          <span>AI Doubts</span>
+        </a>
+
+        <a href="study-groups.html" class="nav-link">
+          <span class="nav-link-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+              <circle cx="9" cy="7" r="4" />
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+              <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+            </svg>
+          </span>
+          <span>Study Groups</span>
+        </a>
+
+        <div class="nav-divider"></div> <a href="settings.html" class="nav-link">
+          <span class="nav-link-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="3" />
+              <path
+                d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
+            </svg>
+          </span>
+          <span>Settings</span>
+        </a>
+      </nav>
+
+      <!-- Sidebar Bottom Profile Card -->
+      <div class="sidebar-footer">
+        <a href="profile.html" class="sidebar-user-card">
+          <div class="user-avatar">
+            <span class="user-avatar-initials">RZ</span>
+          </div>
+          <div class="user-info-text">
+            <div class="user-name" id="sidebar-user-name">Riddhi Zunjarrao</div>
+            <span class="user-role-tag" id="sidebar-user-role">Sem 4 • Sec A</span>
+          </div>
+        </a>
+      </div>
+    </aside>
+
+    <!-- ====================================================================
+         Main Application Layout & Topbar
+         ==================================================================== -->
+    <div class="app-main">
+      <header class="app-topbar">
+        <div class="topbar-left">
+          <button type="button" class="mobile-nav-toggle" id="mobile-nav-toggle" aria-label="Open Navigation">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="3" y1="12" x2="21" y2="12" />
+              <line x1="3" y1="6" x2="21" y2="6" />
+              <line x1="3" y1="18" x2="21" y2="18" />
+            </svg>
+          </button>
+          <div class="topbar-page-title">
+            <h1>Student Dashboard</h1>
+          </div>
+        </div>
+
+        <div class="topbar-search-box">
+          <svg class="topbar-search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="2">
+            <circle cx="11" cy="11" r="8" />
+            <line x1="21" y1="21" x2="16.65" y2="16.65" />
+          </svg>
+          <input type="search" id="global-search-input" class="topbar-search-input"
+            placeholder="Search courses, assignments, notes (Press Enter)..." aria-label="Global Search">
+        </div>
+
+        <div class="topbar-right">
+          <!-- Notification Dropdown -->
+          <div class="dropdown-container">
+            <button type="button" class="icon-button" data-dropdown-toggle="notification-dropdown"
+              aria-label="Notifications">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+                <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+              </svg>
+              <span class="unread-badge" id="notif-badge">3</span>
+            </button>
+
+            <div id="notification-dropdown" class="menu-dropdown notification-dropdown">
+              <div class="dropdown-header">
+                <h4>Notifications</h4>
+                <a href="#" id="mark-all-read-btn" style="font-size: 0.75rem;">Mark all as read</a>
+              </div>
+              <ul class="dropdown-list" id="notifications-list-container">
+                <!-- Injected by JS -->
+              </ul>
+            </div>
+          </div>
+
+          <!-- User Profile Dropdown -->
+          <div class="dropdown-container">
+            <button type="button" class="user-menu-btn" data-dropdown-toggle="user-dropdown-menu"
+              aria-label="User Menu">
+              <div class="user-avatar-sm">
+                <span class="user-avatar-initials">RZ</span>
+              </div>
+              <div class="user-menu-info">
+                <div class="user-menu-name" id="topbar-user-name">Riddhi Zunjarrao</div>
+                <div class="user-menu-sub">B.Tech CSE</div>
+              </div>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="6 9 12 15 18 9" />
+              </svg>
+            </button>
+
+            <div id="user-dropdown-menu" class="menu-dropdown profile-dropdown-menu">
+              <a href="profile.html">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                  <circle cx="12" cy="7" r="4" />
+                </svg>
+                <span>My Profile</span>
+              </a>
+              <a href="settings.html">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="3" />
+                  <path
+                    d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
+                </svg>
+                <span>Settings</span>
+              </a>
+              <button type="button" id="logout-action-btn" class="logout-action">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                  <polyline points="16 17 21 12 16 7" />
+                  <line x1="21" y1="12" x2="9" y2="12" />
+                </svg>
+                <span>Sign Out</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- ====================================================================
+           Dashboard Content Area
+           ==================================================================== -->
+      <main class="app-content">
+        <div class="ref-dashboard-grid">
+
+          <!-- ================================================================
+               LEFT MAIN COLUMN (Welcome, Hero, Pinned Info, Analytics Duo & Hub)
+               ================================================================ -->
+          <div class="ref-col-left">
+
+            <!-- 1. Top Greeting Header -->
+            <div class="ref-greeting-header">
+              <div>
+                <div class="ref-greeting-sub">Hi, <span id="banner-student-name">Riddhi</span></div>
+                <h1 class="ref-greeting-title">Welcome Back!</h1>
+              </div>
+              <div class="dropdown-container">
+                <button type="button" class="ref-header-bell-btn" data-dropdown-toggle="notification-dropdown"
+                  aria-label="Notifications">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+                    <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+                  </svg>
+                  <span class="ref-bell-dot" id="notif-badge-dot"></span>
+                </button>
+              </div>
+            </div>
+
+            <!-- 2. Hero Banner Card (Reference Purple Gradient with Illustration) -->
+            <div class="ref-hero-banner">
+              <div class="ref-hero-content">
+                <span class="ref-hero-tag">Reminder</span>
+                <h2 class="ref-hero-title">Have you reviewed your mid-term revision roadmap this semester?</h2>
+                <div class="ref-hero-actions">
+                  <a href="calendar.html" class="ref-btn-white">Check Now</a>
+                  <a href="results.html" class="ref-btn-ghost">View report</a>
+                </div>
+              </div>
+              <div class="ref-hero-artwork" aria-hidden="true">
+                <svg width="180" height="150" viewBox="0 0 200 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <!-- Ground Shadow -->
+                  <ellipse cx="100" cy="148" rx="80" ry="10" fill="rgba(0,0,0,0.12)" />
+                  <!-- Desk / Laptop Base -->
+                  <rect x="35" y="116" width="130" height="8" rx="3" fill="#0F172A" />
+                  <rect x="52" y="58" width="96" height="62" rx="6" fill="#1E293B" />
+                  <rect x="58" y="64" width="84" height="50" rx="3" fill="#C084FC" fill-opacity="0.35" />
+                  <!-- Code / Analytics lines on Screen -->
+                  <rect x="64" y="70" width="45" height="3" rx="1.5" fill="#FFFFFF" />
+                  <rect x="64" y="77" width="30" height="3" rx="1.5" fill="#F3E8FF" />
+                  <rect x="64" y="84" width="55" height="3" rx="1.5" fill="#F3E8FF" />
+                  <circle cx="120" cy="85" r="13" fill="#FFFFFF" fill-opacity="0.9" />
+                  <path d="M115 85L119 89L126 81" stroke="#8B5CF6" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+                  <!-- Desk Plant -->
+                  <path d="M172 110L168 124H182L178 110H172Z" fill="#334155" />
+                  <path d="M175 110C175 102 165 98 165 98C165 98 175 92 175 110Z" fill="#34D399" />
+                  <path d="M175 106C175 96 186 92 186 92C186 92 175 88 175 106Z" fill="#10B981" />
+                  <!-- Floating Badge -->
+                  <g transform="translate(18, 48)">
+                    <rect width="28" height="28" rx="8" fill="#FFFFFF" fill-opacity="0.9" filter="drop-shadow(0 4px 6px rgba(0,0,0,0.1))" />
+                    <path d="M7 14L14 9L21 14L14 19L7 14Z" fill="#8B5CF6" />
+                  </g>
+                </svg>
+              </div>
+            </div>
+
+            <!-- 3. Pinned Information Section (Reference Archetype) -->
+            <section class="ref-pinned-section">
+              <div class="ref-pinned-header">
+                <h3 class="ref-section-title">
+                  <span>📌</span>
+                  <span>Pinned Informations</span>
+                </h3>
+                <button type="button" class="ref-btn-add-new" id="open-add-task-modal">
+                  <span>Add New</span>
+                  <span>+</span>
+                </button>
+              </div>
+
+              <div class="ref-pinned-grid">
+                <!-- Card 1: Attendance -->
+                <div class="ref-pinned-card" onclick="window.location.href='attendance.html'">
+                  <div class="ref-pinned-icon ref-icon-red">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z" />
+                    </svg>
+                  </div>
+                  <div class="ref-pinned-info">
+                    <div class="ref-pinned-label">Attendance (overall)</div>
+                    <div class="ref-pinned-val" id="kpi-attendance-val">86.4<span class="ref-pinned-unit">%</span></div>
+                  </div>
+                </div>
+
+                <!-- Card 2: Current SGPA -->
+                <div class="ref-pinned-card" onclick="window.location.href='results.html'">
+                  <div class="ref-pinned-icon ref-icon-green">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <rect x="2" y="7" width="20" height="14" rx="2" ry="2" />
+                      <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
+                    </svg>
+                  </div>
+                  <div class="ref-pinned-info">
+                    <div class="ref-pinned-label">Current SGPA</div>
+                    <div class="ref-pinned-val" id="kpi-performance-val">9.20</div>
+                  </div>
+                </div>
+
+                <!-- Card 3: Pending Deadlines -->
+                <div class="ref-pinned-card" onclick="window.location.href='assignments.html'">
+                  <div class="ref-pinned-icon ref-icon-purple">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                    </svg>
+                  </div>
+                  <div class="ref-pinned-info">
+                    <div class="ref-pinned-label">Pending Deadlines</div>
+                    <div class="ref-pinned-val" id="kpi-assignments-val">3<span class="ref-pinned-unit">Due</span></div>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <!-- 4. Visual Analytics Duo Grid (Cylinders & Donut Progression) -->
+            <div class="ref-analytics-duo">
+              <!-- Left: Vertical Liquid Cylinder Levels -->
+              <div class="ref-analytics-card">
+                <div class="ref-analytics-header">
+                  <h4 class="ref-analytics-title">Subject Attendance & Engagement</h4>
+                  <a href="attendance.html" class="ref-view-more-link">View More</a>
+                </div>
+
+                <div class="ref-cylinders-chart-wrap">
+                  <div class="ref-chart-y-axis">
+                    <span>High</span>
+                    <span>Normal</span>
+                    <span>Low</span>
+                  </div>
+                  <div class="ref-cylinders-stage">
+                    <div class="ref-cylinder-column">
+                      <div class="ref-cylinder-track" title="DSA: 92%">
+                        <div class="ref-cylinder-fill fill-red" style="height: 92%;"></div>
+                      </div>
+                      <span class="ref-cylinder-label">DSA</span>
+                    </div>
+                    <div class="ref-cylinder-column">
+                      <div class="ref-cylinder-track" title="DBMS: 84%">
+                        <div class="ref-cylinder-fill fill-purple" style="height: 84%;"></div>
+                      </div>
+                      <span class="ref-cylinder-label">DBMS</span>
+                    </div>
+                    <div class="ref-cylinder-column">
+                      <div class="ref-cylinder-track" title="ML: 89%">
+                        <div class="ref-cylinder-fill fill-violet" style="height: 89%;"></div>
+                      </div>
+                      <span class="ref-cylinder-label">ML</span>
+                    </div>
+                    <div class="ref-cylinder-column">
+                      <div class="ref-cylinder-track" title="OS: 83%">
+                        <div class="ref-cylinder-fill fill-indigo" style="height: 83%;"></div>
+                      </div>
+                      <span class="ref-cylinder-label">OS</span>
+                    </div>
+                    <div class="ref-cylinder-column">
+                      <div class="ref-cylinder-track" title="CN: 86%">
+                        <div class="ref-cylinder-fill fill-emerald" style="height: 86%;"></div>
+                      </div>
+                      <span class="ref-cylinder-label">CN</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Right: Donut Chart Degree Progression -->
+              <div class="ref-analytics-card">
+                <div class="ref-analytics-header">
+                  <h4 class="ref-analytics-title">Degree & Domain Progression</h4>
+                  <a href="results.html" class="ref-view-more-link">View More</a>
+                </div>
+
+                <div class="ref-donut-chart-wrap">
+                  <div class="ref-donut-svg-stage">
+                    <svg width="130" height="130" viewBox="0 0 100 100">
+                      <circle cx="50" cy="50" r="38" fill="transparent" stroke="#F1F5F9" stroke-width="13" />
+                      <!-- Core CS: 40 Cr -->
+                      <circle cx="50" cy="50" r="38" fill="transparent" stroke="#8B5CF6" stroke-width="13"
+                        stroke-dasharray="115 238" stroke-dashoffset="0" />
+                      <!-- AI/ML: 18 Cr -->
+                      <circle cx="50" cy="50" r="38" fill="transparent" stroke="#A855F7" stroke-width="13"
+                        stroke-dasharray="55 238" stroke-dashoffset="-115" />
+                      <!-- Systems: 12 Cr -->
+                      <circle cx="50" cy="50" r="38" fill="transparent" stroke="#C084FC" stroke-width="13"
+                        stroke-dasharray="36 238" stroke-dashoffset="-170" />
+                      <!-- Labs: 8 Cr -->
+                      <circle cx="50" cy="50" r="38" fill="transparent" stroke="#DDD6FE" stroke-width="13"
+                        stroke-dasharray="24 238" stroke-dashoffset="-206" />
+                    </svg>
+
+                    <!-- Callout Badges -->
+                    <span class="ref-donut-tag-pill ref-donut-tag-top">40 Cr</span>
+                    <span class="ref-donut-tag-pill ref-donut-tag-right">18 Cr</span>
+                    <span class="ref-donut-tag-pill ref-donut-tag-bottom">12 Cr</span>
+
+                    <div class="ref-donut-center-info">
+                      <div class="ref-donut-center-val">78 / 160</div>
+                      <div class="ref-donut-center-sub">Credits (48.8%)</div>
+                    </div>
+                  </div>
+
+                  <div class="ref-donut-legends">
+                    <div class="ref-legend-item">
+                      <span class="ref-legend-dot dot-purple"></span>
+                      <span>Core CS</span>
+                    </div>
+                    <div class="ref-legend-item">
+                      <span class="ref-legend-dot dot-violet"></span>
+                      <span>AI & ML</span>
+                    </div>
+                    <div class="ref-legend-item">
+                      <span class="ref-legend-dot dot-indigo"></span>
+                      <span>Systems</span>
+                    </div>
+                    <div class="ref-legend-item">
+                      <span class="ref-legend-dot dot-lavender"></span>
+                      <span>Labs</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 5. Academic Operations Hub (Materials, AI Doubts, Tasks, Community & Calendar) -->
+            <div class="ref-secondary-hub-card">
+              <div class="ref-tab-nav" role="tablist">
+                <button type="button" class="ref-tab-btn active" id="hub-tab-materials"
+                  onclick="switchHubTab('materials')">Learning Materials</button>
+                <button type="button" class="ref-tab-btn" id="hub-tab-ai" onclick="switchHubTab('ai')">AI Concept
+                  Assistant</button>
+                <button type="button" class="ref-tab-btn" id="hub-tab-tasks" onclick="switchHubTab('tasks')">Task
+                  Manager</button>
+                <button type="button" class="ref-tab-btn" id="hub-tab-community"
+                  onclick="switchHubTab('community')">Study Groups</button>
+                <button type="button" class="ref-tab-btn" id="hub-tab-calendar"
+                  onclick="switchHubTab('calendar')">Academic Calendar</button>
+              </div>
+
+              <!-- Tab 1: Materials -->
+              <div id="hub-pane-materials">
+                <div class="materials-grid" id="materials-container">
+                  <!-- Dynamic Materials Injected via JS -->
+                </div>
+              </div>
+
+              <!-- Tab 2: AI Doubts -->
+              <div id="hub-pane-ai" class="hidden">
+                <form id="ai-doubt-form" class="ai-input-group">
+                  <div class="ai-input-wrapper">
+                    <svg class="ai-input-search-icon" width="15" height="15" viewBox="0 0 24 24" fill="none"
+                      stroke="currentColor" stroke-width="2">
+                      <circle cx="11" cy="11" r="8" />
+                      <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                    </svg>
+                    <input type="text" id="ai-doubt-query" class="ai-input"
+                      placeholder="Ask a question (e.g. Explain 3NF Normalization)" required>
+                  </div>
+                  <button type="submit" id="ai-submit-btn" class="btn btn-primary btn-sm"
+                    style="white-space: nowrap; height: 40px; padding: 0 1rem; border-radius: 8px;">
+                    <span id="ai-btn-text">Ask a Doubt</span>
+                    <div id="ai-spinner" class="spinner hidden"></div>
+                  </button>
+                </form>
+
+                <div class="ai-suggestions-chips">
+                  <span class="ai-suggestions-label">Suggestions:</span>
+                  <button type="button" class="ai-chip"
+                    data-query="Explain database normalization (1NF, 2NF, 3NF)">Normalization</button>
+                  <button type="button" class="ai-chip"
+                    data-query="Explain Dijkstra's shortest path algorithm">Dijkstra's Algo</button>
+                  <button type="button" class="ai-chip"
+                    data-query="How does Gradient Descent work in Machine Learning?">Gradient Descent</button>
+                </div>
+
+                <div id="ai-active-response-container" class="mb-3 hidden"></div>
+
+                <div class="recent-doubts-section">
+                  <div class="recent-doubts-header">
+                    <h5>Recent Resolved Doubts</h5>
+                  </div>
+                  <div class="recent-doubts-list" id="recent-doubts-container"></div>
+                </div>
+              </div>
+
+              <!-- Tab 3: Tasks -->
+              <div id="hub-pane-tasks" class="hidden">
+                <div class="tasks-list" id="tasks-container"></div>
+              </div>
+
+              <!-- Tab 4: Study Groups -->
+              <div id="hub-pane-community" class="hidden">
+                <div class="study-groups-list" id="study-groups-container"></div>
+              </div>
+
+              <!-- Tab 5: Academic Calendar -->
+              <div id="hub-pane-calendar" class="hidden">
+                <div class="cal-filter-cluster" id="dash-cal-filter-cluster" style="margin-bottom: 1.15rem; display: flex; gap: 0.45rem; flex-wrap: wrap;">
+                  <button type="button" class="cal-filter-btn active" data-filter="all" onclick="filterDashCalendarEvents('all')">
+                    <span>All Events</span>
+                    <span class="badge" style="background: rgba(255,255,255,0.2); color: inherit; padding: 0.1rem 0.35rem; font-size: 0.7rem;" id="dash-cal-all-count">9</span>
+                  </button>
+                  <button type="button" class="cal-filter-btn" data-filter="exam" onclick="filterDashCalendarEvents('exam')">
+                    <span style="width: 7px; height: 7px; border-radius: 50%; background: #EF4444;"></span>
+                    <span>Exams & Quizzes</span>
+                  </button>
+                  <button type="button" class="cal-filter-btn" data-filter="assignment" onclick="filterDashCalendarEvents('assignment')">
+                    <span style="width: 7px; height: 7px; border-radius: 50%; background: #F59E0B;"></span>
+                    <span>Assignments</span>
+                  </button>
+                  <button type="button" class="cal-filter-btn" data-filter="class" onclick="filterDashCalendarEvents('class')">
+                    <span style="width: 7px; height: 7px; border-radius: 50%; background: #8B5CF6;"></span>
+                    <span>Labs & Classes</span>
+                  </button>
+                  <button type="button" class="cal-filter-btn" data-filter="milestone" onclick="filterDashCalendarEvents('milestone')">
+                    <span style="width: 7px; height: 7px; border-radius: 50%; background: #A855F7;"></span>
+                    <span>Milestones</span>
+                  </button>
+                </div>
+
+                <div class="agenda-events-list" id="dash-academic-calendar-list" style="display: flex; flex-direction: column; gap: 0.75rem;">
+                  <!-- Dynamic event rows -->
+                </div>
+
+                <div style="margin-top: 1.15rem; display: flex; justify-content: space-between; align-items: center; padding-top: 0.85rem; border-top: 1px solid #F1F5F9;">
+                  <span style="font-size: 0.78125rem; color: #64748B; font-weight: 500;">Official Semester 4 Academic Calendar</span>
+                  <a href="calendar.html" class="ref-btn-view-more-purple" style="font-size: 0.75rem;">Open Full Calendar →</a>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- ================================================================
+               RIGHT COLUMN (Upcoming Schedule, Line Up Agenda & Previous Reports)
+               ================================================================ -->
+          <div class="ref-col-right">
+
+            <!-- Right Header -->
+            <div class="ref-right-header">
+              <h2 class="ref-right-title">Upcoming Schedule</h2>
+              <button type="button" class="ref-btn-circle-plus" id="btn-quick-add"
+                onclick="UI.openModal('add-task-modal')" title="Quick Add Task">+</button>
+            </div>
+
+            <!-- Card 1: Interactive Calendar -->
+            <div class="ref-cal-card">
+              <div class="ref-cal-nav-row">
+                <span class="ref-cal-month-title" id="dash-cal-month-name">September 2026</span>
+                <div class="ref-cal-nav-arrows">
+                  <button type="button" class="ref-cal-arrow-btn" id="dash-cal-prev-month"
+                    aria-label="Previous Month">‹</button>
+                  <button type="button" class="ref-cal-arrow-btn" id="dash-cal-next-month"
+                    aria-label="Next Month">›</button>
+                </div>
+              </div>
+
+              <div class="ref-cal-weekdays">
+                <span>Su</span><span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span>
+              </div>
+
+              <div class="ref-cal-days-grid" id="dash-cal-days-grid">
+                <!-- Populated by JS -->
+              </div>
+            </div>
+
+            <!-- Card 2: Line up Schedule (Active Date Agenda) -->
+            <div class="ref-lineup-card">
+              <div class="ref-lineup-header">
+                <h3 class="ref-lineup-title">Line up Schedule</h3>
+                <span class="ref-lineup-date-tag" id="ref-lineup-date-label">(08 Sep)</span>
+              </div>
+
+              <div class="ref-lineup-list" id="ref-lineup-container">
+                <!-- Populated by JS -->
+              </div>
+
+              <div class="ref-lineup-footer">
+                <span class="ref-lineup-more-count" id="ref-lineup-more-text">(2 more)</span>
+                <a href="calendar.html" class="ref-btn-view-more-purple">View More →</a>
+              </div>
+            </div>
+
+            <!-- Card 3: Previous Check-ups & Graded Reports -->
+            <div class="ref-previous-card">
+              <h3 class="ref-previous-title">Previous Assessments</h3>
+
+              <div class="ref-previous-list" id="ref-previous-container">
+                <div class="ref-previous-item">
+                  <div class="ref-previous-icon ref-prev-icon-red">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                      stroke-width="2">
+                      <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z" />
+                    </svg>
+                  </div>
+                  <div class="ref-previous-info">
+                    <div class="ref-previous-item-title">DBMS Quiz 1 — Graded</div>
+                    <div class="ref-previous-item-sub">05 Sep, 10:00 AM • Score: 19/20</div>
+                  </div>
+                  <a href="assignments.html" class="ref-previous-link">View Report</a>
+                </div>
+
+                <div class="ref-previous-item">
+                  <div class="ref-previous-icon ref-prev-icon-yellow">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                      stroke-width="2">
+                      <circle cx="12" cy="12" r="10" />
+                      <polyline points="12 6 12 12 14 14" />
+                    </svg>
+                  </div>
+                  <div class="ref-previous-info">
+                    <div class="ref-previous-item-title">OS Semaphore Lab Report</div>
+                    <div class="ref-previous-item-sub">03 Sep, 02:00 PM • Score: 10/10</div>
+                  </div>
+                  <a href="assignments.html" class="ref-previous-link">View Report</a>
+                </div>
+
+                <div class="ref-previous-item">
+                  <div class="ref-previous-icon ref-prev-icon-green">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                      stroke-width="2">
+                      <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                      <polyline points="22 4 12 14.01 9 11.01" />
+                    </svg>
+                  </div>
+                  <div class="ref-previous-info">
+                    <div class="ref-previous-item-title">CN Subnetting Practice</div>
+                    <div class="ref-previous-item-sub">01 Sep, 04:00 PM • Score: 95%</div>
+                  </div>
+                  <a href="assignments.html" class="ref-previous-link">View Report</a>
+                </div>
+              </div>
+
+              <div class="ref-previous-footer">
+                <a href="results.html" class="ref-btn-view-more-purple">View all →</a>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- ====================================================================
+       MODALS: Add Task Modal & Submit Assignment Modal
+       ==================================================================== -->
+
+  <!-- Add Task Modal -->
+  <div id="add-task-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-title-task">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 id="modal-title-task" class="modal-title">Create Academic Task</h3>
+        <button type="button" class="toast-close" id="close-task-modal" aria-label="Close dialog">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label for="task-title-input" class="form-label">Task Title <span class="required">*</span></label>
+          <input type="text" id="task-title-input" class="form-input"
+            placeholder="e.g. Complete DBMS normalization assignment" required>
+        </div>
+        <div class="form-group">
+          <label for="task-due-input" class="form-label">Due Timeline</label>
+          <input type="text" id="task-due-input" class="form-input" placeholder="e.g. Tomorrow, 05:00 PM">
+        </div>
+        <div class="form-group">
+          <label for="task-priority-select" class="form-label">Priority</label>
+          <select id="task-priority-select" class="form-input">
+            <option value="high">High Priority</option>
+            <option value="medium" selected>Medium Priority</option>
+            <option value="low">Low Priority</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" id="cancel-task-btn">Cancel</button>
+        <button type="button" class="btn btn-primary" id="save-task-btn">Save Task</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Submit Assignment Modal -->
+  <div id="submit-assignment-modal" class="modal-overlay" role="dialog" aria-modal="true"
+    aria-labelledby="modal-title-submission">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 id="modal-title-submission" class="modal-title">Submit Academic Assignment</h3>
+        <button type="button" class="toast-close" id="close-submission-modal" aria-label="Close dialog">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label for="assignment-select" class="form-label">Select Assignment <span class="required">*</span></label>
+          <select id="assignment-select" class="form-input">
+            <option value="asg_001">DBMS — Normalization & Relational Schema (Due Sep 08)</option>
+            <option value="asg_003">OS — Process Synchronization with Semaphores (Due Sep 12)</option>
+            <option value="asg_004">CN — IPv4 Subnetting & CIDR Calculation (Overdue)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">File Upload <span class="required">*</span></label>
+          <input type="file" id="assignment-file-input" class="form-input" accept=".pdf,.doc,.docx,.zip,.ipynb">
+          <div class="form-helper">Accepted formats: PDF, DOCX, IPYNB, ZIP. Max file size: 25MB.</div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" id="cancel-submission-btn">Cancel</button>
+        <button type="button" class="btn btn-primary" id="confirm-submission-btn">Upload & Submit</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Event Details Modal (Synced with Academic Calendar) -->
+  <div class="modal-overlay" id="modal-event-detail" role="dialog" aria-modal="true" aria-labelledby="modal-event-title">
+    <div class="modal-dialog" style="max-width: 520px;">
+      <div class="modal-header">
+        <div style="display: flex; align-items: center; gap: 0.5rem;">
+          <span class="cal-event-pill pill-assignment" id="modal-event-type-badge">EVENT</span>
+          <h3 class="modal-title" id="modal-event-title" style="margin: 0; font-size: 1.1rem;">Event Details</h3>
+        </div>
+        <button type="button" class="toast-close" onclick="UI.closeModal('modal-event-detail')" aria-label="Close dialog">&times;</button>
+      </div>
+      <div class="modal-body" style="display: flex; flex-direction: column; gap: 1.25rem;">
+        <div style="padding: 1.125rem; background-color: #F8FAFC; border-radius: 14px; border: 1px solid #E2E8F0;">
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; font-size: 0.84375rem;">
+            <div>
+              <div style="color: #64748B; font-size: 0.71875rem; font-weight: 700; text-transform: uppercase;">DATE</div>
+              <div id="modal-event-date" style="font-weight: 800; color: #0F172A; margin-top: 0.2rem;">Sep 08, 2026</div>
+            </div>
+            <div>
+              <div style="color: #64748B; font-size: 0.71875rem; font-weight: 700; text-transform: uppercase;">TIME & DURATION</div>
+              <div id="modal-event-time" style="font-weight: 800; color: #0F172A; margin-top: 0.2rem;">11:59 PM</div>
+            </div>
+            <div>
+              <div style="color: #64748B; font-size: 0.71875rem; font-weight: 700; text-transform: uppercase;">COURSE & CODE</div>
+              <div id="modal-event-subject" style="font-weight: 800; color: #0F172A; margin-top: 0.2rem;">DBMS (CS402)</div>
+            </div>
+            <div>
+              <div style="color: #64748B; font-size: 0.71875rem; font-weight: 700; text-transform: uppercase;">VENUE / PORTAL</div>
+              <div id="modal-event-venue" style="font-weight: 800; color: #0F172A; margin-top: 0.2rem;">Smart Student Portal</div>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div style="font-size: 0.78125rem; font-weight: 700; text-transform: uppercase; color: #64748B; margin-bottom: 0.35rem;">
+            Description & Academic Guidelines
+          </div>
+          <p id="modal-event-desc"
+            style="font-size: 0.875rem; color: #475569; line-height: 1.55; margin: 0; background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 10px; padding: 0.875rem;">
+            Event description will appear here.
+          </p>
+        </div>
+      </div>
+      <div class="modal-footer" style="justify-content: space-between;">
+        <button type="button" class="btn btn-secondary" onclick="UI.closeModal('modal-event-detail')">Close</button>
+        <div style="display: flex; gap: 0.5rem;">
+          <button type="button" class="btn btn-outline" id="btn-add-to-tasks" onclick="addEventToTasks()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 0.35rem;">
+              <polyline points="9 11 12 14 22 4" />
+              <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
+            </svg>
+            Add to Tasks
+          </button>
+          <button type="button" class="btn btn-primary" onclick="downloadSingleIcs()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 0.35rem;">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+              <polyline points="7 10 12 15 17 10" />
+              <line x1="12" y1="15" x2="12" y2="3" />
+            </svg>
+            Add to Calendar (.ics)
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====================================================================
+       SCRIPTS & DASHBOARD CONTROLLER
+       ==================================================================== -->
+  <!-- Firebase SDKs (Compat v10) -->
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+
+  <!-- Mock Data Layer -->
+  <script src="../data/mock-student.js"></script>
+  <script src="../data/mock-schedule.js"></script>
+  <script src="../data/mock-assignments.js"></script>
+  <script src="../data/mock-exams.js"></script>
+  <script src="../data/mock-attendance.js"></script>
+  <script src="../data/mock-materials.js"></script>
+  <script src="../data/mock-tasks.js"></script>
+  <script src="../data/mock-calendar.js"></script>
+  <script src="../data/mock-announcements.js"></script>
+  <script src="../data/mock-study-groups.js"></script>
+  <script src="../data/mock-doubts.js"></script>
+
+  <!-- Services -->
+  <script src="../js/firebase-config.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/student-service.js"></script>
+  <script src="../js/assignment-service.js"></script>
+  <script src="../js/course-service.js"></script>
+  <script src="../js/exam-service.js"></script>
+  <script src="../js/attendance-service.js"></script>
+  <script src="../js/material-service.js"></script>
+  <script src="../js/task-service.js"></script>
+  <script src="../js/notification-service.js"></script>
+  <script src="../js/ai-service.js"></script>
+  <script src="../js/ui.js"></script>
+
+  <!-- Dashboard Page Initializer & Component Logic -->
+  <script>
+    function getTodayInfo() {
+      const now = new Date();
+      const year = now.getFullYear();
+      const month = String(now.getMonth() + 1).padStart(2, '0');
+      const day = String(now.getDate()).padStart(2, '0');
+      const dateStr = `${year}-${month}-${day}`;
+      const weekday = now.toLocaleDateString('en-US', { weekday: 'short' });
+      const monthName = now.toLocaleDateString('en-US', { month: 'short' });
+      const readable = `${weekday}, ${monthName} ${now.getDate()}, ${year}`;
+      return { dateStr, dayNum: now.getDate(), monthNum: now.getMonth() + 1, year, readable };
+    }
+
+    const todayInfo = getTodayInfo();
+    let currentCalYear = todayInfo.year || 2026;
+    let currentCalMonth = (todayInfo.monthNum - 1) || 8; // 0-indexed, 8 = September
+    let selectedCalDateStr = todayInfo.dateStr || '2026-09-07';
+    let currentDashCalFilter = 'all';
+    let currentOpenedEventId = null;
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      // 1. Initialize Student Identity
+      await UI.syncStudentIdentity();
+
+      // 2. Render Calendar & Lineup Schedule
+      renderCalendar();
+      renderLineupSchedule(selectedCalDateStr);
+
+      // 3. Render Materials
+      renderMaterials();
+
+      // 4. Render AI Doubts
+      renderRecentDoubts();
+
+      // 5. Render Tasks
+      renderTasks();
+
+      // 6. Render Study Community (Strict 5 Max rule)
+      renderStudyGroups();
+
+      // 7. Render Academic Calendar Feed
+      renderDashCalendarFeed();
+
+      // 8. Render Notifications
+      renderNotifications();
+
+      // Setup Event Listeners
+      setupDashboardEvents();
+    });
+
+    // --- Tab Switching in Secondary Hub ---
+    window.switchHubTab = function (tabName) {
+      const tabs = ['materials', 'ai', 'tasks', 'community', 'calendar'];
+      tabs.forEach(t => {
+        const btn = document.getElementById(`hub-tab-${t}`);
+        const pane = document.getElementById(`hub-pane-${t}`);
+        if (btn) btn.classList.toggle('active', t === tabName);
+        if (pane) pane.classList.toggle('hidden', t !== tabName);
+      });
+      if (tabName === 'calendar') {
+        renderDashCalendarFeed();
+      }
+    };
+
+    // --- Interactive Calendar Matrix ---
+    function renderCalendar() {
+      setupCalendarControls();
+      renderCalMonthMatrix();
+    }
+
+    function setupCalendarControls() {
+      const prevBtn = document.getElementById('dash-cal-prev-month');
+      const nextBtn = document.getElementById('dash-cal-next-month');
+
+      if (prevBtn && !prevBtn.dataset.bound) {
+        prevBtn.dataset.bound = 'true';
+        prevBtn.addEventListener('click', () => {
+          currentCalMonth--;
+          if (currentCalMonth < 0) { currentCalMonth = 11; currentCalYear--; }
+          renderCalMonthMatrix();
+        });
+      }
+
+      if (nextBtn && !nextBtn.dataset.bound) {
+        nextBtn.dataset.bound = 'true';
+        nextBtn.addEventListener('click', () => {
+          currentCalMonth++;
+          if (currentCalMonth > 11) { currentCalMonth = 0; currentCalYear++; }
+          renderCalMonthMatrix();
+        });
+      }
+    }
+
+    function renderCalMonthMatrix() {
+      const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+      const monthNameEl = document.getElementById('dash-cal-month-name');
+      if (monthNameEl) monthNameEl.textContent = `${monthNames[currentCalMonth]} ${currentCalYear}`;
+
+      const grid = document.getElementById('dash-cal-days-grid');
+      if (!grid) return;
+      const events = window.mockCalendar || [];
+
+      const firstDayIndex = new Date(currentCalYear, currentCalMonth, 1).getDay();
+      const totalDays = new Date(currentCalYear, currentCalMonth + 1, 0).getDate();
+
+      let html = '';
+
+      // Leading empty cells
+      for (let i = 0; i < firstDayIndex; i++) {
+        html += '<div class="ref-cal-day empty"></div>';
+      }
+
+      // Day cells
+      for (let day = 1; day <= totalDays; day++) {
+        const monthStr = String(currentCalMonth + 1).padStart(2, '0');
+        const dayStr = String(day).padStart(2, '0');
+        const dateStr = `${currentCalYear}-${monthStr}-${dayStr}`;
+
+        const isSelected = (dateStr === selectedCalDateStr);
+        const isToday = (dateStr === todayInfo.dateStr || (todayInfo.year === currentCalYear && todayInfo.monthNum === (currentCalMonth + 1) && day === todayInfo.dayNum));
+        const dayEvents = events.filter(e => e.date === dateStr);
+
+        let dotHtml = '';
+        if (dayEvents.length > 0) {
+          let dotClass = 'dot-class';
+          if (dayEvents.some(e => e.type === 'exam')) dotClass = 'dot-exam';
+          else if (dayEvents.some(e => e.type === 'assignment')) dotClass = 'dot-assignment';
+          else if (dayEvents.some(e => e.type === 'milestone')) dotClass = 'dot-milestone';
+          dotHtml = `<span class="ref-cal-event-dot ${dotClass}"></span>`;
+        }
+
+        html += `
+          <div class="ref-cal-day ${isSelected ? 'active-selected' : ''} ${isToday ? 'today-day' : ''}" 
+               data-date="${dateStr}" onclick="handleSelectCalDate('${dateStr}')" 
+               title="${isToday ? '[Today] ' : ''}${dayEvents.length > 0 ? dayEvents.map(e => e.title).join(' | ') : dateStr}">
+            <span>${day}</span>
+            ${dotHtml}
+          </div>
+        `;
+      }
+
+      grid.innerHTML = html;
+    }
+
+    window.handleSelectCalDate = function (dateStr) {
+      selectedCalDateStr = dateStr;
+      renderCalMonthMatrix();
+      renderLineupSchedule(dateStr);
+    };
+
+    // --- Line-up Schedule Renderer (Reference Layout & Live Calendar Filter) ---
+    async function renderLineupSchedule(dateStr) {
+      const container = document.getElementById('ref-lineup-container');
+      const dateLabel = document.getElementById('ref-lineup-date-label');
+      const moreText = document.getElementById('ref-lineup-more-text');
+      if (!container) return;
+
+      const parts = dateStr.split('-');
+      const d = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
+      const formattedShort = d.toLocaleDateString('en-US', { day: '2-digit', month: 'short' });
+      if (dateLabel) dateLabel.textContent = `(${formattedShort})`;
+
+      const events = window.mockCalendar || [];
+      const dayEvents = events.filter(e => e.date === dateStr);
+
+      if (dayEvents.length > 0) {
+        container.innerHTML = dayEvents.map((item) => {
+          let iconSvg = '';
+          let iconBgClass = 'ref-icon-purple';
+          if (item.type === 'exam') {
+            iconBgClass = 'ref-prev-icon-red';
+            iconSvg = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 14 14"/></svg>`;
+          } else if (item.type === 'assignment') {
+            iconBgClass = 'ref-prev-icon-yellow';
+            iconSvg = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg>`;
+          } else if (item.type === 'milestone') {
+            iconBgClass = 'ref-prev-icon-green';
+            iconSvg = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`;
+          } else {
+            iconBgClass = 'ref-icon-purple';
+            iconSvg = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>`;
+          }
+
+          return `
+            <div class="ref-lineup-item" onclick="openEventDetailModal('${item.id}')" style="cursor: pointer;" title="Click to view details">
+              <div class="ref-lineup-icon ${iconBgClass}">
+                ${iconSvg}
+              </div>
+              <div class="ref-lineup-info">
+                <div class="ref-lineup-item-title">${escapeHtml(item.title)}</div>
+                <div class="ref-lineup-item-sub">${escapeHtml(item.time)} • ${escapeHtml(item.venue || item.courseId)}</div>
+              </div>
+              <div class="ref-lineup-radio-check" onclick="event.stopPropagation(); this.style.borderColor='#8B5CF6'; this.style.backgroundColor='#8B5CF6';" title="Mark completed / attended"></div>
+            </div>
+          `;
+        }).join('');
+      } else {
+        const weekdayNum = d.getDay();
+        let routineItems = [];
+        if (weekdayNum >= 1 && weekdayNum <= 5) {
+          routineItems = [
+            {
+              title: 'CS402 — Database Systems Lecture',
+              time: '10:00 AM • LH-201',
+              iconSvg: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>`
+            },
+            {
+              title: 'CS404 — Operating Systems Tutorial',
+              time: '02:00 PM • Room 304',
+              iconSvg: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="2" ry="2"/><rect x="9" y="9" width="6" height="6"/><line x1="9" y1="1" x2="9" y2="4"/><line x1="15" y1="1" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="23"/><line x1="15" y1="20" x2="15" y2="23"/><line x1="20" y1="9" x2="23" y2="9"/><line x1="20" y1="14" x2="23" y2="14"/><line x1="1" y1="9" x2="4" y2="9"/><line x1="1" y1="14" x2="4" y2="14"/></svg>`
+            }
+          ];
+        }
+
+        if (routineItems.length > 0) {
+          container.innerHTML = routineItems.map(item => `
+            <div class="ref-lineup-item">
+              <div class="ref-lineup-icon">
+                ${item.iconSvg}
+              </div>
+              <div class="ref-lineup-info">
+                <div class="ref-lineup-item-title">${escapeHtml(item.title)}</div>
+                <div class="ref-lineup-item-sub">${escapeHtml(item.time)}</div>
+              </div>
+              <div class="ref-lineup-radio-check" onclick="this.style.borderColor='#8B5CF6'; this.style.backgroundColor='#8B5CF6';" title="Mark attended"></div>
+            </div>
+          `).join('');
+        } else {
+          container.innerHTML = `
+            <div style="text-align: center; padding: 1.25rem 0.5rem; color: #64748B;">
+              <div style="font-size: 0.8125rem; font-weight: 600; color: #334155;">No scheduled events on this date</div>
+              <div style="font-size: 0.75rem; color: #94A3B8; margin-top: 0.2rem;">Weekend / Academic Break</div>
+            </div>
+          `;
+        }
+      }
+
+      const otherEventsCount = events.filter(e => e.date !== dateStr).length;
+      if (moreText) {
+        moreText.textContent = `(${otherEventsCount} more in term)`;
+      }
+    }
+
+    // --- Academic Calendar Hub Filter & Feed ---
+    window.filterDashCalendarEvents = function (filter) {
+      currentDashCalFilter = filter;
+      const buttons = document.querySelectorAll('#dash-cal-filter-cluster .cal-filter-btn');
+      buttons.forEach(btn => {
+        btn.classList.toggle('active', btn.getAttribute('data-filter') === filter);
+      });
+      renderDashCalendarFeed();
+    };
+
+    function renderDashCalendarFeed() {
+      const container = document.getElementById('dash-academic-calendar-list');
+      if (!container) return;
+
+      let events = window.mockCalendar || [];
+      const totalCountEl = document.getElementById('dash-cal-all-count');
+      if (totalCountEl) totalCountEl.textContent = events.length;
+
+      if (currentDashCalFilter !== 'all') {
+        events = events.filter(e => e.type === currentDashCalFilter);
+      }
+
+      if (events.length === 0) {
+        container.innerHTML = '<div class="empty-state" style="padding: 1.5rem; text-align: center; color: #64748B; font-size: 0.84375rem;">No academic events found for this filter.</div>';
+        return;
+      }
+
+      container.innerHTML = events.map(ev => {
+        const dateParts = ev.date.split('-');
+        const d = new Date(parseInt(dateParts[0]), parseInt(dateParts[1]) - 1, parseInt(dateParts[2]));
+        const monthStr = d.toLocaleDateString('en-US', { month: 'short' });
+        const dayStr = d.toLocaleDateString('en-US', { day: '2-digit' });
+
+        let pillClass = 'pill-assignment';
+        let pillLabel = 'ASSIGNMENT';
+        if (ev.type === 'exam') { pillClass = 'pill-exam'; pillLabel = 'EXAMINATION'; }
+        else if (ev.type === 'class') { pillClass = 'pill-class'; pillLabel = 'LAB / CLASS'; }
+        else if (ev.type === 'milestone') { pillClass = 'pill-milestone'; pillLabel = 'MILESTONE'; }
+
+        return `
+          <div class="agenda-event-row" onclick="openEventDetailModal('${ev.id}')">
+            <div class="agenda-date-block">
+              <span class="agenda-date-day">${dayStr}</span>
+              <span class="agenda-date-month">${monthStr}</span>
+            </div>
+            <div class="agenda-details-wrap">
+              <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
+                <span class="cal-event-pill ${pillClass}">${pillLabel}</span>
+                <span style="font-size: 0.75rem; font-weight: 700; color: #8B5CF6;">${escapeHtml(ev.courseId)}</span>
+              </div>
+              <div class="agenda-event-title">${escapeHtml(ev.title)}</div>
+              <div class="agenda-meta-tags">
+                <span>🕒 ${escapeHtml(ev.time)}</span>
+                <span>📍 ${escapeHtml(ev.venue)}</span>
+              </div>
+            </div>
+            <div style="display: flex; gap: 0.4rem; align-items: center;" onclick="event.stopPropagation();">
+              <button type="button" class="btn btn-secondary btn-sm" onclick="openEventDetailModal('${ev.id}')" style="font-size: 0.75rem; padding: 0.25rem 0.6rem;">Details</button>
+              <button type="button" class="btn btn-outline btn-sm" onclick="addTaskFromCalendar('${ev.id}')" title="Add to Task Manager" style="font-size: 0.75rem; padding: 0.25rem 0.6rem;">+ Task</button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // --- Event Details Modal Controller ---
+    window.openEventDetailModal = function (eventId) {
+      const events = window.mockCalendar || [];
+      const ev = events.find(e => e.id === eventId);
+      if (!ev) return;
+
+      currentOpenedEventId = eventId;
+      const titleEl = document.getElementById('modal-event-title');
+      const badgeEl = document.getElementById('modal-event-type-badge');
+      const dateEl = document.getElementById('modal-event-date');
+      const timeEl = document.getElementById('modal-event-time');
+      const subjEl = document.getElementById('modal-event-subject');
+      const venueEl = document.getElementById('modal-event-venue');
+      const descEl = document.getElementById('modal-event-desc');
+
+      if (titleEl) titleEl.textContent = ev.title;
+      if (dateEl) dateEl.textContent = ev.displayDate || ev.date;
+      if (timeEl) timeEl.textContent = ev.time;
+      if (subjEl) subjEl.textContent = `${ev.subject} (${ev.courseId})`;
+      if (venueEl) venueEl.textContent = ev.venue || 'Smart Student Portal';
+      if (descEl) descEl.textContent = ev.description || 'Academic event as scheduled in semester syllabus.';
+
+      if (badgeEl) {
+        badgeEl.className = 'cal-event-pill';
+        if (ev.type === 'exam') {
+          badgeEl.classList.add('pill-exam');
+          badgeEl.textContent = 'EXAMINATION';
+        } else if (ev.type === 'assignment') {
+          badgeEl.classList.add('pill-assignment');
+          badgeEl.textContent = 'ASSIGNMENT';
+        } else if (ev.type === 'class') {
+          badgeEl.classList.add('pill-class');
+          badgeEl.textContent = 'LAB / PRACTICAL';
+        } else if (ev.type === 'milestone') {
+          badgeEl.classList.add('pill-milestone');
+          badgeEl.textContent = 'MILESTONE';
+        }
+      }
+
+      UI.openModal('modal-event-detail');
+    };
+
+    window.addEventToTasks = async function () {
+      if (!currentOpenedEventId) return;
+      await addTaskFromCalendar(currentOpenedEventId);
+      UI.closeModal('modal-event-detail');
+    };
+
+    window.addTaskFromCalendar = async function (eventId) {
+      const events = window.mockCalendar || [];
+      const ev = events.find(e => e.id === eventId);
+      if (!ev) return;
+
+      const priority = ev.type === 'exam' ? 'high' : 'medium';
+      const dueStr = `${ev.displayDate || ev.date} (${ev.time.split(' - ')[0]})`;
+      await TaskService.addTask(`[${ev.courseId}] ${ev.title}`, dueStr, priority);
+      renderTasks();
+      UI.showToast('success', 'Task Added', `"${ev.title}" was added to your Task Manager.`);
+    };
+
+    window.downloadSingleIcs = function () {
+      if (!currentOpenedEventId) return;
+      const events = window.mockCalendar || [];
+      const ev = events.find(e => e.id === currentOpenedEventId);
+      if (!ev) return;
+
+      const icsData = [
+        "BEGIN:VCALENDAR",
+        "VERSION:2.0",
+        "PRODID:-//Smart Student Platform//Academic Calendar//EN",
+        "BEGIN:VEVENT",
+        `UID:${ev.id}@smartstudent.edu`,
+        `SUMMARY:${ev.title}`,
+        `DESCRIPTION:${ev.description} - ${ev.subject} (${ev.courseId})`,
+        `LOCATION:${ev.venue}`,
+        `DTSTART:${ev.date.replace(/-/g, '')}T090000Z`,
+        `DTEND:${ev.date.replace(/-/g, '')}T110000Z`,
+        "STATUS:CONFIRMED",
+        "END:VEVENT",
+        "END:VCALENDAR"
+      ].join("\r\n");
+
+      const blob = new Blob([icsData], { type: 'text/calendar;charset=utf-8' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.setAttribute('download', `${ev.courseId}_${ev.date}.ics`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      UI.showToast('success', 'Calendar Exported', `Downloaded .ics invitation for "${ev.title}".`);
+    };
+
+    // --- Learning Materials Renderer ---
+    async function renderMaterials() {
+      const container = document.getElementById('materials-container');
+      if (!container) return;
+      const materials = await MaterialService.getRecentMaterials();
+
+      if (!materials || materials.length === 0) {
+        container.innerHTML = '<div class="empty-state" style="padding: 1rem; text-align: center; color: #64748B; font-size: 0.8125rem;">No materials uploaded yet.</div>';
+        return;
+      }
+
+      container.innerHTML = materials.slice(0, 4).map(mat => {
+        const fileTypeLower = (mat.fileType || 'pdf').toLowerCase();
+        return `
+          <div class="material-card">
+            <div class="material-header">
+              <div class="file-type-icon ${fileTypeLower}">${fileTypeLower.toUpperCase()}</div>
+              <div class="material-info">
+                <h5>${escapeHtml(mat.title)}</h5>
+                <p>${escapeHtml(mat.subject)} • ${escapeHtml(mat.faculty)}</p>
+              </div>
+            </div>
+            <div class="material-footer">
+              <span class="text-muted">${escapeHtml(mat.uploadedAt)} • ${escapeHtml(mat.fileSize)}</span>
+              <div class="flex-center gap-2">
+                <a href="${mat.fileUrl}" target="_blank" class="btn btn-secondary btn-sm" style="font-size: 0.75rem; padding: 0.25rem 0.6rem;">View</a>
+                <a href="${MaterialService.getDownloadUrl(mat)}" target="_blank" download class="btn btn-primary btn-sm" style="font-size: 0.75rem; padding: 0.25rem 0.6rem;">Download</a>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // --- AI Doubt Solver Renderer ---
+    async function renderRecentDoubts() {
+      const container = document.getElementById('recent-doubts-container');
+      if (!container) return;
+      const doubts = await AIService.getRecentDoubts();
+
+      if (!doubts || doubts.length === 0) {
+        container.innerHTML = '<div class="text-muted" style="font-size: 0.75rem;">No recent doubts asked yet.</div>';
+        return;
+      }
+
+      container.innerHTML = doubts.slice(0, 3).map(d => `
+        <div class="recent-doubt-item" onclick="viewDoubtDetails('${d.id}')">
+          <div class="recent-doubt-icon">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+            </svg>
+          </div>
+          <div class="doubt-question-content">
+            <div class="doubt-question-text">"${escapeHtml(d.question)}"</div>
+            <div class="doubt-meta-text">Answered • Click to inspect solution</div>
+          </div>
+          <div class="recent-doubt-actions">
+            <span class="badge badge-success" style="font-size: 0.6875rem; padding: 0.2rem 0.5rem;">Answered</span>
+            <svg class="recent-doubt-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    window.viewDoubtDetails = function (doubtId) {
+      const doubts = window.mockDoubts || [];
+      const doubt = doubts.find(d => d.id === doubtId);
+      if (doubt) {
+        const responseBox = document.getElementById('ai-active-response-container');
+        responseBox.innerHTML = `
+          <div class="ai-active-response-card">
+            <div class="ai-response-header">
+              <div class="ai-response-title">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#8B5CF6" stroke-width="2">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <line x1="12" y1="16" x2="12" y2="12"></line>
+                  <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                </svg>
+                <span>AI Response: ${escapeHtml(doubt.question)}</span>
+              </div>
+              <span class="badge badge-success" style="font-size: 0.6875rem;">Verified Academic Source</span>
+            </div>
+            <div class="ai-response-body">${escapeHtml(doubt.answer)}</div>
+            <div class="ai-response-footer">
+              <small class="text-muted">${escapeHtml(doubt.createdAt || 'Just now')}</small>
+              <a href="ai-doubts.html" class="ai-response-deepdive-link">Open in Full Doubt Solver →</a>
+            </div>
+          </div>
+        `;
+        responseBox.classList.remove('hidden');
+      }
+    };
+
+    // --- Tasks Renderer ---
+    async function renderTasks() {
+      const container = document.getElementById('tasks-container');
+      if (!container) return;
+      const tasks = await TaskService.getTasks();
+
+      if (!tasks || tasks.length === 0) {
+        container.innerHTML = '<div class="empty-state"><h4>No tasks</h4><p>All tasks completed!</p></div>';
+        return;
+      }
+
+      container.innerHTML = tasks.map(task => {
+        let pClass = 'badge-neutral';
+        if (task.priority === 'high') pClass = 'badge-danger';
+        if (task.priority === 'medium') pClass = 'badge-warning';
+
+        return `
+          <div class="task-item ${task.completed ? 'completed' : ''}" id="task-row-${task.id}">
+            <div class="task-checkbox-group">
+              <input type="checkbox" id="chk-${task.id}" ${task.completed ? 'checked' : ''} onchange="handleToggleTask('${task.id}')">
+              <label for="chk-${task.id}" class="checkbox-label">
+                <span class="checkbox-custom"></span>
+                <span class="task-label">${task.title}</span>
+              </label>
+            </div>
+            <div class="task-meta">
+              <small class="text-muted">${task.dueDate}</small>
+              <span class="badge ${pClass}">${task.priority}</span>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    window.handleToggleTask = async function (taskId) {
+      const updated = await TaskService.toggleTask(taskId);
+      if (updated) {
+        renderTasks();
+        UI.showToast('info', 'Task Updated', `Task status changed to ${updated.completed ? 'Completed' : 'Pending'}.`);
+      }
+    };
+
+    // --- Study Community Renderer (Enforces 5-Student Max Rule) ---
+    function renderStudyGroups() {
+      const container = document.getElementById('study-groups-container');
+      if (!container) return;
+      const groups = window.mockStudyGroups || [];
+
+      if (groups.length === 0) {
+        container.innerHTML = '<div class="empty-state" style="padding: 1rem; text-align: center; color: #64748B; font-size: 0.8125rem;">No study groups available.</div>';
+        return;
+      }
+
+      container.innerHTML = groups.map(g => {
+        const isFull = g.currentMembers >= 5;
+
+        return `
+          <div class="study-group-item">
+            <div class="group-info">
+              <h5>${escapeHtml(g.name)}</h5>
+              <div class="group-subject">${escapeHtml(g.subject)} • ${escapeHtml(g.topic)}</div>
+            </div>
+            <div class="group-capacity">
+              <span class="capacity-badge ${isFull ? 'full' : ''}">
+                ${g.currentMembers} / 5 Members
+              </span>
+              ${isFull
+                ? `<button type="button" class="btn btn-secondary btn-sm" disabled style="opacity:0.6; cursor:not-allowed; font-size: 0.75rem; padding: 0.25rem 0.6rem;">Full</button>`
+                : `<button type="button" class="btn btn-primary btn-sm" onclick="joinStudyGroup('${escapeHtml(g.id)}', '${escapeHtml(g.name)}')" style="font-size: 0.75rem; padding: 0.25rem 0.6rem;">Join</button>`
+              }
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    window.joinStudyGroup = function (groupId, groupName) {
+      const groups = window.mockStudyGroups || [];
+      const g = groups.find(item => item.id === groupId);
+      if (g) {
+        if (g.currentMembers >= 5) {
+          UI.showToast('error', 'Group Full', 'Strict limit of 5 students per study group reached.');
+          return;
+        }
+        g.currentMembers += 1;
+        if (g.currentMembers >= 5) g.isFull = true;
+        renderStudyGroups();
+        UI.showToast('success', 'Joined Study Group', `You have joined "${groupName}". Meeting link sent to calendar.`);
+      }
+    };
+
+    // --- Notifications Renderer ---
+    async function renderNotifications() {
+      const listContainer = document.getElementById('notifications-list-container');
+      const badgeDot = document.getElementById('notif-badge-dot');
+      const notifs = await NotificationService.getNotifications();
+      const unreadCount = NotificationService.getUnreadCount();
+
+      if (badgeDot) {
+        badgeDot.style.display = unreadCount > 0 ? 'block' : 'none';
+      }
+
+      if (!listContainer) return;
+
+      if (notifs.length === 0) {
+        listContainer.innerHTML = '<li class="empty-state">No notifications.</li>';
+        return;
+      }
+
+      listContainer.innerHTML = notifs.map(n => `
+        <li>
+          <a href="#" class="dropdown-item-link ${n.isUnread ? 'unread' : ''}" onclick="readNotification('${n.id}')">
+            <div class="notification-icon-pill">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/></svg>
+            </div>
+            <div class="notification-body">
+              <h5>${n.title}</h5>
+              <p>${n.message}</p>
+              <span class="notification-time">${n.time}</span>
+            </div>
+          </a>
+        </li>
+      `).join('');
+    }
+
+    window.readNotification = function (notifId) {
+      NotificationService.markAsRead(notifId);
+      renderNotifications();
+    };
+
+    // --- Setup Interactive Dashboard Events ---
+    function setupDashboardEvents() {
+      // Logout Action
+      const logoutBtn = document.getElementById('logout-action-btn');
+      if (logoutBtn) {
+        logoutBtn.addEventListener('click', () => {
+          AuthService.logout();
+        });
+      }
+
+      // Mark all read
+      const markAllBtn = document.getElementById('mark-all-read-btn');
+      if (markAllBtn) {
+        markAllBtn.addEventListener('click', (e) => {
+          e.preventDefault();
+          NotificationService.markAllAsRead();
+          renderNotifications();
+          UI.showToast('info', 'Notifications', 'All notifications marked as read.');
+        });
+      }
+
+      // AI Doubt Form
+      const aiForm = document.getElementById('ai-doubt-form');
+      const aiInput = document.getElementById('ai-doubt-query');
+      const aiSubmitBtn = document.getElementById('ai-submit-btn');
+      const aiBtnText = document.getElementById('ai-btn-text');
+      const aiSpinner = document.getElementById('ai-spinner');
+      const aiResponseBox = document.getElementById('ai-active-response-container');
+
+      if (aiForm) {
+        aiForm.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          const query = aiInput.value.trim();
+          if (!query) return;
+
+          aiSubmitBtn.disabled = true;
+          aiBtnText.textContent = "Analyzing...";
+          aiSpinner.classList.remove('hidden');
+
+          try {
+            const result = await AIService.askQuestion(query);
+
+            aiResponseBox.innerHTML = `
+              <div class="ai-active-response-card">
+                <div class="ai-response-header">
+                  <div class="ai-response-title">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#8B5CF6" stroke-width="2">
+                      <circle cx="12" cy="12" r="10"></circle>
+                      <line x1="12" y1="16" x2="12" y2="12"></line>
+                      <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                    </svg>
+                    <span>AI Response: ${escapeHtml(result.question)}</span>
+                  </div>
+                  <span class="badge badge-success" style="font-size: 0.6875rem;">Verified Academic Source</span>
+                </div>
+                <div class="ai-response-body">${escapeHtml(result.answer)}</div>
+                <div class="ai-response-footer">
+                  <small class="text-muted">Just now</small>
+                  <a href="ai-doubts.html" class="ai-response-deepdive-link">Open in Full Doubt Solver →</a>
+                </div>
+              </div>
+            `;
+            aiResponseBox.classList.remove('hidden');
+            aiInput.value = '';
+            renderRecentDoubts();
+            UI.showToast('success', 'AI Doubt Answered', 'Your concept explanation is ready.');
+          } catch (err) {
+            UI.showToast('error', 'AI Assistant', err.message);
+          } finally {
+            aiSubmitBtn.disabled = false;
+            aiBtnText.textContent = "Ask a Doubt";
+            aiSpinner.classList.add('hidden');
+          }
+        });
+      }
+
+      // AI suggestion chips
+      document.querySelectorAll('.ai-chip').forEach(chip => {
+        chip.addEventListener('click', () => {
+          if (aiInput && aiForm) {
+            aiInput.value = chip.getAttribute('data-query');
+            aiForm.dispatchEvent(new Event('submit'));
+          }
+        });
+      });
+
+      // Add Task Modal Handlers
+      const openTaskBtn = document.getElementById('open-add-task-modal');
+      const closeTaskBtn = document.getElementById('close-task-modal');
+      const cancelTaskBtn = document.getElementById('cancel-task-btn');
+      const saveTaskBtn = document.getElementById('save-task-btn');
+      const taskTitleInput = document.getElementById('task-title-input');
+      const taskDueInput = document.getElementById('task-due-input');
+      const taskPrioritySelect = document.getElementById('task-priority-select');
+
+      if (openTaskBtn) {
+        openTaskBtn.addEventListener('click', () => {
+          if (taskTitleInput) taskTitleInput.value = '';
+          if (taskDueInput) taskDueInput.value = 'Tomorrow';
+          UI.openModal('add-task-modal');
+        });
+      }
+
+      if (closeTaskBtn) closeTaskBtn.addEventListener('click', () => UI.closeModal('add-task-modal'));
+      if (cancelTaskBtn) cancelTaskBtn.addEventListener('click', () => UI.closeModal('add-task-modal'));
+
+      if (saveTaskBtn) {
+        saveTaskBtn.addEventListener('click', async () => {
+          const title = taskTitleInput.value.trim();
+          if (!title) {
+            UI.showToast('warning', 'Task Title Required', 'Please provide a title for your task.');
+            return;
+          }
+
+          await TaskService.addTask(title, taskDueInput.value.trim(), taskPrioritySelect.value);
+          UI.closeModal('add-task-modal');
+          renderTasks();
+          UI.showToast('success', 'Task Created', `Added: "${title}"`);
+        });
+      }
+
+      // Submit Assignment Modal Handlers
+      const closeSubBtn = document.getElementById('close-submission-modal');
+      const cancelSubBtn = document.getElementById('cancel-submission-btn');
+      const confirmSubBtn = document.getElementById('confirm-submission-btn');
+      const subFileInput = document.getElementById('assignment-file-input');
+      const asgSelect = document.getElementById('assignment-select');
+
+      if (closeSubBtn) closeSubBtn.addEventListener('click', () => UI.closeModal('submit-assignment-modal'));
+      if (cancelSubBtn) cancelSubBtn.addEventListener('click', () => UI.closeModal('submit-assignment-modal'));
+
+      if (confirmSubBtn) {
+        confirmSubBtn.addEventListener('click', async () => {
+          if (!subFileInput.files || subFileInput.files.length === 0) {
+            UI.showToast('warning', 'File Required', 'Please select an assignment document to upload.');
+            return;
+          }
+
+          const file = subFileInput.files[0];
+          confirmSubBtn.disabled = true;
+          confirmSubBtn.textContent = 'Uploading file...';
+
+          try {
+            await AssignmentService.submitAssignment(asgSelect.value, {
+              name: file.name,
+              size: (file.size / (1024 * 1024)).toFixed(1) + ' MB'
+            });
+
+            UI.closeModal('submit-assignment-modal');
+            UI.showToast('success', 'Assignment Submitted', `"${file.name}" uploaded and recorded to Firestore successfully.`);
+          } catch (e) {
+            UI.showToast('error', 'Submission Failed', e.message);
+          } finally {
+            confirmSubBtn.disabled = false;
+            confirmSubBtn.textContent = 'Upload & Submit';
+            subFileInput.value = '';
+          }
+        });
+      }
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+  </script>
+</body>
+
+</html>

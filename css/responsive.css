@@ -1,0 +1,194 @@
+/* ==========================================================================
+   SMART STUDENT — Responsive Design System
+   Breakpoints: Desktop, Laptop (1280px), Tablet (1024px), Mobile (768px/480px)
+   ========================================================================== */
+
+/* Laptop & Medium Screens (< 1280px) */
+@media (max-width: 1280px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .materials-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Tablet Screens (< 1024px) */
+@media (max-width: 1024px) {
+  :root {
+    --sidebar-width: 240px;
+  }
+
+  .snapshot-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .welcome-banner {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .welcome-meta {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .academic-badge-pill {
+    text-align: left;
+  }
+
+  .topbar-search-box {
+    width: 240px;
+  }
+}
+
+/* Mobile Screens (< 768px) */
+@media (max-width: 768px) {
+  /* Layout transformation */
+  .app-sidebar {
+    width: 260px !important;
+    top: 0 !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    border-radius: 0 20px 20px 0 !important;
+    transform: translateX(-100%);
+    box-shadow: var(--shadow-dropdown);
+    z-index: 150;
+    transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  }
+
+  .app-sidebar.drawer-open {
+    transform: translateX(0);
+  }
+
+  .app-sidebar.drawer-open .sidebar-brand-text,
+  .app-sidebar.drawer-open .nav-section-label,
+  .app-sidebar.drawer-open .nav-link-text,
+  .app-sidebar.drawer-open .nav-link > span:not(.nav-link-icon):not(.nav-badge),
+  .app-sidebar.drawer-open .nav-badge,
+  .app-sidebar.drawer-open .sidebar-user-info,
+  .app-sidebar.drawer-open .sidebar-user-card .user-info-text {
+    display: block !important;
+    opacity: 1 !important;
+    transform: translateX(0) !important;
+  }
+
+  .app-sidebar.drawer-open .nav-section-label {
+    height: 18px !important;
+    margin: 0.45rem 0 0.15rem !important;
+  }
+
+  .app-sidebar.drawer-open .nav-divider {
+    display: block !important;
+  }
+
+  /* Overlay backdrop for mobile drawer */
+  .sidebar-backdrop {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background-color: rgba(15, 23, 42, 0.6);
+    backdrop-filter: blur(2px);
+    z-index: 95;
+  }
+
+  .sidebar-backdrop.active {
+    display: block;
+  }
+
+  .app-main,
+  .app-sidebar:hover ~ .app-main {
+    margin-left: 0 !important;
+  }
+
+  .app-topbar {
+    padding: 0 1rem;
+  }
+
+  .mobile-nav-toggle {
+    display: flex;
+  }
+
+  .topbar-search-box {
+    display: none; /* Can be opened via search trigger on mobile */
+  }
+
+  .user-menu-info {
+    display: none;
+  }
+
+  .app-content {
+    padding: 1.25rem 1rem 2.5rem;
+  }
+
+  .snapshot-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+  }
+
+  .snapshot-card {
+    padding: 1rem;
+  }
+
+  .snapshot-metric {
+    font-size: 1.35rem;
+  }
+
+  .notification-dropdown {
+    width: 300px;
+    right: -50px;
+  }
+}
+
+/* Small Mobile Screens (< 480px) */
+@media (max-width: 480px) {
+  .snapshot-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .welcome-meta {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .schedule-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .schedule-time-block {
+    text-align: left;
+    padding-right: 0;
+    border-right: none;
+    border-bottom: 1px solid var(--border-subtle);
+    padding-bottom: 0.35rem;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .schedule-meta-actions {
+    width: 100%;
+    justify-content: space-between;
+    margin-top: 0.25rem;
+  }
+
+  .assignment-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .assignment-meta {
+    width: 100%;
+    justify-content: space-between;
+  }
+}

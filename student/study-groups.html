@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Peer Study Community — Smart Student</title>
+  <meta name="description"
+    content="Collaborative peer study rooms with a strict 5-student cap for focused engineering revision and exam prep.">
+  <link rel="stylesheet" href="../css/main.css">
+  <link rel="stylesheet" href="../css/dashboard.css">
+  <link rel="stylesheet" href="../css/responsive.css">
+  <script src="../js/auth-guard.js"></script>
+</head>
+
+<body>
+  <div id="toast-container"></div>
+  <div class="sidebar-backdrop"></div>
+  <div class="app-container">
+    <!-- LOCKED SIDEBAR - EXACT REPLICA -->
+    <aside class="app-sidebar" aria-label="Main Navigation">
+      <div class="sidebar-header">
+        <a href="dashboard.html" class="sidebar-brand">
+          <div class="sidebar-brand-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
+              <path d="M6 12v5c3 3 9 3 12 0v-5" />
+            </svg>
+          </div>
+          <div class="sidebar-brand-text">
+            <h2>Smart Student</h2>
+            <span>Student Portal</span>
+          </div>
+        </a>
+      </div>
+      <nav class="sidebar-nav-container">
+        <div class="nav-section-label">Academic Core</div>
+        <a href="dashboard.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18"
+              viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="3" width="7" height="7" />
+              <rect x="14" y="3" width="7" height="7" />
+              <rect x="14" y="14" width="7" height="7" />
+              <rect x="3" y="14" width="7" height="7" />
+            </svg></span><span>Overview</span></a>
+        <a href="courses.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18"
+              viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+              <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+            </svg></span><span>My Courses</span></a>
+        <a href="assignments.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18"
+              viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" />
+              <rect x="8" y="2" width="8" height="4" rx="1" ry="1" />
+            </svg></span><span>Assignments</span><span class="nav-badge">3</span></a>
+        <a href="exams.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18"
+              viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10" />
+              <polyline points="12 6 12 12 14 14" />
+            </svg></span><span>Exams</span><span class="nav-badge"
+            style="background-color: var(--status-danger);">2</span></a>
+        <a href="attendance.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18"
+              viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+              <polyline points="22 4 12 14.01 9 11.01" />
+            </svg></span><span>Attendance</span></a>
+        <a href="results.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18"
+              viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="18" y1="20" x2="18" y2="10" />
+              <line x1="12" y1="20" x2="12" y2="4" />
+              <line x1="6" y1="20" x2="6" y2="14" />
+            </svg></span><span>Results</span></a>
+        <div class="nav-section-label">Productivity & Resources</div>
+        <a href="materials.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18"
+              viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+            </svg></span><span>Learning Materials</span></a>
+        <a href="tasks.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18"
+              viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="9 11 12 14 22 4" />
+              <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
+            </svg></span><span>Tasks</span></a>
+        <a href="calendar.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18"
+              viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+              <line x1="16" y1="2" x2="16" y2="6" />
+              <line x1="8" y1="2" x2="8" y2="6" />
+              <line x1="3" y1="10" x2="21" y2="10" />
+            </svg></span><span>Calendar</span></a>
+        <a href="ai-doubts.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18"
+              viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10" />
+              <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+              <line x1="12" y1="17" x2="12.01" y2="17" />
+            </svg></span><span>AI Doubts</span></a>
+        <a href="study-groups.html" class="nav-link active"><span class="nav-link-icon"><svg width="18" height="18"
+              viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+              <circle cx="9" cy="7" r="4" />
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+              <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+            </svg></span><span>Study Groups</span></a>
+        <div class="nav-divider"></div>
+        <a href="settings.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18"
+              viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="3" />
+              <path
+                d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
+            </svg></span><span>Settings</span></a>
+      </nav>
+      <div class="sidebar-footer">
+        <a href="profile.html" class="sidebar-user-card">
+          <div class="user-avatar"><span class="user-avatar-initials">RZ</span></div>
+          <div class="user-info-text">
+            <div class="user-name" id="sidebar-user-name">Riddhi Zunjarrao</div>
+            <span class="user-role-tag" id="sidebar-user-role">Sem 4 • Sec A</span>
+          </div>
+        </a>
+      </div>
+    </aside>
+
+    <div class="app-main">
+      <header class="app-topbar">
+        <div class="topbar-left">
+          <button type="button" class="mobile-nav-toggle" id="mobile-nav-toggle" aria-label="Open Navigation">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="3" y1="12" x2="21" y2="12" />
+              <line x1="3" y1="6" x2="21" y2="6" />
+              <line x1="3" y1="18" x2="21" y2="18" />
+            </svg>
+          </button>
+          <div class="topbar-page-title">
+            <h1>Peer Study Community</h1>
+          </div>
+        </div>
+
+        <div class="topbar-search-box">
+          <svg class="topbar-search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8" />
+            <line x1="21" y1="21" x2="16.65" y2="16.65" />
+          </svg>
+          <input type="search" id="global-search-input" class="topbar-search-input"
+            placeholder="Search study groups, topics, leaders..." aria-label="Global Search">
+        </div>
+
+        <div class="topbar-right">
+          <div class="dropdown-container">
+            <button type="button" class="user-menu-btn" data-dropdown-toggle="user-dropdown-menu" aria-label="User Menu">
+              <div class="user-avatar-sm"><span class="user-avatar-initials">RZ</span></div>
+              <div class="user-menu-info">
+                <div class="user-menu-name" id="topbar-user-name">Riddhi Zunjarrao</div>
+                <div class="user-menu-sub">B.Tech CSE</div>
+              </div>
+            </button>
+            <div id="user-dropdown-menu" class="menu-dropdown profile-dropdown-menu">
+              <a href="profile.html">My Profile</a>
+              <a href="settings.html">Settings</a>
+              <a href="../login.html" class="logout-action">Sign Out</a>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <main class="app-content">
+        <!-- Academic Header Block -->
+        <div class="page-header-block">
+          <div class="page-header-content">
+            <div class="page-header-context">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                <circle cx="9" cy="7" r="4" />
+              </svg>
+              <span>Peer Collaboration • Study Cohorts</span>
+            </div>
+            <div class="page-title-row">
+              <h1>Small-Group Peer Learning Cohorts</h1>
+            </div>
+            <p class="page-header-desc">
+              Join focused study groups for derivation walkthroughs, problem sets, and mid-term exam review.
+            </p>
+          </div>
+          <div class="page-header-actions">
+            <button type="button" class="btn btn-primary" id="btn-create-group">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" style="margin-right: 0.35rem;">
+                <line x1="12" y1="5" x2="12" y2="19"/>
+                <line x1="5" y1="12" x2="19" y2="12"/>
+              </svg>
+              + Create Study Group
+            </button>
+          </div>
+        </div>
+
+        <!-- Academic Policy Callout Banner -->
+        <div class="notice-box-yellow mb-3">
+          <div class="notice-box-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10" />
+              <line x1="12" y1="8" x2="12" y2="12" />
+              <line x1="12" y1="16" x2="12.01" y2="16" />
+            </svg>
+          </div>
+          <div class="notice-box-content">
+            <div class="notice-box-title">Academic Cohort Policy — Max 5 Students Per Room</div>
+            <div class="notice-box-desc">
+              To maximize individual participation and maintain effective peer problem-solving, all study cohorts are strictly capped at 5 members. Once a group reaches 5 members, access is locked.
+            </div>
+          </div>
+        </div>
+
+        <!-- KPI Metrics Grid -->
+        <div class="kpi-metrics-grid" style="grid-template-columns: repeat(4, 1fr); margin-bottom: 1.5rem;">
+          <div class="kpi-metric-card">
+            <div class="kpi-metric-label">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                <circle cx="9" cy="7" r="4" />
+              </svg>
+              <span>Active Cohorts</span>
+            </div>
+            <div class="kpi-metric-value" id="kpi-total-groups">5</div>
+            <div class="kpi-metric-sub">Semester 4 Topics</div>
+          </div>
+          <div class="kpi-metric-card">
+            <div class="kpi-metric-label">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                <circle cx="8.5" cy="7" r="4"></circle>
+                <polyline points="17 11 19 13 23 9"></polyline>
+              </svg>
+              <span>Enrolled Peers</span>
+            </div>
+            <div class="kpi-metric-value text-primary" id="kpi-total-members">18</div>
+            <div class="kpi-metric-sub">Collaborating Online</div>
+          </div>
+          <div class="kpi-metric-card">
+            <div class="kpi-metric-label">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10" />
+                <polyline points="12 6 12 12 14 14" />
+              </svg>
+              <span>Available Seats</span>
+            </div>
+            <div class="kpi-metric-value text-success" id="kpi-open-seats">7</div>
+            <div class="kpi-metric-sub">Open for Enrollment</div>
+          </div>
+          <div class="kpi-metric-card">
+            <div class="kpi-metric-label">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+              </svg>
+              <span>Full Rooms (5/5)</span>
+            </div>
+            <div class="kpi-metric-value text-danger" id="kpi-full-rooms">1</div>
+            <div class="kpi-metric-sub">Capacity Reached</div>
+          </div>
+        </div>
+
+        <!-- Filter & Search Toolbar -->
+        <div class="filter-toolbar">
+          <div class="segment-tab-group" role="tablist">
+            <button class="segment-tab active" data-subject="all" role="tab">All Subjects</button>
+            <button class="segment-tab" data-subject="CS403" role="tab">Machine Learning</button>
+            <button class="segment-tab" data-subject="CS402" role="tab">DBMS</button>
+            <button class="segment-tab" data-subject="CS404" role="tab">OS</button>
+            <button class="segment-tab" data-subject="CS401" role="tab">DSA</button>
+            <button class="segment-tab" data-subject="CS405" role="tab">Networks</button>
+          </div>
+
+          <div class="filter-group">
+            <input type="text" id="group-search-input" class="form-input" placeholder="Search cohorts, topics..." style="min-width: 220px; height: 38px;">
+          </div>
+        </div>
+
+        <!-- Study Cohorts Cards Grid -->
+        <div class="study-groups-grid" id="study-groups-cards-container">
+          <!-- Rendered dynamically by JavaScript -->
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- Create Study Group Modal -->
+  <div class="modal-overlay" id="modal-create-group">
+    <div class="modal-dialog" style="max-width: 520px;">
+      <div class="modal-header">
+        <h3 class="modal-title">Create New Study Cohort</h3>
+        <button type="button" class="toast-close" onclick="UI.closeModal('modal-create-group')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="create-group-form">
+          <div class="form-group">
+            <label for="new-group-name" class="form-label">Cohort Name <span class="required">*</span></label>
+            <input type="text" id="new-group-name" class="form-input" placeholder="e.g. Machine Learning PYQ Derivation Squad" required>
+          </div>
+
+          <div class="form-group">
+            <label for="new-group-subject" class="form-label">Course / Subject <span class="required">*</span></label>
+            <select id="new-group-subject" class="form-input" required>
+              <option value="CS401|Data Structures & Algorithms">CS401 — Data Structures & Algorithms</option>
+              <option value="CS402|Database Management Systems">CS402 — Database Management Systems</option>
+              <option value="CS403|Machine Learning">CS403 — Machine Learning</option>
+              <option value="CS404|Operating Systems">CS404 — Operating Systems</option>
+              <option value="CS405|Computer Networks">CS405 — Computer Networks</option>
+              <option value="CS406|Software Engineering">CS406 — Software Engineering</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="new-group-topic" class="form-label">Focus Topic & Study Objective <span class="required">*</span></label>
+            <textarea id="new-group-topic" class="form-input" rows="2" placeholder="e.g. Weekly problem solving on dynamic programming and graph algorithms" required></textarea>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Max Member Limit</label>
+            <input type="text" class="form-input" value="5 Students (Locked by Academic Policy)" disabled style="background-color: var(--bg-surface-subtle); color: var(--text-secondary); cursor: not-allowed;">
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" onclick="UI.closeModal('modal-create-group')">Cancel</button>
+        <button type="button" class="btn btn-primary" id="btn-save-new-group">Create & Open Room</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cohort Workspace Modal -->
+  <div class="modal-overlay" id="modal-cohort-workspace">
+    <div class="modal-dialog" style="max-width: 600px;">
+      <div class="modal-header">
+        <div>
+          <span class="badge badge-info" id="ws-subject-code" style="font-size: 0.6875rem; margin-bottom: 0.25rem;">CS403</span>
+          <h3 class="modal-title" id="ws-group-title" style="margin: 0; font-size: 1.15rem;">Study Cohort Workspace</h3>
+        </div>
+        <button type="button" class="toast-close" onclick="UI.closeModal('modal-cohort-workspace')">&times;</button>
+      </div>
+      <div class="modal-body" style="display: flex; flex-direction: column; gap: 1.25rem;">
+        <div style="padding: 1rem; background-color: var(--bg-surface-subtle); border-radius: var(--radius-md); border: 1px solid var(--border-light);">
+          <div style="font-size: 0.75rem; font-weight: 700; color: var(--text-tertiary); text-transform: uppercase; margin-bottom: 0.25rem;">Study Agenda</div>
+          <pre id="ws-agenda" style="font-family: inherit; font-size: 0.84375rem; color: var(--text-primary); margin: 0; white-space: pre-wrap;"></pre>
+        </div>
+
+        <div>
+          <div style="font-size: 0.75rem; font-weight: 700; color: var(--text-tertiary); text-transform: uppercase; margin-bottom: 0.35rem;">Shared Whiteboard Notes</div>
+          <textarea id="ws-shared-notes" class="form-input" rows="4" placeholder="Type collaborative study notes, formulas, and references here...">Key formula: Cost Function J(θ) = 1/(2m) Σ (h_θ(x^(i)) - y^(i))^2
+Convergence criterion: α = 0.01 learning rate</textarea>
+        </div>
+      </div>
+      <div class="modal-footer" style="justify-content: space-between;">
+        <button type="button" class="btn btn-secondary" onclick="UI.closeModal('modal-cohort-workspace')">Close</button>
+        <div style="display: flex; gap: 0.5rem;">
+          <button type="button" class="btn btn-outline" onclick="UI.showToast('success', 'Notes Saved', 'Peer study notes updated for group members.')">Save Notes</button>
+          <a href="https://meet.google.com/study-cohort-live" target="_blank" class="btn btn-primary">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 0.35rem;">
+              <polygon points="23 7 16 12 23 17 23 7"/>
+              <rect x="1" y="5" width="15" height="14" rx="2" ry="2"/>
+            </svg>
+            Launch Live Google Meet
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="../data/mock-student.js"></script>
+  <script src="../data/mock-study-groups.js"></script>
+  <script src="../js/firebase-config.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/ui.js"></script>
+
+  <script>
+    let currentSubjectFilter = 'all';
+    let searchQuery = '';
+    let cohorts = [];
+
+    document.addEventListener('DOMContentLoaded', () => {
+      UI.syncStudentIdentity();
+      cohorts = [...(window.mockStudyGroups || [])];
+      renderCohorts();
+
+      // Filter tabs
+      document.querySelectorAll('.segment-tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+          document.querySelectorAll('.segment-tab').forEach(t => t.classList.remove('active'));
+          tab.classList.add('active');
+          currentSubjectFilter = tab.getAttribute('data-subject');
+          renderCohorts();
+        });
+      });
+
+      // Search input
+      document.getElementById('group-search-input').addEventListener('input', (e) => {
+        searchQuery = e.target.value.toLowerCase().trim();
+        renderCohorts();
+      });
+      document.getElementById('global-search-input').addEventListener('input', (e) => {
+        searchQuery = e.target.value.toLowerCase().trim();
+        document.getElementById('group-search-input').value = e.target.value;
+        renderCohorts();
+      });
+
+      // Open Create Modal
+      document.getElementById('btn-create-group').addEventListener('click', () => {
+        UI.openModal('modal-create-group');
+      });
+
+      // Save New Group
+      document.getElementById('btn-save-new-group').addEventListener('click', () => {
+        const name = document.getElementById('new-group-name').value.trim();
+        const subRaw = document.getElementById('new-group-subject').value;
+        const topic = document.getElementById('new-group-topic').value.trim();
+
+        if (!name || !topic) {
+          UI.showToast('error', 'Incomplete Form', 'Please enter a cohort name and topic focus.');
+          return;
+        }
+
+        const [code, subject] = subRaw.split('|');
+        const newGroup = {
+          id: 'grp_' + Date.now(),
+          name: name,
+          subject: subject,
+          subjectCode: code,
+          currentMembers: 1,
+          maxMembers: 5,
+          isFull: false,
+          topic: topic,
+          creator: 'Riddhi Z. (You)',
+          meetLink: 'https://meet.google.com/study-cohort-new',
+          members: ['RZ'],
+          agenda: '1. Group kickoff & topic distribution\n2. Weekly study schedule setup'
+        };
+
+        cohorts.unshift(newGroup);
+        UI.closeModal('modal-create-group');
+        UI.showToast('success', 'Cohort Created', `Study group "${name}" created (1/5 members).`);
+        document.getElementById('create-group-form').reset();
+        renderCohorts();
+      });
+    });
+
+    function updateKPIS() {
+      const total = cohorts.length;
+      let totalMembers = 0;
+      let fullCount = 0;
+
+      cohorts.forEach(c => {
+        totalMembers += c.currentMembers;
+        if (c.currentMembers >= 5) fullCount++;
+      });
+
+      const maxPossible = total * 5;
+      const openSeats = Math.max(0, maxPossible - totalMembers);
+
+      document.getElementById('kpi-total-groups').textContent = total;
+      document.getElementById('kpi-total-members').textContent = totalMembers;
+      document.getElementById('kpi-open-seats').textContent = openSeats;
+      document.getElementById('kpi-full-rooms').textContent = fullCount;
+    }
+
+    function renderCohorts() {
+      updateKPIS();
+
+      let filtered = [...cohorts];
+      if (currentSubjectFilter !== 'all') {
+        filtered = filtered.filter(c => c.subjectCode === currentSubjectFilter);
+      }
+      if (searchQuery) {
+        filtered = filtered.filter(c => 
+          (c.name || '').toLowerCase().includes(searchQuery) ||
+          (c.topic || '').toLowerCase().includes(searchQuery) ||
+          (c.subject || '').toLowerCase().includes(searchQuery) ||
+          (c.creator || '').toLowerCase().includes(searchQuery)
+        );
+      }
+
+      const container = document.getElementById('study-groups-cards-container');
+      if (filtered.length === 0) {
+        container.innerHTML = `
+          <div class="academic-empty-state" style="grid-column: 1 / -1;">
+            <div class="academic-empty-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>
+              </svg>
+            </div>
+            <div class="academic-empty-title">No Study Cohorts Match Filters</div>
+            <p class="academic-empty-desc">Create your own peer study cohort using the "+ Create Study Group" button above.</p>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = filtered.map(g => {
+        const isFull = g.currentMembers >= 5;
+        const capacityPct = Math.round((g.currentMembers / 5) * 100);
+        const memberAvatars = (g.members || ['AS', 'RZ']).map(m => `
+          <div class="user-avatar-initials" style="width: 24px; height: 24px; font-size: 0.65rem; border: 2px solid #FFFFFF; margin-left: -6px;" title="Student Member: ${m}">
+            ${m}
+          </div>
+        `).join('');
+
+        return `
+          <div class="study-group-card-academic" id="cohort-card-${g.id}">
+            <div>
+              <div class="study-group-header-row">
+                <span class="badge badge-info" style="font-size: 0.6875rem;">${g.subjectCode} • ${g.subject}</span>
+                <span class="capacity-indicator-pill ${isFull ? 'full' : 'available'}">
+                  ${g.currentMembers} / 5 Students ${isFull ? '(FULL)' : ''}
+                </span>
+              </div>
+
+              <h3 class="study-group-title" style="margin-top: 0.75rem;">${escapeHtml(g.name)}</h3>
+              <p class="study-group-topic">${escapeHtml(g.topic)}</p>
+
+              <div style="font-size: 0.75rem; color: var(--text-tertiary); margin-bottom: 0.75rem;">
+                Room Lead: <strong>${escapeHtml(g.creator)}</strong>
+              </div>
+
+              <!-- Capacity Progress Bar -->
+              <div style="margin-bottom: 1rem;">
+                <div style="display: flex; justify-content: space-between; font-size: 0.6875rem; font-weight: 700; color: var(--text-tertiary); margin-bottom: 0.25rem;">
+                  <span>SEAT CAPACITY</span>
+                  <span>${g.currentMembers}/5 Filled</span>
+                </div>
+                <div style="height: 6px; background-color: var(--border-default); border-radius: 3px; overflow: hidden;">
+                  <div style="height: 100%; width: ${capacityPct}%; background-color: ${isFull ? 'var(--error-main)' : 'var(--blue-600)'}; transition: width 0.3s ease;"></div>
+                </div>
+              </div>
+
+              <!-- Members Row -->
+              <div class="study-group-members-row">
+                <div style="font-size: 0.75rem; color: var(--text-secondary); font-weight: 600;">Active Members:</div>
+                <div style="display: flex; align-items: center; padding-left: 6px;">
+                  ${memberAvatars}
+                </div>
+              </div>
+            </div>
+
+            <!-- Actions Row -->
+            <div style="display: flex; gap: 0.5rem; margin-top: 1rem;">
+              ${isFull ? `
+                <button type="button" class="btn btn-secondary btn-sm" disabled style="flex: 1; opacity: 0.65; cursor: not-allowed; border: 1px solid var(--error-light); color: var(--error-dark);">
+                  Room Full (5/5)
+                </button>
+              ` : `
+                <button type="button" class="btn btn-primary btn-sm" onclick="joinGroup('${g.id}')" style="flex: 1;">
+                  Join Cohort
+                </button>
+              `}
+              <button type="button" class="btn btn-outline btn-sm" onclick="openWorkspaceModal('${g.id}')" style="flex: 1;">
+                Workspace
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    window.joinGroup = function (id) {
+      const g = cohorts.find(item => item.id === id);
+      if (!g) return;
+
+      if (g.currentMembers >= 5) {
+        UI.showToast('error', 'Group Full', 'Strict maximum of 5 students per study group is enforced.');
+        return;
+      }
+
+      g.currentMembers += 1;
+      if (!g.members.includes('RZ')) {
+        g.members.push('RZ');
+      }
+      if (g.currentMembers >= 5) {
+        g.isFull = true;
+      }
+
+      renderCohorts();
+      UI.showToast('success', 'Joined Study Cohort', `You have been added to "${g.name}".`);
+    };
+
+    window.openWorkspaceModal = function (id) {
+      const g = cohorts.find(item => item.id === id);
+      if (!g) return;
+
+      document.getElementById('ws-subject-code').textContent = `${g.subjectCode} • ${g.subject}`;
+      document.getElementById('ws-group-title').textContent = g.name;
+      document.getElementById('ws-agenda').textContent = g.agenda || '1. General peer doubt discussion\n2. Homework check';
+
+      UI.openModal('modal-cohort-workspace');
+    };
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+  </script>
+</body>
+
+</html>

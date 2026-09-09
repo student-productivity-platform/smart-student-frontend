@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Attendance Analytics — Smart Student</title>
+  <link rel="stylesheet" href="../css/main.css">
+  <link rel="stylesheet" href="../css/dashboard.css">
+  <link rel="stylesheet" href="../css/responsive.css">
+  <script src="../js/auth-guard.js"></script>
+</head>
+
+<body>
+  <div id="toast-container"></div>
+  <div class="sidebar-backdrop"></div>
+  <div class="app-container">
+    <aside class="app-sidebar" aria-label="Main Navigation">
+      <div class="sidebar-header">
+        <a href="dashboard.html" class="sidebar-brand">
+          <div class="sidebar-brand-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2">
+              <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
+              <path d="M6 12v5c3 3 9 3 12 0v-5" />
+            </svg></div>
+          <div class="sidebar-brand-text">
+            <h2>Smart Student</h2><span>Student Portal</span>
+          </div>
+        </a>
+      </div>
+      <nav class="sidebar-nav-container">
+        <div class="nav-section-label">Academic Core</div>
+        <a href="dashboard.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18"
+              viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="3" width="7" height="7" />
+              <rect x="14" y="3" width="7" height="7" />
+              <rect x="14" y="14" width="7" height="7" />
+              <rect x="3" y="14" width="7" height="7" />
+            </svg></span><span>Overview</span></a>
+        <a href="courses.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18"
+              viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+              <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+            </svg></span><span>My Courses</span></a>
+        <a href="assignments.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18"
+              viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" />
+              <rect x="8" y="2" width="8" height="4" rx="1" ry="1" />
+            </svg></span><span>Assignments</span><span class="nav-badge">3</span></a>
+        <a href="exams.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18"
+              viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10" />
+              <polyline points="12 6 12 12 14 14" />
+            </svg></span><span>Exams</span><span class="nav-badge"
+            style="background-color: var(--status-danger);">2</span></a>
+        <a href="attendance.html" class="nav-link active"><span class="nav-link-icon"><svg width="18" height="18"
+              viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+              <polyline points="22 4 12 14.01 9 11.01" />
+            </svg></span><span>Attendance</span></a>
+        <a href="results.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18"
+              viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="18" y1="20" x2="18" y2="10" />
+              <line x1="12" y1="20" x2="12" y2="4" />
+              <line x1="6" y1="20" x2="6" y2="14" />
+            </svg></span><span>Results</span></a>
+        <div class="nav-section-label">Productivity & Resources</div>
+        <a href="materials.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18"
+              viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+            </svg></span><span>Learning Materials</span></a>
+        <a href="tasks.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18"
+              viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="9 11 12 14 22 4" />
+              <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
+            </svg></span><span>Tasks</span></a>
+        <a href="calendar.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18"
+              viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+              <line x1="16" y1="2" x2="16" y2="6" />
+              <line x1="8" y1="2" x2="8" y2="6" />
+              <line x1="3" y1="10" x2="21" y2="10" />
+            </svg></span><span>Calendar</span></a>
+        <a href="ai-doubts.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18"
+              viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10" />
+              <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+              <line x1="12" y1="17" x2="12.01" y2="17" />
+            </svg></span><span>AI Doubts</span></a>
+        <a href="study-groups.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18"
+              viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+              <circle cx="9" cy="7" r="4" />
+            </svg></span><span>Study Groups</span></a>
+        <div class="nav-divider"></div>
+        <a href="settings.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18"
+              viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="3" />
+              <path
+                d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
+            </svg></span><span>Settings</span></a>
+      </nav>
+      <div class="sidebar-footer">
+        <a href="profile.html" class="sidebar-user-card">
+          <div class="user-avatar"><span class="user-avatar-initials">RZ</span></div>
+          <div class="user-info-text">
+            <div class="user-name" id="sidebar-user-name">Riddhi Zunjarrao</div><span class="user-role-tag"
+              id="sidebar-user-role">Sem 4 • Sec A</span>
+          </div>
+        </a>
+      </div>
+    </aside>
+
+    <div class="app-main">
+      <header class="app-topbar">
+        <div class="topbar-left">
+          <button type="button" class="mobile-nav-toggle" id="mobile-nav-toggle" aria-label="Open Navigation">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="3" y1="12" x2="21" y2="12" />
+              <line x1="3" y1="6" x2="21" y2="6" />
+              <line x1="3" y1="18" x2="21" y2="18" />
+            </svg>
+          </button>
+          <div class="topbar-page-title">
+            <h1>Attendance Analytics</h1>
+          </div>
+        </div>
+
+        <div class="topbar-search-box">
+          <svg class="topbar-search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8" />
+            <line x1="21" y1="21" x2="16.65" y2="16.65" />
+          </svg>
+          <input type="search" id="global-search-input" class="topbar-search-input"
+            placeholder="Search attendance sessions, subjects..." aria-label="Global Search">
+        </div>
+
+        <div class="topbar-right">
+          <div class="dropdown-container">
+            <button type="button" class="user-menu-btn" data-dropdown-toggle="user-dropdown-menu" aria-label="User Menu">
+              <div class="user-avatar-sm"><span class="user-avatar-initials">RZ</span></div>
+              <div class="user-menu-info">
+                <div class="user-menu-name" id="topbar-user-name">Riddhi Zunjarrao</div>
+                <div class="user-menu-sub">B.Tech CSE</div>
+              </div>
+            </button>
+            <div id="user-dropdown-menu" class="menu-dropdown profile-dropdown-menu">
+              <a href="profile.html">My Profile</a>
+              <a href="settings.html">Settings</a>
+              <a href="../login.html" class="logout-action">Sign Out</a>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <main class="app-content">
+        <!-- Page Header -->
+        <div class="page-header-block">
+          <div class="page-header-content">
+            <div class="page-header-context">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                <polyline points="22 4 12 14.01 9 11.01" />
+              </svg>
+              <span>Semester 4 • Statutory Attendance Compliance</span>
+            </div>
+            <div class="page-title-row">
+              <h1>Attendance Compliance & Session Logs</h1>
+            </div>
+            <p class="page-header-desc">University regulations mandate a minimum of 75% attendance per registered course for exam eligibility.</p>
+          </div>
+          <div class="page-header-actions">
+            <span class="badge badge-success" style="font-size: 0.8125rem; padding: 0.45rem 0.85rem;">Overall: 87% • Eligible</span>
+          </div>
+        </div>
+
+        <!-- Compliance Hero Banner -->
+        <div class="attendance-overview-banner">
+          <div class="attendance-gauge-circle">
+            <span class="percent">87%</span>
+            <span class="label">Compliance</span>
+          </div>
+
+          <div>
+            <div class="flex-between mb-1">
+              <h3 style="font-size: 1.15rem; font-weight: 700; color: var(--navy-900);">Good Academic Standing</h3>
+              <span class="badge badge-success">+12% Above 75% Requirement</span>
+            </div>
+            <p style="font-size: 0.84375rem; color: var(--text-secondary); margin-bottom: 1rem;">
+              You have attended <strong>161 out of 185 total lectures and lab sessions</strong> held across all 5 registered Semester 4 courses.
+            </p>
+            <div class="progress-track" style="height: 8px;">
+              <div class="progress-fill progress-green" style="width: 87%;"></div>
+            </div>
+          </div>
+
+          <div class="attendance-stats-strip">
+            <div class="attendance-stat-box">
+              <div class="title">Total Held</div>
+              <div class="val">185</div>
+            </div>
+            <div class="attendance-stat-box">
+              <div class="title">Attended</div>
+              <div class="val" style="color: var(--status-success-text);">161</div>
+            </div>
+            <div class="attendance-stat-box">
+              <div class="title">Requirement</div>
+              <div class="val" style="color: var(--blue-600);">75% Min</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Interactive What-If Attendance Simulator Card -->
+        <div class="card mb-4" style="border: 1px solid var(--border-default); border-radius: var(--radius-xl); background: var(--surface); padding: 1.5rem; box-shadow: var(--shadow-sm);">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.75rem;">
+            <div>
+              <h3 style="font-size: 1.05rem; font-weight: 700; color: var(--navy-900); display: flex; align-items: center; gap: 0.5rem;">
+                <span>🎯</span>
+                <span>"What-If" Attendance Projection Simulator</span>
+              </h3>
+              <p style="font-size: 0.8125rem; color: var(--text-tertiary);">Simulate future attendance percentages based on upcoming lectures you plan to attend or miss.</p>
+            </div>
+            <button type="button" class="btn btn-secondary btn-sm" onclick="openMedicalLeaveModal()">
+              📋 Apply for Medical / Duty Leave
+            </button>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1.2fr 1fr 1fr 1.2fr; gap: 1rem; align-items: center; background: var(--bg-surface-subtle); padding: 1rem; border-radius: var(--radius-lg);">
+            <div>
+              <label class="form-label" style="font-size: 0.75rem;">Select Subject</label>
+              <select id="sim-subject-select" class="form-input" style="height: 38px; border-radius: 8px;">
+                <option value="CS401">CS401 — Data Structures (92%)</option>
+                <option value="CS402">CS402 — DBMS (84%)</option>
+                <option value="CS403">CS403 — Machine Learning (89%)</option>
+                <option value="CS404">CS404 — Operating Systems (78%)</option>
+                <option value="CS405">CS405 — Comp. Networks (91%)</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="form-label" style="font-size: 0.75rem;">Action to Simulate</label>
+              <select id="sim-action-select" class="form-input" style="height: 38px; border-radius: 8px;">
+                <option value="miss">If I miss next N classes</option>
+                <option value="attend">If I attend next N classes</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="form-label" style="font-size: 0.75rem;">Number of Classes (N)</label>
+              <input type="number" id="sim-count-input" class="form-input" value="3" min="1" max="20" style="height: 38px; border-radius: 8px;">
+            </div>
+
+            <div style="background: var(--surface); padding: 0.75rem; border-radius: 10px; border: 1px solid var(--border-default); text-align: center;">
+              <div style="font-size: 0.6875rem; font-weight: 700; color: var(--text-tertiary); text-transform: uppercase;">Projected Attendance</div>
+              <div id="sim-result-percent" style="font-size: 1.35rem; font-weight: 800; color: var(--blue-600);">81.2%</div>
+              <div id="sim-result-status" class="badge badge-success" style="font-size: 0.6875rem; margin-top: 0.2rem;">Safe (+6.2% above 75%)</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Subject-Wise Attendance Breakdown -->
+        <div class="flex-between mb-3">
+          <h3 style="font-size: 1.1rem; font-weight: 700; color: var(--navy-900);">Subject Attendance Breakdown</h3>
+          <span class="text-tertiary" style="font-size: 0.8125rem;">5 Active Courses</span>
+        </div>
+
+        <div id="subject-attendance-container" class="mb-4">
+          <!-- Injected via JS -->
+        </div>
+
+        <!-- Session History Log Section -->
+        <div class="flex-between mb-3 mt-4">
+          <div>
+            <h3 style="font-size: 1.1rem; font-weight: 700; color: var(--navy-900);">Recent Class Session Log</h3>
+            <p class="text-tertiary" style="font-size: 0.8125rem;">Daily attendance entries recorded by faculty members</p>
+          </div>
+          <select id="log-subject-filter" class="filter-select" aria-label="Filter Session Logs by Subject">
+            <option value="all">All Subjects</option>
+            <option value="CS401">Data Structures (CS401)</option>
+            <option value="CS402">DBMS (CS402)</option>
+            <option value="CS403">Machine Learning (CS403)</option>
+            <option value="CS404">Operating Systems (CS404)</option>
+            <option value="CS405">Computer Networks (CS405)</option>
+          </select>
+        </div>
+
+        <div class="academic-table-card">
+          <div class="academic-table-responsive">
+            <table class="academic-table">
+              <thead>
+                <tr>
+                  <th>Date & Time</th>
+                  <th>Subject & Code</th>
+                  <th>Faculty Instructor</th>
+                  <th>Location</th>
+                  <th style="text-align: right;">Attendance Status</th>
+                </tr>
+              </thead>
+              <tbody id="session-logs-table-body">
+                <!-- Injected via JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Medical Leave / Duty Leave Application Modal -->
+        <div class="modal-overlay" id="medical-leave-modal" role="dialog" aria-modal="true" aria-labelledby="modal-leave-title">
+          <div class="modal-dialog" style="max-width: 540px;">
+            <div class="modal-header">
+              <h3 class="modal-title" id="modal-leave-title">Apply for Statutory Leave / Medical Exemption</h3>
+              <button type="button" class="btn-icon modal-close-btn" onclick="UI.closeModal('medical-leave-modal')" aria-label="Close modal">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+              </button>
+            </div>
+            <div class="modal-body">
+              <form id="leave-app-form">
+                <div class="form-group mb-3">
+                  <label class="form-label">Leave Category</label>
+                  <select id="leave-type-select" class="form-input" required>
+                    <option value="Medical Exemption">Medical Exemption (Doctor Verified)</option>
+                    <option value="University Duty">Official University Duty / Sports / Hackathon</option>
+                    <option value="Bereavement">Emergency Family Leave</option>
+                  </select>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;" class="mb-3">
+                  <div class="form-group">
+                    <label class="form-label">From Date</label>
+                    <input type="date" id="leave-from-date" class="form-input" required value="2026-09-08">
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">To Date</label>
+                    <input type="date" id="leave-to-date" class="form-input" required value="2026-09-09">
+                  </div>
+                </div>
+                <div class="form-group mb-3">
+                  <label class="form-label">Reason & Details</label>
+                  <textarea id="leave-reason-text" class="form-input" rows="3" placeholder="Briefly describe the medical or duty justification..." required></textarea>
+                </div>
+                <div class="form-group mb-3">
+                  <label class="form-label">Attach Supporting Certificate / OD Letter (PDF/JPG)</label>
+                  <input type="file" id="leave-doc-input" class="form-input" accept=".pdf,.jpg,.jpeg,.png">
+                </div>
+              </form>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary btn-sm" onclick="UI.closeModal('medical-leave-modal')">Cancel</button>
+              <button type="button" class="btn btn-primary btn-sm" onclick="submitMedicalLeave()">Submit Leave Request</button>
+            </div>
+          </div>
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <script src="../data/mock-student.js"></script>
+  <script src="../data/mock-attendance.js"></script>
+  <script src="../js/firebase-config.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/attendance-service.js"></script>
+  <script src="../js/ui.js"></script>
+  <script>
+    let attData = null;
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      UI.syncStudentIdentity();
+      attData = await AttendanceService.getAttendanceOverview();
+      renderSubjectAttendance(attData.subjects || []);
+      renderSessionLogs(attData.recentSessions || window.mockAttendance.recentSessions || []);
+
+      const logFilter = document.getElementById('log-subject-filter');
+      logFilter.addEventListener('change', () => {
+        const selected = logFilter.value;
+        const allSessions = attData.recentSessions || window.mockAttendance.recentSessions || [];
+        const filtered = selected === 'all' ? allSessions : allSessions.filter(s => s.subjectCode.startsWith(selected));
+        renderSessionLogs(filtered);
+      });
+    });
+
+    function renderSubjectAttendance(subjects) {
+      const container = document.getElementById('subject-attendance-container');
+      container.innerHTML = subjects.map(s => `
+        <div class="attendance-subject-card">
+          <div class="flex-between mb-2">
+            <div>
+              <span class="badge badge-neutral mb-1" style="font-size: 0.6875rem;">${s.subjectCode}</span>
+              <h4 style="font-size: 0.95rem; font-weight: 700; color: var(--navy-900);">${s.subjectName}</h4>
+              <div class="text-tertiary" style="font-size: 0.78125rem;">Faculty: ${s.faculty || 'Instructor'}</div>
+            </div>
+            <div style="text-align: right;">
+              <div style="font-size: 1.35rem; font-weight: 800; color: ${s.percentage >= 75 ? 'var(--status-success-text)' : 'var(--status-danger-text)'};">${s.percentage}%</div>
+              <div class="text-secondary" style="font-size: 0.75rem;">${s.attended} of ${s.total} Sessions</div>
+            </div>
+          </div>
+
+          <div class="progress-track mb-2" style="height: 8px;">
+            <div class="progress-fill ${s.percentage >= 85 ? 'progress-green' : (s.percentage >= 75 ? 'progress-blue' : 'progress-red')}" style="width: ${s.percentage}%;"></div>
+          </div>
+
+          <div class="flex-between" style="font-size: 0.78125rem;">
+            <span style="color: var(--text-tertiary);">Statutory Threshold: 75% Required</span>
+            <span style="color: ${s.percentage >= 75 ? 'var(--status-success-text)' : 'var(--status-danger-text)'}; font-weight: 600;">
+              ${s.safeMargin || 'Compliant with university policy'}
+            </span>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function renderSessionLogs(sessions) {
+      const tbody = document.getElementById('session-logs-table-body');
+      if (!sessions.length) {
+        tbody.innerHTML = `<tr><td colspan="5" class="text-center text-muted" style="padding: 2rem;">No session logs found for selected subject.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = sessions.map(s => `
+        <tr>
+          <td>
+            <div style="font-weight: 700; color: var(--navy-900);">${s.date}</div>
+            <div class="text-muted" style="font-size: 0.75rem;">${s.time}</div>
+          </td>
+          <td>
+            <div style="font-weight: 600; color: var(--text-primary);">${s.subject}</div>
+            <div class="text-tertiary" style="font-size: 0.75rem;">${s.subjectCode}</div>
+          </td>
+          <td>${s.faculty}</td>
+          <td>${s.room || 'Classroom'}</td>
+          <td style="text-align: right;">
+            <span class="badge ${s.status === 'Present' ? 'badge-success' : (s.status === 'Medical Leave' ? 'badge-info' : 'badge-danger')}">
+              ${s.status}
+            </span>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function initSimulator() {
+      const subjSelect = document.getElementById('sim-subject-select');
+      const actionSelect = document.getElementById('sim-action-select');
+      const countInput = document.getElementById('sim-count-input');
+
+      const updateSimulation = () => {
+        const code = subjSelect.value;
+        const action = actionSelect.value;
+        const count = parseInt(countInput.value, 10) || 1;
+
+        const subjects = attData?.subjects || window.mockAttendance?.subjects || [];
+        const subj = subjects.find(s => s.subjectCode === code) || { attended: 36, total: 40 };
+
+        let projectedAttended = subj.attended;
+        let projectedTotal = subj.total + count;
+
+        if (action === 'attend') {
+          projectedAttended += count;
+        }
+
+        const projectedPercent = Math.round((projectedAttended / projectedTotal) * 1000) / 10;
+        const resultEl = document.getElementById('sim-result-percent');
+        const statusEl = document.getElementById('sim-result-status');
+
+        if (resultEl) resultEl.textContent = `${projectedPercent}%`;
+
+        if (statusEl) {
+          if (projectedPercent >= 75) {
+            const diff = Math.round((projectedPercent - 75) * 10) / 10;
+            statusEl.textContent = `Safe (+${diff}% above 75%)`;
+            statusEl.className = 'badge badge-success';
+          } else {
+            const diff = Math.round((75 - projectedPercent) * 10) / 10;
+            statusEl.textContent = `At Risk (-${diff}% below 75%)`;
+            statusEl.className = 'badge badge-danger';
+          }
+        }
+      };
+
+      if (subjSelect) subjSelect.addEventListener('change', updateSimulation);
+      if (actionSelect) actionSelect.addEventListener('change', updateSimulation);
+      if (countInput) countInput.addEventListener('input', updateSimulation);
+
+      updateSimulation();
+    }
+
+    window.openMedicalLeaveModal = function () {
+      UI.openModal('medical-leave-modal');
+    };
+
+    window.submitMedicalLeave = function () {
+      const reason = document.getElementById('leave-reason-text').value.trim();
+      const fromDate = document.getElementById('leave-from-date').value;
+      const toDate = document.getElementById('leave-to-date').value;
+      const leaveType = document.getElementById('leave-type-select').value;
+
+      if (!reason) {
+        UI.showToast('warning', 'Reason Required', 'Please provide a brief justification for the leave.');
+        return;
+      }
+
+      // Add a simulated entry to the session logs
+      const newEntry = {
+        date: fromDate,
+        time: 'All Day',
+        subject: 'All Enrolled Courses',
+        subjectCode: 'INST-LEAVE',
+        faculty: 'Dean of Student Welfare',
+        room: 'Official Exemption',
+        status: 'Medical Leave'
+      };
+
+      const sessions = attData?.recentSessions || window.mockAttendance?.recentSessions || [];
+      sessions.unshift(newEntry);
+      renderSessionLogs(sessions);
+
+      UI.closeModal('medical-leave-modal');
+      UI.showToast('success', 'Leave Request Logged', `${leaveType} request submitted for ${fromDate} to ${toDate}. Verification pending.`);
+    };
+
+    // Initialize Simulator after loading
+    document.addEventListener('DOMContentLoaded', () => {
+      setTimeout(initSimulator, 100);
+    });
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Smart Student — Your academic life, organized.</title>
+  <meta name="description"
+    content="Centralized academic productivity platform for university students. Courses, assignments, attendance, schedule, and AI assistance in one unified portal.">
+  <link rel="stylesheet" href="css/main.css">
+  <style>
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      background-color: var(--primary-navy);
+      color: #FFFFFF;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .redirect-card {
+      text-align: center;
+      padding: 2rem;
+    }
+
+    .redirect-brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .redirect-icon {
+      width: 44px;
+      height: 44px;
+      background: linear-gradient(135deg, #8B5CF6 0%, #6D28D9 100%);
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #FFFFFF;
+      font-weight: 700;
+      font-size: 1.25rem;
+    }
+
+    .redirect-brand h1 {
+      font-size: 1.5rem;
+      color: #FFFFFF;
+    }
+
+    .redirect-tagline {
+      font-size: 0.875rem;
+      color: #94A3B8;
+      margin-bottom: 1.5rem;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="redirect-card">
+    <div class="redirect-brand">
+      <div class="redirect-icon">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
+          <path d="M6 12v5c3 3 9 3 12 0v-5" />
+        </svg>
+      </div>
+      <h1>Smart Student</h1>
+    </div>
+    <p class="redirect-tagline">Your academic life, organized.</p>
+    <div class="spinner"></div>
+  </div>
+
+  <script>
+    (function routeRoot() {
+      const session = sessionStorage.getItem('smart_student_session') || localStorage.getItem('smart_student_session');
+      if (session) {
+        try {
+          const user = JSON.parse(session);
+          if (user.role === 'student') {
+            window.location.replace('student/dashboard.html');
+            return;
+          }
+        } catch (e) {
+          sessionStorage.removeItem('smart_student_session');
+          localStorage.removeItem('smart_student_session');
+        }
+      }
+      window.location.replace('login.html');
+    })();
+  </script>
+</body>
+
+</html>

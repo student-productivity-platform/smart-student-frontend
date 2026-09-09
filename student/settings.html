@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portal Settings — Smart Student</title>
+  <meta name="description"
+    content="Configure institutional student notifications, portal security, appearance preferences, and verified university profile.">
+  <link rel="stylesheet" href="../css/main.css">
+  <link rel="stylesheet" href="../css/dashboard.css">
+  <link rel="stylesheet" href="../css/responsive.css">
+  <script src="../js/auth-guard.js"></script>
+</head>
+
+<body>
+  <div id="toast-container"></div>
+  <div class="sidebar-backdrop"></div>
+  <div class="app-container">
+    <!-- LOCKED SIDEBAR - EXACT REPLICA -->
+    <aside class="app-sidebar" aria-label="Main Navigation">
+      <div class="sidebar-header">
+        <a href="dashboard.html" class="sidebar-brand">
+          <div class="sidebar-brand-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
+              <path d="M6 12v5c3 3 9 3 12 0v-5" />
+            </svg>
+          </div>
+          <div class="sidebar-brand-text">
+            <h2>Smart Student</h2>
+            <span>Student Portal</span>
+          </div>
+        </a>
+      </div>
+      <nav class="sidebar-nav-container">
+        <div class="nav-section-label">Academic Core</div>
+        <a href="dashboard.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18"
+              viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="3" width="7" height="7" />
+              <rect x="14" y="3" width="7" height="7" />
+              <rect x="14" y="14" width="7" height="7" />
+              <rect x="3" y="14" width="7" height="7" />
+            </svg></span><span>Overview</span></a>
+        <a href="courses.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18"
+              viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+              <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+            </svg></span><span>My Courses</span></a>
+        <a href="assignments.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18"
+              viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" />
+              <rect x="8" y="2" width="8" height="4" rx="1" ry="1" />
+            </svg></span><span>Assignments</span><span class="nav-badge">3</span></a>
+        <a href="exams.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18"
+              viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10" />
+              <polyline points="12 6 12 12 14 14" />
+            </svg></span><span>Exams</span><span class="nav-badge"
+            style="background-color: var(--status-danger);">2</span></a>
+        <a href="attendance.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18"
+              viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+              <polyline points="22 4 12 14.01 9 11.01" />
+            </svg></span><span>Attendance</span></a>
+        <a href="results.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18"
+              viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="18" y1="20" x2="18" y2="10" />
+              <line x1="12" y1="20" x2="12" y2="4" />
+              <line x1="6" y1="20" x2="6" y2="14" />
+            </svg></span><span>Results</span></a>
+        <div class="nav-section-label">Productivity & Resources</div>
+        <a href="materials.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18"
+              viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+            </svg></span><span>Learning Materials</span></a>
+        <a href="tasks.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18"
+              viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="9 11 12 14 22 4" />
+              <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
+            </svg></span><span>Tasks</span></a>
+        <a href="calendar.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18"
+              viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+              <line x1="16" y1="2" x2="16" y2="6" />
+              <line x1="8" y1="2" x2="8" y2="6" />
+              <line x1="3" y1="10" x2="21" y2="10" />
+            </svg></span><span>Calendar</span></a>
+        <a href="ai-doubts.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18"
+              viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10" />
+              <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+              <line x1="12" y1="17" x2="12.01" y2="17" />
+            </svg></span><span>AI Doubts</span></a>
+        <a href="study-groups.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18"
+              viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+              <circle cx="9" cy="7" r="4" />
+            </svg></span><span>Study Groups</span></a>
+        <div class="nav-divider"></div>
+        <a href="settings.html" class="nav-link active"><span class="nav-link-icon"><svg width="18" height="18"
+              viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="3" />
+              <path
+                d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
+            </svg></span><span>Settings</span></a>
+      </nav>
+      <div class="sidebar-footer">
+        <a href="profile.html" class="sidebar-user-card">
+          <div class="user-avatar"><span class="user-avatar-initials">RZ</span></div>
+          <div class="user-info-text">
+            <div class="user-name" id="sidebar-user-name">Riddhi Zunjarrao</div>
+            <span class="user-role-tag" id="sidebar-user-role">Sem 4 • Sec A</span>
+          </div>
+        </a>
+      </div>
+    </aside>
+
+    <div class="app-main">
+      <header class="app-topbar">
+        <div class="topbar-left">
+          <button type="button" class="mobile-nav-toggle" id="mobile-nav-toggle" aria-label="Open Navigation">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="3" y1="12" x2="21" y2="12" />
+              <line x1="3" y1="6" x2="21" y2="6" />
+              <line x1="3" y1="18" x2="21" y2="18" />
+            </svg>
+          </button>
+          <div class="topbar-page-title">
+            <h1>Portal Settings</h1>
+          </div>
+        </div>
+
+        <div class="topbar-right">
+          <div class="dropdown-container">
+            <button type="button" class="user-menu-btn" data-dropdown-toggle="user-dropdown-menu" aria-label="User Menu">
+              <div class="user-avatar-sm"><span class="user-avatar-initials">RZ</span></div>
+              <div class="user-menu-info">
+                <div class="user-menu-name" id="topbar-user-name">Riddhi Zunjarrao</div>
+                <div class="user-menu-sub">B.Tech CSE</div>
+              </div>
+            </button>
+            <div id="user-dropdown-menu" class="menu-dropdown profile-dropdown-menu">
+              <a href="profile.html">My Profile</a>
+              <a href="settings.html">Settings</a>
+              <a href="../login.html" class="logout-action">Sign Out</a>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <main class="app-content">
+        <!-- Academic Page Header -->
+        <div class="page-header-block">
+          <div class="page-header-content">
+            <div class="page-header-context">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="3" />
+                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
+              </svg>
+              <span>Student Account • Portal Configuration</span>
+            </div>
+            <div class="page-title-row">
+              <h1>Account Settings & Preferences</h1>
+            </div>
+            <p class="page-header-desc">
+              Manage verified student credentials, academic notifications, security preferences, and display localization.
+            </p>
+          </div>
+          <div class="page-header-actions">
+            <span class="badge badge-success" style="padding: 0.45rem 0.85rem; font-size: 0.8125rem;">
+              ● SSO Authenticated
+            </span>
+          </div>
+        </div>
+
+        <!-- 2-Column Workspace Layout -->
+        <div class="settings-workspace-layout">
+          <!-- Left Navigation Menu -->
+          <div class="settings-nav-card">
+            <button type="button" class="settings-tab-link active" data-target="pane-notifications">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+                <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+              </svg>
+              <span>Notifications</span>
+            </button>
+            <button type="button" class="settings-tab-link" data-target="pane-profile">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                <circle cx="12" cy="7" r="4"/>
+              </svg>
+              <span>Student Record</span>
+            </button>
+            <button type="button" class="settings-tab-link" data-target="pane-security">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+              </svg>
+              <span>Security & Access</span>
+            </button>
+            <button type="button" class="settings-tab-link" data-target="pane-display">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="3"/>
+                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+              </svg>
+              <span>Display & Theme</span>
+            </button>
+            <button type="button" class="settings-tab-link" data-target="pane-sessions">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
+                <line x1="8" y1="21" x2="16" y2="21"/>
+                <line x1="12" y1="17" x2="12" y2="21"/>
+              </svg>
+              <span>Device Sessions</span>
+            </button>
+          </div>
+
+          <!-- Right Content Panes -->
+          <div class="settings-content-area">
+
+            <!-- PANE 1: NOTIFICATIONS -->
+            <div class="settings-pane-card" id="pane-notifications">
+              <div class="settings-section-title">Academic Notification Channels</div>
+              <div class="settings-section-desc">Choose which alert triggers send notifications to your student portal and email.</div>
+
+              <div style="display: flex; flex-direction: column; gap: 1.25rem;">
+                <label class="checkbox-label" style="justify-content: space-between; width: 100%; padding: 0.75rem; background: var(--bg-surface-subtle); border-radius: var(--radius-md);">
+                  <div>
+                    <div class="text-bold" style="font-size: 0.90625rem; color: var(--navy-900);">Assignment Deadline Reminders</div>
+                    <small class="text-muted">Receive high-priority alerts 24 hours prior to deadline submission closing.</small>
+                  </div>
+                  <input type="checkbox" checked>
+                  <span class="checkbox-custom"></span>
+                </label>
+
+                <label class="checkbox-label" style="justify-content: space-between; width: 100%; padding: 0.75rem; background: var(--bg-surface-subtle); border-radius: var(--radius-md);">
+                  <div>
+                    <div class="text-bold" style="font-size: 0.90625rem; color: var(--navy-900);">Attendance Low Buffer Alerts</div>
+                    <small class="text-muted">Instant warning if any enrolled subject approaches or drops below 75% attendance threshold.</small>
+                  </div>
+                  <input type="checkbox" checked>
+                  <span class="checkbox-custom"></span>
+                </label>
+
+                <label class="checkbox-label" style="justify-content: space-between; width: 100%; padding: 0.75rem; background: var(--bg-surface-subtle); border-radius: var(--radius-md);">
+                  <div>
+                    <div class="text-bold" style="font-size: 0.90625rem; color: var(--navy-900);">Lecture Rescheduling & Room Updates</div>
+                    <small class="text-muted">Receive live timetable push updates when a professor reschedules or shifts rooms.</small>
+                  </div>
+                  <input type="checkbox" checked>
+                  <span class="checkbox-custom"></span>
+                </label>
+
+                <label class="checkbox-label" style="justify-content: space-between; width: 100%; padding: 0.75rem; background: var(--bg-surface-subtle); border-radius: var(--radius-md);">
+                  <div>
+                    <div class="text-bold" style="font-size: 0.90625rem; color: var(--navy-900);">Peer Study Cohort Invitations</div>
+                    <small class="text-muted">Get notified when a classmate invites you to an exam preparation room.</small>
+                  </div>
+                  <input type="checkbox" checked>
+                  <span class="checkbox-custom"></span>
+                </label>
+              </div>
+
+              <div style="text-align: right; margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--border-light);">
+                <button type="button" class="btn btn-primary" onclick="UI.showToast('success', 'Preferences Saved', 'Notification channels updated successfully.')">Save Preferences</button>
+              </div>
+            </div>
+
+            <!-- PANE 2: STUDENT RECORD -->
+            <div class="settings-pane-card hidden" id="pane-profile">
+              <div class="settings-section-title">Verified University Academic Record</div>
+              <div class="settings-section-desc">Official institutional student record verified by the university registrar.</div>
+
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem;">
+                <div class="form-group">
+                  <label class="form-label">Full Name</label>
+                  <input type="text" class="form-input" value="Riddhi Zunjarrao" readonly style="background-color: var(--bg-surface-subtle); color: var(--navy-900); font-weight: 600;">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Permanent Registration Number (PRN)</label>
+                  <input type="text" class="form-input" value="2024-BTECH-CS-042" readonly style="background-color: var(--bg-surface-subtle); font-family: monospace;">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Degree & Program</label>
+                  <input type="text" class="form-input" value="B.Tech Computer Science & Engineering" readonly style="background-color: var(--bg-surface-subtle);">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Term & Batch</label>
+                  <input type="text" class="form-input" value="Semester 4 • Section A (2024-2028)" readonly style="background-color: var(--bg-surface-subtle);">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Registered Institutional Email</label>
+                  <input type="email" class="form-input" value="riddhi.z@univ.edu.in" readonly style="background-color: var(--bg-surface-subtle);">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Faculty Academic Advisor</label>
+                  <input type="text" class="form-input" value="Dr. Arvind Menon (Dept. of CSE)" readonly style="background-color: var(--bg-surface-subtle);">
+                </div>
+              </div>
+
+              <div class="notice-box-yellow mt-3" style="margin-bottom: 0;">
+                <div class="notice-box-icon">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/>
+                  </svg>
+                </div>
+                <div class="notice-box-content">
+                  <div class="notice-box-desc" style="font-size: 0.8125rem;">
+                    Institutional identity fields are synced directly from the university ERP. To request corrections, submit a change petition to the Academic Registrar office.
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- PANE 3: SECURITY & ACCESS -->
+            <div class="settings-pane-card hidden" id="pane-security">
+              <div class="settings-section-title">Security & Password Management</div>
+              <div class="settings-section-desc">Manage institutional portal access, passwords, and two-factor authentication.</div>
+
+              <form id="form-security-update">
+                <div class="form-group">
+                  <label for="pwd-curr" class="form-label">Current Password</label>
+                  <input type="password" id="pwd-curr" class="form-input" placeholder="••••••••••••" required>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                  <div class="form-group">
+                    <label for="pwd-new" class="form-label">New Password</label>
+                    <input type="password" id="pwd-new" class="form-input" placeholder="Min. 8 characters" required>
+                  </div>
+                  <div class="form-group">
+                    <label for="pwd-conf" class="form-label">Confirm New Password</label>
+                    <input type="password" id="pwd-conf" class="form-input" placeholder="Re-enter new password" required>
+                  </div>
+                </div>
+
+                <div style="padding: 1rem; background: var(--bg-surface-subtle); border-radius: var(--radius-md); margin-bottom: 1.25rem; display: flex; align-items: center; justify-content: space-between;">
+                  <div>
+                    <div style="font-weight: 700; font-size: 0.875rem; color: var(--navy-900);">Two-Factor Authentication (2FA)</div>
+                    <div style="font-size: 0.8125rem; color: var(--text-tertiary);">Secured with University Microsoft Authenticator / OTP</div>
+                  </div>
+                  <span class="badge badge-success">2FA Active</span>
+                </div>
+
+                <div style="text-align: right;">
+                  <button type="submit" class="btn btn-primary">Update Password</button>
+                </div>
+              </form>
+            </div>
+
+            <!-- PANE 4: DISPLAY & THEME -->
+            <div class="settings-pane-card hidden" id="pane-display">
+              <div class="settings-section-title">Display & Theme Preferences</div>
+              <div class="settings-section-desc">Customize portal appearance, theme mode, and reading contrast.</div>
+
+              <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+                <div class="form-group">
+                  <label class="form-label" style="margin-bottom: 0.75rem;">Color Theme Mode</label>
+                  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem;">
+                    <!-- Light Theme Card -->
+                    <div class="theme-picker-card" data-theme-choice="light" onclick="UI.setTheme('light')" style="border: 2px solid var(--border-default); border-radius: 14px; padding: 1rem; cursor: pointer; background: #FFFFFF; transition: all 0.2s ease;">
+                      <div style="height: 48px; border-radius: 8px; background: #F8FAFC; border: 1px solid #E2E8F0; margin-bottom: 0.75rem; display: flex; align-items: center; justify-content: center; font-weight: 700; color: #0F172A; font-size: 0.8125rem;">
+                        ☀️ Light Theme
+                      </div>
+                      <div style="font-weight: 700; font-size: 0.875rem; color: #0F172A;">University Light</div>
+                      <div style="font-size: 0.75rem; color: #64748B;">Crisp, clean institutional styling</div>
+                    </div>
+
+                    <!-- Dark Theme Card -->
+                    <div class="theme-picker-card" data-theme-choice="dark" onclick="UI.setTheme('dark')" style="border: 2px solid var(--border-default); border-radius: 14px; padding: 1rem; cursor: pointer; background: #0F172A; transition: all 0.2s ease;">
+                      <div style="height: 48px; border-radius: 8px; background: #1E293B; border: 1px solid #334155; margin-bottom: 0.75rem; display: flex; align-items: center; justify-content: center; font-weight: 700; color: #F8FAFC; font-size: 0.8125rem;">
+                        🌙 Dark Mode
+                      </div>
+                      <div style="font-weight: 700; font-size: 0.875rem; color: #F8FAFC;">Modern Dark Slate</div>
+                      <div style="font-size: 0.75rem; color: #94A3B8;">High contrast for late-night study</div>
+                    </div>
+
+                    <!-- Navy Theme Card -->
+                    <div class="theme-picker-card" data-theme-choice="navy" onclick="UI.setTheme('navy')" style="border: 2px solid var(--border-default); border-radius: 14px; padding: 1rem; cursor: pointer; background: #0B1220; transition: all 0.2s ease;">
+                      <div style="height: 48px; border-radius: 8px; background: #111C2E; border: 1px solid #1E2E4E; margin-bottom: 0.75rem; display: flex; align-items: center; justify-content: center; font-weight: 700; color: #8B5CF6; font-size: 0.8125rem;">
+                        ✨ Midnight Navy
+                      </div>
+                      <div style="font-weight: 700; font-size: 0.875rem; color: #FFFFFF;">Deep Institutional Navy</div>
+                      <div style="font-size: 0.75rem; color: #94A3B8;">Signature purple & navy aesthetic</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label" for="theme-select">Quick Theme Dropdown</label>
+                  <select class="form-input" id="theme-select" onchange="UI.setTheme(this.value)">
+                    <option value="light">Institutional Light (University Standard)</option>
+                    <option value="dark">Modern Dark Slate</option>
+                    <option value="navy">Midnight Institutional Navy</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">Academic Table Density</label>
+                  <select class="form-input" id="table-density-select">
+                    <option value="comfortable" selected>Comfortable (Default, optimized for reading)</option>
+                    <option value="compact">Compact (Higher information density for laptops)</option>
+                  </select>
+                </div>
+              </div>
+
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--border-light);">
+                <button type="button" class="btn btn-secondary btn-sm" onclick="exportStudentData()">📥 Export Academic Data (JSON)</button>
+                <button type="button" class="btn btn-primary" onclick="UI.showToast('success', 'Preferences Applied', 'Your appearance settings are active.')">Save Preferences</button>
+              </div>
+            </div>
+
+            <!-- PANE 5: DEVICE SESSIONS -->
+            <div class="settings-pane-card hidden" id="pane-sessions">
+              <div class="settings-section-title">Active Device Sessions</div>
+              <div class="settings-section-desc">Manage devices that currently have active session tokens for your portal account.</div>
+
+              <div style="display: flex; flex-direction: column; gap: 1rem;">
+                <div style="display: flex; align-items: center; justify-content: space-between; padding: 1rem; background: var(--bg-surface-subtle); border-radius: var(--radius-md); border: 1px solid var(--border-light);">
+                  <div style="display: flex; align-items: center; gap: 0.75rem;">
+                    <div style="width: 38px; height: 38px; border-radius: var(--radius-md); background-color: var(--blue-50); color: var(--blue-600); display: flex; align-items: center; justify-content: center;">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
+                        <line x1="8" y1="21" x2="16" y2="21"/>
+                        <line x1="12" y1="17" x2="12" y2="21"/>
+                      </svg>
+                    </div>
+                    <div>
+                      <div style="font-weight: 700; font-size: 0.875rem; color: var(--navy-900);">Mac OS — Chrome Browser</div>
+                      <div style="font-size: 0.78125rem; color: var(--text-tertiary);">IP: 192.168.1.42 • Campus Wi-Fi (Active Now)</div>
+                    </div>
+                  </div>
+                  <span class="badge badge-success">Current Session</span>
+                </div>
+
+                <div style="display: flex; align-items: center; justify-content: space-between; padding: 1rem; background: var(--surface); border-radius: var(--radius-md); border: 1px solid var(--border-light);">
+                  <div style="display: flex; align-items: center; gap: 0.75rem;">
+                    <div style="width: 38px; height: 38px; border-radius: var(--radius-md); background-color: var(--bg-primary); color: var(--text-secondary); display: flex; align-items: center; justify-content: center;">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="5" y="2" width="14" height="20" rx="2" ry="2"/>
+                        <line x1="12" y1="18" x2="12.01" y2="18"/>
+                      </svg>
+                    </div>
+                    <div>
+                      <div style="font-weight: 700; font-size: 0.875rem; color: var(--navy-900);">iOS Student Portal App</div>
+                      <div style="font-size: 0.78125rem; color: var(--text-tertiary);">iPhone 15 Pro • Last active 2 hours ago</div>
+                    </div>
+                  </div>
+                  <button type="button" class="btn btn-secondary btn-sm" onclick="UI.showToast('info', 'Session Terminated', 'Signed out from iOS mobile device.')">Sign Out</button>
+                </div>
+              </div>
+
+              <div style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--border-light);">
+                <button type="button" class="btn btn-outline" style="color: var(--error-dark);" onclick="UI.showToast('success', 'Security Action', 'All other device sessions have been revoked.')">
+                  Sign Out of All Other Devices
+                </button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="../data/mock-student.js"></script>
+  <script src="../js/firebase-config.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/ui.js"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      UI.syncStudentIdentity();
+
+      // Sync active theme in select
+      const currentTheme = UI.getTheme();
+      const themeSelect = document.getElementById('theme-select');
+      if (themeSelect) themeSelect.value = currentTheme;
+
+      document.querySelectorAll('.theme-picker-card').forEach(card => {
+        if (card.dataset.themeChoice === currentTheme) {
+          card.style.borderColor = '#8B5CF6';
+          card.style.boxShadow = '0 0 0 3px rgba(139, 92, 246, 0.25)';
+        }
+      });
+
+      // Tab switching
+      document.querySelectorAll('.settings-tab-link').forEach(link => {
+        link.addEventListener('click', () => {
+          document.querySelectorAll('.settings-tab-link').forEach(l => l.classList.remove('active'));
+          link.classList.add('active');
+
+          const targetId = link.getAttribute('data-target');
+          document.querySelectorAll('.settings-pane-card').forEach(pane => pane.classList.add('hidden'));
+          const activePane = document.getElementById(targetId);
+          if (activePane) activePane.classList.remove('hidden');
+        });
+      });
+
+      // Password form submission
+      document.getElementById('form-security-update').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const pCurr = document.getElementById('pwd-curr').value;
+        const pNew = document.getElementById('pwd-new').value;
+        const pConf = document.getElementById('pwd-conf').value;
+
+        if (pNew.length < 6) {
+          UI.showToast('warning', 'Weak Password', 'Password must be at least 6 characters.');
+          return;
+        }
+
+        if (pNew !== pConf) {
+          UI.showToast('error', 'Mismatch', 'New passwords do not match.');
+          return;
+        }
+
+        UI.showToast('success', 'Password Updated', 'Institutional password updated successfully.');
+        e.target.reset();
+      });
+    });
+
+    function exportStudentData() {
+      const user = AuthService.getCurrentUser() || window.mockStudent;
+      const exportPayload = {
+        student: user,
+        exportedAt: new Date().toISOString(),
+        platform: 'Smart Student Productivity Platform'
+      };
+
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(exportPayload, null, 2));
+      const downloadAnchor = document.createElement('a');
+      downloadAnchor.setAttribute("href", dataStr);
+      downloadAnchor.setAttribute("download", `academic_record_${user.uid || 'student'}.json`);
+      document.body.appendChild(downloadAnchor);
+      downloadAnchor.click();
+      downloadAnchor.remove();
+
+      UI.showToast('success', 'Data Exported', 'Academic record downloaded in JSON format.');
+    }
+  </script>
+</body>
+
+</html>

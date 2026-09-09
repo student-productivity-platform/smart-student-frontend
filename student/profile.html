@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Profile — Smart Student</title>
+  <meta name="description" content="Official university student profile and academic record details.">
+
+  <link rel="stylesheet" href="../css/main.css">
+  <link rel="stylesheet" href="../css/dashboard.css">
+  <link rel="stylesheet" href="../css/responsive.css">
+
+  <script src="../js/auth-guard.js"></script>
+</head>
+
+<body>
+  <div id="toast-container"></div>
+  <div class="sidebar-backdrop"></div>
+
+  <div class="app-container">
+    <!-- Sidebar Navigation -->
+    <aside class="app-sidebar" aria-label="Main Navigation">
+      <div class="sidebar-header">
+        <a href="dashboard.html" class="sidebar-brand">
+          <div class="sidebar-brand-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
+              <path d="M6 12v5c3 3 9 3 12 0v-5" />
+            </svg>
+          </div>
+          <div class="sidebar-brand-text">
+            <h2>Smart Student</h2>
+            <span>Student Portal</span>
+          </div>
+        </a>
+      </div>
+
+      <nav class="sidebar-nav-container">
+        <div class="nav-section-label">Academic Core</div>
+        <a href="dashboard.html" class="nav-link">
+          <span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2">
+              <rect x="3" y="3" width="7" height="7" />
+              <rect x="14" y="3" width="7" height="7" />
+              <rect x="14" y="14" width="7" height="7" />
+              <rect x="3" y="14" width="7" height="7" />
+            </svg></span>
+          <span>Overview</span>
+        </a>
+        <a href="courses.html" class="nav-link">
+          <span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2">
+              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+              <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+            </svg></span>
+          <span>My Courses</span>
+        </a>
+        <a href="assignments.html" class="nav-link">
+          <span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2">
+              <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" />
+              <rect x="8" y="2" width="8" height="4" rx="1" ry="1" />
+            </svg></span>
+          <span>Assignments</span>
+        </a>
+        <a href="exams.html" class="nav-link">
+          <span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2">
+              <circle cx="12" cy="12" r="10" />
+              <polyline points="12 6 12 12 14 14" />
+            </svg></span>
+          <span>Exams</span>
+        </a>
+        <a href="attendance.html" class="nav-link">
+          <span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2">
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+              <polyline points="22 4 12 14.01 9 11.01" />
+            </svg></span>
+          <span>Attendance</span>
+        </a>
+        <a href="results.html" class="nav-link">
+          <span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2">
+              <line x1="18" y1="20" x2="18" y2="10" />
+              <line x1="12" y1="20" x2="12" y2="4" />
+              <line x1="6" y1="20" x2="6" y2="14" />
+            </svg></span>
+          <span>Results</span>
+        </a>
+
+        <div class="nav-section-label">Productivity & Resources</div>
+        <a href="materials.html" class="nav-link">
+          <span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+            </svg></span>
+          <span>Learning Materials</span>
+        </a>
+        <a href="tasks.html" class="nav-link">
+          <span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2">
+              <polyline points="9 11 12 14 22 4" />
+              <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
+            </svg></span>
+          <span>Tasks</span>
+        </a>
+        <a href="calendar.html" class="nav-link">
+          <span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+              <line x1="16" y1="2" x2="16" y2="6" />
+              <line x1="8" y1="2" x2="8" y2="6" />
+              <line x1="3" y1="10" x2="21" y2="10" />
+            </svg></span>
+          <span>Calendar</span>
+        </a>
+        <a href="ai-doubts.html" class="nav-link">
+          <span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2">
+              <circle cx="12" cy="12" r="10" />
+              <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+              <line x1="12" y1="17" x2="12.01" y2="17" />
+            </svg></span>
+          <span>AI Doubts</span>
+        </a>
+        <a href="study-groups.html" class="nav-link">
+          <span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+              <circle cx="9" cy="7" r="4" />
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+              <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+            </svg></span>
+          <span>Study Groups</span>
+        </a>
+
+        <div class="nav-divider"></div>
+        <a href="settings.html" class="nav-link">
+          <span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2">
+              <circle cx="12" cy="12" r="3" />
+              <path
+                d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
+            </svg></span>
+          <span>Settings</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <a href="profile.html" class="sidebar-user-card">
+          <div class="user-avatar"><span class="user-avatar-initials">RZ</span></div>
+          <div class="user-info-text">
+            <div class="user-name" id="sidebar-user-name">Riddhi Zunjarrao</div>
+            <span class="user-role-tag" id="sidebar-user-role">Sem 4 • Sec A</span>
+          </div>
+        </a>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <div class="app-main">
+      <header class="app-topbar">
+        <div class="topbar-left">
+          <button type="button" class="mobile-nav-toggle" id="mobile-nav-toggle" aria-label="Open Navigation">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="3" y1="12" x2="21" y2="12" />
+              <line x1="3" y1="6" x2="21" y2="6" />
+              <line x1="3" y1="18" x2="21" y2="18" />
+            </svg>
+          </button>
+          <div class="topbar-page-title">
+            <h1>Student Profile & Academic Records</h1>
+          </div>
+        </div>
+
+        <div class="topbar-right">
+          <button type="button" class="btn btn-secondary btn-sm" onclick="window.history.back()">Back to
+            Dashboard</button>
+        </div>
+      </header>
+
+      <main class="app-content">
+        <!-- Profile Header Card -->
+        <div class="card mb-4"
+          style="padding: 2rem; background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%); color: white; border: 1px solid rgba(255,255,255,0.1);">
+          <div style="display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; flex-wrap: wrap;">
+            <div style="display: flex; align-items: center; gap: 1.5rem; flex-wrap: wrap;">
+              <div
+                style="width: 72px; height: 72px; border-radius: 50%; background: linear-gradient(135deg, #8B5CF6 0%, #6D28D9 100%); display: flex; align-items: center; justify-content: center; font-size: 1.75rem; font-weight: 700; border: 3px solid rgba(255,255,255,0.2); box-shadow: 0 4px 14px rgba(109, 40, 217, 0.4);">
+                RZ
+              </div>
+              <div>
+                <h2 style="color: white; font-size: 1.5rem; margin-bottom: 0.25rem;">Riddhi Zunjarrao</h2>
+                <p style="color: #94A3B8;">Student ID: <strong style="color: #F8FAFC;">STU-2024-8842</strong> • Roll No:
+                  CS24-042</p>
+                <div style="display: flex; gap: 0.5rem; margin-top: 0.5rem; flex-wrap: wrap;">
+                  <span class="badge badge-success">Active Enrolled Student</span>
+                  <span class="badge badge-info">Semester 4 (2025–2026)</span>
+                  <span class="badge badge-warning" style="color: #FDE68A; border-color: rgba(253, 230, 138, 0.4);">Dean's List Honoree</span>
+                </div>
+              </div>
+            </div>
+            <div>
+              <button type="button" class="btn btn-primary" id="btn-view-digital-id" style="box-shadow: 0 4px 14px rgba(139, 92, 246, 0.4);">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><line x1="7" y1="8" x2="17" y2="8"/><line x1="7" y1="12" x2="17" y2="12"/><line x1="7" y1="16" x2="11" y2="16"/></svg>
+                <span>Digital Student ID</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1.2fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem;">
+          <!-- Institution Official Details (Read-Only) -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
+                  <path d="M6 12v5c3 3 9 3 12 0v-5" />
+                </svg>
+                <span>Institutional Information</span>
+              </div>
+              <span class="badge badge-neutral">Institution Managed (Read-Only)</span>
+            </div>
+            <div class="card-body">
+              <div class="form-group">
+                <label class="form-label">Full Name</label>
+                <input type="text" class="form-input" value="Riddhi Zunjarrao" readonly
+                  style="background-color: var(--bg-surface-subtle);">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Institutional Email</label>
+                <input type="email" class="form-input" value="riddhi.z@university.edu" readonly
+                  style="background-color: var(--bg-surface-subtle);">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Degree Program</label>
+                <input type="text" class="form-input" value="B.Tech Computer Science & Engineering" readonly
+                  style="background-color: var(--bg-surface-subtle);">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Department</label>
+                <input type="text" class="form-input" value="Department of Computer Engineering" readonly
+                  style="background-color: var(--bg-surface-subtle);">
+              </div>
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div class="form-group">
+                  <label class="form-label">Current Semester</label>
+                  <input type="text" class="form-input" value="Semester 4" readonly
+                    style="background-color: var(--bg-surface-subtle);">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Assigned Section</label>
+                  <input type="text" class="form-input" value="Section A" readonly
+                    style="background-color: var(--bg-surface-subtle);">
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Academic Faculty Mentor</label>
+                <input type="text" class="form-input" value="Prof. Rajesh Sharma (CS Dept)" readonly
+                  style="background-color: var(--bg-surface-subtle);">
+              </div>
+            </div>
+          </div>
+
+          <!-- Student Contact & Residence Details (Editable) -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path
+                    d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
+                </svg>
+                <span>Contact & Communication</span>
+              </div>
+              <span class="badge badge-info">Student Editable</span>
+            </div>
+            <div class="card-body">
+              <form id="profile-contact-form">
+                <div class="form-group">
+                  <label for="contact-phone" class="form-label">Primary Mobile Number</label>
+                  <input type="tel" id="contact-phone" class="form-input" value="+91 98765 43210" required>
+                </div>
+                <div class="form-group">
+                  <label for="contact-alt-email" class="form-label">Personal Alternate Email</label>
+                  <input type="email" id="contact-alt-email" class="form-input" value="riddhi.personal@gmail.com">
+                </div>
+                <div class="form-group">
+                  <label for="contact-address" class="form-label">Campus / Residential Address</label>
+                  <textarea id="contact-address" class="form-input"
+                    rows="3">University Campus Residence, Hall 3, Room 214, North Wing</textarea>
+                </div>
+                <div class="form-group">
+                  <label for="contact-emergency" class="form-label">Emergency Contact (Parent/Guardian)</label>
+                  <input type="text" id="contact-emergency" class="form-input" value="+91 98765 00000 (Guardian)">
+                </div>
+
+                <div style="margin-top: 1.5rem; text-align: right;">
+                  <button type="submit" id="save-profile-btn" class="btn btn-primary">
+                    <span>Save Contact Changes</span>
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <!-- Academic Honors & Verified Badges Showcase -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+              </svg>
+              <span>Academic Distinctions & Institutional Honors</span>
+            </div>
+            <span class="badge badge-success">4 Verified Credentials</span>
+          </div>
+          <div class="card-body">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem;">
+              <div style="background: var(--bg-surface-subtle); border: 1px solid var(--border-light); border-radius: var(--radius-md); padding: 1rem;">
+                <div class="flex-between mb-2">
+                  <span class="badge badge-warning" style="font-size: 0.6875rem;">GPA Distinction</span>
+                  <span style="font-size: 0.75rem; color: var(--text-tertiary);">2025-2026</span>
+                </div>
+                <h4 style="font-size: 0.9125rem; font-weight: 700; color: var(--navy-900); margin-bottom: 0.25rem;">Dean's List of Excellence</h4>
+                <p style="font-size: 0.78125rem; color: var(--text-secondary); line-height: 1.4;">Recognized for maintaining cumulative GPA above 8.5 across consecutive academic terms.</p>
+              </div>
+
+              <div style="background: var(--bg-surface-subtle); border: 1px solid var(--border-light); border-radius: var(--radius-md); padding: 1rem;">
+                <div class="flex-between mb-2">
+                  <span class="badge badge-success" style="font-size: 0.6875rem;">Compliance</span>
+                  <span style="font-size: 0.75rem; color: var(--text-tertiary);">Semester 3</span>
+                </div>
+                <h4 style="font-size: 0.9125rem; font-weight: 700; color: var(--navy-900); margin-bottom: 0.25rem;">Exemplary Attendance Award</h4>
+                <p style="font-size: 0.78125rem; color: var(--text-secondary); line-height: 1.4;">Achieved 96.4% verified biometric attendance in Java and Data Structures laboratories.</p>
+              </div>
+
+              <div style="background: var(--bg-surface-subtle); border: 1px solid var(--border-light); border-radius: var(--radius-md); padding: 1rem;">
+                <div class="flex-between mb-2">
+                  <span class="badge badge-info" style="font-size: 0.6875rem;">Departmental</span>
+                  <span style="font-size: 0.75rem; color: var(--text-tertiary);">Spring 2026</span>
+                </div>
+                <h4 style="font-size: 0.9125rem; font-weight: 700; color: var(--navy-900); margin-bottom: 0.25rem;">DevSprint Hackathon Finalist</h4>
+                <p style="font-size: 0.78125rem; color: var(--text-secondary); line-height: 1.4;">1st Runner Up in University Smart Campus Solutions for automated timetable routing.</p>
+              </div>
+
+              <div style="background: var(--bg-surface-subtle); border: 1px solid var(--border-light); border-radius: var(--radius-md); padding: 1rem;">
+                <div class="flex-between mb-2">
+                  <span class="badge badge-neutral" style="font-size: 0.6875rem;">Leadership</span>
+                  <span style="font-size: 0.75rem; color: var(--text-tertiary);">Active</span>
+                </div>
+                <h4 style="font-size: 0.9125rem; font-weight: 700; color: var(--navy-900); margin-bottom: 0.25rem;">Peer Study Group Moderator</h4>
+                <p style="font-size: 0.78125rem; color: var(--text-secondary); line-height: 1.4;">Leading the DBMS Cohort for BCNF normalization practice and query optimization.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- Digital Student ID Card Modal -->
+  <div class="modal-overlay" id="digital-id-modal" role="dialog" aria-modal="true" aria-labelledby="modal-id-title">
+    <div class="modal-dialog" style="max-width: 520px;">
+      <div class="modal-header">
+        <div>
+          <span class="badge badge-neutral mb-1">Smart NFC Credential</span>
+          <h3 class="modal-title" id="modal-id-title">Official Student Smart ID Card</h3>
+        </div>
+        <button type="button" class="btn-icon modal-close-btn" onclick="UI.closeModal('digital-id-modal')" aria-label="Close modal">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="digital-id-card-wrapper">
+          <div class="digital-id-card">
+            <div class="id-card-top">
+              <div>
+                <div class="id-univ-name">State Technical University</div>
+                <div style="font-size: 0.6875rem; color: #94A3B8;">Identity & Access Control</div>
+              </div>
+              <span class="id-card-badge">Valid Thru 2028</span>
+            </div>
+
+            <div class="id-card-middle">
+              <div class="id-avatar-box">RZ</div>
+              <div>
+                <div class="id-student-name">Riddhi Zunjarrao</div>
+                <div class="id-student-dept">B.Tech Computer Science & Engineering</div>
+                <div class="id-student-meta-row">
+                  <div>Roll: <strong>CS24-042</strong></div>
+                  <div>Sem: <strong>4 (Sec A)</strong></div>
+                  <div>Blood: <strong>O+ve</strong></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="id-card-footer">
+              <div style="display: flex; align-items: center; gap: 0.65rem;">
+                <span class="id-chip-icon"></span>
+                <span>RFID / NFC Contactless Active</span>
+              </div>
+              <span style="font-family: 'Courier New', monospace; font-size: 0.8125rem; font-weight: 700; color: #DDD6FE;">STU-8842-NFC</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary btn-sm" onclick="UI.closeModal('digital-id-modal')">Close</button>
+        <button type="button" class="btn btn-primary btn-sm" onclick="window.print()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+          <span>Print Smart ID</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../data/mock-student.js"></script>
+  <script src="../js/firebase-config.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/student-service.js"></script>
+  <script src="../js/ui.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      UI.syncStudentIdentity();
+
+      // Digital ID Modal
+      document.getElementById('btn-view-digital-id').addEventListener('click', () => {
+        UI.openModal('digital-id-modal');
+      });
+
+      const form = document.getElementById('profile-contact-form');
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const btn = document.getElementById('save-profile-btn');
+        btn.disabled = true;
+        btn.textContent = 'Saving...';
+
+        try {
+          await StudentService.updateProfile({
+            phone: document.getElementById('contact-phone').value,
+            personalEmail: document.getElementById('contact-alt-email').value,
+            address: document.getElementById('contact-address').value,
+            emergencyContact: document.getElementById('contact-emergency').value
+          });
+          UI.showToast('success', 'Profile Updated', 'Contact information has been saved successfully.');
+        } catch (err) {
+          UI.showToast('error', 'Update Failed', err.message);
+        } finally {
+          btn.disabled = false;
+          btn.textContent = 'Save Contact Changes';
+        }
+      });
+    });
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,2002 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Academic Doubt Solver — Smart Student</title>
+  <meta name="description"
+    content="Instant university engineering concept breakdowns, algorithmic derivations, and step-by-step academic doubt resolution.">
+
+  <!-- Fonts & Stylesheets -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/main.css">
+  <link rel="stylesheet" href="../css/dashboard.css">
+  <link rel="stylesheet" href="../css/responsive.css">
+
+  <!-- Synchronous Route Guard -->
+  <script src="../js/auth-guard.js"></script>
+</head>
+
+<body>
+  <!-- Toast Notification Container -->
+  <div id="toast-container" aria-live="polite"></div>
+  <div class="sidebar-backdrop"></div>
+
+  <div class="app-container">
+    <!-- ====================================================================
+         Sidebar Navigation
+         ==================================================================== -->
+    <aside class="app-sidebar" aria-label="Main Navigation">
+      <div class="sidebar-header">
+        <a href="dashboard.html" class="sidebar-brand">
+          <div class="sidebar-brand-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
+              <path d="M6 12v5c3 3 9 3 12 0v-5" />
+            </svg>
+          </div>
+          <div class="sidebar-brand-text">
+            <h2>Smart Student</h2>
+            <span>Student Portal</span>
+          </div>
+        </a>
+      </div>
+
+      <nav class="sidebar-nav-container">
+        <div class="nav-section-label">Academic Core</div>
+        <a href="dashboard.html" class="nav-link">
+          <span class="nav-link-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="3" width="7" height="7" />
+              <rect x="14" y="3" width="7" height="7" />
+              <rect x="14" y="14" width="7" height="7" />
+              <rect x="3" y="14" width="7" height="7" />
+            </svg>
+          </span>
+          <span>Overview</span>
+        </a>
+        <a href="courses.html" class="nav-link">
+          <span class="nav-link-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+              <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+            </svg>
+          </span>
+          <span>My Courses</span>
+        </a>
+        <a href="assignments.html" class="nav-link">
+          <span class="nav-link-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" />
+              <rect x="8" y="2" width="8" height="4" rx="1" ry="1" />
+            </svg>
+          </span>
+          <span>Assignments</span>
+          <span class="nav-badge">3</span>
+        </a>
+        <a href="exams.html" class="nav-link">
+          <span class="nav-link-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10" />
+              <polyline points="12 6 12 12 14 14" />
+            </svg>
+          </span>
+          <span>Exams</span>
+          <span class="nav-badge" style="background-color: var(--status-danger);">2</span>
+        </a>
+        <a href="attendance.html" class="nav-link">
+          <span class="nav-link-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+              <polyline points="22 4 12 14.01 9 11.01" />
+            </svg>
+          </span>
+          <span>Attendance</span>
+        </a>
+        <a href="results.html" class="nav-link">
+          <span class="nav-link-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="18" y1="20" x2="18" y2="10" />
+              <line x1="12" y1="20" x2="12" y2="4" />
+              <line x1="6" y1="20" x2="6" y2="14" />
+            </svg>
+          </span>
+          <span>Results</span>
+        </a>
+
+        <div class="nav-section-label">Productivity & Resources</div>
+        <a href="materials.html" class="nav-link">
+          <span class="nav-link-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+            </svg>
+          </span>
+          <span>Learning Materials</span>
+        </a>
+        <a href="tasks.html" class="nav-link">
+          <span class="nav-link-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="9 11 12 14 22 4" />
+              <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
+            </svg>
+          </span>
+          <span>Tasks</span>
+        </a>
+        <a href="calendar.html" class="nav-link">
+          <span class="nav-link-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+              <line x1="16" y1="2" x2="16" y2="6" />
+              <line x1="8" y1="2" x2="8" y2="6" />
+              <line x1="3" y1="10" x2="21" y2="10" />
+            </svg>
+          </span>
+          <span>Calendar</span>
+        </a>
+        <a href="ai-doubts.html" class="nav-link active">
+          <span class="nav-link-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10" />
+              <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+              <line x1="12" y1="17" x2="12.01" y2="17" />
+            </svg>
+          </span>
+          <span>AI Doubts</span>
+        </a>
+        <a href="study-groups.html" class="nav-link">
+          <span class="nav-link-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+              <circle cx="9" cy="7" r="4" />
+            </svg>
+          </span>
+          <span>Study Groups</span>
+        </a>
+
+        <div class="nav-divider"></div>
+        <a href="settings.html" class="nav-link">
+          <span class="nav-link-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="3" />
+              <path
+                d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
+            </svg>
+          </span>
+          <span>Settings</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <a href="profile.html" class="sidebar-user-card">
+          <div class="user-avatar"><span class="user-avatar-initials">RZ</span></div>
+          <div class="user-info-text">
+            <div class="user-name" id="sidebar-user-name">Riddhi Zunjarrao</div>
+            <span class="user-role-tag" id="sidebar-user-role">Sem 4 • Sec A</span>
+          </div>
+        </a>
+      </div>
+    </aside>
+
+    <!-- ====================================================================
+         Main Page Content Area
+         ==================================================================== -->
+    <div class="app-main">
+      <header class="app-topbar">
+        <div class="topbar-left">
+          <button type="button" class="mobile-nav-toggle" id="mobile-nav-toggle" aria-label="Open Navigation">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="3" y1="12" x2="21" y2="12" />
+              <line x1="3" y1="6" x2="21" y2="6" />
+              <line x1="3" y1="18" x2="21" y2="18" />
+            </svg>
+          </button>
+          <div class="topbar-page-title">
+            <h1>AI Academic Doubt Solver</h1>
+          </div>
+        </div>
+
+        <div class="topbar-search-box">
+          <svg class="topbar-search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="2">
+            <circle cx="11" cy="11" r="8" />
+            <line x1="21" y1="21" x2="16.65" y2="16.65" />
+          </svg>
+          <input type="search" id="global-search-input" class="topbar-search-input"
+            placeholder="Search courses, assignments, notes (Press Enter)..." aria-label="Global Search">
+        </div>
+
+        <div class="topbar-right">
+          <!-- Notification Dropdown -->
+          <div class="dropdown-container">
+            <button type="button" class="icon-button" data-dropdown-toggle="notification-dropdown"
+              aria-label="Notifications">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+                <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+              </svg>
+              <span class="unread-badge" id="notif-badge">3</span>
+            </button>
+
+            <div id="notification-dropdown" class="menu-dropdown notification-dropdown">
+              <div class="dropdown-header">
+                <h4>Notifications</h4>
+                <a href="#" id="mark-all-read-btn" style="font-size: 0.75rem;">Mark all as read</a>
+              </div>
+              <ul class="dropdown-list" id="notifications-list-container">
+                <!-- Injected by JS -->
+              </ul>
+            </div>
+          </div>
+
+          <!-- User Profile Dropdown -->
+          <div class="dropdown-container">
+            <button type="button" class="user-menu-btn" data-dropdown-toggle="user-dropdown-menu"
+              aria-label="User Menu">
+              <div class="user-avatar-sm">
+                <span class="user-avatar-initials">RZ</span>
+              </div>
+              <div class="user-menu-info">
+                <div class="user-menu-name" id="topbar-user-name">Riddhi Zunjarrao</div>
+                <div class="user-menu-sub">B.Tech CSE</div>
+              </div>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="6 9 12 15 18 9" />
+              </svg>
+            </button>
+
+            <div id="user-dropdown-menu" class="menu-dropdown profile-dropdown-menu">
+              <a href="profile.html">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                  <circle cx="12" cy="7" r="4" />
+                </svg>
+                <span>My Profile</span>
+              </a>
+              <a href="settings.html">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="3" />
+                  <path
+                    d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
+                </svg>
+                <span>Settings</span>
+              </a>
+              <button type="button" id="logout-action-btn" class="logout-action">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                  <polyline points="16 17 21 12 16 7" />
+                  <line x1="21" y1="12" x2="9" y2="12" />
+                </svg>
+                <span>Sign Out</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <main class="app-content">
+        <div class="doubt-solver-page">
+
+          <!-- ================================================================
+               3-AREA WORKSPACE: Left Sidebar + Center Messages + Bottom Composer
+               ================================================================ -->
+          <div class="doubt-workspace-grid">
+
+            <!-- --------------------------------------------------------------
+                 AREA 1: LEFT SIDEBAR (Doubt History & Saved Sessions)
+                 -------------------------------------------------------------- -->
+            <aside class="doubt-history-panel" id="doubt-history-panel" aria-label="Doubt Sessions History">
+              <div class="history-panel-header">
+                <div class="history-header-top">
+                  <div class="history-header-title">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                      stroke-width="2.2">
+                      <circle cx="12" cy="12" r="10" />
+                      <polyline points="12 6 12 12 14 14" />
+                    </svg>
+                    <span>Doubt History</span>
+                  </div>
+                  <span class="badge badge-neutral" id="session-counter-badge" style="font-size: 0.6875rem;">3
+                    Sessions</span>
+                </div>
+
+                <button type="button" class="btn-new-doubt-primary" id="btn-new-doubt">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4">
+                    <line x1="12" y1="5" x2="12" y2="19" />
+                    <line x1="5" y1="12" x2="19" y2="12" />
+                  </svg>
+                  <span>New Doubt</span>
+                </button>
+
+                <div class="history-search-wrapper">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8" />
+                    <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                  </svg>
+                  <input type="text" id="history-search-input" class="history-search-input-field"
+                    placeholder="Search past solutions..." aria-label="Search Doubt History">
+                </div>
+              </div>
+
+              <!-- Filter tabs -->
+              <div class="history-filters-bar" role="tablist" aria-label="History Filters">
+                <button type="button" class="history-chip active" data-filter="all" role="tab">All</button>
+                <button type="button" class="history-chip" data-filter="saved" role="tab"
+                  style="display: inline-flex; align-items: center; gap: 0.3rem;">
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor"
+                    stroke-width="1">
+                    <polygon
+                      points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                  </svg>
+                  <span>Saved</span>
+                </button>
+                <button type="button" class="history-chip" data-filter="DBMS" role="tab">DBMS</button>
+                <button type="button" class="history-chip" data-filter="OS" role="tab">OS</button>
+                <button type="button" class="history-chip" data-filter="Networks" role="tab">Networks</button>
+                <button type="button" class="history-chip" data-filter="ML" role="tab">ML</button>
+                <button type="button" class="history-chip" data-filter="DSA" role="tab">DSA</button>
+              </div>
+
+              <!-- Sessions list container -->
+              <div class="history-sessions-scroll" id="history-sessions-list">
+                <!-- Dynamically populated -->
+              </div>
+            </aside>
+
+            <!-- --------------------------------------------------------------
+                 AREA 2 & 3: MAIN CHAT CANVAS (Center Conversation + Bottom Composer)
+                 -------------------------------------------------------------- -->
+            <section class="doubt-main-canvas" aria-label="Conversation Workspace">
+
+              <!-- Top Controls Header -->
+              <div class="doubt-chat-header">
+                <div class="doubt-header-left-cluster">
+                  <button type="button" class="mobile-history-toggle-btn" id="mobile-history-toggle"
+                    aria-label="Toggle Doubt History">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <line x1="3" y1="12" x2="21" y2="12" />
+                      <line x1="3" y1="6" x2="21" y2="6" />
+                      <line x1="3" y1="18" x2="21" y2="18" />
+                    </svg>
+                  </button>
+                  <div class="doubt-header-title-block">
+                    <h2>
+                      AI Academic Doubt Solver
+                      <button type="button" class="gemini-status-live-badge" id="btn-header-gemini-status" title="Click to configure AI Model / Google Gemini API Key">
+                        <span class="live-pulse-dot" id="gemini-status-dot"></span>
+                        <span id="gemini-status-text">Gemini 2.5 Flash</span>
+                      </button>
+                    </h2>
+                    <div class="doubt-header-subtitle">Ask questions, understand concepts, and learn step by step.</div>
+                  </div>
+                </div>
+
+                <!-- Academic Controls (Subject, Difficulty, Tutor Mode, Actions) -->
+                <div class="doubt-header-controls">
+                  <!-- Course Selector -->
+                  <div class="doubt-control-group">
+                    <select id="doubt-subject-select" class="doubt-select-compact" aria-label="Select Subject Domain">
+                      <option value="All Engineering Subjects">Auto-Detect Domain</option>
+                      <option value="Database Management Systems">DBMS (CS301)</option>
+                      <option value="Operating Systems">Operating Systems (CS302)</option>
+                      <option value="Computer Networks">Computer Networks (CS303)</option>
+                      <option value="Machine Learning">Machine Learning (CS304)</option>
+                      <option value="Data Structures & Algorithms">DSA (CS201)</option>
+                    </select>
+                  </div>
+
+                  <!-- Difficulty Selector -->
+                  <div class="doubt-control-group">
+                    <select id="doubt-difficulty-select" class="doubt-select-compact"
+                      aria-label="Select Target Difficulty">
+                      <option value="Intermediate">Intermediate Level</option>
+                      <option value="Introductory">Basic / Conceptual</option>
+                      <option value="Advanced">University Exam Level</option>
+                    </select>
+                  </div>
+
+                  <!-- Socratic Tutor Mode Toggle -->
+                  <label class="tutor-mode-toggle-wrapper"
+                    title="Socratic mode guides you step by step with questions instead of immediate answer dumping">
+                    <input type="checkbox" id="tutor-mode-checkbox">
+                    <span class="tutor-toggle-switch"></span>
+                    <span class="tutor-mode-pill" style="display: inline-flex; align-items: center; gap: 0.35rem;">
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2">
+                        <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
+                        <path d="M6 12v5c3 3 9 3 12 0v-5" />
+                      </svg>
+                      <span>Tutor Mode</span>
+                    </span>
+                  </label>
+
+                  <!-- Session Action Options Dropdown -->
+                  <div style="position: relative;">
+                    <button type="button" class="header-action-icon-btn" id="btn-session-menu-toggle"
+                      data-dropdown-toggle="session-menu-dropdown" title="Session Options" aria-label="Session Options">
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2">
+                        <circle cx="12" cy="12" r="1" />
+                        <circle cx="12" cy="5" r="1" />
+                        <circle cx="12" cy="19" r="1" />
+                      </svg>
+                    </button>
+                    <div id="session-menu-dropdown" class="menu-dropdown" style="right: 0; min-width: 190px;">
+                      <button type="button" class="menu-item" id="btn-open-gemini-modal">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                          stroke-width="2">
+                          <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+                        </svg>
+                        AI Model Settings
+                      </button>
+                      <button type="button" class="menu-item" id="btn-export-conv">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                          stroke-width="2">
+                          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                          <polyline points="7 10 12 15 17 10" />
+                          <line x1="12" y1="15" x2="12" y2="3" />
+                        </svg>
+                        Export Markdown Notes
+                      </button>
+                      <button type="button" class="menu-item" id="btn-rename-conv">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                          stroke-width="2">
+                          <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                          <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+                        </svg>
+                        Rename Conversation
+                      </button>
+                      <button type="button" class="menu-item" id="btn-bookmark-conv">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                          stroke-width="2">
+                          <polygon
+                            points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                        </svg>
+                        <span id="bookmark-menu-text">Bookmark Solution</span>
+                      </button>
+                      <button type="button" class="menu-item" id="btn-escalate-conv">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                          stroke-width="2">
+                          <path d="M22 2L11 13" />
+                          <polygon points="22 2 15 22 11 13 2 9 22 2" />
+                        </svg>
+                        Escalate to Faculty
+                      </button>
+                      <div class="menu-divider"></div>
+                      <button type="button" class="menu-item text-danger" id="btn-clear-conv">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                          stroke-width="2">
+                          <polyline points="3 6 5 6 21 6" />
+                          <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                        </svg>
+                        Delete Conversation
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Message Stream / Conversation Canvas -->
+              <div class="doubt-messages-container" id="doubt-messages-stream">
+
+                <!-- Educational Empty State (Shown when conversation is empty) -->
+                <div class="doubt-empty-state-view" id="doubt-empty-state">
+                  <div class="empty-state-hero-badge">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                      stroke-width="2.2">
+                      <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+                    </svg>
+                    <span>AI Academic Mentor</span>
+                  </div>
+                  <h3 class="empty-state-title">How can I help you learn today?</h3>
+                  <p class="empty-state-description">
+                    Ask theoretical derivations, algorithmic step-by-step proofs, code debugging, or exam revision
+                    questions.
+                  </p>
+
+                  <!-- 5 Clickable Educational Suggestion Cards -->
+                  <div class="suggestion-cards-grid">
+                    <div class="suggestion-card-item"
+                      data-prompt="Explain a difficult concept with an intuitive real-world analogy and step-by-step breakdown: ">
+                      <div class="suggestion-icon-wrap">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                          stroke-width="2">
+                          <circle cx="12" cy="12" r="10" />
+                          <line x1="12" y1="16" x2="12" y2="12" />
+                          <line x1="12" y1="8" x2="12.01" y2="8" />
+                        </svg>
+                      </div>
+                      <div class="suggestion-title">Explain a difficult concept</div>
+                      <div class="suggestion-subtitle">Clear breakdown with intuitive metaphors</div>
+                    </div>
+
+                    <div class="suggestion-card-item"
+                      data-prompt="Solve this mathematics and algorithmic derivation step by step: ">
+                      <div class="suggestion-icon-wrap">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                          stroke-width="2">
+                          <line x1="18" y1="20" x2="18" y2="10" />
+                          <line x1="12" y1="20" x2="12" y2="4" />
+                          <line x1="6" y1="20" x2="6" y2="14" />
+                        </svg>
+                      </div>
+                      <div class="suggestion-title">Solve a math problem</div>
+                      <div class="suggestion-subtitle">Equations, proofs, and complexity bounds</div>
+                    </div>
+
+                    <div class="suggestion-card-item"
+                      data-prompt="Debug my code and explain the root cause and time complexity optimization: ">
+                      <div class="suggestion-icon-wrap">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                          stroke-width="2">
+                          <polyline points="16 18 22 12 16 6" />
+                          <polyline points="8 6 2 12 8 18" />
+                        </svg>
+                      </div>
+                      <div class="suggestion-title">Debug my code</div>
+                      <div class="suggestion-subtitle">Find syntax errors & race conditions</div>
+                    </div>
+
+                    <div class="suggestion-card-item"
+                      data-prompt="Analyze this examination question and show how to structure a full-marks university answer: ">
+                      <div class="suggestion-icon-wrap">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                          stroke-width="2">
+                          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                          <polyline points="14 2 14 8 20 8" />
+                        </svg>
+                      </div>
+                      <div class="suggestion-title">Analyze this question</div>
+                      <div class="suggestion-subtitle">Marking scheme & key points checklist</div>
+                    </div>
+
+                    <div class="suggestion-card-item"
+                      data-prompt="Help me prepare for an exam by generating a high-yield summary and practice problems on: ">
+                      <div class="suggestion-icon-wrap">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                          stroke-width="2">
+                          <circle cx="12" cy="12" r="10" />
+                          <polygon points="12 6 12 12 14 14" />
+                        </svg>
+                      </div>
+                      <div class="suggestion-title">Prepare for an exam</div>
+                      <div class="suggestion-subtitle">High-yield revision & practice questions</div>
+                    </div>
+                  </div>
+
+                  <!-- Quick syllabus prompt pills -->
+                  <div class="quick-topics-row">
+                    <span style="font-size: 0.71875rem; color: var(--text-muted); font-weight: 600;">Popular
+                      topics:</span>
+                    <button type="button" class="quick-topic-pill"
+                      data-query="Explain database normalization (1NF, 2NF, 3NF, BCNF) with a student table example.">Database
+                      Normalization</button>
+                    <button type="button" class="quick-topic-pill"
+                      data-query="How does Dijkstra's shortest path algorithm work with a min-heap?">Dijkstra
+                      Algorithm</button>
+                    <button type="button" class="quick-topic-pill"
+                      data-query="What are the 4 Coffman conditions for Deadlock and how to prevent them?">OS
+                      Deadlock</button>
+                    <button type="button" class="quick-topic-pill"
+                      data-query="Explain the TCP 3-Way Handshake vs UDP transport protocols.">TCP 3-Way
+                      Handshake</button>
+                    <button type="button" class="quick-topic-pill"
+                      data-query="What is overfitting in Machine Learning and how to prevent it?">Overfitting in
+                      ML</button>
+                  </div>
+                </div>
+
+                <!-- Active Chat Messages List -->
+                <div id="doubt-chat-list" class="flex flex-col gap-4">
+                  <!-- Injected dynamically -->
+                </div>
+
+                <!-- Progressive Thinking State Card (Hidden by default) -->
+                <div id="doubt-thinking-indicator" class="ai-thinking-card hidden" aria-live="polite">
+                  <div class="ai-pulse-spinner"></div>
+                  <div class="ai-thinking-text-group">
+                    <div class="ai-thinking-stage-title" id="thinking-stage-text">Analyzing your question...</div>
+                    <div class="ai-thinking-stage-sub">Referencing syllabus curriculum & canonical derivations</div>
+                  </div>
+                </div>
+
+              </div>
+
+              <!-- --------------------------------------------------------------
+                   AREA 3: BOTTOM QUESTION COMPOSER
+                   -------------------------------------------------------------- -->
+              <div class="doubt-composer-container">
+                <!-- Attachments Tray -->
+                <div class="composer-attachments-tray hidden" id="composer-attachments-tray">
+                  <!-- Previews dynamically rendered here -->
+                </div>
+
+                <!-- Hidden file inputs -->
+                <input type="file" id="input-image-file" accept="image/png,image/jpeg,image/webp"
+                  style="display: none;">
+                <input type="file" id="input-doc-file" accept=".pdf,.txt,.docx,.py,.js,.cpp,.java,.sql"
+                  style="display: none;">
+
+                <!-- Composer Input Box -->
+                <form id="doubt-composer-form">
+                  <div class="composer-input-box">
+                    <textarea id="doubt-composer-input" class="composer-textarea"
+                      placeholder="Ask an engineering concept, theorem, algorithm, or derivation (e.g. Explain how Semaphore avoids Deadlock)..."
+                      rows="1" aria-label="Academic Question Composer"></textarea>
+
+                    <div class="composer-tools-cluster">
+                      <!-- Image Upload Button -->
+                      <button type="button" class="composer-tool-btn" id="btn-attach-image"
+                        title="Attach Diagram / Screenshot (PNG, JPG, WebP)">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                          stroke-width="2">
+                          <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+                          <circle cx="8.5" cy="8.5" r="1.5" />
+                          <polyline points="21 15 16 10 5 21" />
+                        </svg>
+                      </button>
+
+                      <!-- Document Upload Button -->
+                      <button type="button" class="composer-tool-btn" id="btn-attach-doc"
+                        title="Attach Document / Code (PDF, TXT, PY, JS, CPP)">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                          stroke-width="2">
+                          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                          <polyline points="14 2 14 8 20 8" />
+                          <line x1="16" y1="13" x2="8" y2="13" />
+                          <line x1="16" y1="17" x2="8" y2="17" />
+                          <polyline points="10 9 9 9 8 9" />
+                        </svg>
+                      </button>
+
+                      <!-- Voice Input Dictation Button -->
+                      <button type="button" class="composer-tool-btn" id="btn-voice-input"
+                        title="Dictate Query via Microphone">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                          stroke-width="2">
+                          <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z" />
+                          <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
+                          <line x1="12" y1="19" x2="12" y2="23" />
+                          <line x1="8" y1="23" x2="16" y2="23" />
+                        </svg>
+                      </button>
+
+                      <!-- Send Button -->
+                      <button type="submit" class="btn-send-doubt" id="btn-send-doubt" disabled aria-label="Send Query">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                          stroke-width="2.4">
+                          <line x1="22" y1="2" x2="11" y2="13" />
+                          <polygon points="22 2 15 22 11 13 2 9 22 2" />
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
+
+                  <div class="composer-footer-hints">
+                    <span>Press <kbd>Enter</kbd> to send, <kbd>Shift</kbd> + <kbd>Enter</kbd> for new line</span>
+                    <span id="detected-domain-tag"
+                      style="font-weight: 500; display: inline-flex; align-items: center; gap: 0.25rem;"></span>
+                  </div>
+                </form>
+              </div>
+
+            </section>
+          </div>
+
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- Rename Conversation Modal -->
+  <div class="modal-overlay" id="modal-rename-conv">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 class="modal-title">Rename Doubt Conversation</h3>
+        <button type="button" class="toast-close" onclick="UI.closeModal('modal-rename-conv')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label for="rename-conv-input" class="form-label">Conversation Title</label>
+          <input type="text" id="rename-conv-input" class="form-input" placeholder="e.g. Dijkstra Shortest Path Proof">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" onclick="UI.closeModal('modal-rename-conv')">Cancel</button>
+        <button type="button" class="btn btn-primary" id="btn-save-rename-conv">Save Title</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Delete Conversation Confirmation Modal -->
+  <div class="modal-overlay" id="modal-delete-conv">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 class="modal-title">Delete Conversation</h3>
+        <button type="button" class="toast-close" onclick="UI.closeModal('modal-delete-conv')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size: 0.90625rem; color: var(--text-secondary);">
+          Are you sure you want to remove this academic doubt conversation? All question history and generated solutions
+          in this session will be permanently deleted.
+        </p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" onclick="UI.closeModal('modal-delete-conv')">Cancel</button>
+        <button type="button" class="btn btn-primary" style="background-color: var(--status-danger);"
+          id="btn-confirm-delete-conv">Delete Permanently</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Google Gemini API Configuration Modal -->
+  <div class="modal-overlay" id="modal-gemini-config">
+    <div class="modal-dialog" style="max-width: 520px;">
+      <div class="modal-header">
+        <div style="display: flex; align-items: center; gap: 0.625rem;">
+          <div
+            style="width: 32px; height: 32px; border-radius: 8px; background-color: #0B1F3A; color: #F6D86B; display: flex; align-items: center; justify-content: center;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+              <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+            </svg>
+          </div>
+          <div>
+            <h3 class="modal-title" style="margin: 0; font-size: 1.05rem;">Google Gemini AI Integration</h3>
+            <p style="font-size: 0.75rem; color: var(--text-secondary); margin: 0;">Backend Server & Client-side API key
+              configuration</p>
+          </div>
+        </div>
+        <button type="button" class="toast-close" onclick="UI.closeModal('modal-gemini-config')">&times;</button>
+      </div>
+      <div class="modal-body" style="display: flex; flex-direction: column; gap: 1rem;">
+        <div id="gemini-backend-notice" class="gemini-info-callout">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            style="flex-shrink: 0; margin-top: 2px;">
+            <circle cx="12" cy="12" r="10" />
+            <line x1="12" y1="16" x2="12" y2="12" />
+            <line x1="12" y1="8" x2="12.01" y2="8" />
+          </svg>
+          <span id="gemini-backend-notice-text">Checking backend AI proxy status...</span>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 0;">
+          <label for="gemini-api-key-input" class="form-label"
+            style="display: flex; justify-content: space-between; align-items: center;">
+            <span>Google Gemini API Key</span>
+            <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener noreferrer"
+              style="color: #0284c7; font-size: 0.75rem; text-decoration: underline; font-weight: 500;">Get Free Key
+              &rarr;</a>
+          </label>
+          <div style="position: relative;">
+            <input type="password" id="gemini-api-key-input" class="form-input"
+              placeholder="AIzaSy... (Paste key here or in .env)"
+              style="padding-right: 2.5rem; font-family: monospace;">
+            <button type="button" id="btn-toggle-key-visibility"
+              style="position: absolute; right: 0.5rem; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; color: var(--text-tertiary);"
+              title="Toggle Visibility" aria-label="Toggle Key Visibility">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                <circle cx="12" cy="12" r="3" />
+              </svg>
+            </button>
+          </div>
+          <p style="font-size: 0.725rem; color: var(--text-tertiary); margin-top: 0.375rem; margin-bottom: 0;">Saving
+            here will automatically configure both the backend server and browser client.</p>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 0;">
+          <label for="gemini-model-select" class="form-label">Gemini Model</label>
+          <select id="gemini-model-select" class="form-input">
+            <option value="gemini-2.5-flash">Gemini 2.5 Flash (Recommended — Ultra-Fast, Multimodal)</option>
+            <option value="gemini-2.5-pro">Gemini 2.5 Pro (Deep Theoretical Proofs & Reasoning)</option>
+            <option value="gemini-flash-latest">Gemini Flash Latest</option>
+            <option value="gemini-2.5-flash-lite">Gemini 2.5 Flash Lite</option>
+          </select>
+        </div>
+
+        <div id="gemini-test-result"
+          style="display: none; padding: 0.625rem 0.875rem; border-radius: var(--radius-sm); font-size: 0.8125rem;">
+        </div>
+      </div>
+      <div class="modal-footer" style="justify-content: space-between;">
+        <button type="button" class="btn btn-secondary" id="btn-clear-gemini-key"
+          style="color: var(--status-danger);">Clear API Key</button>
+        <div style="display: flex; gap: 0.5rem;">
+          <button type="button" class="btn btn-outline" id="btn-test-gemini-key">Test Key</button>
+          <button type="button" class="btn btn-primary" id="btn-save-gemini-key">Save & Connect</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Escalate to Faculty Consultation Modal -->
+  <div class="modal-overlay" id="modal-escalate-faculty">
+    <div class="modal-dialog" style="max-width: 520px;">
+      <div class="modal-header">
+        <div style="display: flex; align-items: center; gap: 0.625rem;">
+          <div
+            style="width: 32px; height: 32px; border-radius: 8px; background-color: var(--blue-50); color: var(--blue-600); display: flex; align-items: center; justify-content: center;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M22 2L11 13" />
+              <polygon points="22 2 15 22 11 13 2 9 22 2" />
+            </svg>
+          </div>
+          <div>
+            <h3 class="modal-title" style="margin: 0; font-size: 1.05rem;">Escalate Doubt to Faculty</h3>
+            <p style="font-size: 0.75rem; color: var(--text-secondary); margin: 0;">Submit question and AI discussion
+              notes for professor review</p>
+          </div>
+        </div>
+        <button type="button" class="toast-close" onclick="UI.closeModal('modal-escalate-faculty')">&times;</button>
+      </div>
+      <div class="modal-body" style="display: flex; flex-direction: column; gap: 1rem;">
+        <div class="form-group">
+          <label for="escalate-faculty-select" class="form-label">Subject Faculty Member <span
+              class="required">*</span></label>
+          <select id="escalate-faculty-select" class="form-input">
+            <option value="Dr. Arvind Menon (CS404 Operating Systems)">Dr. Arvind Menon — Operating Systems (CS404)
+            </option>
+            <option value="Prof. Priya Sharma (CS402 DBMS)">Prof. Priya Sharma — DBMS (CS402)</option>
+            <option value="Dr. Rajesh Kumar (CS403 Machine Learning)">Dr. Rajesh Kumar — Machine Learning (CS403)
+            </option>
+            <option value="Prof. Ananya Sen (CS401 DSA)">Prof. Ananya Sen — Data Structures & Algo (CS401)</option>
+            <option value="Dr. Vikram Malhotra (CS405 Networks)">Dr. Vikram Malhotra — Computer Networks (CS405)
+            </option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="escalate-note-input" class="form-label">Specific Doubt Clarification Note</label>
+          <textarea id="escalate-note-input" class="form-input" rows="3"
+            placeholder="Explain which part of the derivation or solution remains unclear..."></textarea>
+        </div>
+
+        <div class="notice-box-yellow" style="margin-bottom: 0;">
+          <div class="notice-box-icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10" />
+              <line x1="12" y1="16" x2="12" y2="12" />
+              <line x1="12" y1="8" x2="12.01" y2="8" />
+            </svg>
+          </div>
+          <div class="notice-box-content">
+            <div class="notice-box-desc" style="font-size: 0.8125rem;">
+              The conversation transcript and attached diagrams will be forwarded to your professor's university portal
+              for office-hour review.
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary"
+          onclick="UI.closeModal('modal-escalate-faculty')">Cancel</button>
+        <button type="button" class="btn btn-primary" id="btn-confirm-escalate">Forward to Faculty</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Application Scripts -->
+  <script src="../data/mock-student.js"></script>
+  <script src="../data/mock-doubts.js"></script>
+  <script src="../js/firebase-config.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/ai-service.js"></script>
+  <script src="../js/ui.js"></script>
+
+  <!-- Interactive Doubt Solver Controller Script -->
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      UI.syncStudentIdentity();
+
+      // UI Elements
+      const historyListEl = document.getElementById('history-sessions-list');
+      const searchInput = document.getElementById('history-search-input');
+      const filterTabs = document.querySelectorAll('.history-chip');
+      const btnNewDoubt = document.getElementById('btn-new-doubt');
+      const sessionCountBadge = document.getElementById('session-counter-badge');
+
+      const chatContainer = document.getElementById('doubt-messages-stream');
+      const emptyStateView = document.getElementById('doubt-empty-state');
+      const chatList = document.getElementById('doubt-chat-list');
+      const thinkingCard = document.getElementById('doubt-thinking-indicator');
+      const thinkingText = document.getElementById('thinking-stage-text');
+
+      const subjectSelect = document.getElementById('doubt-subject-select');
+      const difficultySelect = document.getElementById('doubt-difficulty-select');
+      const tutorModeCheck = document.getElementById('tutor-mode-checkbox');
+
+      const composerForm = document.getElementById('doubt-composer-form');
+      const composerInput = document.getElementById('doubt-composer-input');
+      const sendBtn = document.getElementById('btn-send-doubt');
+      const attachImageBtn = document.getElementById('btn-attach-image');
+      const attachDocBtn = document.getElementById('btn-attach-doc');
+      const voiceInputBtn = document.getElementById('btn-voice-input');
+      const imageFileInput = document.getElementById('input-image-file');
+      const docFileInput = document.getElementById('input-doc-file');
+      const attachmentsTray = document.getElementById('composer-attachments-tray');
+      const detectedDomainTag = document.getElementById('detected-domain-tag');
+
+      const mobileHistoryToggle = document.getElementById('mobile-history-toggle');
+      const historyPanel = document.getElementById('doubt-history-panel');
+
+      // Dropdown & Session Actions
+      const btnExportConv = document.getElementById('btn-export-conv');
+      const btnRenameConv = document.getElementById('btn-rename-conv');
+      const btnBookmarkConv = document.getElementById('btn-bookmark-conv');
+      const bookmarkMenuText = document.getElementById('bookmark-menu-text');
+      const btnClearConv = document.getElementById('btn-clear-conv');
+      const renameInput = document.getElementById('rename-conv-input');
+      const btnSaveRename = document.getElementById('btn-save-rename-conv');
+      const btnConfirmDelete = document.getElementById('btn-confirm-delete-conv');
+
+      // State
+      let currentFilter = 'all';
+      let currentSessionId = null;
+      let activeAttachments = [];
+      let isRecordingVoice = false;
+      let speechRecognizer = null;
+
+      // 1. Initial Load: Fetch conversations
+      await loadConversationList();
+
+      // 2. Select initial conversation (first available or empty)
+      const allConvs = await AIService.getConversations();
+      if (allConvs && allConvs.length > 0) {
+        selectConversation(allConvs[0].id);
+      } else {
+        showEmptyState();
+      }
+
+      // ====================================================================
+      // Session Management & History Drawer
+      // ====================================================================
+      async function loadConversationList() {
+        const convs = await AIService.getConversations();
+        const search = (searchInput.value || '').trim().toLowerCase();
+
+        const filtered = convs.filter(c => {
+          // Search matching
+          const matchSearch = !search ||
+            c.title.toLowerCase().includes(search) ||
+            (c.subject && c.subject.toLowerCase().includes(search)) ||
+            (c.messages && c.messages.some(m => m.content.toLowerCase().includes(search)));
+
+          if (!matchSearch) return false;
+
+          // Tab filter matching
+          if (currentFilter === 'all') return true;
+          if (currentFilter === 'saved') return !!c.bookmarked;
+          if (currentFilter === 'DBMS') return c.subject && c.subject.includes('Database');
+          if (currentFilter === 'OS') return c.subject && c.subject.includes('Operating');
+          if (currentFilter === 'Networks') return c.subject && c.subject.includes('Network');
+          if (currentFilter === 'ML') return c.subject && c.subject.includes('Machine');
+          if (currentFilter === 'DSA') return c.subject && (c.subject.includes('Data') || c.subject.includes('Algorithm'));
+          return true;
+        });
+
+        sessionCountBadge.textContent = `${filtered.length} ${filtered.length === 1 ? 'Session' : 'Sessions'}`;
+
+        if (filtered.length === 0) {
+          historyListEl.innerHTML = `
+            <div class="session-empty-state">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+              <p>No doubts found.<br>Click <strong>+ New Doubt</strong> to begin.</p>
+            </div>
+          `;
+          return;
+        }
+
+        historyListEl.innerHTML = filtered.map(c => {
+          const isActive = c.id === currentSessionId;
+          const firstUserMsg = c.messages ? c.messages.find(m => m.role === 'user') : null;
+          const snippet = firstUserMsg ? firstUserMsg.content : (c.title || 'New Question');
+          const timeStr = formatSessionTime(c.updatedAt || c.createdAt);
+
+          return `
+            <div class="session-card ${isActive ? 'active' : ''}" data-id="${c.id}">
+              <div class="session-card-top">
+                <span class="session-title" title="${escapeHtml(c.title)}">${escapeHtml(c.title)}</span>
+                ${c.bookmarked ? '<svg width="11" height="11" viewBox="0 0 24 24" fill="#D97706" stroke="#D97706" stroke-width="1"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>' : ''}
+              </div>
+              <div class="session-meta-row">
+                <span class="subject-tag ${getSubjectTagClass(c.subject)}" style="font-size: 0.625rem; padding: 0.1rem 0.45rem;">${c.subject || 'Engineering'}</span>
+                <span>${timeStr}</span>
+              </div>
+            </div>
+          `;
+        }).join('');
+
+        // Attach click listeners to cards
+        historyListEl.querySelectorAll('.session-card').forEach(card => {
+          card.addEventListener('click', () => {
+            const id = card.getAttribute('data-id');
+            selectConversation(id);
+            if (window.innerWidth <= 992) {
+              historyPanel.classList.remove('drawer-open');
+            }
+          });
+        });
+      }
+
+      async function selectConversation(convId) {
+        currentSessionId = convId;
+        const conv = await AIService.getConversation(convId);
+
+        if (!conv) {
+          showEmptyState();
+          return;
+        }
+
+        // Sync header controls
+        if (conv.subject) subjectSelect.value = conv.subject;
+        if (conv.difficulty) difficultySelect.value = conv.difficulty;
+        tutorModeCheck.checked = !!conv.tutorMode;
+        bookmarkMenuText.textContent = conv.bookmarked ? 'Remove Bookmark' : 'Bookmark Solution';
+
+        // Re-render history list active state
+        loadConversationList();
+
+        // Render messages
+        if (!conv.messages || conv.messages.length === 0) {
+          showEmptyState();
+        } else {
+          emptyStateView.classList.add('hidden');
+          renderMessageStream(conv.messages);
+        }
+      }
+
+      function showEmptyState() {
+        emptyStateView.classList.remove('hidden');
+        chatList.innerHTML = '';
+      }
+
+      function renderMessageStream(messages = []) {
+        chatList.innerHTML = messages.map((m, idx) => {
+          if (m.role === 'user') {
+            let attachmentsHtml = '';
+            if (m.attachments && m.attachments.length > 0) {
+              attachmentsHtml = `
+                <div class="user-attachments-preview-list">
+                  ${m.attachments.map(att => {
+                if (att.type === 'image') {
+                  return `<img src="${att.dataUrl}" alt="Attachment" class="user-attachment-thumb">`;
+                }
+                return `<span class="user-doc-attachment-badge"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg> ${escapeHtml(att.name)}</span>`;
+              }).join('')}
+                </div>
+              `;
+            }
+
+            return `
+              <div class="message-row user-row" id="${m.id}">
+                <div class="user-message-bubble">
+                  <div>${escapeHtml(m.content)}</div>
+                  ${attachmentsHtml}
+                </div>
+                <small class="text-muted" style="font-size: 0.6875rem; margin-top: 2px;">${m.timestamp || 'Just now'}</small>
+              </div>
+            `;
+          } else {
+            // AI Response
+            return `
+              <div class="message-row ai-row" id="${m.id}">
+                <div class="ai-response-card">
+                  <div class="ai-response-card-header">
+                    <div class="ai-badge-cluster">
+                      <span class="ai-engine-pill">
+                        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+                        Academic LLM
+                      </span>
+                      <span class="subject-tag ${getSubjectTagClass(m.subject)}">${m.subject || 'Engineering'}</span>
+                      <span class="ai-difficulty-pill">${m.difficulty || 'Intermediate'}</span>
+                    </div>
+                    <small class="text-muted" style="font-size: 0.6875rem;">${m.timestamp || 'Just now'}</small>
+                  </div>
+
+                  <div class="ai-response-content">
+                    ${formatMarkdown(m.content)}
+                  </div>
+
+                  <!-- Actions Bar Under Every AI Response -->
+                  <div class="ai-response-actions-bar">
+                    <div class="actions-cluster">
+                      <button type="button" class="response-action-pill" onclick="window.handleCopyResponse('${m.id}')" title="Copy Solution">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                        <span>Copy</span>
+                      </button>
+                      <button type="button" class="response-action-pill ${m.bookmarked ? 'active' : ''}" onclick="window.handleSaveMessage('${m.id}')" title="Save to Revision Notes">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="${m.bookmarked ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                        <span>${m.bookmarked ? 'Saved' : 'Save'}</span>
+                      </button>
+                      <button type="button" class="response-action-pill" onclick="window.handleExplainSimpler('${m.id}')" title="Explain with simpler analogies">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 0 1 8.91 14"/></svg>
+                        <span>Simpler</span>
+                      </button>
+                      <button type="button" class="response-action-pill" onclick="window.handleExplainDetail('${m.id}')" title="Explain with deeper theoretical proofs">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+                        <span>Detail</span>
+                      </button>
+                      <button type="button" class="response-action-pill" onclick="window.handleAskFollowup('${m.id}')" title="Ask a follow-up question">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                        <span>Follow-up</span>
+                      </button>
+                      <button type="button" class="response-action-pill primary-action" onclick="window.handleGeneratePractice('${m.id}', '${escapeHtml(m.topic || 'General')}', '${escapeHtml(m.subject || 'Engineering')}')" title="Generate interactive practice question on this topic">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                        <span>Practice Problem</span>
+                      </button>
+                      <button type="button" class="response-action-pill" onclick="window.handleRegenerate('${m.id}')" title="Regenerate Answer" aria-label="Regenerate Answer">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+                      </button>
+                      <button type="button" class="response-action-pill" onclick="window.handleReportAnswer('${m.id}')" title="Report Inaccuracy" aria-label="Report Inaccuracy">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>
+                      </button>
+                    </div>
+                  </div>
+
+                  <!-- Container for inline Practice Question when requested -->
+                  <div id="practice-container-${m.id}"></div>
+                </div>
+              </div>
+            `;
+          }
+        }).join('');
+
+        attachCodeCopyHandlers(chatList);
+
+        // Scroll to bottom smoothly
+        setTimeout(() => {
+          chatContainer.scrollTop = chatContainer.scrollHeight;
+        }, 50);
+      }
+
+      // ====================================================================
+      // New Doubt & Suggestion Handlers
+      // ====================================================================
+      btnNewDoubt.addEventListener('click', async () => {
+        const newConv = await AIService.createConversation({
+          title: 'New Academic Doubt',
+          subject: subjectSelect.value,
+          difficulty: difficultySelect.value,
+          tutorMode: tutorModeCheck.checked
+        });
+        await loadConversationList();
+        selectConversation(newConv.id);
+        composerInput.value = '';
+        composerInput.focus();
+        UI.showToast('info', 'New Session Created', 'Ask your question in the composer below.');
+      });
+
+      // Suggestion card clicks
+      document.querySelectorAll('.suggestion-card-item').forEach(card => {
+        card.addEventListener('click', () => {
+          const promptPrefix = card.getAttribute('data-prompt');
+          composerInput.value = promptPrefix;
+          composerInput.focus();
+          validateComposer();
+        });
+      });
+
+      // Quick topic chips
+      document.querySelectorAll('.quick-topic-pill').forEach(chip => {
+        chip.addEventListener('click', () => {
+          const query = chip.getAttribute('data-query');
+          composerInput.value = query;
+          validateComposer();
+          composerForm.dispatchEvent(new Event('submit', { cancelable: true }));
+        });
+      });
+
+      // Search and Tab Filters
+      searchInput.addEventListener('input', () => {
+        loadConversationList();
+      });
+
+      filterTabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+          filterTabs.forEach(t => t.classList.remove('active'));
+          tab.classList.add('active');
+          currentFilter = tab.getAttribute('data-filter');
+          loadConversationList();
+        });
+      });
+
+      // Header control changes sync to current session
+      subjectSelect.addEventListener('change', async () => {
+        if (!currentSessionId) return;
+        const conv = await AIService.getConversation(currentSessionId);
+        if (conv) {
+          conv.subject = subjectSelect.value;
+          loadConversationList();
+        }
+      });
+
+      difficultySelect.addEventListener('change', async () => {
+        if (!currentSessionId) return;
+        const conv = await AIService.getConversation(currentSessionId);
+        if (conv) {
+          conv.difficulty = difficultySelect.value;
+        }
+      });
+
+      tutorModeCheck.addEventListener('change', async () => {
+        if (!currentSessionId) return;
+        const conv = await AIService.getConversation(currentSessionId);
+        if (conv) {
+          conv.tutorMode = tutorModeCheck.checked;
+          UI.showToast('info', tutorModeCheck.checked ? 'Socratic Tutor Mode Enabled' : 'Direct Explanation Mode', tutorModeCheck.checked ? 'The AI will guide you step by step with questions.' : 'Direct comprehensive answers enabled.');
+        }
+      });
+
+      // Mobile history drawer toggle
+      mobileHistoryToggle.addEventListener('click', () => {
+        historyPanel.classList.toggle('drawer-open');
+      });
+
+      // ====================================================================
+      // Composer & Form Submission (Multi-Turn Context)
+      // ====================================================================
+      function validateComposer() {
+        const text = composerInput.value.trim();
+        const hasAttachments = activeAttachments.length > 0;
+        sendBtn.disabled = !text && !hasAttachments;
+
+        // Auto-expand textarea height
+        composerInput.style.height = 'auto';
+        composerInput.style.height = Math.min(composerInput.scrollHeight, 160) + 'px';
+
+        // Dynamic domain preview tag
+        if (text.length > 5) {
+          const detected = AIService.detectSubjectAndTopic(text);
+          detectedDomainTag.innerHTML = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> <span>Detected: ${detected.subject} (${detected.topic})</span>`;
+        } else {
+          detectedDomainTag.innerHTML = '';
+        }
+      }
+
+      composerInput.addEventListener('input', validateComposer);
+
+      // Hotkey: Enter sends, Shift+Enter new line
+      composerInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+          e.preventDefault();
+          if (!sendBtn.disabled) {
+            composerForm.dispatchEvent(new Event('submit', { cancelable: true }));
+          }
+        }
+      });
+
+      // Form Submit
+      composerForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const queryText = composerInput.value.trim();
+        if (!queryText && activeAttachments.length === 0) return;
+
+        // Ensure active conversation
+        if (!currentSessionId) {
+          const newConv = await AIService.createConversation({
+            title: queryText.substring(0, 36) || 'Visual Question',
+            subject: subjectSelect.value,
+            difficulty: difficultySelect.value,
+            tutorMode: tutorModeCheck.checked
+          });
+          currentSessionId = newConv.id;
+        }
+
+        const payload = {
+          text: queryText,
+          attachments: [...activeAttachments]
+        };
+
+        // Reset composer
+        composerInput.value = '';
+        activeAttachments = [];
+        renderAttachmentsTray();
+        validateComposer();
+
+        // UI Loading States
+        sendBtn.disabled = true;
+        emptyStateView.classList.add('hidden');
+        thinkingCard.classList.remove('hidden');
+        thinkingText.textContent = 'Analyzing your question...';
+
+        // Immediate optimistic render of user message
+        const conv = await AIService.getConversation(currentSessionId);
+        if (conv) {
+          const tempUserMsg = {
+            id: 'temp_user',
+            role: 'user',
+            content: payload.text,
+            attachments: payload.attachments,
+            timestamp: 'Just now'
+          };
+          renderMessageStream([...conv.messages, tempUserMsg]);
+        }
+
+        try {
+          const result = await AIService.sendMessage(
+            currentSessionId,
+            payload,
+            {
+              subject: subjectSelect.value,
+              difficulty: difficultySelect.value,
+              tutorMode: tutorModeCheck.checked
+            },
+            (stage) => {
+              thinkingText.textContent = stage;
+            }
+          );
+
+          // Render updated messages
+          renderMessageStream(result.conversation.messages);
+          await loadConversationList();
+        } catch (err) {
+          console.error('Error sending message:', err);
+          UI.showToast('error', 'Resolution Error', 'Something went wrong while generating your answer. Please try again.');
+        } finally {
+          thinkingCard.classList.add('hidden');
+          sendBtn.disabled = false;
+        }
+      });
+
+      // ====================================================================
+      // File Upload & Attachment Processing
+      // ====================================================================
+      attachImageBtn.addEventListener('click', () => imageFileInput.click());
+      attachDocBtn.addEventListener('click', () => docFileInput.click());
+
+      imageFileInput.addEventListener('change', () => {
+        const file = imageFileInput.files[0];
+        if (!file) return;
+
+        // Validation
+        const validTypes = ['image/jpeg', 'image/png', 'image/webp'];
+        if (!validTypes.includes(file.type)) {
+          UI.showToast('error', 'Unsupported Format', 'Please upload a valid JPEG, PNG, or WebP image.');
+          imageFileInput.value = '';
+          return;
+        }
+        if (file.size > 5 * 1024 * 1024) {
+          UI.showToast('error', 'File Too Large', 'Maximum image size is 5MB.');
+          imageFileInput.value = '';
+          return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          activeAttachments.push({
+            id: 'att_' + Date.now(),
+            type: 'image',
+            name: file.name,
+            size: (file.size / 1024).toFixed(1) + ' KB',
+            dataUrl: e.target.result
+          });
+          renderAttachmentsTray();
+          validateComposer();
+          UI.showToast('success', 'Image Attached', `${file.name} ready for concept analysis.`);
+        };
+        reader.readAsDataURL(file);
+        imageFileInput.value = '';
+      });
+
+      docFileInput.addEventListener('change', () => {
+        const file = docFileInput.files[0];
+        if (!file) return;
+
+        if (file.size > 10 * 1024 * 1024) {
+          UI.showToast('error', 'File Too Large', 'Maximum document size is 10MB.');
+          docFileInput.value = '';
+          return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          activeAttachments.push({
+            id: 'att_' + Date.now(),
+            type: 'doc',
+            name: file.name,
+            size: (file.size / 1024).toFixed(1) + ' KB',
+            ext: file.name.split('.').pop().toUpperCase()
+          });
+          renderAttachmentsTray();
+          validateComposer();
+          UI.showToast('success', 'Document Attached', `${file.name} ready for evaluation.`);
+        };
+        reader.readAsText(file);
+        docFileInput.value = '';
+      });
+
+      function renderAttachmentsTray() {
+        if (activeAttachments.length === 0) {
+          attachmentsTray.classList.add('hidden');
+          attachmentsTray.innerHTML = '';
+          return;
+        }
+
+        attachmentsTray.classList.remove('hidden');
+        attachmentsTray.innerHTML = activeAttachments.map(att => {
+          if (att.type === 'image') {
+            return `
+              <div class="composer-image-preview-card">
+                <img src="${att.dataUrl}" alt="${escapeHtml(att.name)}" class="composer-preview-img">
+                <button type="button" class="composer-remove-attachment-btn" onclick="window.removeAttachment('${att.id}')">&times;</button>
+              </div>
+            `;
+          }
+          return `
+            <div class="composer-doc-preview-card">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--text-tertiary);"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+              <div class="doc-meta">
+                <span class="doc-name">${escapeHtml(att.name)}</span>
+                <span class="doc-size">${att.size} • ${att.ext}</span>
+              </div>
+              <button type="button" class="toast-close" style="font-size: 14px; margin-left: 0.5rem;" onclick="window.removeAttachment('${att.id}')">&times;</button>
+            </div>
+          `;
+        }).join('');
+      }
+
+      window.removeAttachment = function (id) {
+        activeAttachments = activeAttachments.filter(a => a.id !== id);
+        renderAttachmentsTray();
+        validateComposer();
+      };
+
+      // ====================================================================
+      // Voice / Microphone Dictation
+      // ====================================================================
+      voiceInputBtn.addEventListener('click', () => {
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (!SpeechRecognition) {
+          UI.showToast('warning', 'Voice Input Unavailable', 'Speech recognition is not supported in this browser.');
+          return;
+        }
+
+        if (!speechRecognizer) {
+          speechRecognizer = new SpeechRecognition();
+          speechRecognizer.continuous = false;
+          speechRecognizer.interimResults = false;
+          speechRecognizer.lang = 'en-US';
+
+          speechRecognizer.onstart = () => {
+            isRecordingVoice = true;
+            voiceInputBtn.classList.add('recording');
+            UI.showToast('info', 'Listening...', 'Speak your academic question now.');
+          };
+
+          speechRecognizer.onresult = (event) => {
+            const transcript = event.results[0][0].transcript;
+            composerInput.value = (composerInput.value + ' ' + transcript).trim();
+            validateComposer();
+            UI.showToast('success', 'Voice Captured', transcript);
+          };
+
+          speechRecognizer.onerror = (event) => {
+            console.warn('Speech error:', event.error);
+            isRecordingVoice = false;
+            voiceInputBtn.classList.remove('recording');
+          };
+
+          speechRecognizer.onend = () => {
+            isRecordingVoice = false;
+            voiceInputBtn.classList.remove('recording');
+          };
+        }
+
+        if (isRecordingVoice) {
+          speechRecognizer.stop();
+        } else {
+          speechRecognizer.start();
+        }
+      });
+
+      // ====================================================================
+      // Global Response Actions (Copy, Save, Simpler, Detail, Followup, Practice)
+      // ====================================================================
+      window.handleCopyResponse = async function (msgId) {
+        const conv = await AIService.getConversation(currentSessionId);
+        const msg = conv?.messages.find(m => m.id === msgId);
+        if (msg) {
+          navigator.clipboard.writeText(msg.content).then(() => {
+            UI.showToast('success', 'Copied to Clipboard', 'Full AI response copied.');
+          });
+        }
+      };
+
+      window.handleSaveMessage = async function (msgId) {
+        const bookmarked = await AIService.toggleBookmark(currentSessionId, msgId);
+        selectConversation(currentSessionId);
+        UI.showToast('success', bookmarked ? 'Saved to Revision Notes' : 'Removed from Saved', 'Bookmark status updated.');
+      };
+
+      window.handleExplainSimpler = function (msgId) {
+        composerInput.value = 'Please explain this concept in simpler terms using an everyday analogy.';
+        validateComposer();
+        composerForm.dispatchEvent(new Event('submit', { cancelable: true }));
+      };
+
+      window.handleExplainDetail = function (msgId) {
+        composerInput.value = 'Please explain the rigorous theoretical derivation, invariants, and edge test cases in detail.';
+        validateComposer();
+        composerForm.dispatchEvent(new Event('submit', { cancelable: true }));
+      };
+
+      window.handleAskFollowup = function (msgId) {
+        composerInput.value = 'Regarding this breakdown: ';
+        validateComposer();
+        composerInput.focus();
+        composerInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      };
+
+      window.handleRegenerate = async function (msgId) {
+        const conv = await AIService.getConversation(currentSessionId);
+        if (!conv || conv.messages.length === 0) return;
+        const lastUserMsg = [...conv.messages].reverse().find(m => m.role === 'user');
+        if (lastUserMsg) {
+          composerInput.value = lastUserMsg.content;
+          validateComposer();
+          composerForm.dispatchEvent(new Event('submit', { cancelable: true }));
+        }
+      };
+
+      window.handleReportAnswer = function (msgId) {
+        UI.showToast('info', 'Feedback Submitted', 'Thank you. This question and answer have been flagged for faculty review.');
+      };
+
+      // Practice Question Generator
+      window.handleGeneratePractice = async function (msgId, topic, subject) {
+        const container = document.getElementById(`practice-container-${msgId}`);
+        if (!container) return;
+
+        container.innerHTML = `
+          <div class="ai-thinking-card mt-2">
+            <div class="ai-pulse-spinner"></div>
+            <div class="ai-thinking-text-group">
+              <div class="ai-thinking-stage-title">Generating Practice Problem...</div>
+              <div class="ai-thinking-stage-sub">Constructing contextual quiz based on ${topic}</div>
+            </div>
+          </div>
+        `;
+
+        const qData = await AIService.generatePracticeQuestion(topic, subject, difficultySelect.value);
+
+        container.innerHTML = `
+          <div class="practice-question-card" id="card-${qData.id}">
+            <div class="practice-header">
+              <span class="practice-badge" style="display: inline-flex; align-items: center; gap: 0.35rem;">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+                <span>${qData.difficulty} Practice Quiz</span>
+              </span>
+              <span class="subject-tag subject-tag-general" style="font-size: 0.625rem;">${qData.topic}</span>
+            </div>
+            
+            <div class="practice-question-text">${escapeHtml(qData.question)}</div>
+
+            <div class="practice-options-grid">
+              ${qData.options.map((opt, i) => `
+                <button type="button" class="practice-option-btn" onclick="window.submitPracticeAnswer('${qData.id}', ${i}, '${msgId}')">
+                  <strong style="color: #7C3AED;">${String.fromCharCode(65 + i)}.</strong>
+                  <span>${escapeHtml(opt)}</span>
+                </button>
+              `).join('')}
+            </div>
+
+            <div id="practice-feedback-${qData.id}"></div>
+          </div>
+        `;
+        window[`_qData_${qData.id}`] = qData;
+      };
+
+      window.submitPracticeAnswer = async function (qId, selectedIdx, msgId) {
+        const qData = window[`_qData_${qId}`];
+        if (!qData) return;
+
+        const card = document.getElementById(`card-${qId}`);
+        const feedbackEl = document.getElementById(`practice-feedback-${qId}`);
+        const buttons = card.querySelectorAll('.practice-option-btn');
+
+        // Disable options
+        buttons.forEach((btn, i) => {
+          btn.disabled = true;
+          if (i === qData.correctIndex) {
+            btn.classList.add('correct');
+          } else if (i === selectedIdx) {
+            btn.classList.add('incorrect');
+          }
+        });
+
+        const evalResult = await AIService.evaluateStudentAnswer(qData, selectedIdx);
+
+        feedbackEl.innerHTML = `
+          <div class="practice-feedback-box ${evalResult.correct ? 'correct' : 'incorrect'}" style="display: flex; gap: 0.5rem; align-items: flex-start;">
+            ${evalResult.correct
+            ? '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="color: #16A34A; flex-shrink: 0; margin-top: 1px;"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>'
+            : '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="color: #DC2626; flex-shrink: 0; margin-top: 1px;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>'
+          }
+            <div>
+              <strong>${evalResult.feedback}</strong>
+              <p style="margin-top: 0.35rem; font-size: 0.78125rem;">${evalResult.explanation}</p>
+            </div>
+          </div>
+        `;
+      };
+
+      // ====================================================================
+      // Session Modal Actions (Rename, Export, Delete)
+      // ====================================================================
+      btnExportConv.addEventListener('click', async () => {
+        if (!currentSessionId) return;
+        const conv = await AIService.getConversation(currentSessionId);
+        if (!conv) return;
+
+        const md = AIService.exportConversationToMarkdown(conv);
+        const blob = new Blob([md], { type: 'text/markdown;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${conv.title.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_notes.md`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        UI.showToast('success', 'Notes Exported', 'Downloaded Markdown study document.');
+      });
+
+      btnRenameConv.addEventListener('click', async () => {
+        if (!currentSessionId) return;
+        const conv = await AIService.getConversation(currentSessionId);
+        if (conv) {
+          renameInput.value = conv.title;
+          UI.openModal('modal-rename-conv');
+        }
+      });
+
+      btnSaveRename.addEventListener('click', async () => {
+        const newTitle = renameInput.value.trim();
+        if (newTitle && currentSessionId) {
+          await AIService.renameConversation(currentSessionId, newTitle);
+          UI.closeModal('modal-rename-conv');
+          await loadConversationList();
+          UI.showToast('success', 'Title Updated', newTitle);
+        }
+      });
+
+      btnBookmarkConv.addEventListener('click', async () => {
+        if (!currentSessionId) return;
+        const isBookmarked = await AIService.toggleBookmark(currentSessionId);
+        bookmarkMenuText.textContent = isBookmarked ? 'Remove Bookmark' : 'Bookmark Solution';
+        await loadConversationList();
+        UI.showToast('info', isBookmarked ? 'Conversation Bookmarked' : 'Bookmark Removed', 'Saved status updated.');
+      });
+
+      btnClearConv.addEventListener('click', () => {
+        if (currentSessionId) {
+          UI.openModal('modal-delete-conv');
+        }
+      });
+
+      btnConfirmDelete.addEventListener('click', async () => {
+        if (!currentSessionId) return;
+        await AIService.deleteConversation(currentSessionId);
+        UI.closeModal('modal-delete-conv');
+        UI.showToast('warning', 'Conversation Deleted', 'Doubt session removed from history.');
+
+        const all = await AIService.getConversations();
+        if (all.length > 0) {
+          selectConversation(all[0].id);
+        } else {
+          currentSessionId = null;
+          showEmptyState();
+          await loadConversationList();
+        }
+      });
+
+      // Escalate to Faculty Handlers
+      const btnEscalateConv = document.getElementById('btn-escalate-conv');
+      const btnConfirmEscalate = document.getElementById('btn-confirm-escalate');
+      if (btnEscalateConv) {
+        btnEscalateConv.addEventListener('click', () => {
+          if (currentSessionId) {
+            UI.openModal('modal-escalate-faculty');
+          } else {
+            UI.showToast('warning', 'No Active Session', 'Ask a question first before escalating.');
+          }
+        });
+      }
+
+      if (btnConfirmEscalate) {
+        btnConfirmEscalate.addEventListener('click', () => {
+          const faculty = document.getElementById('escalate-faculty-select').value;
+          UI.closeModal('modal-escalate-faculty');
+          UI.showToast('success', 'Escalated to Faculty', `Conversation transcript forwarded to ${faculty}.`);
+        });
+      }
+
+      // ====================================================================
+      // Google Gemini API Configuration & Backend Status Logic
+      // ====================================================================
+      const btnOpenGeminiModal = document.getElementById('btn-open-gemini-modal');
+      const geminiStatusDot = document.getElementById('gemini-status-dot');
+      const geminiStatusText = document.getElementById('gemini-status-text');
+      const geminiApiKeyInput = document.getElementById('gemini-api-key-input');
+      const btnToggleKeyVisibility = document.getElementById('btn-toggle-key-visibility');
+      const geminiModelSelect = document.getElementById('gemini-model-select');
+      const btnTestGeminiKey = document.getElementById('btn-test-gemini-key');
+      const btnSaveGeminiKey = document.getElementById('btn-save-gemini-key');
+      const btnClearGeminiKey = document.getElementById('btn-clear-gemini-key');
+      const geminiTestResult = document.getElementById('gemini-test-result');
+      const geminiBackendNoticeText = document.getElementById('gemini-backend-notice-text');
+
+      async function updateGeminiStatusBadge() {
+        const clientKey = AIService.getGeminiApiKey();
+        const model = AIService.getGeminiModel();
+        const backendStatus = await AIService.checkBackendStatus();
+
+        if (clientKey) {
+          if (geminiStatusDot) geminiStatusDot.classList.add('active');
+          if (geminiStatusText) geminiStatusText.textContent = model === 'gemini-2.5-flash' ? 'Gemini 2.5' : (model === 'gemini-2.5-pro' ? 'Gemini Pro' : 'Gemini AI');
+          if (btnOpenGeminiModal) btnOpenGeminiModal.title = `Using Custom Client Key (${model}). Click to configure.`;
+          if (geminiBackendNoticeText) {
+            geminiBackendNoticeText.textContent = `Client Key Override active. Processing via direct Google API (${model}).`;
+          }
+        } else if (backendStatus && backendStatus.configured) {
+          if (geminiStatusDot) geminiStatusDot.classList.add('active');
+          if (geminiStatusText) geminiStatusText.textContent = 'Gemini Backend';
+          if (btnOpenGeminiModal) btnOpenGeminiModal.title = `Backend Server AI Active (${backendStatus.model || 'gemini-2.5-flash'}). Key kept securely server-side.`;
+          if (geminiBackendNoticeText) {
+            geminiBackendNoticeText.textContent = `Backend Server Key Active (${backendStatus.model || 'gemini-2.5-flash'}). All questions are processed securely by the server.`;
+          }
+        } else {
+          if (geminiStatusDot) geminiStatusDot.classList.remove('active');
+          if (geminiStatusText) geminiStatusText.textContent = 'Local AI';
+          if (btnOpenGeminiModal) btnOpenGeminiModal.title = 'Using Local Academic Engine. Click to connect Google Gemini API or configure backend key.';
+          if (geminiBackendNoticeText) {
+            geminiBackendNoticeText.textContent = 'Backend key not set. Set GEMINI_API_KEY in .env or enter a client key below.';
+          }
+        }
+      }
+
+      // Initial badge sync
+      updateGeminiStatusBadge();
+
+      const btnHeaderGeminiStatus = document.getElementById('btn-header-gemini-status');
+      const openGeminiModal = async () => {
+        geminiApiKeyInput.value = AIService.getGeminiApiKey() || '';
+        geminiModelSelect.value = AIService.getGeminiModel() || 'gemini-2.5-flash';
+        geminiTestResult.style.display = 'none';
+        await updateGeminiStatusBadge();
+        UI.openModal('modal-gemini-config');
+      };
+
+      if (btnOpenGeminiModal) {
+        btnOpenGeminiModal.addEventListener('click', openGeminiModal);
+      }
+      if (btnHeaderGeminiStatus) {
+        btnHeaderGeminiStatus.addEventListener('click', openGeminiModal);
+      }
+
+      btnToggleKeyVisibility.addEventListener('click', () => {
+        const isPassword = geminiApiKeyInput.type === 'password';
+        geminiApiKeyInput.type = isPassword ? 'text' : 'password';
+      });
+
+      btnTestGeminiKey.addEventListener('click', async () => {
+        const key = geminiApiKeyInput.value.trim();
+        const model = geminiModelSelect.value;
+        if (!key) {
+          geminiTestResult.style.display = 'block';
+          geminiTestResult.style.backgroundColor = '#FEF2F2';
+          geminiTestResult.style.color = '#991B1B';
+          geminiTestResult.style.border = '1px solid #FCA5A5';
+          geminiTestResult.textContent = 'Please enter an API key to test.';
+          return;
+        }
+
+        btnTestGeminiKey.disabled = true;
+        btnTestGeminiKey.textContent = 'Testing...';
+        geminiTestResult.style.display = 'block';
+        geminiTestResult.style.backgroundColor = '#EFF6FF';
+        geminiTestResult.style.color = '#1E40AF';
+        geminiTestResult.style.border = '1px solid #BFDBFE';
+        geminiTestResult.textContent = `Connecting to Google Gemini (${model})...`;
+
+        const res = await AIService.testGeminiApiKey(key, model);
+        btnTestGeminiKey.disabled = false;
+        btnTestGeminiKey.textContent = 'Test Key';
+
+        if (res.success) {
+          geminiTestResult.style.backgroundColor = '#F0FDF4';
+          geminiTestResult.style.color = '#166534';
+          geminiTestResult.style.border = '1px solid #86EFAC';
+          geminiTestResult.textContent = res.message;
+        } else {
+          geminiTestResult.style.backgroundColor = '#FEF2F2';
+          geminiTestResult.style.color = '#991B1B';
+          geminiTestResult.style.border = '1px solid #FCA5A5';
+          geminiTestResult.textContent = `Connection failed: ${res.error}`;
+        }
+      });
+
+      btnSaveGeminiKey.addEventListener('click', async () => {
+        const key = geminiApiKeyInput.value.trim();
+        const model = geminiModelSelect.value;
+        AIService.setGeminiApiKey(key);
+        AIService.setGeminiModel(model);
+
+        // Sync with backend server environment
+        try {
+          await fetch('/api/ai/config', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ apiKey: key, model: model })
+          });
+        } catch (e) {
+          console.warn('Backend config sync fallback:', e);
+        }
+
+        await updateGeminiStatusBadge();
+        UI.closeModal('modal-gemini-config');
+        if (key) {
+          UI.showToast('success', 'Gemini AI Configured', `Connected using ${model}. Real-time Google AI active!`);
+        } else {
+          UI.showToast('info', 'Settings Updated', 'Using built-in academic reasoning engine.');
+        }
+      });
+
+      btnClearGeminiKey.addEventListener('click', async () => {
+        AIService.setGeminiApiKey('');
+        geminiApiKeyInput.value = '';
+
+        // Clear in backend server environment as well
+        try {
+          await fetch('/api/ai/config', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ apiKey: '', model: 'gemini-2.5-flash' })
+          });
+        } catch (e) { }
+
+        await updateGeminiStatusBadge();
+        UI.closeModal('modal-gemini-config');
+        UI.showToast('info', 'Key Cleared', 'Using built-in academic reasoning engine.');
+      });
+
+      // ====================================================================
+      // Helper Renderers (Markdown, Tags, Formatting)
+      // ====================================================================
+      function getSubjectTagClass(subject = '') {
+        const s = (subject || '').toLowerCase();
+        if (s.includes('database') || s.includes('dbms')) return 'subject-tag-dbms';
+        if (s.includes('operating') || s.includes('os')) return 'subject-tag-os';
+        if (s.includes('network') || s.includes('cn')) return 'subject-tag-cn';
+        if (s.includes('machine') || s.includes('ml')) return 'subject-tag-ml';
+        if (s.includes('data structure') || s.includes('dsa') || s.includes('algorithm')) return 'subject-tag-dsa';
+        return 'subject-tag-general';
+      }
+
+      function formatSessionTime(dateStr) {
+        if (!dateStr) return 'Recent';
+        const d = new Date(dateStr);
+        const now = new Date();
+        const diffMs = now - d;
+        const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+
+        if (diffDays === 0) return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        if (diffDays === 1) return 'Yesterday';
+        if (diffDays < 7) return `${diffDays}d ago`;
+        return d.toLocaleDateString([], { month: 'short', day: 'numeric' });
+      }
+
+      function escapeHtml(str) {
+        return (str || '')
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#039;');
+      }
+
+      function formatMarkdown(text = '') {
+        if (!text) return '';
+        let f = text;
+
+        // Code Blocks ```...```
+        f = f.replace(/```([a-zA-Z]*)\n([\s\S]*?)```/g, (match, lang, code) => {
+          const l = (lang || 'code').toLowerCase();
+          return `
+            <div class="code-block-wrapper">
+              <div class="code-header">
+                <div class="code-header-left">
+                  <div class="mac-dots">
+                    <span class="mac-dot red"></span>
+                    <span class="mac-dot yellow"></span>
+                    <span class="mac-dot green"></span>
+                  </div>
+                  <span class="code-lang">${l}</span>
+                </div>
+                <button type="button" class="code-copy-btn" data-code="${encodeURIComponent(code.trim())}">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                  Copy Code
+                </button>
+              </div>
+              <pre><code>${escapeHtml(code.trim())}</code></pre>
+            </div>
+          `;
+        });
+
+        // Block Math: $$...$$
+        f = f.replace(/\$\$([\s\S]*?)\$\$/g, '<div class="math-formula-box">$1</div>');
+
+        // Inline Math: $...$
+        f = f.replace(/\$([^\$\n]+)\$/g, '<code style="background: rgba(139, 92, 246, 0.08); padding: 0.15rem 0.4rem; border-radius: 4px; font-size: 0.88rem; font-family: \'Cambria Math\', Cambria, Georgia, serif; color: #6D28D9; font-weight: 600;">$1</code>');
+
+        // Inline Code: `...`
+        f = f.replace(/`([^`]+)`/g, '<code style="background: var(--bg-surface-subtle); border: 1px solid var(--border-default); padding: 0.12rem 0.4rem; border-radius: 4px; font-size: 0.8125rem; color: #DB2777; font-family: ui-monospace, monospace;">$1</code>');
+
+        // Alert Callouts: > [!TIP]
+        f = f.replace(/>\s*\[!TIP\]\s*\n?>?\s*(.*)/gi, `
+          <div class="academic-callout tip">
+            <div class="callout-header">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+              <span>University Exam Tip</span>
+            </div>
+            <div class="callout-body">$1</div>
+          </div>
+        `);
+
+        // Alert Callouts: > [!NOTE]
+        f = f.replace(/>\s*\[!NOTE\]\s*\n?>?\s*(.*)/gi, `
+          <div class="academic-callout note">
+            <div class="callout-header">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+              <span>Academic Invariant / Key Principle</span>
+            </div>
+            <div class="callout-body">$1</div>
+          </div>
+        `);
+
+        // Headings
+        f = f.replace(/^### (.*$)/gim, '<h4>$1</h4>');
+        f = f.replace(/^## (.*$)/gim, '<h3>$1</h3>');
+
+        // Horizontal rules
+        f = f.replace(/^---$/gim, '<hr>');
+
+        // Bold
+        f = f.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+
+        // Bullet lists
+        f = f.replace(/^\s*[\*\-]\s+(.*)$/gim, '<li style="margin-bottom: 0.35rem;">$1</li>');
+        f = f.replace(/(<li[\s\S]*?<\/li>)/g, '<ul>$1</ul>');
+
+        // Numbered lists
+        f = f.replace(/^\s*(\d+)\.\s+(.*)$/gim, '<div style="margin-bottom: 0.4rem; display: flex; gap: 0.4rem; align-items: flex-start;"><strong style="color: #7C3AED; flex-shrink: 0;">$1.</strong> <span>$2</span></div>');
+
+        return f;
+      }
+
+      function attachCodeCopyHandlers(parentEl) {
+        parentEl.querySelectorAll('.code-copy-btn').forEach(btn => {
+          btn.addEventListener('click', () => {
+            const rawCode = decodeURIComponent(btn.getAttribute('data-code') || '');
+            navigator.clipboard.writeText(rawCode).then(() => {
+              btn.innerHTML = `
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                Copied!
+              `;
+              setTimeout(() => {
+                btn.innerHTML = `
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                  Copy Code
+                `;
+              }, 1800);
+            });
+          });
+        });
+      }
+    });
+  </script>
+</body>
+
+</html>
