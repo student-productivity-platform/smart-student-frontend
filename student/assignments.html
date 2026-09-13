@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Assignments — Smart Student</title>
+  <link rel="stylesheet" href="../css/main.css">
+  <link rel="stylesheet" href="../css/dashboard.css">
+  <link rel="stylesheet" href="../css/responsive.css">
+  <script src="../js/auth-guard.js"></script>
+</head>
+
+<body>
+  <div id="toast-container"></div>
+  <div class="sidebar-backdrop"></div>
+  <div class="app-container">
+    <aside class="app-sidebar" aria-label="Main Navigation">
+      <div class="sidebar-header">
+        <a href="dashboard.html" class="sidebar-brand">
+          <div class="sidebar-brand-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2">
+              <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
+              <path d="M6 12v5c3 3 9 3 12 0v-5" />
+            </svg></div>
+          <div class="sidebar-brand-text">
+            <h2>Smart Student</h2><span>Student Portal</span>
+          </div>
+        </a>
+      </div>
+      <nav class="sidebar-nav-container">
+        <div class="nav-section-label">Academic Core</div>
+        <a href="dashboard.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18"
+              viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="3" width="7" height="7" />
+              <rect x="14" y="3" width="7" height="7" />
+              <rect x="14" y="14" width="7" height="7" />
+              <rect x="3" y="14" width="7" height="7" />
+            </svg></span><span>Overview</span></a>
+        <a href="courses.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18"
+              viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+              <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+            </svg></span><span>My Courses</span></a>
+        <a href="assignments.html" class="nav-link active"><span class="nav-link-icon"><svg width="18" height="18"
+              viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" />
+              <rect x="8" y="2" width="8" height="4" rx="1" ry="1" />
+            </svg></span><span>Assignments</span><span class="nav-badge">3</span></a>
+        <a href="exams.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18"
+              viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10" />
+              <polyline points="12 6 12 12 14 14" />
+            </svg></span><span>Exams</span><span class="nav-badge"
+            style="background-color: var(--status-danger);">2</span></a>
+        <a href="attendance.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18"
+              viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+              <polyline points="22 4 12 14.01 9 11.01" />
+            </svg></span><span>Attendance</span></a>
+        <a href="results.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18"
+              viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="18" y1="20" x2="18" y2="10" />
+              <line x1="12" y1="20" x2="12" y2="4" />
+              <line x1="6" y1="20" x2="6" y2="14" />
+            </svg></span><span>Results</span></a>
+        <div class="nav-section-label">Productivity & Resources</div>
+        <a href="materials.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18"
+              viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+            </svg></span><span>Learning Materials</span></a>
+        <a href="tasks.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18"
+              viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="9 11 12 14 22 4" />
+              <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
+            </svg></span><span>Tasks</span></a>
+        <a href="calendar.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18"
+              viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+              <line x1="16" y1="2" x2="16" y2="6" />
+              <line x1="8" y1="2" x2="8" y2="6" />
+              <line x1="3" y1="10" x2="21" y2="10" />
+            </svg></span><span>Calendar</span></a>
+        <a href="ai-doubts.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18"
+              viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10" />
+              <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+              <line x1="12" y1="17" x2="12.01" y2="17" />
+            </svg></span><span>AI Doubts</span></a>
+        <a href="study-groups.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18"
+              viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+              <circle cx="9" cy="7" r="4" />
+            </svg></span><span>Study Groups</span></a>
+        <div class="nav-divider"></div>
+        <a href="settings.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18"
+              viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="3" />
+              <path
+                d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
+            </svg></span><span>Settings</span></a>
+      </nav>
+      <div class="sidebar-footer">
+        <a href="profile.html" class="sidebar-user-card">
+          <div class="user-avatar"><span class="user-avatar-initials">RZ</span></div>
+          <div class="user-info-text">
+            <div class="user-name" id="sidebar-user-name">Riddhi Zunjarrao</div><span class="user-role-tag"
+              id="sidebar-user-role">Sem 4 • Sec A</span>
+          </div>
+        </a>
+      </div>
+    </aside>
+
+    <div class="app-main">
+      <header class="app-topbar">
+        <div class="topbar-left">
+          <button type="button" class="mobile-nav-toggle" id="mobile-nav-toggle" aria-label="Open Navigation">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="3" y1="12" x2="21" y2="12" />
+              <line x1="3" y1="6" x2="21" y2="6" />
+              <line x1="3" y1="18" x2="21" y2="18" />
+            </svg>
+          </button>
+          <div class="topbar-page-title">
+            <h1>Assignments</h1>
+          </div>
+        </div>
+
+        <div class="topbar-search-box">
+          <svg class="topbar-search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8" />
+            <line x1="21" y1="21" x2="16.65" y2="16.65" />
+          </svg>
+          <input type="search" id="global-search-input" class="topbar-search-input"
+            placeholder="Search coursework, tasks, submissions..." aria-label="Global Search">
+        </div>
+
+        <div class="topbar-right">
+          <div class="dropdown-container">
+            <button type="button" class="user-menu-btn" data-dropdown-toggle="user-dropdown-menu" aria-label="User Menu">
+              <div class="user-avatar-sm"><span class="user-avatar-initials">RZ</span></div>
+              <div class="user-menu-info">
+                <div class="user-menu-name" id="topbar-user-name">Riddhi Zunjarrao</div>
+                <div class="user-menu-sub">B.Tech CSE</div>
+              </div>
+            </button>
+            <div id="user-dropdown-menu" class="menu-dropdown profile-dropdown-menu">
+              <a href="profile.html">My Profile</a>
+              <a href="settings.html">Settings</a>
+              <a href="../login.html" class="logout-action">Sign Out</a>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <main class="app-content">
+        <!-- Page Header -->
+        <div class="page-header-block">
+          <div class="page-header-content">
+            <div class="page-header-context">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" />
+                <rect x="8" y="2" width="8" height="4" rx="1" ry="1" />
+              </svg>
+              <span>Semester 4 • Coursework Submissions</span>
+            </div>
+            <div class="page-title-row">
+              <h1>Academic Assignments & Continuous Evaluation</h1>
+            </div>
+            <p class="page-header-desc">Track deadlines, submit laboratory and theoretical coursework, and review faculty grading feedback.</p>
+          </div>
+          <div class="page-header-actions" id="assignment-summary-badges">
+            <span class="badge badge-neutral" id="badge-total-count">5 Total</span>
+            <span class="badge badge-warning" id="badge-pending-count">2 Pending</span>
+            <span class="badge badge-success" id="badge-submitted-count">1 Submitted</span>
+            <span class="badge badge-info" id="badge-graded-count">1 Graded</span>
+            <span class="badge badge-danger" id="badge-overdue-count">1 Overdue</span>
+          </div>
+        </div>
+
+        <!-- Attention Notice for Upcoming Deadlines -->
+        <div class="notice-box-yellow">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10" />
+            <line x1="12" y1="8" x2="12" y2="12" />
+            <line x1="12" y1="16" x2="12.01" y2="16" />
+          </svg>
+          <div>
+            <strong>Upcoming Deadline Alert:</strong> Database Management Systems <em>"Normalization & Relational Schema Design"</em> is due on <strong>Sep 08, 2026 at 11:59 PM</strong>. Ensure solutions adhere to BCNF decomposition guidelines.
+          </div>
+        </div>
+
+        <!-- Filter & Search Toolbar -->
+        <div class="filter-toolbar">
+          <div class="filter-left-cluster">
+            <div class="filter-search-box">
+              <svg class="filter-search-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="11" cy="11" r="8" />
+                <line x1="21" y1="21" x2="16.65" y2="16.65" />
+              </svg>
+              <input type="text" id="asg-search-input" class="filter-search-input" placeholder="Search by assignment or course...">
+            </div>
+            <select id="asg-course-filter" class="filter-select" aria-label="Filter by Subject">
+              <option value="all">All Subjects</option>
+              <option value="CS401">Data Structures (CS401)</option>
+              <option value="CS402">DBMS (CS402)</option>
+              <option value="CS403">Machine Learning (CS403)</option>
+              <option value="CS404">Operating Systems (CS404)</option>
+              <option value="CS405">Computer Networks (CS405)</option>
+            </select>
+          </div>
+
+          <div class="segment-tab-group" id="status-tab-group" role="tablist">
+            <button type="button" class="segment-tab-btn active" data-status="all">All</button>
+            <button type="button" class="segment-tab-btn" data-status="pending">Pending</button>
+            <button type="button" class="segment-tab-btn" data-status="submitted">Submitted</button>
+            <button type="button" class="segment-tab-btn" data-status="graded">Graded</button>
+            <button type="button" class="segment-tab-btn" data-status="overdue">Overdue</button>
+          </div>
+        </div>
+
+        <!-- Academic Assignment Table Card -->
+        <div class="academic-table-card">
+          <div class="academic-table-responsive">
+            <table class="academic-table">
+              <thead>
+                <tr>
+                  <th>Assignment & Topic</th>
+                  <th>Course & Faculty</th>
+                  <th>Deadline</th>
+                  <th>Status</th>
+                  <th>Marks</th>
+                  <th style="text-align: right;">Action</th>
+                </tr>
+              </thead>
+              <tbody id="assignments-table-body">
+                <!-- Injected via JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- Assignment Detail & Submission Modal -->
+  <div class="modal-overlay" id="assignment-detail-modal" role="dialog" aria-modal="true" aria-labelledby="modal-asg-title">
+    <div class="modal-dialog" style="max-width: 640px;">
+      <div class="modal-header">
+        <div>
+          <span class="badge badge-neutral mb-1" id="modal-asg-course">CS402 • Database Management Systems</span>
+          <h3 class="modal-title" id="modal-asg-title">Normalization & Relational Schema Design</h3>
+        </div>
+        <button type="button" class="btn-icon modal-close-btn" onclick="UI.closeModal('assignment-detail-modal')" aria-label="Close modal">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="flex-between mb-3" style="background: var(--bg-primary); border: 1px solid var(--border-light); border-radius: var(--radius-md); padding: 0.75rem 1rem;">
+          <div>
+            <div style="font-size: 0.6875rem; font-weight: 700; text-transform: uppercase; color: var(--text-tertiary);">Due Date</div>
+            <div style="font-size: 0.9375rem; font-weight: 700; color: var(--navy-900);" id="modal-asg-deadline">Sep 08, 2026 • 11:59 PM</div>
+          </div>
+          <div>
+            <div style="font-size: 0.6875rem; font-weight: 700; text-transform: uppercase; color: var(--text-tertiary); text-align: right;">Evaluation</div>
+            <div style="font-size: 0.9375rem; font-weight: 700; color: var(--blue-600); text-align: right;" id="modal-asg-marks">20 Marks Max</div>
+          </div>
+        </div>
+
+        <h4 style="font-size: 0.875rem; font-weight: 700; color: var(--navy-900); margin-bottom: 0.35rem;">Problem Statement & Instructions</h4>
+        <p style="font-size: 0.84375rem; color: var(--text-secondary); line-height: 1.5; margin-bottom: 1rem;" id="modal-asg-desc">
+          Convert the given unnormalized student enrollment data into 3NF and BCNF. Provide detailed functional dependency diagrams and justification for each decomposition step.
+        </p>
+
+        <div id="modal-attachment-block" style="margin-bottom: 1.25rem;">
+          <a href="#" class="btn btn-secondary btn-sm" id="modal-attachment-btn" download style="display: inline-flex; align-items: center; gap: 0.5rem;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            <span id="modal-attachment-label">Download Problem Specification (PDF)</span>
+          </a>
+        </div>
+
+        <!-- Graded Feedback Section -->
+        <div id="modal-graded-feedback-box" class="hidden" style="background-color: #F0FDF4; border: 1px solid #BBF7D0; border-radius: var(--radius-md); padding: 1rem; margin-bottom: 1.25rem;">
+          <div class="flex-between mb-1">
+            <strong style="color: #15803D; font-size: 0.875rem;">Faculty Assessment Feedback</strong>
+            <span class="badge badge-success" id="modal-grade-pill">Grade: A+ (14/15)</span>
+          </div>
+          <p style="font-size: 0.8125rem; color: #166534;" id="modal-grade-text">Feedback details...</p>
+        </div>
+
+        <!-- Submission Upload Section -->
+        <div id="modal-submission-section">
+          <h4 style="font-size: 0.875rem; font-weight: 700; color: var(--navy-900); margin-bottom: 0.5rem;">Your Submission</h4>
+          <div id="modal-dropzone" style="border: 2px dashed var(--border-strong); border-radius: var(--radius-md); padding: 1.5rem; text-align: center; background: var(--bg-primary); cursor: pointer; transition: all 0.2s ease;">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--text-tertiary)" stroke-width="2" style="margin-bottom: 0.5rem;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+            <div style="font-size: 0.84375rem; font-weight: 600; color: var(--text-primary); margin-bottom: 0.25rem;" id="dropzone-text">Click or drag your assignment solution file here</div>
+            <div style="font-size: 0.75rem; color: var(--text-tertiary);">Supports PDF, ZIP, DOCX, IPYNB, C, JAVA up to 25MB</div>
+            <input type="file" id="assignment-file-input" style="display: none;" onchange="handleFileSelect(event)">
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary btn-sm" onclick="UI.closeModal('assignment-detail-modal')">Close</button>
+        <button type="button" class="btn btn-primary btn-sm" id="btn-submit-assignment" onclick="submitCurrentAssignment()">Submit Assignment</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../data/mock-student.js"></script>
+  <script src="../data/mock-assignments.js"></script>
+  <script src="../js/firebase-config.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/assignment-service.js"></script>
+  <script src="../js/ui.js"></script>
+  <script>
+    let assignmentsData = [];
+    let currentActiveId = null;
+    let selectedFile = null;
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      UI.syncStudentIdentity();
+      assignmentsData = await AssignmentService.getAssignments();
+      updateSummaryBadges();
+      renderAssignmentsTable(assignmentsData);
+
+      // Search & Filters
+      const searchInput = document.getElementById('asg-search-input');
+      const courseFilter = document.getElementById('asg-course-filter');
+      const statusTabs = document.querySelectorAll('#status-tab-group .segment-tab-btn');
+
+      let currentStatusFilter = 'all';
+
+      function applyFilters() {
+        const query = (searchInput.value || '').toLowerCase().trim();
+        const course = courseFilter.value;
+
+        let filtered = assignmentsData.filter(item => {
+          const matchQuery = !query || item.title.toLowerCase().includes(query) || item.subject.toLowerCase().includes(query) || item.subjectCode.toLowerCase().includes(query);
+          const matchCourse = course === 'all' || item.subjectCode === course;
+          const matchStatus = currentStatusFilter === 'all' || item.status === currentStatusFilter;
+          return matchQuery && matchCourse && matchStatus;
+        });
+
+        renderAssignmentsTable(filtered);
+      }
+
+      searchInput.addEventListener('input', applyFilters);
+      courseFilter.addEventListener('change', applyFilters);
+
+      statusTabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+          statusTabs.forEach(t => t.classList.remove('active'));
+          tab.classList.add('active');
+          currentStatusFilter = tab.dataset.status;
+          applyFilters();
+        });
+      });
+
+      // Dropzone click trigger
+      const dropzone = document.getElementById('modal-dropzone');
+      const fileInput = document.getElementById('assignment-file-input');
+      if (dropzone && fileInput) {
+        dropzone.addEventListener('click', () => fileInput.click());
+      }
+    });
+
+    function updateSummaryBadges() {
+      const total = assignmentsData.length;
+      const pending = assignmentsData.filter(a => a.status === 'pending').length;
+      const submitted = assignmentsData.filter(a => a.status === 'submitted').length;
+      const graded = assignmentsData.filter(a => a.status === 'graded').length;
+      const overdue = assignmentsData.filter(a => a.status === 'overdue').length;
+
+      document.getElementById('badge-total-count').textContent = `${total} Total`;
+      document.getElementById('badge-pending-count').textContent = `${pending} Pending`;
+      document.getElementById('badge-submitted-count').textContent = `${submitted} Submitted`;
+      document.getElementById('badge-graded-count').textContent = `${graded} Graded`;
+      document.getElementById('badge-overdue-count').textContent = `${overdue} Overdue`;
+    }
+
+    function renderAssignmentsTable(items) {
+      const tbody = document.getElementById('assignments-table-body');
+      if (!items.length) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="6">
+              <div class="academic-empty-state">
+                <div class="academic-empty-icon">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg>
+                </div>
+                <h3>No assignments found</h3>
+                <p>No coursework matches the selected filters.</p>
+              </div>
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      tbody.innerHTML = items.map(asg => {
+        let statusBadge = '';
+        if (asg.status === 'submitted') {
+          statusBadge = `<span class="badge badge-success">Submitted</span>`;
+        } else if (asg.status === 'graded') {
+          statusBadge = `<span class="badge badge-info">Graded: ${asg.grade || 'A'}</span>`;
+        } else if (asg.status === 'overdue') {
+          statusBadge = `<span class="badge badge-danger">Overdue</span>`;
+        } else {
+          statusBadge = `<span class="badge badge-warning">Pending</span>`;
+        }
+
+        const isDueSoon = asg.dueDate.includes('Sep 08') || asg.dueDate.includes('Today');
+
+        return `
+          <tr>
+            <td>
+              <div style="font-weight: 700; color: var(--navy-900); font-size: 0.9125rem;">${asg.title}</div>
+              <div class="text-tertiary" style="font-size: 0.78125rem; margin-top: 0.15rem;">Format: ${asg.submissionType || 'Document'}</div>
+            </td>
+            <td>
+              <div style="font-weight: 600; color: var(--text-primary); font-size: 0.84375rem;">${asg.subject} (${asg.subjectCode})</div>
+              <div class="text-muted" style="font-size: 0.75rem;">${asg.faculty || 'Course Faculty'}</div>
+            </td>
+            <td>
+              <div style="font-weight: 600; font-size: 0.8125rem; ${isDueSoon ? 'color: #B45309;' : ''}">${asg.dueDate}</div>
+              <div class="text-muted" style="font-size: 0.75rem;">${asg.dueTime || '11:59 PM'}</div>
+            </td>
+            <td>${statusBadge}</td>
+            <td>
+              <strong style="color: var(--navy-900); font-size: 0.84375rem;">${asg.score ? `${asg.score}/${asg.maxMarks}` : `${asg.maxMarks} Pts`}</strong>
+            </td>
+            <td style="text-align: right;">
+              <button type="button" class="btn ${asg.status === 'pending' || asg.status === 'overdue' ? 'btn-primary' : 'btn-secondary'} btn-sm" onclick="openAssignmentModal('${asg.id}')">
+                ${asg.status === 'pending' || asg.status === 'overdue' ? 'Submit / View' : 'View Details'}
+              </button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    window.openAssignmentModal = function(id) {
+      currentActiveId = id;
+      const asg = assignmentsData.find(a => a.id === id);
+      if (!asg) return;
+
+      document.getElementById('modal-asg-course').textContent = `${asg.subjectCode} • ${asg.subject} (${asg.faculty || 'Faculty'})`;
+      document.getElementById('modal-asg-title').textContent = asg.title;
+      document.getElementById('modal-asg-deadline').textContent = `${asg.dueDate} • ${asg.dueTime || '11:59 PM'}`;
+      document.getElementById('modal-asg-marks').textContent = `${asg.maxMarks} Marks Max`;
+      document.getElementById('modal-asg-desc').textContent = asg.description;
+
+      const attachmentBlock = document.getElementById('modal-attachment-block');
+      if (asg.attachmentName) {
+        attachmentBlock.classList.remove('hidden');
+        document.getElementById('modal-attachment-label').textContent = `Download: ${asg.attachmentName}`;
+      } else {
+        attachmentBlock.classList.add('hidden');
+      }
+
+      const gradedBox = document.getElementById('modal-graded-feedback-box');
+      if (asg.status === 'graded') {
+        gradedBox.classList.remove('hidden');
+        document.getElementById('modal-grade-pill').textContent = `Score: ${asg.score}/${asg.maxMarks} (${asg.grade})`;
+        document.getElementById('modal-grade-text').textContent = asg.feedback || 'Excellent submission.';
+      } else {
+        gradedBox.classList.add('hidden');
+      }
+
+      const submitBtn = document.getElementById('btn-submit-assignment');
+      const dropzoneText = document.getElementById('dropzone-text');
+      selectedFile = null;
+
+      if (asg.status === 'submitted' || asg.status === 'graded') {
+        dropzoneText.innerHTML = `<strong>Already Submitted:</strong> ${asg.submittedFile || 'solution_submission.pdf'}<br><span style="font-size:0.75rem; color: var(--text-tertiary);">Submitted on ${asg.submittedAt || 'on time'}. Click to re-upload.</span>`;
+        submitBtn.textContent = 'Resubmit Assignment';
+      } else {
+        dropzoneText.textContent = 'Click or drag your assignment solution file here';
+        submitBtn.textContent = 'Submit Assignment';
+      }
+
+      UI.openModal('assignment-detail-modal');
+    };
+
+    window.handleFileSelect = function(e) {
+      if (e.target.files && e.target.files[0]) {
+        selectedFile = e.target.files[0];
+        document.getElementById('dropzone-text').innerHTML = `<strong style="color: var(--blue-600);">${selectedFile.name}</strong> (${(selectedFile.size / 1024 / 1024).toFixed(2)} MB) ready to submit.`;
+      }
+    };
+
+    window.submitCurrentAssignment = async function() {
+      if (!currentActiveId) return;
+      const asg = assignmentsData.find(a => a.id === currentActiveId);
+      if (!asg) return;
+
+      const fileData = selectedFile ? { name: selectedFile.name, size: `${(selectedFile.size / 1024 / 1024).toFixed(2)} MB` } : { name: `${asg.subjectCode}_Solution.pdf`, size: '2.1 MB' };
+
+      await AssignmentService.submitAssignment(currentActiveId, fileData);
+      asg.status = 'submitted';
+      asg.submittedFile = fileData.name;
+      asg.submittedAt = 'Just now';
+
+      updateSummaryBadges();
+      renderAssignmentsTable(assignmentsData);
+      UI.closeModal('assignment-detail-modal');
+      UI.showToast('success', 'Assignment Submitted', `"${asg.title}" has been successfully uploaded to the institutional portal.`);
+    };
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Academic Results — Smart Student</title>
+  <link rel="stylesheet" href="../css/main.css">
+  <link rel="stylesheet" href="../css/dashboard.css">
+  <link rel="stylesheet" href="../css/responsive.css">
+  <script src="../js/auth-guard.js"></script>
+</head>
+
+<body>
+  <div id="toast-container"></div>
+  <div class="sidebar-backdrop"></div>
+  <div class="app-container">
+    <aside class="app-sidebar" aria-label="Main Navigation">
+      <div class="sidebar-header">
+        <a href="dashboard.html" class="sidebar-brand">
+          <div class="sidebar-brand-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2">
+              <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
+              <path d="M6 12v5c3 3 9 3 12 0v-5" />
+            </svg></div>
+          <div class="sidebar-brand-text">
+            <h2>Smart Student</h2><span>Student Portal</span>
+          </div>
+        </a>
+      </div>
+      <nav class="sidebar-nav-container">
+        <div class="nav-section-label">Academic Core</div>
+        <a href="dashboard.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18"
+              viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="3" width="7" height="7" />
+              <rect x="14" y="3" width="7" height="7" />
+              <rect x="14" y="14" width="7" height="7" />
+              <rect x="3" y="14" width="7" height="7" />
+            </svg></span><span>Overview</span></a>
+        <a href="courses.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18"
+              viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+              <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+            </svg></span><span>My Courses</span></a>
+        <a href="assignments.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18"
+              viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" />
+              <rect x="8" y="2" width="8" height="4" rx="1" ry="1" />
+            </svg></span><span>Assignments</span><span class="nav-badge">3</span></a>
+        <a href="exams.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18"
+              viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10" />
+              <polyline points="12 6 12 12 14 14" />
+            </svg></span><span>Exams</span><span class="nav-badge"
+            style="background-color: var(--status-danger);">2</span></a>
+        <a href="attendance.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18"
+              viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+              <polyline points="22 4 12 14.01 9 11.01" />
+            </svg></span><span>Attendance</span></a>
+        <a href="results.html" class="nav-link active"><span class="nav-link-icon"><svg width="18" height="18"
+              viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="18" y1="20" x2="18" y2="10" />
+              <line x1="12" y1="20" x2="12" y2="4" />
+              <line x1="6" y1="20" x2="6" y2="14" />
+            </svg></span><span>Results</span></a>
+        <div class="nav-section-label">Productivity & Resources</div>
+        <a href="materials.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18"
+              viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+            </svg></span><span>Learning Materials</span></a>
+        <a href="tasks.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18"
+              viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="9 11 12 14 22 4" />
+              <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
+            </svg></span><span>Tasks</span></a>
+        <a href="calendar.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18"
+              viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+              <line x1="16" y1="2" x2="16" y2="6" />
+              <line x1="8" y1="2" x2="8" y2="6" />
+              <line x1="3" y1="10" x2="21" y2="10" />
+            </svg></span><span>Calendar</span></a>
+        <a href="ai-doubts.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18"
+              viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10" />
+              <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+              <line x1="12" y1="17" x2="12.01" y2="17" />
+            </svg></span><span>AI Doubts</span></a>
+        <a href="study-groups.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18"
+              viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+              <circle cx="9" cy="7" r="4" />
+            </svg></span><span>Study Groups</span></a>
+        <div class="nav-divider"></div>
+        <a href="settings.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18"
+              viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="3" />
+              <path
+                d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
+            </svg></span><span>Settings</span></a>
+      </nav>
+      <div class="sidebar-footer">
+        <a href="profile.html" class="sidebar-user-card">
+          <div class="user-avatar"><span class="user-avatar-initials">RZ</span></div>
+          <div class="user-info-text">
+            <div class="user-name" id="sidebar-user-name">Riddhi Zunjarrao</div><span class="user-role-tag"
+              id="sidebar-user-role">Sem 4 • Sec A</span>
+          </div>
+        </a>
+      </div>
+    </aside>
+
+    <div class="app-main">
+      <header class="app-topbar">
+        <div class="topbar-left">
+          <button type="button" class="mobile-nav-toggle" id="mobile-nav-toggle" aria-label="Open Navigation">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="3" y1="12" x2="21" y2="12" />
+              <line x1="3" y1="6" x2="21" y2="6" />
+              <line x1="3" y1="18" x2="21" y2="18" />
+            </svg>
+          </button>
+          <div class="topbar-page-title">
+            <h1>Academic Results</h1>
+          </div>
+        </div>
+
+        <div class="topbar-search-box">
+          <svg class="topbar-search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8" />
+            <line x1="21" y1="21" x2="16.65" y2="16.65" />
+          </svg>
+          <input type="search" id="global-search-input" class="topbar-search-input"
+            placeholder="Search courses, grade cards, transcripts..." aria-label="Global Search">
+        </div>
+
+        <div class="topbar-right">
+          <div class="dropdown-container">
+            <button type="button" class="user-menu-btn" data-dropdown-toggle="user-dropdown-menu" aria-label="User Menu">
+              <div class="user-avatar-sm"><span class="user-avatar-initials">RZ</span></div>
+              <div class="user-menu-info">
+                <div class="user-menu-name" id="topbar-user-name">Riddhi Zunjarrao</div>
+                <div class="user-menu-sub">B.Tech CSE</div>
+              </div>
+            </button>
+            <div id="user-dropdown-menu" class="menu-dropdown profile-dropdown-menu">
+              <a href="profile.html">My Profile</a>
+              <a href="settings.html">Settings</a>
+              <a href="../login.html" class="logout-action">Sign Out</a>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <main class="app-content">
+        <!-- Page Header -->
+        <div class="page-header-block">
+          <div class="page-header-content">
+            <div class="page-header-context">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="18" y1="20" x2="18" y2="10" />
+                <line x1="12" y1="20" x2="12" y2="4" />
+                <line x1="6" y1="20" x2="6" y2="14" />
+              </svg>
+              <span>Office of Academic Records • Controller of Examinations</span>
+            </div>
+            <div class="page-title-row">
+              <h1>Official Academic Performance & Grade Transcripts</h1>
+            </div>
+            <p class="page-header-desc">Review semester grade point averages (SGPA), cumulative progress (CGPA), and subject evaluation transcripts.</p>
+          </div>
+          <div class="page-header-actions">
+            <button type="button" class="btn btn-primary btn-sm" onclick="downloadTranscriptPdf()">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              <span>Download Official Transcript (PDF)</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Academic Standing Hero Card -->
+        <div class="results-hero-card">
+          <div>
+            <div style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--yellow-accent); letter-spacing: 0.08em; margin-bottom: 0.35rem;">Cumulative Performance Index</div>
+            <div class="cgpa-display-large">8.70 <span style="font-size: 1.1rem; color: #94A3B8; font-weight: 600;">/ 10.00 CGPA</span></div>
+            <div style="font-size: 0.84375rem; color: #CBD5E1; margin-top: 0.5rem;">
+              Standing: <strong style="color: #FFFFFF;">First Class with Distinction</strong> • Rank: <strong style="color: var(--yellow-accent);">Top 5% in B.Tech CSE</strong>
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); border-radius: var(--radius-md); padding: 1rem 1.25rem;">
+            <div>
+              <div style="font-size: 0.6875rem; color: #94A3B8; font-weight: 700; text-transform: uppercase;">Credits Earned</div>
+              <div style="font-size: 1.25rem; font-weight: 800; color: white;">68 / 160</div>
+            </div>
+            <div>
+              <div style="font-size: 0.6875rem; color: #94A3B8; font-weight: 700; text-transform: uppercase;">Sem 3 SGPA</div>
+              <div style="font-size: 1.25rem; font-weight: 800; color: #34D399;">8.90</div>
+            </div>
+            <div>
+              <div style="font-size: 0.6875rem; color: #94A3B8; font-weight: 700; text-transform: uppercase;">Total Passed</div>
+              <div style="font-size: 1.25rem; font-weight: 800; color: white;">18 Courses</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Semester Performance Progression Trend Chart -->
+        <div class="sgpa-trend-chart-box">
+          <div class="flex-between mb-3">
+            <div>
+              <h3 style="font-size: 1.05rem; font-weight: 700; color: var(--navy-900);">Semester SGPA Progression Trend</h3>
+              <p style="font-size: 0.8125rem; color: var(--text-tertiary);">Track GPA consistency across completed academic terms</p>
+            </div>
+            <span class="badge badge-info" style="font-size: 0.75rem;">Consistently Above 8.40</span>
+          </div>
+
+          <!-- Visual Bar Chart -->
+          <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; align-items: flex-end; padding: 1.5rem 1rem 0.5rem; background: var(--bg-primary); border-radius: var(--radius-md); border: 1px solid var(--border-light); min-height: 180px;">
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 0.5rem;">
+              <span style="font-size: 0.875rem; font-weight: 800; color: var(--navy-900);">8.40</span>
+              <div style="width: 100%; max-width: 60px; height: 100px; background: linear-gradient(180deg, var(--blue-600) 0%, #1E40AF 100%); border-radius: 6px 6px 0 0;"></div>
+              <span style="font-size: 0.75rem; font-weight: 700; color: var(--text-secondary);">Semester 1</span>
+            </div>
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 0.5rem;">
+              <span style="font-size: 0.875rem; font-weight: 800; color: var(--navy-900);">8.80</span>
+              <div style="width: 100%; max-width: 60px; height: 118px; background: linear-gradient(180deg, var(--blue-600) 0%, #1E40AF 100%); border-radius: 6px 6px 0 0;"></div>
+              <span style="font-size: 0.75rem; font-weight: 700; color: var(--text-secondary);">Semester 2</span>
+            </div>
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 0.5rem;">
+              <span style="font-size: 0.875rem; font-weight: 800; color: #16A34A;">8.90</span>
+              <div style="width: 100%; max-width: 60px; height: 125px; background: linear-gradient(180deg, #16A34A 0%, #15803D 100%); border-radius: 6px 6px 0 0;"></div>
+              <span style="font-size: 0.75rem; font-weight: 700; color: var(--text-secondary);">Semester 3 (Latest)</span>
+            </div>
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 0.5rem;">
+              <span style="font-size: 0.875rem; font-weight: 800; color: #D97706;">8.75*</span>
+              <div style="width: 100%; max-width: 60px; height: 114px; background: linear-gradient(180deg, #FDE68A 0%, #D97706 100%); border-radius: 6px 6px 0 0; opacity: 0.85;"></div>
+              <span style="font-size: 0.75rem; font-weight: 700; color: var(--text-secondary);">Sem 4 (Projected)</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Semester Selection Tabs & Transcript Table -->
+        <div class="flex-between mb-3 mt-4">
+          <div>
+            <h3 style="font-size: 1.1rem; font-weight: 700; color: var(--navy-900);">Subject-Wise Coursework Grades</h3>
+            <p style="font-size: 0.8125rem; color: var(--text-tertiary);">Detailed breakdown of internal continuous assessment and end-term performance</p>
+          </div>
+          <div class="segment-tab-group" id="semester-results-tabs" role="tablist">
+            <button type="button" class="segment-tab-btn active" data-sem="sem3">Semester 3 (Published)</button>
+            <button type="button" class="segment-tab-btn" data-sem="sem2">Semester 2</button>
+            <button type="button" class="segment-tab-btn" data-sem="sem1">Semester 1</button>
+            <button type="button" class="segment-tab-btn" data-sem="sem4">Sem 4 (Interim)</button>
+          </div>
+        </div>
+
+        <div class="academic-table-card">
+          <div class="academic-table-responsive">
+            <table class="academic-table">
+              <thead>
+                <tr>
+                  <th>Course Title & Code</th>
+                  <th>Credits</th>
+                  <th>Internal (40)</th>
+                  <th>External (60)</th>
+                  <th>Total Marks (100)</th>
+                  <th>Grade</th>
+                  <th style="text-align: right;">Grade Point</th>
+                </tr>
+              </thead>
+              <tbody id="results-table-body">
+                <!-- Injected via JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Subject Domain Analysis Grid -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 1.75rem;">
+          <div class="card" style="padding: 1.25rem;">
+            <div class="flex-between mb-2">
+              <h4 style="font-size: 0.95rem; font-weight: 700; color: #166534;">Core Strengths & High Performance</h4>
+              <span class="badge badge-success">Top Percentile</span>
+            </div>
+            <ul style="font-size: 0.8125rem; color: var(--text-secondary); line-height: 1.6; padding-left: 1.25rem;">
+              <li><strong>Object-Oriented Programming (Java):</strong> Perfect Grade 'O' (10.0 GP) with 94/100.</li>
+              <li><strong>Discrete Mathematics:</strong> Grade 'A+' (9.0 GP) with high mastery in Combinatorics & Proofs.</li>
+              <li><strong>Database Systems (Interim):</strong> High internal score in SQL query normalization.</li>
+            </ul>
+          </div>
+
+          <div class="card" style="padding: 1.25rem;">
+            <div class="flex-between mb-2">
+              <h4 style="font-size: 0.95rem; font-weight: 700; color: #B45309;">Focus & Revision Target Areas</h4>
+              <span class="badge badge-warning">Target Attention</span>
+            </div>
+            <ul style="font-size: 0.8125rem; color: var(--text-secondary); line-height: 1.6; padding-left: 1.25rem;">
+              <li><strong>Computer Networks (CS405):</strong> Subnet masking and routing protocols need deeper practice.</li>
+              <li><strong>Machine Learning (CS403):</strong> Mathematical derivation of multi-layer backprop gradients.</li>
+            </ul>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- Official Transcript Modal -->
+  <div class="modal-overlay" id="transcript-modal" role="dialog" aria-modal="true" aria-labelledby="modal-transcript-title">
+    <div class="modal-dialog" style="max-width: 720px;">
+      <div class="modal-header">
+        <div>
+          <span class="badge badge-success mb-1">Controller of Examinations</span>
+          <h3 class="modal-title" id="modal-transcript-title">Official Consolidated Grade Transcript</h3>
+        </div>
+        <button type="button" class="btn-icon modal-close-btn" onclick="UI.closeModal('transcript-modal')" aria-label="Close modal">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="admit-slip-sheet">
+          <div class="admit-watermark">OFFICIAL TRANSCRIPT</div>
+
+          <div class="admit-header">
+            <div class="admit-univ-title">State Technical University</div>
+            <div class="admit-univ-sub">Office of Academic Records & Examination Controller</div>
+            <div class="admit-title-pill">CONSOLIDATED ACADEMIC GRADE CARD</div>
+          </div>
+
+          <div class="admit-student-grid">
+            <div class="admit-fields">
+              <div>
+                <div class="admit-field-label">Student Name</div>
+                <div class="admit-field-val">Riddhi Zunjarrao</div>
+              </div>
+              <div>
+                <div class="admit-field-label">Roll Number</div>
+                <div class="admit-field-val">CS24-042</div>
+              </div>
+              <div>
+                <div class="admit-field-label">Degree Program</div>
+                <div class="admit-field-val">B.Tech (CSE)</div>
+              </div>
+              <div>
+                <div class="admit-field-label">Cumulative GPA</div>
+                <div class="admit-field-val" style="color: #16A34A;">8.70 / 10.00 CGPA</div>
+              </div>
+              <div>
+                <div class="admit-field-label">Credits Completed</div>
+                <div class="admit-field-val">68 / 160 Credits</div>
+              </div>
+              <div>
+                <div class="admit-field-label">Academic Standing</div>
+                <div class="admit-field-val" style="color: #6D28D9;">First Class Distinction</div>
+              </div>
+            </div>
+            <div class="admit-photo-box">
+              <div style="font-size: 1.5rem; font-weight: 800; color: #6D28D9; margin-bottom: 0.15rem;">RZ</div>
+              <span>VERIFIED</span>
+            </div>
+          </div>
+
+          <div style="margin-bottom: 0.75rem;">
+            <div style="font-size: 0.75rem; font-weight: 700; color: #475569; text-transform: uppercase; margin-bottom: 0.35rem;">Published Academic Term Performance (Semester 3)</div>
+            <table class="admit-timetable-table">
+              <thead>
+                <tr>
+                  <th>Course Code</th>
+                  <th>Course Title</th>
+                  <th>Credits</th>
+                  <th>Grade</th>
+                  <th style="text-align: right;">Grade Point</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>CS301</strong></td>
+                  <td>Discrete Mathematical Structures</td>
+                  <td>4</td>
+                  <td><span class="badge badge-info">A+</span></td>
+                  <td style="text-align: right;"><strong>9.0</strong></td>
+                </tr>
+                <tr>
+                  <td><strong>CS302</strong></td>
+                  <td>Digital Logic & Computer Architecture</td>
+                  <td>4</td>
+                  <td><span class="badge badge-neutral">A</span></td>
+                  <td style="text-align: right;"><strong>8.5</strong></td>
+                </tr>
+                <tr>
+                  <td><strong>CS303</strong></td>
+                  <td>Object Oriented Programming (Java)</td>
+                  <td>4</td>
+                  <td><span class="badge badge-success">O</span></td>
+                  <td style="text-align: right;"><strong>10.0</strong></td>
+                </tr>
+                <tr>
+                  <td><strong>CS304</strong></td>
+                  <td>Data Structures Theory & Analysis</td>
+                  <td>4</td>
+                  <td><span class="badge badge-info">A+</span></td>
+                  <td style="text-align: right;"><strong>9.0</strong></td>
+                </tr>
+                <tr>
+                  <td><strong>CS305L</strong></td>
+                  <td>Java Programming Laboratory</td>
+                  <td>2</td>
+                  <td><span class="badge badge-success">O</span></td>
+                  <td style="text-align: right;"><strong>10.0</strong></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="admit-barcode-row">
+            <div>
+              <div class="admit-barcode-sim">TR-2026-CS24042-STU</div>
+              <div style="font-size: 0.6875rem; color: #64748B; margin-top: 0.15rem;">Digital Signature Hash: 7b9f-43ea-9821-e8d1</div>
+            </div>
+            <div style="display: flex; gap: 1.5rem;">
+              <div class="admit-sig-box">
+                <div class="admit-sig-line"></div>
+                <span>Academic Dean</span>
+              </div>
+              <div class="admit-sig-box">
+                <div class="admit-sig-line"></div>
+                <span>Controller of Exams</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary btn-sm" onclick="UI.closeModal('transcript-modal')">Close</button>
+        <button type="button" class="btn btn-secondary btn-sm" onclick="window.print()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+          <span>Print Transcript</span>
+        </button>
+        <button type="button" class="btn btn-primary btn-sm" onclick="confirmTranscriptDownload()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          <span>Download PDF</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../data/mock-student.js"></script>
+  <script src="../js/firebase-config.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/ui.js"></script>
+  <script>
+    const transcriptData = {
+      sem3: [
+        { name: "Discrete Mathematical Structures", code: "CS301", credits: 4, internal: 37, external: 55, total: 92, grade: "A+", gp: 9.0 },
+        { name: "Digital Logic & Computer Architecture", code: "CS302", credits: 4, internal: 34, external: 52, total: 86, grade: "A", gp: 8.5 },
+        { name: "Object Oriented Programming (Java)", code: "CS303", credits: 4, internal: 39, external: 57, total: 96, grade: "O", gp: 10.0 },
+        { name: "Data Structures Theory & Analysis", code: "CS304", credits: 4, internal: 36, external: 54, total: 90, grade: "A+", gp: 9.0 },
+        { name: "Java Programming Laboratory", code: "CS305L", credits: 2, internal: 19, external: 29, total: 48, grade: "O", gp: 10.0 }
+      ],
+      sem2: [
+        { name: "Engineering Mathematics II", code: "MA201", credits: 4, internal: 35, external: 53, total: 88, grade: "A", gp: 8.5 },
+        { name: "Basic Electronics & Digital Systems", code: "EC202", credits: 4, internal: 36, external: 52, total: 88, grade: "A", gp: 8.5 },
+        { name: "Data Structures in C", code: "CS203", credits: 4, internal: 38, external: 55, total: 93, grade: "O", gp: 10.0 },
+        { name: "Environmental Sciences", code: "HS204", credits: 2, internal: 18, external: 27, total: 45, grade: "A+", gp: 9.0 }
+      ],
+      sem1: [
+        { name: "Engineering Mathematics I", code: "MA101", credits: 4, internal: 33, external: 51, total: 84, grade: "A", gp: 8.0 },
+        { name: "Engineering Physics & Optics", code: "PH102", credits: 4, internal: 34, external: 50, total: 84, grade: "A", gp: 8.0 },
+        { name: "Problem Solving & Python Programming", code: "CS103", credits: 4, internal: 38, external: 56, total: 94, grade: "O", gp: 10.0 }
+      ],
+      sem4: [
+        { name: "Data Structures & Algorithms", code: "CS401", credits: 4, internal: 36, external: "Upcoming", total: "36/40", grade: "A+ (Est.)", gp: 9.0 },
+        { name: "Database Management Systems", code: "CS402", credits: 4, internal: 35, external: "Upcoming", total: "35/40", grade: "A (Est.)", gp: 8.5 },
+        { name: "Machine Learning Fundamentals", code: "CS403", credits: 3, internal: 26, external: "Upcoming", total: "26/30", grade: "A+ (Est.)", gp: 9.0 },
+        { name: "Operating Systems", code: "CS404", credits: 4, internal: 34, external: "Upcoming", total: "34/40", grade: "A (Est.)", gp: 8.5 },
+        { name: "Computer Networks", code: "CS405", credits: 3, internal: 25, external: "Upcoming", total: "25/30", grade: "A (Est.)", gp: 8.5 }
+      ]
+    };
+
+    document.addEventListener('DOMContentLoaded', () => {
+      UI.syncStudentIdentity();
+      renderTranscriptTable('sem3');
+
+      const tabs = document.querySelectorAll('#semester-results-tabs .segment-tab-btn');
+      tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+          tabs.forEach(t => t.classList.remove('active'));
+          tab.classList.add('active');
+          renderTranscriptTable(tab.dataset.sem);
+        });
+      });
+    });
+
+    function renderTranscriptTable(semKey) {
+      const rows = transcriptData[semKey] || transcriptData.sem3;
+      const tbody = document.getElementById('results-table-body');
+
+      tbody.innerHTML = rows.map(r => `
+        <tr>
+          <td>
+            <div style="font-weight: 700; color: var(--navy-900); font-size: 0.9125rem;">${r.name}</div>
+            <div class="text-tertiary" style="font-size: 0.75rem;">${r.code}</div>
+          </td>
+          <td><strong>${r.credits}</strong></td>
+          <td>${r.internal}</td>
+          <td>${r.external}</td>
+          <td><strong>${r.total}</strong></td>
+          <td>
+            <span class="badge ${r.grade.includes('O') ? 'badge-success' : (r.grade.includes('A+') ? 'badge-info' : 'badge-neutral')}">${r.grade}</span>
+          </td>
+          <td style="text-align: right;">
+            <strong style="color: var(--blue-600); font-size: 0.9375rem;">${typeof r.gp === 'number' ? r.gp.toFixed(1) : r.gp}</strong>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    window.downloadTranscriptPdf = function() {
+      UI.openModal('transcript-modal');
+    };
+
+    window.confirmTranscriptDownload = function() {
+      UI.closeModal('transcript-modal');
+      UI.showToast('success', 'Transcript Downloaded', 'Official Semester 1-3 Consolidated Academic Grade Card (PDF) generated.');
+    };
+  </script>
+</body>
+
+</html>
