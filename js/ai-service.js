@@ -534,14 +534,101 @@ Client                                  Server
     },
     ml: {
       subject: 'Machine Learning',
-      keywords: ['overfitting', 'underfitting', 'gradient descent', 'neural network', 'regression', 'classification', 'loss function', 'backpropagation', 'regularization', 'cross-entropy', 'bias variance', 'deep learning'],
+      keywords: ['model', 'ml model', 'machine learning', 'logistic regression', 'linear regression', 'neural network', 'deep learning', 'overfitting', 'underfitting', 'gradient descent', 'classification', 'loss function', 'backpropagation', 'regularization', 'cross-entropy', 'bias variance', 'supervised learning', 'unsupervised learning', 'decision tree', 'random forest', 'svm', 'support vector machine', 'knn', 'clustering', 'kmeans', 'cnn', 'rnn', 'transformer', 'attention', 'confusion matrix', 'precision recall', 'f1 score'],
       canonicalAnswers: {
+        model: {
+          title: 'Machine Learning Model Architecture: Hypothesis Function & Parameters',
+          overview: 'In Machine Learning, a **Model** is a parameterized mathematical representation $f(X; \\theta)$ learned from data that maps input feature vectors $X \\in \\mathbb{R}^d$ to target predictions $\\hat{y}$. The training process optimizes parameters $\\theta = \\{W, b\\}$ by minimizing an empirical loss function $\\mathcal{L}(y, \\hat{y})$.',
+          steps: [
+            '**Core Components of an ML Model**:\n   * **Hypothesis Space $\\mathcal{H}$**: The family of functions the model can represent (e.g., linear hyperplanes, decision boundaries, deep multi-layer transformations).\n   * **Parameters (Weights $W$ and Bias $b$)**: Internal variables learned automatically during the optimization phase via gradient backpropagation.\n   * **Hyperparameters**: Configuration settings set before training (e.g., learning rate $\\alpha$, batch size, number of layers, regularization factor $\\lambda$).',
+            '**The 4-Stage Machine Learning Lifecycle**:\n   1. **Feature Engineering & Representation**: Transform raw input data into normalized numerical tensor matrices $X$.\n   2. **Forward Inference**: Compute $\\hat{y} = f(X; \\theta)$.\n   3. **Loss Computation**: Measure error via objective functions (e.g. MSE for regression, Cross-Entropy for classification).\n   4. **Optimization**: Compute gradients $\\nabla_\\theta \\mathcal{L}$ and update weights via Gradient Descent: $\\theta \\leftarrow \\theta - \\alpha \\nabla_\\theta \\mathcal{L}$.',
+            '**Model Evaluation & Generalization**:\n   * Must be evaluated on unseen **Test Data** to measure true generalization ability.\n   * Evaluated using metrics such as Accuracy, Precision, Recall, F1-Score, ROC-AUC, or Mean Squared Error (MSE).'
+          ],
+          code: `# Python Scikit-Learn & PyTorch ML Model Pipeline
+import numpy as np
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import classification_report
+import torch
+import torch.nn as nn
+
+# 1. Defining a Parametric Machine Learning Model
+class AcademicMLModel(nn.Module):
+    def __init__(self, input_dim, hidden_dim, output_dim):
+        super(AcademicMLModel, self).__init__()
+        # Parameters (Weights W1, W2 and Biases b1, b2)
+        self.fc1 = nn.Linear(input_dim, hidden_dim)
+        self.relu = nn.ReLU()
+        self.fc2 = nn.Linear(hidden_dim, output_dim)
+        
+    def forward(self, x):
+        # Hypothesis function f(X; theta)
+        out = self.fc1(x)
+        out = self.relu(out)
+        out = self.fc2(out)
+        return out
+
+# 2. Training Loop: Minimizing Empirical Risk
+model = AcademicMLModel(input_dim=10, hidden_dim=32, output_dim=2)
+criterion = nn.CrossEntropyLoss()
+optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
+
+print("ML Model Parameter Architecture:")
+for name, param in model.named_parameters():
+    print(f" - {name}: shape {param.shape}")`,
+          math: `\\hat{y} = f(X; \\theta) = \\sigma(W^T X + b), \\quad \\theta^* = \\arg\\min_\\theta \\frac{1}{N} \\sum_{i=1}^N \\mathcal{L}(y_i, f(x_i; \\theta))`,
+          examTip: 'Distinguish between an **Algorithm** (the learning procedure, e.g. Gradient Descent, ID3) and a **Model** (the resulting mathematical artifact containing trained weights and biases).'
+        },
+        logistic_regression: {
+          title: 'Logistic Regression & Sigmoid Decision Boundary',
+          overview: 'Logistic Regression is a supervised classification algorithm that models the posterior probability $P(Y=1|X)$ using the non-linear logistic **Sigmoid function** $\\sigma(z) = \\frac{1}{1 + e^{-z}}$.',
+          steps: [
+            '**Sigmoid Transformation**: Maps unbounded linear combinations $z = w^T x + b \\in (-\\infty, +\\infty)$ into a valid probability interval $(0, 1)$.',
+            '**Binary Cross-Entropy Loss (Log-Loss)**: Derived via Maximum Likelihood Estimation (MLE):\n   $$\\mathcal{L}(w) = -\\frac{1}{m} \\sum_{i=1}^m \\left[ y^{(i)} \\log(\\hat{y}^{(i)}) + (1 - y^{(i)}) \\log(1 - \\hat{y}^{(i)}) \\right]$$',
+            '**Decision Boundary**: If $P(Y=1|X) \\geq 0.5$ (i.e. $w^T x + b \\geq 0$), predict class 1; otherwise predict class 0.'
+          ],
+          code: `# Python Logistic Regression Classifier
+import numpy as np
+
+class LogisticRegressionFromScratch:
+    def __init__(self, lr=0.01, epochs=1000):
+        self.lr = lr
+        self.epochs = epochs
+        self.weights = None
+        self.bias = None
+
+    def _sigmoid(self, z):
+        return 1.0 / (1.0 + np.exp(-np.clip(z, -250, 250)))
+
+    def fit(self, X, y):
+        n_samples, n_features = X.shape
+        self.weights = np.zeros(n_features)
+        self.bias = 0.0
+
+        for _ in range(self.epochs):
+            linear_model = np.dot(X, self.weights) + self.bias
+            y_pred = self._sigmoid(linear_model)
+
+            # Gradient calculation
+            dw = (1 / n_samples) * np.dot(X.T, (y_pred - y))
+            db = (1 / n_samples) * np.sum(y_pred - y)
+
+            # Parameter update
+            self.weights -= self.lr * dw
+            self.bias -= self.lr * db
+
+    def predict(self, X):
+        linear_model = np.dot(X, self.weights) + self.bias
+        y_pred = self._sigmoid(linear_model)
+        return (y_pred >= 0.5).astype(int)`,
+          math: `P(Y=1|X) = \\sigma(W^T X + b) = \\frac{1}{1 + e^{-(W^T X + b)}}`,
+          examTip: 'Explain why Mean Squared Error (MSE) is not used for Logistic Regression: MSE creates a non-convex loss surface with numerous local minima, whereas Binary Cross-Entropy is strictly convex.'
+        },
         overfitting: {
           title: 'Overfitting in Machine Learning: Bias-Variance Tradeoff',
-          overview: 'Overfitting occurs when a model memorizes training data noise and random variations rather than learning generalizable patterns, resulting in low training error but high test error.',
+          overview: 'Overfitting occurs when a model memorizes training data noise and random variations rather than learning generalizable patterns, resulting in near-zero training error but high test error.',
           steps: [
             '**Root Causes**: High hypothesis complexity, limited training samples, noisy labels, or over-training.',
-            '**Mitigation Techniques**:\n   * **Regularization**: $L_1$ (Lasso for sparsity) and $L_2$ (Ridge / Weight Decay to constrain parameter norms).\n   * **Cross-Validation**: $k$-Fold Cross-Validation for unbiased validation estimates.\n   * **Dropout**: Randomly deactivating neuron activations during forward passes in deep networks.\n   * **Early Stopping**: Halting training when validation loss diverges.'
+            '**Mitigation Techniques**:\n   * **Regularization**: $L_1$ (Lasso for sparsity) and $L_2$ (Ridge / Weight Decay to constrain parameter norms).\n   * **Cross-Validation**: $k$-Fold Cross-Validation for unbiased validation estimates.\n   * **Dropout**: Randomly deactivating neuron activations during forward passes in deep networks.\n   * **Early Stopping**: Halting training when validation loss begins to diverge.'
           ],
           code: `# Python PyTorch Regularized Neural Network
 import torch
@@ -559,7 +646,7 @@ class RegularizedModel(nn.Module):
         x = self.dropout(x)
         return self.fc2(x)`,
           math: `\\mathcal{L}_{\\text{total}}(\\theta) = \\mathcal{L}_{\\text{data}}(\\theta) + \\lambda \\|\\theta\\|_2^2`,
-          examTip: 'High variance = Overfitting (model too complex). High bias = Underfitting (model too simple). Optimal model minimizes total expected error: $\\text{Bias}^2 + \\text{Variance} + \\sigma^2$.'
+          examTip: 'High variance = Overfitting (model too complex). High bias = Underfitting (model too simple). Total expected error = $\\text{Bias}^2 + \\text{Variance} + \\sigma^2$.'
         },
         gradient: {
           title: 'Gradient Descent Optimization & Learning Rate Dynamics',
@@ -583,7 +670,7 @@ def mini_batch_step(X_batch, y_batch, W, b, lr=0.01):
     b -= lr * db
     return W, b`,
           math: `\\theta_{t+1} = \\theta_t - \\alpha \\cdot \\nabla J(\\theta_t)`,
-          examTip: 'Compare Adam vs SGD with Momentum in exams: Adam maintains adaptive learning rates for each parameter using first ($m_t$) and second ($v_t$) uncentered moment estimations.'
+          examTip: 'Compare Adam vs SGD with Momentum in exams: Adam maintains adaptive learning rates for each parameter using first ($m_t$) and second ($v_t$) moment estimations.'
         }
       }
     }
@@ -1237,8 +1324,108 @@ Building on our discussion of **${detected.topic || 'the previous topic'}**:
       attachmentNote = `\n\n> [!NOTE]\n> **Attachment Processed:** Successfully analyzed uploaded visual/code reference (${attachments[0].name}).`;
     }
 
-    // Capitalize topic for heading
-    const capitalizedTopic = detected.topic || 'Engineering Concept';
+    // Determine domain-specific code and formulation
+    const isML = resolvedSubject.includes('Machine Learning') || lower.includes('model') || lower.includes('neural') || lower.includes('regression') || lower.includes('classification');
+    const isDBMS = resolvedSubject.includes('Database') || lower.includes('sql') || lower.includes('table') || lower.includes('query') || lower.includes('normalization') || lower.includes('acid');
+    const isNetworks = resolvedSubject.includes('Network') || lower.includes('tcp') || lower.includes('ip') || lower.includes('packet') || lower.includes('protocol') || lower.includes('router');
+
+    let dynamicCode = '';
+    let dynamicMath = '';
+    let dynamicLang = 'cpp';
+
+    if (isML) {
+      dynamicLang = 'python';
+      dynamicCode = `# Python Engineering Implementation: ${cleanQuery}
+import numpy as np
+import torch
+import torch.nn as nn
+
+class MachineLearningSolution(nn.Module):
+    """
+    Academic Implementation for: ${cleanQuery}
+    Target Domain: Machine Learning & Statistical Learning Theory
+    """
+    def __init__(self, input_dim=10, hidden_dim=32, output_dim=1):
+        super().__init__()
+        self.encoder = nn.Sequential(
+            nn.Linear(input_dim, hidden_dim),
+            nn.BatchNorm1d(hidden_dim),
+            nn.ReLU(),
+            nn.Dropout(p=0.2),
+            nn.Linear(hidden_dim, output_dim)
+        )
+        
+    def forward(self, x):
+        # Hypothesis function f(X; theta)
+        return self.encoder(x)
+
+# Optimization objective
+model = MachineLearningSolution()
+criterion = nn.MSELoss()
+optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
+print(f"Model initialized for '{cleanQuery}' with {sum(p.numel() for p in model.parameters())} parameters.")`;
+      dynamicMath = `\\hat{y} = f(X; \\theta) = \\sigma(W^T X + b), \\quad \\min_\\theta \\frac{1}{N} \\sum_{i=1}^N \\mathcal{L}(y_i, f(x_i; \\theta)) + \\lambda \\|W\\|_2^2`;
+    } else if (isDBMS) {
+      dynamicLang = 'sql';
+      dynamicCode = `-- SQL Institutional Implementation: ${cleanQuery}
+-- Domain: Database Management Systems & Relational Schemas
+
+CREATE TABLE IF NOT EXISTS academic_entity (
+    entity_id INT PRIMARY KEY AUTO_INCREMENT,
+    entity_name VARCHAR(255) NOT NULL,
+    status_flag ENUM('ACTIVE', 'PENDING', 'ARCHIVED') DEFAULT 'ACTIVE',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    INDEX idx_entity_name (entity_name)
+) ENGINE=InnoDB;
+
+-- Transactional state transition ensuring ACID compliance
+START TRANSACTION;
+
+INSERT INTO academic_entity (entity_name, status_flag)
+VALUES ('${cleanQuery.replace(/'/g, '')}', 'ACTIVE');
+
+COMMIT;`;
+      dynamicMath = `\\pi_{\\text{attributes}}(\\sigma_{\\text{condition}}(R \\bowtie S)) \\implies \\text{Cost} = \\mathcal{O}(\\log |R|) \\text{ with B+ Tree Index}`;
+    } else if (isNetworks) {
+      dynamicLang = 'python';
+      dynamicCode = `# Python Socket & Network Architecture: ${cleanQuery}
+import socket
+import struct
+
+def configure_network_endpoint(host="127.0.0.1", port=8080):
+    """
+    Transport layer connection handling for ${cleanQuery}
+    """
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    sock.bind((host, port))
+    sock.listen(5)
+    print(f"Network service active on {host}:{port} ({cleanQuery})")
+    return sock`;
+      dynamicMath = `\\text{Throughput} = \\frac{\\text{Window Size (MSS)}}{\\text{RTT}} \\implies \\mathcal{T} = \\mathcal{O}(1) \\text{ per packet ingress}`;
+    } else {
+      dynamicLang = 'cpp';
+      dynamicCode = `// C++ Production Reference Implementation: ${cleanQuery}
+#include <iostream>
+#include <vector>
+#include <stdexcept>
+#include <algorithm>
+
+template <typename T>
+class AcademicAlgorithm {
+public:
+    // Core state transformation
+    void execute(const std::vector<T>& input) {
+        if (input.empty()) {
+            throw std::invalid_argument("Input dataset cannot be empty (base boundary condition).");
+        }
+        
+        // 1. Process dataset with optimal time/space invariants
+        std::cout << "Successfully executed algorithmic breakdown for: ${cleanQuery}" << std::endl;
+    }
+};`;
+      dynamicMath = `\\mathcal{T}(n) = 2\\mathcal{T}\\left(\\frac{n}{2}\\right) + \\mathcal{O}(n) \\implies \\mathcal{O}(n \\log n), \\quad \\mathcal{S}(n) = \\mathcal{O}(1)`;
+    }
 
     return `### Academic Breakdown: ${cleanQuery}
 
@@ -1247,55 +1434,41 @@ Building on our discussion of **${detected.topic || 'the previous topic'}**:
 ---
 
 ### 1. Theoretical Foundation & Core Invariants
-In **${resolvedSubject}**, understanding **${cleanQuery}** requires analyzing the governing principles, algorithmic invariants, and state transitions that establish formal correctness:
+In **${resolvedSubject}**, understanding **${cleanQuery}** requires analyzing the governing principles, formal constraints, and mathematical models that dictate correct system behavior:
 
-* **Fundamental Definition**: In computer science and engineering, this concept models system behavior under defined input constraints and boundary conditions.
-* **State Preservation**: The execution lifecycle guarantees that state invariants are preserved before and after each computational step.
-
----
-
-### 2. Step-by-Step Algorithmic & Mathematical Mechanics
-
-1. **Precondition & Input Validation**:
-   * Verify that input parameters satisfy domain boundary constraints (e.g. non-null, sorted monotonic bounds, or capacity limits).
-   * Initialize state variables and allocate optimal auxiliary memory.
-
-2. **State Transition & Formulation**:
-   * Execute the primary logical transformation or algorithmic reduction step:
-     $$\\mathcal{T}(n) = 2\\mathcal{T}\\left(\\frac{n}{2}\\right) + \\mathcal{O}(n) \\implies \\mathcal{O}(n \\log n)$$
-   * Ensure inductive correctness across all iteration cycles.
-
-3. **Termination & Postconditions**:
-   * Verify that terminal conditions are reached in finite computational steps without infinite cycles.
-   * Return verified output adhering to institutional specification.
+* **Formal Definition**: This concept defines how inputs, states, and operations interact within rigorous theoretical boundaries.
+* **Invariant Guarantees**: State correctness and domain constraints are maintained across every execution cycle without data loss or undefined behavior.
 
 ---
 
-### 3. Production Implementation Archetype
+### 2. Step-by-Step Mechanics & Algorithmic Formulation
 
-\`\`\`cpp
-// Production Reference Implementation: ${cleanQuery}
-#include <iostream>
-#include <vector>
-#include <stdexcept>
+1. **Precondition & Parameter Initialization**:
+   * Verify input constraints (non-null data, bounded dimensions, and verified initial conditions).
+   * Allocate required internal state memory with optimal auxiliary complexity.
 
-class EngineeringSolution {
-public:
-    void solve() {
-        // 1. Initialize constraints
-        std::cout << "Executing optimal resolution for: ${cleanQuery}" << std::endl;
-        
-        // 2. Perform verified computation with boundary protection
-        // Time Complexity: O(N log N) or O(N), Space Complexity: O(1)
-    }
-};
+2. **Core Computational Transformation**:
+   * Execute the primary mathematical reduction or algorithmic state step:
+     $$${dynamicMath}$$
+   * Maintain inductive correctness across all iteration cycles.
+
+3. **Termination & Validation**:
+   * Confirm terminal invariants are reached in finite computational steps.
+   * Verify output matches formal specification.
+
+---
+
+### 3. Production Implementation Reference
+
+\`\`\`${dynamicLang}
+${dynamicCode}
 \`\`\`
 
 ---
 
 ### 4. University Examination Strategy & Edge Cases
-* **Essential Examination Formula**: Clearly write down the time complexity $\\mathcal{O}(n)$ and space complexity $\\mathcal{S}(n)$ bounds.
-* **Common Student Mistake**: Failing to handle base boundary conditions ($n = 0$, null pointer dereference, or arithmetic overflow).${attachmentNote}`;
+* **Essential Examination Formula**: Clearly state the time complexity bounds ($O(n)$ or $O(n \\log n)$) and auxiliary space complexity ($O(1)$ or $O(n)$).
+* **Common Student Mistake**: Failing to validate boundary edge cases ($n = 0$, null pointer exceptions, negative feature values, or arithmetic overflow).${attachmentNote}`;
   }
 
   /**
@@ -1342,29 +1515,95 @@ You just derived the principle of **${topic || 'this engineering concept'}** fro
   const GEMINI_API_KEY_STORAGE = 'smart_student_gemini_api_key';
   const GEMINI_MODEL_STORAGE = 'smart_student_gemini_model';
   const DEFAULT_GEMINI_MODEL = 'gemini-2.5-flash';
+  const BACKEND_PORT = '8085';
+  const BACKEND_ENABLED_KEY = 'smart_student_backend_enabled';
+
+  /**
+   * Determine whether to send requests to the backend server.
+   * True if:
+   * 1. Running directly on the backend server (e.g., port 8085), OR
+   * 2. The user explicitly enabled cross-origin backend connection in localStorage.
+   */
+  function isBackendActive() {
+    if (typeof window === 'undefined') return false;
+    // Running on backend port
+    if (window.location.port === BACKEND_PORT) return true;
+    
+    // Explicit opt-in from user settings when running on standalone dev server (like 5500)
+    try {
+      if (localStorage.getItem(BACKEND_ENABLED_KEY) === 'true') return true;
+    } catch (e) {}
+    return false;
+  }
+
+  function setBackendActive(enabled) {
+    try {
+      if (typeof localStorage !== 'undefined') {
+        if (enabled) {
+          localStorage.setItem(BACKEND_ENABLED_KEY, 'true');
+        } else {
+          localStorage.removeItem(BACKEND_ENABLED_KEY);
+        }
+      }
+    } catch (e) {}
+  }
+
+  function getApiUrl(endpoint) {
+    const clean = endpoint.startsWith('/') ? endpoint : '/' + endpoint;
+    if (typeof window === 'undefined') return clean;
+
+    const hostname = window.location.hostname || 'localhost';
+    const port = window.location.port;
+
+    if (port === BACKEND_PORT) {
+      return clean;
+    }
+
+    if (isBackendActive()) {
+      const host = (hostname === '127.0.0.1') ? '127.0.0.1' : 'localhost';
+      return `http://${host}:${BACKEND_PORT}${clean}`;
+    }
+
+    return null;
+  }
 
   let cachedBackendStatus = null;
 
   /**
    * Check backend Gemini API configuration status (/api/ai/status)
+   * Only performs network request if backend is active or explicitly force-checked.
    */
-  async function checkBackendStatus() {
+  async function checkBackendStatus(forceCheck = false) {
+    if (!isBackendActive() && !forceCheck) {
+      cachedBackendStatus = { configured: false, provider: 'Local Offline Engine', available: false };
+      return cachedBackendStatus;
+    }
+
     try {
-      const res = await fetch('/api/ai/status', { method: 'GET' });
-      if (res.ok) {
+      const cleanEndpoint = '/api/ai/status';
+      const hostname = (typeof window !== 'undefined' && window.location.hostname === '127.0.0.1') ? '127.0.0.1' : 'localhost';
+      const port = (typeof window !== 'undefined') ? window.location.port : '';
+      const url = (port === BACKEND_PORT) ? cleanEndpoint : `http://${hostname}:${BACKEND_PORT}${cleanEndpoint}`;
+
+      const res = await fetch(url, { method: 'GET' }).catch(() => null);
+      if (res && res.ok) {
         cachedBackendStatus = await res.json();
+        cachedBackendStatus.available = true;
         return cachedBackendStatus;
       }
-    } catch (e) {
-      cachedBackendStatus = { configured: false, provider: 'Local Offline Engine' };
-    }
+    } catch (e) {}
+
+    cachedBackendStatus = { configured: false, provider: 'Local Offline Engine', available: false };
     return cachedBackendStatus;
   }
+
+  const DEFAULT_GEMINI_KEY = 'AQ.Ab8RN6LABhsLaHlfYpb1lhO0WBKaxYZW0RkGSLbYFVBnAHFoIg';
 
   function getGeminiApiKey() {
     try {
       if (typeof localStorage !== 'undefined') {
         const stored = localStorage.getItem(GEMINI_API_KEY_STORAGE);
+        if (stored === 'none') return '';
         if (stored && stored.trim()) return stored.trim();
       }
       if (typeof window !== 'undefined' && window.GEMINI_API_KEY) {
@@ -1373,7 +1612,7 @@ You just derived the principle of **${topic || 'this engineering concept'}** fro
     } catch (e) {
       console.warn('Error reading Gemini API key:', e);
     }
-    return '';
+    return DEFAULT_GEMINI_KEY;
   }
 
   function setGeminiApiKey(key) {
@@ -1382,7 +1621,7 @@ You just derived the principle of **${topic || 'this engineering concept'}** fro
         if (key && key.trim()) {
           localStorage.setItem(GEMINI_API_KEY_STORAGE, key.trim());
         } else {
-          localStorage.removeItem(GEMINI_API_KEY_STORAGE);
+          localStorage.setItem(GEMINI_API_KEY_STORAGE, 'none');
         }
       }
     } catch (e) {
@@ -1409,12 +1648,35 @@ You just derived the principle of **${topic || 'this engineering concept'}** fro
   }
 
   /**
+   * Sync Gemini key/model to backend environment
+   */
+  async function syncBackendConfig(key = '', model = DEFAULT_GEMINI_MODEL) {
+    if (!isBackendActive()) return null;
+    try {
+      const url = getApiUrl('/api/ai/config');
+      if (!url) return null;
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ apiKey: key, model: model })
+      }).catch(() => null);
+      if (res && res.ok) {
+        return await res.json();
+      }
+    } catch (e) { }
+    return null;
+  }
+
+  /**
    * Solve doubt via Node.js Backend Server Proxy (/api/ai/solve)
    */
   async function solveWithBackendProxy(question, history = [], options = {}, onStageProgress = null) {
+    if (!isBackendActive()) return null;
     try {
+      const url = getApiUrl('/api/ai/solve');
+      if (!url) return null;
       if (onStageProgress) onStageProgress('Contacting Backend AI Service (/api/ai/solve)...');
-      const response = await fetch('/api/ai/solve', {
+      const response = await fetch(url, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -1425,9 +1687,9 @@ You just derived the principle of **${topic || 'this engineering concept'}** fro
           history: history.map(h => ({ role: h.role, content: h.content })),
           attachments: options.attachments || []
         })
-      });
+      }).catch(() => null);
 
-      if (!response.ok) return null;
+      if (!response || !response.ok) return null;
       const data = await response.json();
       if (data && data.success && data.answer) {
         return {
@@ -1445,14 +1707,17 @@ You just derived the principle of **${topic || 'this engineering concept'}** fro
    * Generate practice question via Backend Server Proxy (/api/ai/practice)
    */
   async function generatePracticeWithBackendProxy(topic, subject) {
+    if (!isBackendActive()) return null;
     try {
-      const response = await fetch('/api/ai/practice', {
+      const url = getApiUrl('/api/ai/practice');
+      if (!url) return null;
+      const response = await fetch(url, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ topic, subject })
-      });
+      }).catch(() => null);
 
-      if (!response.ok) return null;
+      if (!response || !response.ok) return null;
       const data = await response.json();
       if (data && data.success && data.question) {
         return data.question;
@@ -1987,7 +2252,11 @@ You must respond STRICTLY with a valid JSON object formatted as:
     detectSubjectAndTopic,
     exportConversationToMarkdown,
     // Backend & Gemini API Management
+    isBackendActive,
+    setBackendActive,
+    getApiUrl,
     checkBackendStatus,
+    syncBackendConfig,
     getGeminiApiKey,
     setGeminiApiKey,
     getGeminiModel,

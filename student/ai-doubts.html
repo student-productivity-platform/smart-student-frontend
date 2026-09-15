@@ -12,9 +12,15 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+  <link rel="alternate icon" href="../favicon.ico">
   <link rel="stylesheet" href="../css/main.css">
   <link rel="stylesheet" href="../css/dashboard.css">
   <link rel="stylesheet" href="../css/responsive.css">
+
+  <!-- KaTeX for Academic Mathematical Rendering -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
 
   <!-- Synchronous Route Guard -->
   <script src="../js/auth-guard.js"></script>
@@ -1824,16 +1830,8 @@
         AIService.setGeminiApiKey(key);
         AIService.setGeminiModel(model);
 
-        // Sync with backend server environment
-        try {
-          await fetch('/api/ai/config', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ apiKey: key, model: model })
-          });
-        } catch (e) {
-          console.warn('Backend config sync fallback:', e);
-        }
+        // Sync with backend server environment if available
+        await AIService.syncBackendConfig(key, model);
 
         await updateGeminiStatusBadge();
         UI.closeModal('modal-gemini-config');
@@ -1849,13 +1847,7 @@
         geminiApiKeyInput.value = '';
 
         // Clear in backend server environment as well
-        try {
-          await fetch('/api/ai/config', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ apiKey: '', model: 'gemini-2.5-flash' })
-          });
-        } catch (e) { }
+        await AIService.syncBackendConfig('', 'gemini-2.5-flash');
 
         await updateGeminiStatusBadge();
         UI.closeModal('modal-gemini-config');
@@ -1897,11 +1889,60 @@
           .replace(/'/g, '&#039;');
       }
 
+      function renderMath(mathStr, isBlock = false) {
+        const cleanRaw = (mathStr || '').trim();
+        if (typeof katex !== 'undefined' && katex.renderToString) {
+          try {
+            return katex.renderToString(cleanRaw, {
+              displayMode: isBlock,
+              throwOnError: false
+            });
+          } catch (e) { }
+        }
+
+        // Clean Unicode fallback if KaTeX is loading or offline
+        const clean = cleanRaw
+          .replace(/\\mathcal\{O\}/g, 'O')
+          .replace(/\\mathcal\{S\}/g, 'S')
+          .replace(/\\mathcal\{T\}/g, 'T')
+          .replace(/\\mathcal\{L\}/g, 'L')
+          .replace(/\\mathcal\{H\}/g, 'H')
+          .replace(/\\mathcal\{([A-Za-z])\}/g, '$1')
+          .replace(/\\mathbf\{([A-Za-z0-9]+)\}/g, '$1')
+          .replace(/\\text\{([^\}]+)\}/g, '$1')
+          .replace(/\\mathbb\{R\}/g, 'ℝ')
+          .replace(/\\in/g, '∈')
+          .replace(/\\left\(/g, '(')
+          .replace(/\\right\)/g, ')')
+          .replace(/\\implies/g, ' ⇒ ')
+          .replace(/\\rightarrow/g, ' → ')
+          .replace(/\\leq/g, ' ≤ ')
+          .replace(/\\geq/g, ' ≥ ')
+          .replace(/\\neq/g, ' ≠ ')
+          .replace(/\\approx/g, ' ≈ ')
+          .replace(/\\times/g, ' × ')
+          .replace(/\\cdot/g, ' · ')
+          .replace(/\\alpha/g, 'α')
+          .replace(/\\beta/g, 'β')
+          .replace(/\\theta/g, 'θ')
+          .replace(/\\lambda/g, 'λ')
+          .replace(/\\sigma/g, 'σ')
+          .replace(/\\nabla/g, '∇')
+          .replace(/\\sum/g, '∑')
+          .replace(/\\arg\\min/g, 'argmin')
+          .replace(/\\frac\{([^}]+)\}\{([^}]+)\}/g, '($1 / $2)');
+
+        if (isBlock) {
+          return `<div class="math-formula-box">${clean}</div>`;
+        }
+        return `<code style="background: rgba(139, 92, 246, 0.08); padding: 0.15rem 0.4rem; border-radius: 4px; font-size: 0.88rem; font-family: 'Cambria Math', Cambria, Georgia, serif; color: #6D28D9; font-weight: 600;">${clean}</code>`;
+      }
+
       function formatMarkdown(text = '') {
         if (!text) return '';
         let f = text;
 
-        // Code Blocks ```...```
+        // 1. Code Blocks ```...```
         f = f.replace(/```([a-zA-Z]*)\n([\s\S]*?)```/g, (match, lang, code) => {
           const l = (lang || 'code').toLowerCase();
           return `
@@ -1925,16 +1966,20 @@
           `;
         });
 
-        // Block Math: $$...$$
-        f = f.replace(/\$\$([\s\S]*?)\$\$/g, '<div class="math-formula-box">$1</div>');
+        // 2. Block Math: $$...$$
+        f = f.replace(/\$\$([\s\S]*?)\$\$/g, (match, mathContent) => {
+          return renderMath(mathContent, true);
+        });
 
-        // Inline Math: $...$
-        f = f.replace(/\$([^\$\n]+)\$/g, '<code style="background: rgba(139, 92, 246, 0.08); padding: 0.15rem 0.4rem; border-radius: 4px; font-size: 0.88rem; font-family: \'Cambria Math\', Cambria, Georgia, serif; color: #6D28D9; font-weight: 600;">$1</code>');
+        // 3. Inline Math: $...$
+        f = f.replace(/\$([^\$\n]+)\$/g, (match, mathContent) => {
+          return renderMath(mathContent, false);
+        });
 
-        // Inline Code: `...`
+        // 4. Inline Code: `...`
         f = f.replace(/`([^`]+)`/g, '<code style="background: var(--bg-surface-subtle); border: 1px solid var(--border-default); padding: 0.12rem 0.4rem; border-radius: 4px; font-size: 0.8125rem; color: #DB2777; font-family: ui-monospace, monospace;">$1</code>');
 
-        // Alert Callouts: > [!TIP]
+        // 5. Alert Callouts: > [!TIP]
         f = f.replace(/>\s*\[!TIP\]\s*\n?>?\s*(.*)/gi, `
           <div class="academic-callout tip">
             <div class="callout-header">
@@ -1945,7 +1990,7 @@
           </div>
         `);
 
-        // Alert Callouts: > [!NOTE]
+        // 6. Alert Callouts: > [!NOTE]
         f = f.replace(/>\s*\[!NOTE\]\s*\n?>?\s*(.*)/gi, `
           <div class="academic-callout note">
             <div class="callout-header">
@@ -1956,21 +2001,26 @@
           </div>
         `);
 
-        // Headings
+        // 7. Headings
         f = f.replace(/^### (.*$)/gim, '<h4>$1</h4>');
         f = f.replace(/^## (.*$)/gim, '<h3>$1</h3>');
 
-        // Horizontal rules
+        // 8. Horizontal rules
         f = f.replace(/^---$/gim, '<hr>');
 
-        // Bold
+        // 9. Bold
         f = f.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
 
-        // Bullet lists
-        f = f.replace(/^\s*[\*\-]\s+(.*)$/gim, '<li style="margin-bottom: 0.35rem;">$1</li>');
-        f = f.replace(/(<li[\s\S]*?<\/li>)/g, '<ul>$1</ul>');
+        // 10. Grouped Bullet lists
+        f = f.replace(/(?:^\s*[\*\-]\s+.*(?:\n|$))+/gim, (match) => {
+          const items = match.trim().split('\n').map(line => {
+            const content = line.replace(/^\s*[\*\-]\s+/, '');
+            return `<li style="margin-bottom: 0.35rem;">${content}</li>`;
+          }).join('');
+          return `<ul style="margin: 0.5rem 0; padding-left: 1.25rem;">${items}</ul>`;
+        });
 
-        // Numbered lists
+        // 11. Numbered lists
         f = f.replace(/^\s*(\d+)\.\s+(.*)$/gim, '<div style="margin-bottom: 0.4rem; display: flex; gap: 0.4rem; align-items: flex-start;"><strong style="color: #7C3AED; flex-shrink: 0;">$1.</strong> <span>$2</span></div>');
 
         return f;
