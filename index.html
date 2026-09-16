@@ -185,7 +185,13 @@
         const sessionRaw = sessionStorage.getItem('smart_student_session') || localStorage.getItem('smart_student_session');
         if (sessionRaw) {
           const user = JSON.parse(sessionRaw);
-          if (user && user.role === 'faculty') {
+          if (user && (user.role === 'administrator' || user.role === 'admin' || user.role === 'super_admin')) {
+            window.location.replace('administrator/dashboard.html');
+            return;
+          } else if (user && user.role === 'hod') {
+            window.location.replace('hod/dashboard.html');
+            return;
+          } else if (user && user.role === 'faculty') {
             window.location.replace('faculty/dashboard.html');
             return;
           } else if (user) {

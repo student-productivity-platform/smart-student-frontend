@@ -76,6 +76,21 @@
               style="background: rgba(139, 92, 246, 0.12); border-color: #8B5CF6; color: #7C3AED; font-weight: 600;">
               faculty@university.edu (Prof. Sunita)
             </button>
+            <button type="button" class="demo-btn" id="demo-hod-btn" data-email="hod@gmail.com"
+              data-pass="hod1234"
+              style="background: rgba(124, 58, 237, 0.14); border-color: #7C3AED; color: #6D28D9; font-weight: 700;">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="flex-shrink:0">
+                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+              </svg>
+              hod@gmail.com (HOD)
+            </button>
+            <button type="button" class="demo-btn demo-btn--admin" id="demo-admin-btn" data-email="admin@university.edu" data-pass="Admin@2026">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="flex-shrink:0">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+              </svg>
+              admin@university.edu
+            </button>
           </div>
         </div>
 
@@ -185,8 +200,10 @@
 
   <!-- Application Services -->
   <script src="data/mock-student.js"></script>
+  <script src="data/mock-hod.js"></script>
   <script src="js/firebase-config.js"></script>
   <script src="js/auth.js"></script>
+  <script src="js/hod-service.js"></script>
   <script src="js/ui.js"></script>
 
   <!-- Login Controller Script -->
@@ -313,7 +330,11 @@
 
           // Role-based portal redirection
           setTimeout(() => {
-            if (user.role === 'faculty') {
+            if (user.role === 'super_admin' || user.role === 'administrator' || user.role === 'admin') {
+              window.location.href = 'administrator/dashboard.html';
+            } else if (user.role === 'hod') {
+              window.location.href = 'hod/dashboard.html';
+            } else if (user.role === 'faculty') {
               window.location.href = 'faculty/dashboard.html';
             } else {
               window.location.href = 'student/dashboard.html';

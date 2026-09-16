@@ -193,6 +193,21 @@ body {
   border-color: #7C3AED;
 }
 
+.demo-btn--admin {
+  background-color: #FFFBEB;
+  border-color: #FCD34D;
+  color: #92400E;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.demo-btn--admin:hover {
+  background-color: #F59E0B;
+  color: #FFFFFF;
+  border-color: #F59E0B;
+}
+
 /* Inline Alert */
 .auth-alert {
   background-color: #FEF2F2;

@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Faculty Allocation — HOD Portal</title>
+  <meta name="description" content="Manage and allocate faculty members to departmental subjects, programs, semesters and sections.">
+
+  <!-- Design System & Stylesheets -->
+  <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+  <link rel="alternate icon" href="../favicon.ico">
+  <link rel="stylesheet" href="../css/main.css">
+  <link rel="stylesheet" href="../css/dashboard.css">
+  <link rel="stylesheet" href="../css/hod.css">
+  <link rel="stylesheet" href="../css/responsive.css">
+
+  <script src="../js/hod-auth-guard.js"></script>
+</head>
+
+<body>
+
+  <div id="toast-container" aria-live="polite"></div>
+  <div class="sidebar-backdrop"></div>
+
+  <div class="app-container">
+    <!-- Sidebar -->
+    <aside class="app-sidebar" aria-label="HOD Navigation">
+      <div class="sidebar-header">
+        <a href="dashboard.html" class="sidebar-brand">
+          <div class="sidebar-brand-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+              <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
+              <path d="M6 12v5c3 3 9 3 12 0v-5" />
+            </svg>
+          </div>
+          <div class="sidebar-brand-text">
+            <h2>Smart Student</h2>
+            <span>HOD PORTAL</span>
+          </div>
+        </a>
+      </div>
+
+      <nav class="sidebar-nav-container">
+        <div class="nav-section-label">Departmental Core</div>
+
+        <a href="dashboard.html" class="nav-link">
+          <span class="nav-link-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+          </span>
+          <span>Overview</span>
+        </a>
+
+        <a href="faculty-allocation.html" class="nav-link active">
+          <span class="nav-link-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><polyline points="16 11 18 13 22 9"/></svg>
+          </span>
+          <span>Faculty Allocation</span>
+        </a>
+
+        <a href="students.html" class="nav-link">
+          <span class="nav-link-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          </span>
+          <span>Students</span>
+        </a>
+
+        <a href="faculty.html" class="nav-link">
+          <span class="nav-link-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          </span>
+          <span>Faculty</span>
+        </a>
+
+        <a href="timetable.html" class="nav-link">
+          <span class="nav-link-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          </span>
+          <span>Timetable</span>
+        </a>
+
+        <a href="approvals.html" class="nav-link">
+          <span class="nav-link-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="m9 15 2 2 4-4"/></svg>
+          </span>
+          <span>Approvals</span>
+          <span class="nav-badge" id="nav-badge-approvals" style="background-color: var(--hod-accent);">5</span>
+        </a>
+
+        <div class="nav-section-label">Analytics & Insights</div>
+
+        <a href="reports.html" class="nav-link">
+          <span class="nav-link-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+          </span>
+          <span>Reports</span>
+        </a>
+
+        <a href="settings.html" class="nav-link">
+          <span class="nav-link-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          </span>
+          <span>Settings</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <a href="profile.html" class="sidebar-user-card">
+          <div class="user-avatar" style="background: linear-gradient(135deg, #7C3AED 0%, #4F46E5 100%);">
+            <span class="user-avatar-initials">AD</span>
+          </div>
+          <div class="user-info-text">
+            <div class="user-name" id="sidebar-user-name">Dr. Anand Deshmukh</div>
+            <span class="user-role-tag" id="sidebar-user-role">Head of Department</span>
+          </div>
+        </a>
+      </div>
+    </aside>
+
+    <!-- Main Container -->
+    <div class="app-main">
+      <header class="app-topbar">
+        <div class="topbar-left">
+          <button type="button" class="mobile-nav-toggle" id="mobile-nav-toggle" aria-label="Open Navigation">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+          </button>
+          <div class="topbar-page-title">
+            <h1>Faculty Allocation (F31)</h1>
+          </div>
+        </div>
+
+        <div class="topbar-search-box">
+          <svg class="topbar-search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="search" id="global-search-input" class="topbar-search-input" placeholder="Search allocations (Press Enter)..." aria-label="Global Search">
+        </div>
+
+        <div class="topbar-right">
+          <button type="button" class="btn-hod-primary" id="open-new-alloc-btn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            <span>Allocate Faculty</span>
+          </button>
+
+          <!-- Quick Portal Switcher -->
+          <a href="../student/dashboard.html" class="badge badge-subtle" style="text-decoration: none; padding: 0.4rem 0.75rem; font-size: 0.75rem; border-radius: 20px; color: #7C3AED; background: #EDE9FE;" title="Switch view to Student Portal">
+            <span>⇄ Student View</span>
+          </a>
+
+          <!-- Notification Dropdown -->
+          <div class="dropdown-container">
+            <button type="button" class="icon-button" data-dropdown-toggle="notification-dropdown" aria-label="Notifications">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+                <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+              </svg>
+              <span class="unread-badge" id="notif-badge">5</span>
+            </button>
+
+            <div id="notification-dropdown" class="menu-dropdown notification-dropdown">
+              <div class="dropdown-header">
+                <h4>Department Notifications</h4>
+                <a href="approvals.html" style="font-size: 0.75rem; color: var(--hod-accent);">View all approvals</a>
+              </div>
+              <ul class="dropdown-list" id="notifications-list-container">
+                <li class="dropdown-item">
+                  <div style="font-size: 0.8125rem; font-weight: 600; color: #0F172A;">Leave Request Pending</div>
+                  <div style="font-size: 0.75rem; color: #64748B;">Prof. Amit Kulkarni submitted 3-day medical leave.</div>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- User Menu Dropdown -->
+          <div class="dropdown-container">
+            <button type="button" class="user-menu-btn" data-dropdown-toggle="user-dropdown" aria-label="HOD Profile Menu">
+              <div class="user-avatar-sm" style="background: linear-gradient(135deg, #7C3AED 0%, #4F46E5 100%); color: #FFFFFF;">
+                <span class="user-avatar-initials">AD</span>
+              </div>
+              <div class="user-menu-info">
+                <div class="user-menu-name" id="topbar-user-name">Dr. Anand Deshmukh</div>
+                <div class="user-menu-sub">HOD • Computer Engg</div>
+              </div>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="6 9 12 15 18 9" />
+              </svg>
+            </button>
+
+            <div id="user-dropdown" class="menu-dropdown profile-dropdown-menu">
+              <div class="dropdown-header">
+                <h4>Dr. Anand Deshmukh</h4>
+                <span style="font-size: 0.75rem; color: #64748B;">Head of Department (CSE)</span>
+              </div>
+              <a href="profile.html">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                <span>My Profile</span>
+              </a>
+              <a href="settings.html">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                <span>Department Settings</span>
+              </a>
+              <button type="button" id="logout-action-btn" class="logout-action">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                <span>Sign Out</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <main class="app-content-body">
+        <!-- Filter Bar -->
+        <div class="hod-filter-bar">
+          <div class="hod-filter-group">
+            <div class="hod-search-box">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              <input type="text" id="alloc-search" placeholder="Search faculty or subject code...">
+            </div>
+
+            <select id="filter-program" class="hod-select" aria-label="Filter by Program">
+              <option value="all">All Programs</option>
+              <option value="B.Tech CSE">B.Tech CSE</option>
+              <option value="M.Tech CSE">M.Tech CSE</option>
+              <option value="B.Tech AI&DS">B.Tech AI&DS</option>
+            </select>
+
+            <select id="filter-semester" class="hod-select" aria-label="Filter by Semester">
+              <option value="all">All Semesters</option>
+              <option value="4">Semester 4</option>
+              <option value="6">Semester 6</option>
+              <option value="8">Semester 8</option>
+            </select>
+
+            <select id="filter-section" class="hod-select" aria-label="Filter by Section">
+              <option value="all">All Sections</option>
+              <option value="A">Section A</option>
+              <option value="B">Section B</option>
+              <option value="C">Section C</option>
+            </select>
+
+            <select id="filter-status" class="hod-select" aria-label="Filter by Allocation Status">
+              <option value="all">All Status</option>
+              <option value="Allocated">Allocated</option>
+              <option value="Pending">Pending</option>
+            </select>
+          </div>
+
+          <button type="button" class="btn-hod-secondary" id="reset-filters-btn" style="padding: 0.45rem 0.85rem; font-size: 0.75rem;">
+            Reset Filters
+          </button>
+        </div>
+
+        <!-- Main Allocation Table -->
+        <div class="hod-table-wrapper">
+          <table class="hod-table" id="allocation-table">
+            <thead>
+              <tr>
+                <th>Faculty Member</th>
+                <th>Subject</th>
+                <th>Program</th>
+                <th>Sem / Sec</th>
+                <th>Weekly Load</th>
+                <th>Status</th>
+                <th style="text-align: right;">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="allocation-table-body">
+              <!-- Rendered dynamically -->
+            </tbody>
+          </table>
+        </div>
+
+        <div id="allocation-pagination" class="pagination-container" style="margin-top: 1rem; display: flex; justify-content: space-between; align-items: center;">
+          <!-- Pagination injected via JS -->
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- Allocate / Reassign Faculty Modal -->
+  <div id="allocation-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="alloc-modal-title" aria-hidden="true">
+    <div class="modal-card" style="max-width: 580px;">
+      <div class="modal-header">
+        <h3 id="alloc-modal-title" class="modal-title">Allocate Faculty to Subject</h3>
+        <button type="button" class="modal-close-btn" id="close-alloc-modal" aria-label="Close dialog">&times;</button>
+      </div>
+      <form id="allocation-form">
+        <input type="hidden" id="alloc-id">
+        <div class="modal-body">
+          <div class="form-field-group">
+            <label for="form-faculty" class="form-field-label">Select Faculty Member *</label>
+            <select id="form-faculty" class="form-field-input" required>
+              <option value="">-- Choose Department Faculty --</option>
+              <option value="fac_1001|Prof. Sunita Mehta">Prof. Sunita Mehta (Associate Professor • 14h/18h)</option>
+              <option value="fac_1002|Dr. Rajesh Sharma">Dr. Rajesh Sharma (Professor • 16h/16h)</option>
+              <option value="fac_1003|Prof. Amit Kulkarni">Prof. Amit Kulkarni (Assistant Professor • 22h/20h)</option>
+              <option value="fac_1004|Prof. Priya Deshpande">Prof. Priya Deshpande (Assistant Professor • 12h/20h)</option>
+              <option value="fac_1005|Dr. Neha Patel">Dr. Neha Patel (Associate Professor • 15h/18h)</option>
+              <option value="fac_1006|Prof. Vikram Singh">Prof. Vikram Singh (Assistant Professor • 10h/20h)</option>
+              <option value="fac_1007|Prof. Sneha Joshi">Prof. Sneha Joshi (Assistant Professor • 14h/20h)</option>
+              <option value="fac_1008|Dr. Arvind Rao">Dr. Arvind Rao (Professor • 14h/16h)</option>
+            </select>
+          </div>
+
+          <div class="form-grid-2">
+            <div class="form-field-group">
+              <label for="form-subject-code" class="form-field-label">Subject Code *</label>
+              <input type="text" id="form-subject-code" class="form-field-input" placeholder="e.g. CS402" required>
+            </div>
+            <div class="form-field-group">
+              <label for="form-subject-name" class="form-field-label">Subject Name *</label>
+              <input type="text" id="form-subject-name" class="form-field-input" placeholder="e.g. Database Management Systems" required>
+            </div>
+          </div>
+
+          <div class="form-grid-2">
+            <div class="form-field-group">
+              <label for="form-program" class="form-field-label">Program *</label>
+              <select id="form-program" class="form-field-input" required>
+                <option value="B.Tech CSE">B.Tech Computer Science & Eng.</option>
+                <option value="M.Tech CSE">M.Tech Computer Science & Eng.</option>
+                <option value="B.Tech AI&DS">B.Tech Artificial Intelligence & Data Sci.</option>
+              </select>
+            </div>
+
+            <div class="form-field-group">
+              <label for="form-semester" class="form-field-label">Semester *</label>
+              <select id="form-semester" class="form-field-input" required>
+                <option value="4">Semester 4</option>
+                <option value="6">Semester 6</option>
+                <option value="8">Semester 8</option>
+                <option value="2">Semester 2 (M.Tech)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-grid-2">
+            <div class="form-field-group">
+              <label for="form-section" class="form-field-label">Section *</label>
+              <select id="form-section" class="form-field-input" required>
+                <option value="A">Section A</option>
+                <option value="B">Section B</option>
+                <option value="C">Section C</option>
+              </select>
+            </div>
+
+            <div class="form-field-group">
+              <label for="form-type" class="form-field-label">Course Type</label>
+              <select id="form-type" class="form-field-input">
+                <option value="Theory">Theory (4 Credits)</option>
+                <option value="Practical">Practical / Lab (2 Credits)</option>
+                <option value="Tutorial">Tutorial (1 Credit)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-grid-2">
+            <div class="form-field-group">
+              <label for="form-credits" class="form-field-label">Credits</label>
+              <input type="number" id="form-credits" class="form-field-input" value="4" min="1" max="6">
+            </div>
+            <div class="form-field-group">
+              <label for="form-hours" class="form-field-label">Weekly Hours</label>
+              <input type="number" id="form-hours" class="form-field-input" value="4" min="1" max="10">
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer" style="display: flex; justify-content: space-between;">
+          <button type="button" class="btn-hod-secondary" id="cancel-alloc-btn">Cancel</button>
+          <button type="submit" class="btn-hod-primary" id="save-alloc-submit-btn">Save Allocation</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- View Allocation Details Modal -->
+  <div id="view-alloc-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="view-modal-title" aria-hidden="true">
+    <div class="modal-card" style="max-width: 500px;">
+      <div class="modal-header">
+        <h3 id="view-modal-title" class="modal-title">Allocation Summary</h3>
+        <button type="button" class="modal-close-btn" id="close-view-modal" aria-label="Close dialog">&times;</button>
+      </div>
+      <div class="modal-body" id="view-modal-body">
+        <!-- Dynamic content -->
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn-hod-secondary" id="close-view-btn">Done</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Application Services -->
+  <script src="../data/mock-student.js"></script>
+  <script src="../data/mock-hod.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/hod-service.js"></script>
+  <script src="../js/ui.js"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      let currentAllocations = [];
+      let currentPage = 1;
+      const pageSize = 8;
+
+      const searchInput = document.getElementById('alloc-search');
+      const progSelect = document.getElementById('filter-program');
+      const semSelect = document.getElementById('filter-semester');
+      const secSelect = document.getElementById('filter-section');
+      const statusSelect = document.getElementById('filter-status');
+      const tableBody = document.getElementById('allocation-table-body');
+
+      function loadAllocations() {
+        const filters = {
+          search: searchInput.value.trim(),
+          program: progSelect.value,
+          semester: semSelect.value,
+          section: secSelect.value,
+          status: statusSelect.value
+        };
+
+        currentAllocations = HODService.getAllocations(filters);
+        renderTable(currentPage);
+      }
+
+      function renderTable(page) {
+        currentPage = page;
+        if (currentAllocations.length === 0) {
+          tableBody.innerHTML = `
+            <tr>
+              <td colspan="7" style="text-align: center; padding: 2.5rem 1rem; color: #64748B;">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="margin-bottom: 0.5rem; color: #94A3B8;"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                <div>No faculty allocations matched your search criteria.</div>
+              </td>
+            </tr>
+          `;
+          UI.renderPagination('allocation-pagination', 0, 1, pageSize, () => {});
+          return;
+        }
+
+        const start = (page - 1) * pageSize;
+        const pagedData = currentAllocations.slice(start, start + pageSize);
+
+        tableBody.innerHTML = pagedData.map(a => `
+          <tr>
+            <td>
+              <div style="display: flex; align-items: center; gap: 0.65rem;">
+                <div class="user-avatar" style="width: 32px; height: 32px; font-size: 0.75rem; background: #EDE9FE; color: var(--hod-accent);">
+                  ${a.facultyName.split(' ').map(n=>n[0]).join('').substring(0,2)}
+                </div>
+                <div>
+                  <div style="font-weight: 700; color: #0F172A;">${a.facultyName}</div>
+                  <div style="font-size: 0.7rem; color: #64748B;">Dept of Computer Engineering</div>
+                </div>
+              </div>
+            </td>
+            <td>
+              <div style="font-weight: 700; color: #0F172A;">${a.subjectCode}</div>
+              <div style="font-size: 0.75rem; color: #64748B;">${a.subjectName}</div>
+            </td>
+            <td><span class="dept-banner-chip" style="background: #F8FAFC; color: #334155; border-color: #E2E8F0;">${a.program}</span></td>
+            <td><strong>Sem ${a.semester}</strong> • Sec ${a.section}</td>
+            <td>
+              <span style="font-weight: 700; color: #0F172A;">${a.weeklyHours || 4} hrs/wk</span>
+              <span style="font-size: 0.7rem; color: #64748B;">(${a.type || 'Theory'})</span>
+            </td>
+            <td><span class="status-badge healthy">● ${a.status}</span></td>
+            <td style="text-align: right;">
+              <div style="display: inline-flex; gap: 0.35rem;">
+                <button type="button" class="btn-table-action view-btn" data-id="${a.id}" title="View Details">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                  View
+                </button>
+                <button type="button" class="btn-table-action edit-btn" data-id="${a.id}" title="Edit / Reassign Allocation">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                  Reassign
+                </button>
+                <button type="button" class="btn-table-action delete-btn" data-id="${a.id}" style="color: #DC2626;" title="Remove Allocation">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                </button>
+              </div>
+            </td>
+          </tr>
+        `).join('');
+
+        UI.renderPagination('allocation-pagination', currentAllocations.length, page, pageSize, renderTable);
+      }
+
+      // Filter events
+      searchInput.addEventListener('input', () => loadAllocations());
+      progSelect.addEventListener('change', () => loadAllocations());
+      semSelect.addEventListener('change', () => loadAllocations());
+      secSelect.addEventListener('change', () => loadAllocations());
+      statusSelect.addEventListener('change', () => loadAllocations());
+
+      document.getElementById('reset-filters-btn').addEventListener('click', () => {
+        searchInput.value = '';
+        progSelect.value = 'all';
+        semSelect.value = 'all';
+        secSelect.value = 'all';
+        statusSelect.value = 'all';
+        loadAllocations();
+        UI.showToast('info', 'Filters Cleared', 'Displaying all departmental allocations.');
+      });
+
+      // Modal Handlers
+      const allocModal = document.getElementById('allocation-modal');
+      const allocForm = document.getElementById('allocation-form');
+      const openBtn = document.getElementById('open-new-alloc-btn');
+
+      openBtn.addEventListener('click', () => {
+        allocForm.reset();
+        document.getElementById('alloc-id').value = '';
+        document.getElementById('alloc-modal-title').textContent = 'Allocate Faculty to Subject';
+        UI.openModal('allocation-modal');
+      });
+
+      document.getElementById('close-alloc-modal').addEventListener('click', () => UI.closeModal('allocation-modal'));
+      document.getElementById('cancel-alloc-btn').addEventListener('click', () => UI.closeModal('allocation-modal'));
+
+      // Form Submit
+      allocForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const facRaw = document.getElementById('form-faculty').value;
+        if (!facRaw) {
+          UI.showToast('warning', 'Faculty Required', 'Please choose a faculty member.');
+          return;
+        }
+
+        const [facId, facName] = facRaw.split('|');
+        const code = document.getElementById('form-subject-code').value.trim();
+        const name = document.getElementById('form-subject-name').value.trim();
+        const program = document.getElementById('form-program').value;
+        const semester = parseInt(document.getElementById('form-semester').value, 10);
+        const section = document.getElementById('form-section').value;
+        const type = document.getElementById('form-type').value;
+        const credits = parseInt(document.getElementById('form-credits').value, 10) || 4;
+        const hours = parseInt(document.getElementById('form-hours').value, 10) || 4;
+        const editId = document.getElementById('alloc-id').value;
+
+        const payload = {
+          id: editId || undefined,
+          facultyId: facId,
+          facultyName: facName,
+          subjectCode: code.toUpperCase(),
+          subjectName: name,
+          program: program,
+          semester: semester,
+          section: section,
+          type: type,
+          credits: credits,
+          weeklyHours: hours,
+          status: 'Allocated'
+        };
+
+        HODService.saveAllocation(payload);
+        UI.closeModal('allocation-modal');
+        UI.showToast('success', editId ? 'Allocation Updated' : 'Faculty Allocated', `Assigned ${facName} to ${code} (Sem ${semester} Sec ${section})`);
+        loadAllocations();
+      });
+
+      // Actions Delegate
+      tableBody.addEventListener('click', (e) => {
+        const viewBtn = e.target.closest('.view-btn');
+        const editBtn = e.target.closest('.edit-btn');
+        const deleteBtn = e.target.closest('.delete-btn');
+
+        if (viewBtn) {
+          const id = viewBtn.getAttribute('data-id');
+          const item = currentAllocations.find(a => a.id === id);
+          if (item) {
+            document.getElementById('view-modal-body').innerHTML = `
+              <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 12px; padding: 1.25rem; margin-bottom: 1rem;">
+                <div style="font-size: 0.75rem; text-transform: uppercase; color: #64748B; font-weight: 700;">ASSIGNED FACULTY</div>
+                <div style="font-size: 1.125rem; font-weight: 800; color: #0F172A; margin-top: 2px;">${item.facultyName}</div>
+                <div style="font-size: 0.8125rem; color: #64748B; margin-top: 2px;">Department of Computer Engineering</div>
+              </div>
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                <div style="border: 1px solid #E2E8F0; padding: 0.75rem; border-radius: 8px;">
+                  <div style="font-size: 0.7rem; color: #64748B; font-weight: 600;">SUBJECT CODE</div>
+                  <div style="font-size: 0.9375rem; font-weight: 800; color: #0F172A;">${item.subjectCode}</div>
+                  <div style="font-size: 0.75rem; color: #64748B;">${item.subjectName}</div>
+                </div>
+                <div style="border: 1px solid #E2E8F0; padding: 0.75rem; border-radius: 8px;">
+                  <div style="font-size: 0.7rem; color: #64748B; font-weight: 600;">COHORT</div>
+                  <div style="font-size: 0.9375rem; font-weight: 800; color: #0F172A;">Sem ${item.semester} • Sec ${item.section}</div>
+                  <div style="font-size: 0.75rem; color: #64748B;">${item.program}</div>
+                </div>
+              </div>
+              <div style="display: flex; justify-content: space-between; background: #F5F3FF; border: 1px solid #DDD6FE; padding: 0.75rem 1rem; border-radius: 8px;">
+                <div>
+                  <span style="font-size: 0.75rem; color: #6D28D9; font-weight: 600;">Course Type:</span>
+                  <strong> ${item.type || 'Theory'}</strong>
+                </div>
+                <div>
+                  <span style="font-size: 0.75rem; color: #6D28D9; font-weight: 600;">Weekly Load:</span>
+                  <strong> ${item.weeklyHours || 4} Hours</strong>
+                </div>
+              </div>
+            `;
+            UI.openModal('view-alloc-modal');
+          }
+        }
+
+        if (editBtn) {
+          const id = editBtn.getAttribute('data-id');
+          const item = currentAllocations.find(a => a.id === id);
+          if (item) {
+            document.getElementById('alloc-id').value = item.id;
+            document.getElementById('alloc-modal-title').textContent = 'Reassign / Edit Allocation';
+            
+            // Set values
+            const facSelect = document.getElementById('form-faculty');
+            for (let i = 0; i < facSelect.options.length; i++) {
+              if (facSelect.options[i].value.includes(item.facultyName)) {
+                facSelect.selectedIndex = i;
+                break;
+              }
+            }
+            document.getElementById('form-subject-code').value = item.subjectCode;
+            document.getElementById('form-subject-name').value = item.subjectName;
+            document.getElementById('form-program').value = item.program;
+            document.getElementById('form-semester').value = String(item.semester);
+            document.getElementById('form-section').value = item.section;
+            document.getElementById('form-type').value = item.type || 'Theory';
+            document.getElementById('form-credits').value = item.credits || 4;
+            document.getElementById('form-hours').value = item.weeklyHours || 4;
+
+            UI.openModal('allocation-modal');
+          }
+        }
+
+        if (deleteBtn) {
+          const id = deleteBtn.getAttribute('data-id');
+          if (confirm('Are you sure you want to remove this faculty allocation?')) {
+            HODService.deleteAllocation(id);
+            UI.showToast('info', 'Allocation Removed', 'The allocation record was deleted.');
+            loadAllocations();
+          }
+        }
+      });
+
+      document.getElementById('close-view-modal').addEventListener('click', () => UI.closeModal('view-alloc-modal'));
+      document.getElementById('close-view-btn').addEventListener('click', () => UI.closeModal('view-alloc-modal'));
+
+      loadAllocations();
+    });
+  </script>
+</body>
+
+</html>

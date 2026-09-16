@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HOD Dashboard — Smart Student</title>
+  <meta name="description" content="Departmental management dashboard for Head of Department. Oversee faculty allocation, student performance, timetable and academic approvals.">
+
+  <!-- Core Design System & Stylesheets -->
+  <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+  <link rel="alternate icon" href="../favicon.ico">
+  <link rel="stylesheet" href="../css/main.css">
+  <link rel="stylesheet" href="../css/dashboard.css">
+  <link rel="stylesheet" href="../css/hod.css">
+  <link rel="stylesheet" href="../css/responsive.css">
+
+  <!-- Synchronous Route Guard -->
+  <script src="../js/hod-auth-guard.js"></script>
+</head>
+
+<body>
+
+  <!-- Toast Notification Container -->
+  <div id="toast-container" aria-live="polite"></div>
+
+  <!-- Mobile Drawer Backdrop -->
+  <div class="sidebar-backdrop"></div>
+
+  <div class="app-container">
+    <!-- ====================================================================
+         Sidebar Navigation (HOD Portal)
+         ==================================================================== -->
+    <aside class="app-sidebar" aria-label="HOD Main Navigation">
+      <div class="sidebar-header">
+        <a href="dashboard.html" class="sidebar-brand">
+          <div class="sidebar-brand-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+              <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
+              <path d="M6 12v5c3 3 9 3 12 0v-5" />
+            </svg>
+          </div>
+          <div class="sidebar-brand-text">
+            <h2>Smart Student</h2>
+            <span>HOD PORTAL</span>
+          </div>
+        </a>
+      </div>
+
+      <nav class="sidebar-nav-container">
+        <div class="nav-section-label">Departmental Core</div>
+
+        <a href="dashboard.html" class="nav-link active">
+          <span class="nav-link-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="3" width="7" height="7" />
+              <rect x="14" y="3" width="7" height="7" />
+              <rect x="14" y="14" width="7" height="7" />
+              <rect x="3" y="14" width="7" height="7" />
+            </svg>
+          </span>
+          <span>Overview</span>
+        </a>
+
+        <a href="faculty-allocation.html" class="nav-link">
+          <span class="nav-link-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+              <circle cx="9" cy="7" r="4" />
+              <polyline points="16 11 18 13 22 9" />
+            </svg>
+          </span>
+          <span>Faculty Allocation</span>
+        </a>
+
+        <a href="students.html" class="nav-link">
+          <span class="nav-link-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+              <circle cx="9" cy="7" r="4" />
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+              <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+            </svg>
+          </span>
+          <span>Students</span>
+        </a>
+
+        <a href="faculty.html" class="nav-link">
+          <span class="nav-link-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+              <circle cx="12" cy="7" r="4" />
+            </svg>
+          </span>
+          <span>Faculty</span>
+        </a>
+
+        <a href="timetable.html" class="nav-link">
+          <span class="nav-link-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+              <line x1="16" y1="2" x2="16" y2="6" />
+              <line x1="8" y1="2" x2="8" y2="6" />
+              <line x1="3" y1="10" x2="21" y2="10" />
+            </svg>
+          </span>
+          <span>Timetable</span>
+        </a>
+
+        <a href="approvals.html" class="nav-link">
+          <span class="nav-link-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+              <polyline points="14 2 14 8 20 8" />
+              <path d="m9 15 2 2 4-4" />
+            </svg>
+          </span>
+          <span>Approvals</span>
+          <span class="nav-badge" id="nav-badge-approvals" style="background-color: var(--hod-accent);">5</span>
+        </a>
+
+        <div class="nav-section-label">Analytics & Insights</div>
+
+        <a href="reports.html" class="nav-link">
+          <span class="nav-link-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="18" y1="20" x2="18" y2="10" />
+              <line x1="12" y1="20" x2="12" y2="4" />
+              <line x1="6" y1="20" x2="6" y2="14" />
+            </svg>
+          </span>
+          <span>Reports</span>
+        </a>
+
+        <a href="settings.html" class="nav-link">
+          <span class="nav-link-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="3" />
+              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
+            </svg>
+          </span>
+          <span>Settings</span>
+        </a>
+      </nav>
+
+      <!-- Sidebar Bottom Profile Card -->
+      <div class="sidebar-footer">
+        <a href="profile.html" class="sidebar-user-card">
+          <div class="user-avatar" style="background: linear-gradient(135deg, #7C3AED 0%, #4F46E5 100%);">
+            <span class="user-avatar-initials">AD</span>
+          </div>
+          <div class="user-info-text">
+            <div class="user-name" id="sidebar-user-name">Dr. Anand Deshmukh</div>
+            <span class="user-role-tag" id="sidebar-user-role">Head of Department</span>
+          </div>
+        </a>
+      </div>
+    </aside>
+
+    <!-- ====================================================================
+         Main Application Layout & Topbar
+         ==================================================================== -->
+    <div class="app-main">
+      <header class="app-topbar">
+        <div class="topbar-left">
+          <button type="button" class="mobile-nav-toggle" id="mobile-nav-toggle" aria-label="Open Navigation">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="3" y1="12" x2="21" y2="12" />
+              <line x1="3" y1="6" x2="21" y2="6" />
+              <line x1="3" y1="18" x2="21" y2="18" />
+            </svg>
+          </button>
+          <div class="topbar-page-title">
+            <h1>HOD Dashboard</h1>
+          </div>
+        </div>
+
+        <div class="topbar-search-box">
+          <svg class="topbar-search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8" />
+            <line x1="21" y1="21" x2="16.65" y2="16.65" />
+          </svg>
+          <input type="search" id="global-search-input" class="topbar-search-input"
+            placeholder="Search allocations, faculty, students, timetable, approvals (Press Enter)..." aria-label="HOD Global Search">
+        </div>
+
+        <div class="topbar-right">
+          <!-- Quick Portal Switcher (For Evaluation & Navigation) -->
+          <a href="../student/dashboard.html" class="badge badge-subtle" style="text-decoration: none; padding: 0.4rem 0.75rem; font-size: 0.75rem; border-radius: 20px; color: #7C3AED; background: #EDE9FE;" title="Switch view to Student Portal">
+            <span>⇄ Student View</span>
+          </a>
+
+          <!-- Notification Dropdown -->
+          <div class="dropdown-container">
+            <button type="button" class="icon-button" data-dropdown-toggle="notification-dropdown" aria-label="Notifications">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+                <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+              </svg>
+              <span class="unread-badge" id="notif-badge">5</span>
+            </button>
+
+            <div id="notification-dropdown" class="menu-dropdown notification-dropdown">
+              <div class="dropdown-header">
+                <h4>Department Notifications</h4>
+                <a href="approvals.html" style="font-size: 0.75rem; color: var(--hod-accent);">View all approvals</a>
+              </div>
+              <ul class="dropdown-list" id="notifications-list-container">
+                <li class="dropdown-item">
+                  <div style="font-size: 0.8125rem; font-weight: 600; color: #0F172A;">Leave Request Pending</div>
+                  <div style="font-size: 0.75rem; color: #64748B;">Prof. Amit Kulkarni submitted 3-day medical leave.</div>
+                </li>
+                <li class="dropdown-item">
+                  <div style="font-size: 0.8125rem; font-weight: 600; color: #0F172A;">Lab Syllabus Revision</div>
+                  <div style="font-size: 0.75rem; color: #64748B;">Prof. Sunita Mehta requested PostgreSQL 16 update.</div>
+                </li>
+                <li class="dropdown-item">
+                  <div style="font-size: 0.8125rem; font-weight: 600; color: #0F172A;">Industrial Visit Proposal</div>
+                  <div style="font-size: 0.75rem; color: #64748B;">Prof. Sneha Joshi submitted AWS Pune field trip.</div>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- User Menu Dropdown -->
+          <div class="dropdown-container">
+            <button type="button" class="user-menu-btn" data-dropdown-toggle="user-dropdown" aria-label="HOD Profile Menu">
+              <div class="user-avatar-sm" style="background: linear-gradient(135deg, #7C3AED 0%, #4F46E5 100%); color: #FFFFFF;">
+                <span class="user-avatar-initials">AD</span>
+              </div>
+              <div class="user-menu-info">
+                <div class="user-menu-name" id="topbar-user-name">Dr. Anand Deshmukh</div>
+                <div class="user-menu-sub">HOD • Computer Engg</div>
+              </div>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="6 9 12 15 18 9" />
+              </svg>
+            </button>
+
+            <div id="user-dropdown" class="menu-dropdown profile-dropdown-menu">
+              <div class="dropdown-header">
+                <h4>Dr. Anand Deshmukh</h4>
+                <span style="font-size: 0.75rem; color: #64748B;">Head of Department (CSE)</span>
+              </div>
+              <a href="profile.html">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                <span>My Profile</span>
+              </a>
+              <a href="settings.html">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                <span>Department Settings</span>
+              </a>
+              <button type="button" id="logout-action-btn" class="logout-action">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                <span>Sign Out</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- ====================================================================
+           Main Content Area
+           ==================================================================== -->
+      <main class="app-content-body">
+
+        <!-- Department Overview Banner -->
+        <section class="dept-banner-card" aria-label="Department Overview">
+          <div>
+            <h2 class="dept-banner-title">Department of Computer Engineering</h2>
+            <div class="dept-banner-sub">
+              <span>Academic Year 2025–2026 • Spring Term</span>
+              <span class="dept-banner-chip">B.Tech CSE, M.Tech CSE, AI&DS</span>
+              <span class="dept-banner-chip">Semesters 4, 6, 8</span>
+              <span class="dept-banner-chip" style="background: rgba(16, 185, 129, 0.12); border-color: rgba(16, 185, 129, 0.3); color: #15803D;">● Operations Active</span>
+            </div>
+          </div>
+          <div class="dept-banner-actions">
+            <a href="faculty-allocation.html" class="btn-hod-primary">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              Allocate Faculty
+            </a>
+            <a href="timetable.html" class="btn-hod-secondary">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+              Timetable
+            </a>
+          </div>
+        </section>
+
+        <!-- KPI Summary Cards (F30) -->
+        <div class="hod-stats-grid">
+          <div class="hod-stat-card">
+            <div class="hod-stat-header">
+              <span class="hod-stat-label">Total Students</span>
+              <div class="hod-stat-icon blue">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+              </div>
+            </div>
+            <div class="hod-stat-value" id="kpi-total-students">248</div>
+            <div class="hod-stat-meta">
+              <span class="trend-badge up">↑ 84.8% Attendance</span>
+              <span>across 3 programs</span>
+            </div>
+          </div>
+
+          <div class="hod-stat-card">
+            <div class="hod-stat-header">
+              <span class="hod-stat-label">Total Faculty</span>
+              <div class="hod-stat-icon purple">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+              </div>
+            </div>
+            <div class="hod-stat-value" id="kpi-total-faculty">18</div>
+            <div class="hod-stat-meta">
+              <span class="trend-badge up">17 Allocated</span>
+              <span>1 underutilized</span>
+            </div>
+          </div>
+
+          <div class="hod-stat-card">
+            <div class="hod-stat-header">
+              <span class="hod-stat-label">Active Subjects</span>
+              <div class="hod-stat-icon green">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+              </div>
+            </div>
+            <div class="hod-stat-value" id="kpi-active-subjects">14</div>
+            <div class="hod-stat-meta">
+              <span class="trend-badge neutral">100% Covered</span>
+              <span>Theory + Labs</span>
+            </div>
+          </div>
+
+          <div class="hod-stat-card">
+            <div class="hod-stat-header">
+              <span class="hod-stat-label">Pending Approvals</span>
+              <div class="hod-stat-icon amber">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 14 14"/></svg>
+              </div>
+            </div>
+            <div class="hod-stat-value" id="kpi-pending-approvals" style="color: #D97706;">5</div>
+            <div class="hod-stat-meta">
+              <span class="trend-badge down">2 Urgent</span>
+              <span>Requires action</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section Grid: Student Performance & Faculty Workload -->
+        <div class="dept-dashboard-grid">
+          <!-- Left: Student Performance & Attendance Distribution -->
+          <div class="dept-card">
+            <div class="dept-card-header">
+              <h3 class="dept-card-title">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--hod-accent);"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+                Department Student Performance Overview
+              </h3>
+              <a href="students.html" class="btn-table-action">View All Students →</a>
+            </div>
+
+            <!-- Grade Distribution Progress Bars -->
+            <div style="margin-bottom: 1.5rem;">
+              <div style="font-size: 0.8125rem; font-weight: 700; color: var(--text-secondary); margin-bottom: 0.75rem;">
+                CGPA / Academic Grade Distribution (248 Enrolled)
+              </div>
+              
+              <div class="dist-bar-item">
+                <div class="dist-bar-label">
+                  <span>O Grade (9.0+ CGPA / Outstanding)</span>
+                  <span>42 Students (16.9%)</span>
+                </div>
+                <div class="dist-bar-track">
+                  <div class="dist-bar-fill" style="width: 16.9%; background: #10B981;"></div>
+                </div>
+              </div>
+
+              <div class="dist-bar-item">
+                <div class="dist-bar-label">
+                  <span>A+ Grade (8.0–8.9 CGPA / Excellent)</span>
+                  <span>88 Students (35.5%)</span>
+                </div>
+                <div class="dist-bar-track">
+                  <div class="dist-bar-fill" style="width: 35.5%; background: var(--hod-accent);"></div>
+                </div>
+              </div>
+
+              <div class="dist-bar-item">
+                <div class="dist-bar-label">
+                  <span>A Grade (7.0–7.9 CGPA / Very Good)</span>
+                  <span>74 Students (29.8%)</span>
+                </div>
+                <div class="dist-bar-track">
+                  <div class="dist-bar-fill" style="width: 29.8%; background: #3B82F6;"></div>
+                </div>
+              </div>
+
+              <div class="dist-bar-item">
+                <div class="dist-bar-label">
+                  <span>Needs Academic Counseling / At Risk (&lt;6.0 CGPA)</span>
+                  <span style="color: #DC2626; font-weight: 700;">12 Students (4.8%)</span>
+                </div>
+                <div class="dist-bar-track">
+                  <div class="dist-bar-fill" style="width: 4.8%; background: #EF4444;"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Attendance Health Summary -->
+            <div style="background: #F8FAFC; border: 1px solid var(--border-default); border-radius: 12px; padding: 1rem; display: flex; justify-content: space-around; text-align: center;">
+              <div>
+                <div style="font-size: 0.75rem; color: var(--text-tertiary); font-weight: 600;">HEALTHY (≥80%)</div>
+                <div style="font-size: 1.25rem; font-weight: 800; color: #16A34A; margin-top: 2px;">222</div>
+              </div>
+              <div style="border-left: 1px solid var(--border-default);"></div>
+              <div>
+                <div style="font-size: 0.75rem; color: var(--text-tertiary); font-weight: 600;">ATTENTION (75–80%)</div>
+                <div style="font-size: 1.25rem; font-weight: 800; color: #D97706; margin-top: 2px;">18</div>
+              </div>
+              <div style="border-left: 1px solid var(--border-default);"></div>
+              <div>
+                <div style="font-size: 0.75rem; color: var(--text-tertiary); font-weight: 600;">AT RISK (&lt;75%)</div>
+                <div style="font-size: 1.25rem; font-weight: 800; color: #DC2626; margin-top: 2px;">8</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right: Quick Actions & Faculty Workload Overview -->
+          <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+            
+            <!-- Quick Actions -->
+            <div class="dept-card" style="padding: 1.25rem;">
+              <h3 class="dept-card-title" style="margin-bottom: 1rem; font-size: 0.9375rem;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--hod-accent);"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                HOD Quick Actions
+              </h3>
+              <div class="quick-actions-grid">
+                <a href="faculty-allocation.html" class="quick-action-btn">
+                  <div class="quick-action-icon">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><polyline points="16 11 18 13 22 9"/></svg>
+                  </div>
+                  <span>Allocate Faculty</span>
+                </a>
+                <a href="timetable.html" class="quick-action-btn">
+                  <div class="quick-action-icon">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/></svg>
+                  </div>
+                  <span>Manage Timetable</span>
+                </a>
+                <a href="approvals.html" class="quick-action-btn">
+                  <div class="quick-action-icon" style="color: #D97706;">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 12 2 2 4-4"/><circle cx="12" cy="12" r="10"/></svg>
+                  </div>
+                  <span>Review Approvals (5)</span>
+                </a>
+                <a href="reports.html" class="quick-action-btn">
+                  <div class="quick-action-icon" style="color: #10B981;">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+                  </div>
+                  <span>View Reports</span>
+                </a>
+              </div>
+            </div>
+
+            <!-- Faculty Workload Spotlight -->
+            <div class="dept-card" style="padding: 1.25rem;">
+              <div class="dept-card-header" style="margin-bottom: 0.75rem; padding-bottom: 0.5rem;">
+                <h3 class="dept-card-title" style="font-size: 0.9375rem;">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--hod-accent);"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                  Faculty Workload Status
+                </h3>
+                <a href="faculty.html" class="btn-table-action" style="font-size: 0.75rem;">Manage →</a>
+              </div>
+              <div id="faculty-workload-mini-list">
+                <!-- Injected via JS -->
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Section: Pending Approvals & Upcoming Timetable -->
+        <div class="dept-dashboard-grid">
+          <!-- Left: Pending Academic Approvals -->
+          <div class="dept-card">
+            <div class="dept-card-header">
+              <h3 class="dept-card-title">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: #D97706;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+                Pending Academic Approvals (F35)
+              </h3>
+              <a href="approvals.html" class="btn-hod-primary" style="font-size: 0.75rem; padding: 0.35rem 0.75rem;">Open Approvals Center</a>
+            </div>
+
+            <div id="dashboard-approvals-list">
+              <!-- Rendered via JS -->
+            </div>
+          </div>
+
+          <!-- Right: Department Upcoming Schedule & Lab Activity -->
+          <div class="dept-card">
+            <div class="dept-card-header">
+              <h3 class="dept-card-title">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--hod-accent);"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                Today's Departmental Sessions
+              </h3>
+              <span class="dept-banner-chip" id="live-current-date" style="background: #F1F5F9; color: #475569; border-color: #E2E8F0;">Today</span>
+            </div>
+
+            <div id="dashboard-schedule-list" style="display: flex; flex-direction: column; gap: 0.75rem;">
+              <!-- Injected via JS -->
+            </div>
+          </div>
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- Review Approval Modal -->
+  <div id="hod-review-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-review-title" aria-hidden="true">
+    <div class="modal-card" style="max-width: 540px;">
+      <div class="modal-header">
+        <h3 id="modal-review-title" class="modal-title">Review Academic Request</h3>
+        <button type="button" class="modal-close-btn" id="close-review-modal" aria-label="Close dialog">&times;</button>
+      </div>
+      <div class="modal-body" id="modal-review-body">
+        <!-- Injected dynamically -->
+      </div>
+      <div class="modal-footer" style="display: flex; justify-content: space-between; align-items: center;">
+        <button type="button" class="btn-hod-secondary" id="cancel-review-btn">Close</button>
+        <div style="display: flex; gap: 0.5rem;">
+          <button type="button" class="btn-hod-danger" id="modal-reject-btn">Reject</button>
+          <button type="button" class="btn-hod-primary" id="modal-approve-btn">Approve Request</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Application Services -->
+  <script src="../data/mock-student.js"></script>
+  <script src="../data/mock-hod.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/hod-service.js"></script>
+  <script src="../js/ui.js"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // 1. Sync Department KPIs
+      const dept = HODService.getDepartmentInfo();
+      document.getElementById('kpi-total-students').textContent = dept.kpis.totalStudents;
+      document.getElementById('kpi-total-faculty').textContent = dept.kpis.totalFaculty;
+      document.getElementById('kpi-active-subjects').textContent = dept.kpis.activeSubjects;
+      document.getElementById('kpi-pending-approvals').textContent = dept.kpis.pendingApprovals;
+      document.getElementById('notif-badge').textContent = dept.kpis.pendingApprovals;
+      const navBadge = document.getElementById('nav-badge-approvals');
+      if (navBadge) navBadge.textContent = dept.kpis.pendingApprovals;
+
+      // 2. Load Faculty Workload Spotlight
+      const faculty = HODService.getFacultyList().slice(0, 4);
+      const facContainer = document.getElementById('faculty-workload-mini-list');
+      if (facContainer) {
+        facContainer.innerHTML = faculty.map(f => {
+          const pct = Math.min(100, Math.round((f.currentWeeklyHours / f.maxWeeklyHours) * 100));
+          const meterClass = f.workloadStatus === 'Overloaded' ? 'overloaded' : (f.workloadStatus === 'Optimal' ? 'optimal' : 'normal');
+          const badgeClass = f.workloadStatus.toLowerCase();
+          return `
+            <div style="margin-bottom: 0.85rem; padding-bottom: 0.85rem; border-bottom: 1px solid var(--border-light);">
+              <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.8125rem;">
+                <strong>${f.name}</strong>
+                <span class="status-badge ${badgeClass}">${f.workloadStatus} (${f.currentWeeklyHours}h / ${f.maxWeeklyHours}h)</span>
+              </div>
+              <div class="workload-meter">
+                <div class="workload-meter-fill ${meterClass}" style="width: ${pct}%;"></div>
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+
+      // 3. Load Pending Approvals
+      const pendingApprovals = HODService.getApprovals('pending').slice(0, 3);
+      const appContainer = document.getElementById('dashboard-approvals-list');
+      if (appContainer) {
+        if (pendingApprovals.length === 0) {
+          appContainer.innerHTML = `<div style="padding: 1.5rem; text-align: center; color: #64748B;">No pending approvals. All academic requests are cleared!</div>`;
+        } else {
+          appContainer.innerHTML = pendingApprovals.map(a => `
+            <div class="approval-card-item">
+              <div class="approval-card-main">
+                <div class="approval-card-title">${a.title}</div>
+                <div class="approval-card-meta">
+                  <span><strong>${a.requestedBy}</strong> (${a.role})</span>
+                  <span>•</span>
+                  <span>${a.date}</span>
+                  <span>•</span>
+                  <span class="status-badge pending">Pending HOD Review</span>
+                </div>
+                <div class="approval-card-desc">${a.details}</div>
+              </div>
+              <div class="approval-card-actions">
+                <button type="button" class="btn-hod-primary review-action-btn" data-id="${a.id}" style="padding: 0.4rem 0.85rem; font-size: 0.75rem;">Review</button>
+              </div>
+            </div>
+          `).join('');
+        }
+      }
+
+      // 4. Load Today's Timetable Preview
+      const timetable = HODService.getTimetable({ day: 'Monday' }).slice(0, 4);
+      const ttContainer = document.getElementById('dashboard-schedule-list');
+      if (ttContainer) {
+        ttContainer.innerHTML = timetable.map(t => `
+          <div style="background: #F8FAFC; border: 1px solid var(--border-default); border-left: 4px solid var(--hod-accent); border-radius: 8px; padding: 0.75rem 1rem; display: flex; justify-content: space-between; align-items: center;">
+            <div>
+              <div style="font-weight: 700; font-size: 0.8125rem; color: #0F172A;">${t.subjectCode} — ${t.subjectName}</div>
+              <div style="font-size: 0.75rem; color: #64748B; margin-top: 2px;">${t.faculty} • Sem ${t.semester} Sec ${t.section}</div>
+            </div>
+            <div style="text-align: right;">
+              <div style="font-size: 0.75rem; font-weight: 700; color: var(--hod-accent);">${t.timeSlot}</div>
+              <span class="tt-room-badge">${t.room}</span>
+            </div>
+          </div>
+        `).join('');
+      }
+
+      // Review Modal Action Listener
+      let activeApprovalId = null;
+      document.addEventListener('click', (e) => {
+        const btn = e.target.closest('.review-action-btn');
+        if (btn) {
+          const id = btn.getAttribute('data-id');
+          activeApprovalId = id;
+          const approval = HODService.getApprovalById(id);
+          if (approval) {
+            document.getElementById('modal-review-body').innerHTML = `
+              <div style="margin-bottom: 1rem;">
+                <div style="font-size: 0.75rem; text-transform: uppercase; color: #64748B; font-weight: 700;">REQUEST TITLE</div>
+                <div style="font-size: 1rem; font-weight: 700; color: #0F172A; margin-top: 2px;">${approval.title}</div>
+              </div>
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; background: #F8FAFC; padding: 0.75rem; border-radius: 8px; border: 1px solid #E2E8F0;">
+                <div>
+                  <div style="font-size: 0.7rem; color: #64748B; font-weight: 600;">REQUESTER</div>
+                  <div style="font-size: 0.8125rem; font-weight: 700; color: #0F172A;">${approval.requestedBy} (${approval.role})</div>
+                </div>
+                <div>
+                  <div style="font-size: 0.7rem; color: #64748B; font-weight: 600;">DATE SUBMITTED</div>
+                  <div style="font-size: 0.8125rem; font-weight: 700; color: #0F172A;">${approval.date}</div>
+                </div>
+              </div>
+              <div style="margin-bottom: 1rem;">
+                <div style="font-size: 0.75rem; text-transform: uppercase; color: #64748B; font-weight: 700;">ACADEMIC CONTEXT</div>
+                <div style="font-size: 0.8125rem; color: #334155; margin-top: 2px;">${approval.academicContext}</div>
+              </div>
+              <div style="margin-bottom: 1.25rem;">
+                <div style="font-size: 0.75rem; text-transform: uppercase; color: #64748B; font-weight: 700;">REQUEST DETAILS</div>
+                <div style="font-size: 0.8125rem; color: #334155; margin-top: 2px; line-height: 1.5; background: #FFFBEB; padding: 0.75rem; border-radius: 8px; border: 1px solid #FDE68A;">${approval.details}</div>
+              </div>
+              <div class="form-field-group">
+                <label for="approval-review-notes" class="form-field-label">HOD Decision Note / Reason</label>
+                <textarea id="approval-review-notes" class="form-field-input" rows="3" placeholder="Enter remarks or approval stipulations..."></textarea>
+              </div>
+            `;
+            UI.openModal('hod-review-modal');
+          }
+        }
+      });
+
+      document.getElementById('close-review-modal').addEventListener('click', () => UI.closeModal('hod-review-modal'));
+      document.getElementById('cancel-review-btn').addEventListener('click', () => UI.closeModal('hod-review-modal'));
+
+      document.getElementById('modal-approve-btn').addEventListener('click', () => {
+        if (!activeApprovalId) return;
+        const notes = (document.getElementById('approval-review-notes') || {}).value;
+        HODService.approveRequest(activeApprovalId, notes);
+        UI.closeModal('hod-review-modal');
+        UI.showToast('success', 'Request Approved', 'The academic activity has been successfully approved.');
+        setTimeout(() => window.location.reload(), 600);
+      });
+
+      document.getElementById('modal-reject-btn').addEventListener('click', () => {
+        if (!activeApprovalId) return;
+        const notes = (document.getElementById('approval-review-notes') || {}).value;
+        if (!notes.trim()) {
+          UI.showToast('warning', 'Remarks Required', 'Please enter a reason for rejecting this academic request.');
+          return;
+        }
+        HODService.rejectRequest(activeApprovalId, notes);
+        UI.closeModal('hod-review-modal');
+        UI.showToast('info', 'Request Rejected', 'The request was marked as rejected with comments.');
+        setTimeout(() => window.location.reload(), 600);
+      });
+    });
+  </script>
+</body>
+
+</html>

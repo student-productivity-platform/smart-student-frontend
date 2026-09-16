@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Profile — Smart Admin</title>
+  <meta name="description" content="Manage your Super Admin account profile and security settings.">
+  <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+  <link rel="stylesheet" href="../css/main.css">
+  <link rel="stylesheet" href="../css/dashboard.css">
+  <link rel="stylesheet" href="../css/responsive.css">
+  <script src="../js/admin-auth-guard.js"></script>
+  <style>
+    :root { --admin-accent:#F59E0B; --admin-accent-dark:#D97706; --admin-accent-bg:#FFFBEB; }
+    .sidebar-brand-icon { background:linear-gradient(135deg,#F59E0B,#D97706)!important; box-shadow:0 4px 12px rgba(245,158,11,.4)!important; }
+    .nav-link.active { background:rgba(245,158,11,.14)!important; color:#F59E0B!important; }
+    .nav-link.active .nav-link-icon { color:#F59E0B!important; }
+    .nav-link:hover { background:rgba(245,158,11,.08)!important; }
+    .page-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:1.5rem; }
+    .page-title { font-size:1.5rem; font-weight:800; color:var(--text-primary); letter-spacing:-.02em; }
+    .page-sub { font-size:.84375rem; color:var(--text-tertiary); margin-top:.2rem; }
+    .btn-primary-admin { display:inline-flex; align-items:center; gap:.4rem; background:linear-gradient(135deg,#F59E0B,#D97706); color:#fff; font-size:.84375rem; font-weight:700; padding:.6rem 1.1rem; border-radius:10px; border:none; cursor:pointer; transition:all .18s; box-shadow:0 4px 12px rgba(245,158,11,.3); font-family:inherit; }
+    .btn-primary-admin:hover { transform:translateY(-1px); box-shadow:0 6px 16px rgba(245,158,11,.4); }
+
+    /* Profile layout */
+    .profile-layout { display:grid; grid-template-columns:300px 1fr; gap:1.5rem; align-items:start; }
+
+    /* Avatar card */
+    .profile-avatar-card { background:#fff; border:1px solid var(--border-default); border-radius:16px; padding:2rem 1.5rem; text-align:center; }
+    .profile-avatar-wrap { width:100px; height:100px; border-radius:50%; background:linear-gradient(135deg,#F59E0B,#D97706); display:flex; align-items:center; justify-content:center; margin:0 auto 1rem; box-shadow:0 8px 24px rgba(245,158,11,.35); }
+    .profile-avatar-initials { font-size:2.25rem; font-weight:800; color:#fff; }
+    .profile-name { font-size:1.1rem; font-weight:800; color:var(--text-primary); }
+    .profile-role-badge { display:inline-flex; align-items:center; gap:.3rem; background:var(--admin-accent-bg); border:1px solid #FCD34D; color:var(--admin-accent-dark); font-size:.71875rem; font-weight:700; padding:.25rem .65rem; border-radius:20px; margin:.4rem 0 .25rem; text-transform:uppercase; letter-spacing:.05em; }
+    .profile-email { font-size:.84375rem; color:var(--text-tertiary); }
+    .profile-divider { border:none; border-top:1px solid var(--border-light); margin:1.25rem 0; }
+    .profile-stat-row { display:flex; justify-content:space-around; }
+    .profile-stat { text-align:center; }
+    .profile-stat-val { font-size:1.1rem; font-weight:800; color:var(--text-primary); }
+    .profile-stat-lbl { font-size:.71875rem; font-weight:600; color:var(--text-tertiary); text-transform:uppercase; }
+    .btn-edit-avatar { display:block; width:100%; margin-top:1.25rem; padding:.5rem; border-radius:9px; border:1px solid var(--border-default); background:#fff; color:var(--text-secondary); font-size:.8125rem; font-weight:600; cursor:pointer; transition:all .18s; font-family:inherit; }
+    .btn-edit-avatar:hover { border-color:var(--admin-accent); color:var(--admin-accent); }
+
+    /* Form card */
+    .profile-form-card { background:#fff; border:1px solid var(--border-default); border-radius:16px; overflow:hidden; }
+    .profile-form-header { padding:1rem 1.5rem; border-bottom:1px solid var(--border-light); font-size:.9375rem; font-weight:700; color:var(--text-primary); }
+    .profile-form-body { padding:1.5rem; }
+    .form-grid { display:grid; grid-template-columns:1fr 1fr; gap:1.25rem; }
+    .form-group { display:flex; flex-direction:column; gap:.4rem; }
+    .form-group.full { grid-column:1/-1; }
+    .form-label { font-size:.75rem; font-weight:700; text-transform:uppercase; letter-spacing:.06em; color:var(--text-secondary); }
+    .form-input { border:1px solid var(--border-default); border-radius:9px; padding:.65rem .875rem; font-size:.84375rem; font-family:inherit; color:var(--text-primary); background:#fff; transition:border-color .15s; }
+    .form-input:focus { outline:none; border-color:var(--admin-accent); box-shadow:0 0 0 3px rgba(245,158,11,.12); }
+    .form-input:disabled { background:#F8FAFC; color:var(--text-tertiary); cursor:not-allowed; }
+    .form-actions { display:flex; gap:.75rem; justify-content:flex-end; padding:1rem 1.5rem; border-top:1px solid var(--border-light); }
+    .btn-ghost { display:inline-flex; padding:.6rem 1rem; border-radius:9px; border:1px solid var(--border-default); background:#fff; font-size:.84375rem; font-weight:600; color:var(--text-secondary); cursor:pointer; font-family:inherit; }
+
+    /* Security card */
+    .security-card { background:#fff; border:1px solid var(--border-default); border-radius:16px; overflow:hidden; margin-top:1.25rem; }
+    .security-item { display:flex; align-items:center; justify-content:space-between; padding:1rem 1.5rem; border-bottom:1px solid var(--border-light); }
+    .security-item:last-child { border-bottom:none; }
+    .security-label { font-size:.875rem; font-weight:700; color:var(--text-primary); }
+    .security-sub { font-size:.75rem; color:var(--text-tertiary); margin-top:.15rem; }
+    .btn-sec { display:inline-flex; padding:.4rem .875rem; border-radius:8px; border:1px solid var(--border-default); background:#fff; font-size:.8125rem; font-weight:600; color:var(--text-secondary); cursor:pointer; font-family:inherit; transition:all .18s; }
+    .btn-sec:hover { border-color:var(--admin-accent); color:var(--admin-accent); }
+
+    @media(max-width:900px){ .profile-layout { grid-template-columns:1fr; } .form-grid { grid-template-columns:1fr; } }
+  </style>
+</head>
+<body>
+  <div id="toast-container"></div>
+  <div class="sidebar-backdrop"></div>
+  <div class="app-container">
+    <aside class="app-sidebar">
+      <div class="sidebar-header"><a href="dashboard.html" class="sidebar-brand"><div class="sidebar-brand-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div><div class="sidebar-brand-text"><h2>Smart Admin</h2><span>Admin Portal</span></div></a></div>
+      <nav class="sidebar-nav-container">
+        <div class="nav-section-label">Platform Overview</div>
+        <a href="dashboard.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg></span><span>Overview</span></a>
+        <a href="profile.html" class="nav-link active"><span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span><span>My Profile</span></a>
+        <div class="nav-section-label">User & Access</div>
+        <a href="users.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span><span>User Management</span></a>
+        <a href="roles-permissions.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span><span>Roles & Permissions</span></a>
+        <div class="nav-section-label">Academic Admin</div>
+        <a href="academic-structure.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg></span><span>Academic Structure</span></a>
+        <a href="courses.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></span><span>Courses</span></a>
+        <div class="nav-section-label">Platform Ops</div>
+        <a href="reports.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></span><span>Reports</span></a>
+        <a href="audit-logs.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></span><span>Audit Logs</span><span class="nav-badge" style="background:#DC2626">5</span></a>
+        <a href="notifications.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></span><span>Notifications</span></a>
+        <a href="system-config.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span><span>System Config</span></a>
+      </nav>
+      <div class="sidebar-footer"><a href="profile.html" class="sidebar-user-card"><div class="user-avatar"><span class="user-avatar-initials">SA</span></div><div class="user-info-text"><div class="user-name" id="sidebar-user-name">Super Administrator</div><span class="user-role-tag">Platform Admin</span></div></a></div>
+    </aside>
+
+    <div class="app-main">
+      <header class="app-topbar">
+        <div class="topbar-left">
+          <button type="button" class="mobile-nav-toggle" id="mobile-nav-toggle"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
+          <div class="topbar-page-title"><h1>My Profile</h1></div>
+        </div>
+        <div class="topbar-right">
+          <div class="dropdown-container">
+            <button type="button" class="user-menu-btn" data-dropdown-toggle="user-dropdown-menu">
+              <div class="user-avatar-sm" style="background:linear-gradient(135deg,#F59E0B,#D97706)"><span class="user-avatar-initials">SA</span></div>
+              <div class="user-menu-info"><div class="user-menu-name">Super Administrator</div><div class="user-menu-sub">Platform Admin</div></div>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div id="user-dropdown-menu" class="menu-dropdown profile-dropdown-menu">
+              <a href="system-config.html"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/></svg><span>System Config</span></a>
+              <button type="button" id="logout-action-btn" class="logout-action"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg><span>Sign Out</span></button>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <main class="app-content">
+        <div class="page-header">
+          <div><div class="page-title">My Profile</div><div class="page-sub">Manage your Super Admin account information and security settings</div></div>
+        </div>
+
+        <div class="profile-layout">
+          <!-- Left: Avatar Card -->
+          <div>
+            <div class="profile-avatar-card">
+              <div class="profile-avatar-wrap">
+                <span class="profile-avatar-initials" id="profile-initials">SA</span>
+              </div>
+              <div class="profile-name" id="profile-name">Super Administrator</div>
+              <div class="profile-role-badge">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                Super Admin
+              </div>
+              <div class="profile-email" id="profile-email">admin@university.edu</div>
+              <hr class="profile-divider">
+              <div class="profile-stat-row">
+                <div class="profile-stat"><div class="profile-stat-val">1,842</div><div class="profile-stat-lbl">Total Users</div></div>
+                <div class="profile-stat"><div class="profile-stat-val">148</div><div class="profile-stat-lbl">Courses</div></div>
+                <div class="profile-stat"><div class="profile-stat-val">8</div><div class="profile-stat-lbl">Depts.</div></div>
+              </div>
+              <button class="btn-edit-avatar" onclick="UI.showToast('info','Avatar','Avatar upload dialog opens here.')">Change Avatar</button>
+            </div>
+
+            <!-- Quick Info -->
+            <div style="background:#fff; border:1px solid var(--border-default); border-radius:14px; padding:1.25rem; margin-top:1.25rem;">
+              <div style="font-size:.84375rem; font-weight:700; color:var(--text-primary); margin-bottom:.875rem;">Account Info</div>
+              <div style="display:flex; flex-direction:column; gap:.6rem;">
+                <div style="display:flex; justify-content:space-between; font-size:.8125rem;">
+                  <span style="color:var(--text-tertiary); font-weight:600;">User ID</span>
+                  <span style="font-family:monospace; color:var(--text-secondary)">ADM-0001</span>
+                </div>
+                <div style="display:flex; justify-content:space-between; font-size:.8125rem;">
+                  <span style="color:var(--text-tertiary); font-weight:600;">Account Type</span>
+                  <span style="color:var(--text-secondary)">Super Admin</span>
+                </div>
+                <div style="display:flex; justify-content:space-between; font-size:.8125rem;">
+                  <span style="color:var(--text-tertiary); font-weight:600;">Status</span>
+                  <span style="color:#16A34A; font-weight:700;">● Active</span>
+                </div>
+                <div style="display:flex; justify-content:space-between; font-size:.8125rem;">
+                  <span style="color:var(--text-tertiary); font-weight:600;">Joined</span>
+                  <span style="color:var(--text-secondary)">Jan 1, 2024</span>
+                </div>
+                <div style="display:flex; justify-content:space-between; font-size:.8125rem;">
+                  <span style="color:var(--text-tertiary); font-weight:600;">Last Login</span>
+                  <span style="color:var(--text-secondary)" id="last-login">Today</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right: Profile Form -->
+          <div>
+            <div class="profile-form-card">
+              <div class="profile-form-header">Personal Information</div>
+              <div class="profile-form-body">
+                <div class="form-grid">
+                  <div class="form-group">
+                    <label class="form-label">First Name</label>
+                    <input type="text" class="form-input" id="first-name" value="Super">
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Last Name</label>
+                    <input type="text" class="form-input" id="last-name" value="Administrator">
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Email Address</label>
+                    <input type="email" class="form-input" id="email-field" value="admin@university.edu">
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Phone</label>
+                    <input type="text" class="form-input" value="+91 98765 43210">
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Role</label>
+                    <input type="text" class="form-input" value="Super Administrator" disabled>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Department</label>
+                    <input type="text" class="form-input" value="Platform Administration" disabled>
+                  </div>
+                  <div class="form-group full">
+                    <label class="form-label">Bio / Notes</label>
+                    <textarea class="form-input" style="min-height:80px; resize:vertical">Platform-wide Super Administrator with full access to all modules including User Management, Academic Structure, Security Audit Logs and System Configuration.</textarea>
+                  </div>
+                </div>
+              </div>
+              <div class="form-actions">
+                <button class="btn-ghost" onclick="UI.showToast('info','Reset','Form values reset to saved.')">Reset</button>
+                <button class="btn-primary-admin" onclick="UI.showToast('success','Saved','Profile updated successfully.')">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                  Save Profile
+                </button>
+              </div>
+            </div>
+
+            <!-- Security -->
+            <div class="security-card">
+              <div style="padding:1rem 1.5rem; border-bottom:1px solid var(--border-light); font-size:.9375rem; font-weight:700; color:var(--text-primary);">Security Settings</div>
+              <div class="security-item">
+                <div>
+                  <div class="security-label">Password</div>
+                  <div class="security-sub">Last changed 45 days ago</div>
+                </div>
+                <button class="btn-sec" onclick="UI.showToast('info','Password','Password change dialog opens here.')">Change Password</button>
+              </div>
+              <div class="security-item">
+                <div>
+                  <div class="security-label">Two-Factor Authentication</div>
+                  <div class="security-sub">Not enabled — highly recommended for admin accounts</div>
+                </div>
+                <button class="btn-sec" onclick="UI.showToast('info','2FA','Two-factor authentication setup wizard opens here.')">Enable 2FA</button>
+              </div>
+              <div class="security-item">
+                <div>
+                  <div class="security-label">Active Sessions</div>
+                  <div class="security-sub">1 active session (this device)</div>
+                </div>
+                <button class="btn-sec" onclick="UI.showToast('warning','Sessions','All other sessions will be terminated.')">Manage Sessions</button>
+              </div>
+              <div class="security-item">
+                <div>
+                  <div class="security-label">Login History</div>
+                  <div class="security-sub">View all recent login events for this account</div>
+                </div>
+                <a href="audit-logs.html" class="btn-sec" style="text-decoration:none">View Logs</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script src="../js/firebase-config.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/ui.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const user = AuthService.getCurrentUser();
+      if (user) {
+        const name = user.name || 'Super Administrator';
+        const initials = name.split(' ').map(w => w[0]).join('').substring(0,2).toUpperCase();
+        document.getElementById('sidebar-user-name').textContent = name;
+        document.getElementById('profile-name').textContent = name;
+        document.getElementById('profile-initials').textContent = initials;
+        document.getElementById('profile-email').textContent = user.email || 'admin@university.edu';
+        document.getElementById('email-field').value = user.email || 'admin@university.edu';
+        const parts = name.split(' ');
+        document.getElementById('first-name').value = parts[0] || '';
+        document.getElementById('last-name').value = parts.slice(1).join(' ') || '';
+      }
+      document.getElementById('last-login').textContent = new Date().toLocaleDateString('en-IN', { day:'numeric', month:'short', year:'numeric' });
+      document.getElementById('logout-action-btn').addEventListener('click', async () => await AuthService.logout());
+      const toggle = document.getElementById('mobile-nav-toggle');
+      const sidebar = document.querySelector('.app-sidebar');
+      const backdrop = document.querySelector('.sidebar-backdrop');
+      if (toggle) { toggle.addEventListener('click', () => { sidebar.classList.toggle('mobile-open'); backdrop.classList.toggle('visible'); }); backdrop.addEventListener('click', () => { sidebar.classList.remove('mobile-open'); backdrop.classList.remove('visible'); }); }
+      document.querySelectorAll('[data-dropdown-toggle]').forEach(btn => { btn.addEventListener('click', e => { e.stopPropagation(); const d = document.getElementById(btn.getAttribute('data-dropdown-toggle')); if (d) { document.querySelectorAll('.menu-dropdown.open').forEach(x => { if(x!==d) x.classList.remove('open'); }); d.classList.toggle('open'); } }); });
+      document.addEventListener('click', () => document.querySelectorAll('.menu-dropdown.open').forEach(d => d.classList.remove('open')));
+    });
+  </script>
+</body>
+</html>

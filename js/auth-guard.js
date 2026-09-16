@@ -34,6 +34,9 @@
       if (user.role === 'faculty') {
         window.location.replace('../faculty/dashboard.html');
         return;
+      } else if (user.role === 'hod') {
+        window.location.replace('../hod/dashboard.html');
+        return;
       }
       window.location.replace('../login.html');
       return;
@@ -43,6 +46,9 @@
       console.warn(`🔒 [AuthGuard] Access Denied: Role "${user.role}" cannot access Faculty Portal.`);
       if (user.role === 'student') {
         window.location.replace('../student/dashboard.html');
+        return;
+      } else if (user.role === 'hod') {
+        window.location.replace('../hod/dashboard.html');
         return;
       }
       window.location.replace('../login.html');

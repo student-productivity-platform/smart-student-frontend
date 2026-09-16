@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Courses Management — Smart Admin</title>
+  <meta name="description" content="Platform-wide course management for Super Admin.">
+  <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+  <link rel="stylesheet" href="../css/main.css">
+  <link rel="stylesheet" href="../css/dashboard.css">
+  <link rel="stylesheet" href="../css/responsive.css">
+  <script src="../js/admin-auth-guard.js"></script>
+  <style>
+    :root { --admin-accent:#F59E0B; --admin-accent-dark:#D97706; --admin-accent-bg:#FFFBEB; }
+    .sidebar-brand-icon { background:linear-gradient(135deg,#F59E0B,#D97706)!important; box-shadow:0 4px 12px rgba(245,158,11,.4)!important; }
+    .nav-link.active { background:rgba(245,158,11,.14)!important; color:#F59E0B!important; }
+    .nav-link.active .nav-link-icon { color:#F59E0B!important; }
+    .nav-link:hover { background:rgba(245,158,11,.08)!important; }
+    .page-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:1.5rem; }
+    .page-title { font-size:1.5rem; font-weight:800; color:var(--text-primary); letter-spacing:-.02em; }
+    .page-sub { font-size:.84375rem; color:var(--text-tertiary); margin-top:.2rem; }
+    .btn-primary-admin { display:inline-flex; align-items:center; gap:.4rem; background:linear-gradient(135deg,#F59E0B,#D97706); color:#fff; font-size:.84375rem; font-weight:700; padding:.6rem 1.1rem; border-radius:10px; border:none; cursor:pointer; transition:all .18s; box-shadow:0 4px 12px rgba(245,158,11,.3); }
+
+    /* Stats */
+    .course-stats { display:grid; grid-template-columns:repeat(4,1fr); gap:1rem; margin-bottom:1.5rem; }
+    .c-stat { background:#fff; border:1px solid var(--border-default); border-radius:12px; padding:1rem 1.25rem; display:flex; align-items:center; gap:.875rem; }
+    .c-stat-icon { width:38px; height:38px; border-radius:10px; display:flex; align-items:center; justify-content:center; }
+    .c-stat-val { font-size:1.5rem; font-weight:800; color:var(--text-primary); letter-spacing:-.02em; }
+    .c-stat-lbl { font-size:.71875rem; font-weight:600; color:var(--text-tertiary); text-transform:uppercase; }
+
+    /* Filters */
+    .filters-bar { display:flex; gap:.75rem; align-items:center; margin-bottom:1.25rem; flex-wrap:wrap; }
+    .filter-select { height:38px; border:1px solid var(--border-default); border-radius:8px; padding:0 .75rem; font-size:.8125rem; font-family:inherit; color:var(--text-secondary); background:#fff; cursor:pointer; }
+    .filter-select:focus { outline:none; border-color:var(--admin-accent); }
+    .search-wrap { position:relative; }
+    .search-wrap svg { position:absolute; left:.6rem; top:50%; transform:translateY(-50%); color:var(--text-tertiary); pointer-events:none; }
+    .search-input-users { height:38px; border:1px solid var(--border-default); border-radius:8px; padding:0 .75rem 0 2rem; font-size:.8125rem; font-family:inherit; color:var(--text-secondary); background:#fff; width:240px; }
+    .search-input-users:focus { outline:none; border-color:var(--admin-accent); }
+
+    /* Course Cards Grid */
+    .courses-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1rem; }
+    .course-card { background:#fff; border:1px solid var(--border-default); border-radius:16px; overflow:hidden; transition:all .2s; }
+    .course-card:hover { box-shadow:0 8px 24px rgba(15,23,42,.08); transform:translateY(-2px); }
+    .course-card-top { height:6px; }
+    .course-card-body { padding:1.25rem; }
+    .course-code { font-size:.71875rem; font-weight:700; color:var(--text-tertiary); text-transform:uppercase; letter-spacing:.06em; margin-bottom:.3rem; }
+    .course-name { font-size:1rem; font-weight:800; color:var(--text-primary); margin-bottom:.25rem; line-height:1.3; }
+    .course-dept { font-size:.78125rem; color:var(--text-tertiary); margin-bottom:.875rem; }
+    .course-meta { display:flex; gap:.875rem; flex-wrap:wrap; margin-bottom:.875rem; }
+    .c-meta-item { display:flex; align-items:center; gap:.3rem; font-size:.78125rem; color:var(--text-secondary); font-weight:500; }
+    .course-card-footer { padding:.75rem 1.25rem; background:#F8FAFC; border-top:1px solid var(--border-light); display:flex; align-items:center; justify-content:space-between; }
+    .status-pill { display:inline-flex; padding:.2rem .6rem; border-radius:20px; font-size:.6875rem; font-weight:700; }
+    .status-pill.active   { background:#DCFCE7; color:#166534; }
+    .status-pill.draft    { background:#F1F5F9; color:#64748B; }
+    .status-pill.archived { background:#FEE2E2; color:#991B1B; }
+    .btn-sm-ghost { padding:.3rem .7rem; border-radius:7px; border:1px solid var(--border-default); background:#fff; font-size:.75rem; font-weight:600; color:var(--text-secondary); cursor:pointer; font-family:inherit; transition:all .15s; }
+    .btn-sm-ghost:hover { border-color:var(--admin-accent); color:var(--admin-accent); }
+
+    @media(max-width:1100px){ .courses-grid { grid-template-columns:1fr 1fr; } .course-stats { grid-template-columns:1fr 1fr; } }
+    @media(max-width:700px){ .courses-grid { grid-template-columns:1fr; } }
+  </style>
+</head>
+<body>
+  <div id="toast-container"></div>
+  <div class="sidebar-backdrop"></div>
+  <div class="app-container">
+    <aside class="app-sidebar">
+      <div class="sidebar-header"><a href="dashboard.html" class="sidebar-brand"><div class="sidebar-brand-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div><div class="sidebar-brand-text"><h2>Smart Admin</h2><span>Admin Portal</span></div></a></div>
+      <nav class="sidebar-nav-container">
+        <div class="nav-section-label">Platform Overview</div>
+        <a href="dashboard.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg></span><span>Overview</span></a>
+        <a href="profile.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span><span>My Profile</span></a>
+        <div class="nav-section-label">User & Access</div>
+        <a href="users.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span><span>User Management</span></a>
+        <a href="roles-permissions.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span><span>Roles & Permissions</span></a>
+        <div class="nav-section-label">Academic Admin</div>
+        <a href="academic-structure.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg></span><span>Academic Structure</span></a>
+        <a href="courses.html" class="nav-link active"><span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></span><span>Courses</span></a>
+        <div class="nav-section-label">Platform Ops</div>
+        <a href="reports.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></span><span>Reports</span></a>
+        <a href="audit-logs.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></span><span>Audit Logs</span><span class="nav-badge" style="background:#DC2626">5</span></a>
+        <a href="notifications.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></span><span>Notifications</span></a>
+        <a href="system-config.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span><span>System Config</span></a>
+      </nav>
+      <div class="sidebar-footer"><a href="profile.html" class="sidebar-user-card"><div class="user-avatar"><span class="user-avatar-initials">SA</span></div><div class="user-info-text"><div class="user-name" id="sidebar-user-name">Super Administrator</div><span class="user-role-tag">Platform Admin</span></div></a></div>
+    </aside>
+
+    <div class="app-main">
+      <header class="app-topbar">
+        <div class="topbar-left">
+          <button type="button" class="mobile-nav-toggle" id="mobile-nav-toggle"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
+          <div class="topbar-page-title"><h1>Courses Management</h1></div>
+        </div>
+        <div class="topbar-right">
+          <div class="dropdown-container">
+            <button type="button" class="user-menu-btn" data-dropdown-toggle="user-dropdown-menu">
+              <div class="user-avatar-sm" style="background:linear-gradient(135deg,#F59E0B,#D97706)"><span class="user-avatar-initials">SA</span></div>
+              <div class="user-menu-info"><div class="user-menu-name">Super Administrator</div><div class="user-menu-sub">Platform Admin</div></div>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div id="user-dropdown-menu" class="menu-dropdown profile-dropdown-menu">
+              <a href="profile.html"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span>My Profile</span></a>
+              <button type="button" id="logout-action-btn" class="logout-action"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg><span>Sign Out</span></button>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <main class="app-content">
+        <div class="page-header">
+          <div><div class="page-title">Courses Management</div><div class="page-sub">Create and manage all platform-wide courses</div></div>
+          <button class="btn-primary-admin" onclick="UI.showToast('info','Add Course','Course creation dialog opens here.')">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Add Course
+          </button>
+        </div>
+
+        <div class="course-stats">
+          <div class="c-stat"><div class="c-stat-icon" style="background:#DBEAFE;color:#2563EB"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></div><div><div class="c-stat-val">148</div><div class="c-stat-lbl">Total Courses</div></div></div>
+          <div class="c-stat"><div class="c-stat-icon" style="background:#DCFCE7;color:#16A34A"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></div><div><div class="c-stat-val">134</div><div class="c-stat-lbl">Active</div></div></div>
+          <div class="c-stat"><div class="c-stat-icon" style="background:#F1F5F9;color:#64748B"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div><div><div class="c-stat-val">10</div><div class="c-stat-lbl">Draft</div></div></div>
+          <div class="c-stat"><div class="c-stat-icon" style="background:#FEE2E2;color:#DC2626"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/></svg></div><div><div class="c-stat-val">4</div><div class="c-stat-lbl">Archived</div></div></div>
+        </div>
+
+        <div class="filters-bar">
+          <div class="search-wrap">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input type="search" class="search-input-users" id="search-course" placeholder="Search course name or code...">
+          </div>
+          <select class="filter-select" id="filter-course-dept">
+            <option value="">All Departments</option>
+            <option value="B.Tech">B.Tech</option>
+            <option value="BBA">BBA</option>
+            <option value="MBA">MBA</option>
+          </select>
+          <select class="filter-select" id="filter-course-sem">
+            <option value="">All Semesters</option>
+            <option value="Sem 1">Semester 1</option>
+            <option value="Sem 2">Semester 2</option>
+            <option value="Sem 3">Semester 3</option>
+            <option value="Sem 4">Semester 4</option>
+            <option value="Sem 5">Semester 5</option>
+            <option value="Sem 6">Semester 6</option>
+          </select>
+          <select class="filter-select" id="filter-course-status">
+            <option value="">All Status</option>
+            <option value="active">Active</option>
+            <option value="draft">Draft</option>
+          </select>
+        </div>
+
+        <div class="courses-grid" id="courses-container">
+          <!-- B.Tech Course 1 -->
+          <div class="course-card" data-dept="B.Tech" data-sem="Sem 6" data-status="active"><div class="course-card-top" style="background:linear-gradient(90deg,#8B5CF6,#6D28D9)"></div><div class="course-card-body"><div class="course-code">CS601 • Sem 6</div><div class="course-name">Advanced Machine Learning</div><div class="course-dept">B.Tech</div><div class="course-meta"><span class="c-meta-item"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Prof. Mehta</span><span class="c-meta-item"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>87 students</span><span class="c-meta-item"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>4 credits</span></div></div><div class="course-card-footer"><span class="status-pill active">Active</span><div style="display:flex;gap:.4rem"><button class="btn-sm-ghost" onclick="UI.showToast('info','Edit','Opening course editor')">Edit</button><button class="btn-sm-ghost">View</button></div></div></div>
+
+          <!-- B.Tech Course 2 -->
+          <div class="course-card" data-dept="B.Tech" data-sem="Sem 4" data-status="active"><div class="course-card-top" style="background:linear-gradient(90deg,#2563EB,#1D4ED8)"></div><div class="course-card-body"><div class="course-code">CS401 • Sem 4</div><div class="course-name">Database Management Systems</div><div class="course-dept">B.Tech</div><div class="course-meta"><span class="c-meta-item"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Dr. Joshi</span><span class="c-meta-item"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>92 students</span><span class="c-meta-item"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>4 credits</span></div></div><div class="course-card-footer"><span class="status-pill active">Active</span><div style="display:flex;gap:.4rem"><button class="btn-sm-ghost">Edit</button><button class="btn-sm-ghost">View</button></div></div></div>
+
+          <!-- BBA Course 1 -->
+          <div class="course-card" data-dept="BBA" data-sem="Sem 3" data-status="active"><div class="course-card-top" style="background:linear-gradient(90deg,#F59E0B,#D97706)"></div><div class="course-card-body"><div class="course-code">BBA301 • Sem 3</div><div class="course-name">Marketing Management & Strategy</div><div class="course-dept">BBA</div><div class="course-meta"><span class="c-meta-item"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Prof. Sunita Mehta</span><span class="c-meta-item"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>68 students</span><span class="c-meta-item"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>3 credits</span></div></div><div class="course-card-footer"><span class="status-pill active">Active</span><div style="display:flex;gap:.4rem"><button class="btn-sm-ghost">Edit</button><button class="btn-sm-ghost">View</button></div></div></div>
+
+          <!-- BBA Course 2 -->
+          <div class="course-card" data-dept="BBA" data-sem="Sem 2" data-status="active"><div class="course-card-top" style="background:linear-gradient(90deg,#0EA5E9,#0284C7)"></div><div class="course-card-body"><div class="course-code">BBA201 • Sem 2</div><div class="course-name">Business Economics & Financial Accounting</div><div class="course-dept">BBA</div><div class="course-meta"><span class="c-meta-item"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Dr. Sharma</span><span class="c-meta-item"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>72 students</span><span class="c-meta-item"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>4 credits</span></div></div><div class="course-card-footer"><span class="status-pill active">Active</span><div style="display:flex;gap:.4rem"><button class="btn-sm-ghost">Edit</button><button class="btn-sm-ghost">View</button></div></div></div>
+
+          <!-- MBA Course 1 -->
+          <div class="course-card" data-dept="MBA" data-sem="Sem 2" data-status="active"><div class="course-card-top" style="background:linear-gradient(90deg,#16A34A,#15803D)"></div><div class="course-card-body"><div class="course-code">MBA202 • Sem 2</div><div class="course-name">Corporate Finance & Investments</div><div class="course-dept">MBA</div><div class="course-meta"><span class="c-meta-item"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Dr. Rajesh Patil</span><span class="c-meta-item"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>60 students</span><span class="c-meta-item"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>4 credits</span></div></div><div class="course-card-footer"><span class="status-pill active">Active</span><div style="display:flex;gap:.4rem"><button class="btn-sm-ghost">Edit</button><button class="btn-sm-ghost">View</button></div></div></div>
+
+          <!-- MBA Course 2 (Draft) -->
+          <div class="course-card" data-dept="MBA" data-sem="Sem 1" data-status="draft"><div class="course-card-top" style="background:linear-gradient(90deg,#94A3B8,#64748B)"></div><div class="course-card-body"><div class="course-code">MBA101 • Sem 1</div><div class="course-name">Strategic Management & Leadership</div><div class="course-dept">MBA</div><div class="course-meta"><span class="c-meta-item"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Dr. Priya Joshi</span><span class="c-meta-item"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>54 students</span><span class="c-meta-item"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>3 credits</span></div></div><div class="course-card-footer"><span class="status-pill draft">Draft</span><div style="display:flex;gap:.4rem"><button class="btn-sm-ghost">Edit</button><button class="btn-sm-ghost">Publish</button></div></div></div>
+
+          <div class="course-card" style="border:2px dashed #E2E8F0; display:flex; align-items:center; justify-content:center; min-height:180px; cursor:pointer; background:#FAFAFA;" onclick="UI.showToast('info','Add Course','Course creation dialog')">
+            <div style="text-align:center; color:var(--text-muted);"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="margin-bottom:.5rem"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg><div style="font-size:.84375rem;font-weight:600">Add Course</div></div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script src="../js/firebase-config.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/ui.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const user = AuthService.getCurrentUser();
+      if (user) document.getElementById('sidebar-user-name').textContent = user.name || 'Super Admin';
+      document.getElementById('logout-action-btn').addEventListener('click', async () => await AuthService.logout());
+
+      // Filter functionality
+      function filterCourses() {
+        const q = (document.getElementById('search-course').value || '').toLowerCase();
+        const dept = document.getElementById('filter-course-dept').value;
+        const sem = document.getElementById('filter-course-sem').value;
+        const status = document.getElementById('filter-course-status').value;
+
+        document.querySelectorAll('#courses-container .course-card[data-dept]').forEach(card => {
+          const cardDept = card.getAttribute('data-dept') || '';
+          const cardSem = card.getAttribute('data-sem') || '';
+          const cardStatus = card.getAttribute('data-status') || '';
+          const cardText = card.textContent.toLowerCase();
+
+          const matchQ = !q || cardText.includes(q);
+          const matchDept = !dept || cardDept === dept;
+          const matchSem = !sem || cardSem === sem;
+          const matchStatus = !status || cardStatus === status;
+
+          if (matchQ && matchDept && matchSem && matchStatus) {
+            card.style.display = '';
+          } else {
+            card.style.display = 'none';
+          }
+        });
+      }
+
+      document.getElementById('search-course').addEventListener('input', filterCourses);
+      document.getElementById('filter-course-dept').addEventListener('change', filterCourses);
+      document.getElementById('filter-course-sem').addEventListener('change', filterCourses);
+      document.getElementById('filter-course-status').addEventListener('change', filterCourses);
+      const toggle = document.getElementById('mobile-nav-toggle');
+      const sidebar = document.querySelector('.app-sidebar');
+      const backdrop = document.querySelector('.sidebar-backdrop');
+      if (toggle) { toggle.addEventListener('click', () => { sidebar.classList.toggle('mobile-open'); backdrop.classList.toggle('visible'); }); backdrop.addEventListener('click', () => { sidebar.classList.remove('mobile-open'); backdrop.classList.remove('visible'); }); }
+      document.querySelectorAll('[data-dropdown-toggle]').forEach(btn => { btn.addEventListener('click', e => { e.stopPropagation(); const d = document.getElementById(btn.getAttribute('data-dropdown-toggle')); if (d) { document.querySelectorAll('.menu-dropdown.open').forEach(x => { if(x!==d) x.classList.remove('open'); }); d.classList.toggle('open'); } }); });
+      document.addEventListener('click', () => document.querySelectorAll('.menu-dropdown.open').forEach(d => d.classList.remove('open')));
+    });
+  </script>
+</body>
+</html>

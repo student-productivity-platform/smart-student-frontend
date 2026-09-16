@@ -50,22 +50,37 @@ const AuthService = (() => {
       department: 'Department of Computer Engineering',
       school: 'School of Computing & Information Technology',
       officeRoom: 'Academic Block 3, Cabin 304',
-      status: 'active'
+      status: 'active',
+      _demoPassword: 'Faculty@2026'
+    },
+    'hod@gmail.com': {
+      uid: 'usr_hod_2001',
+      email: 'hod@gmail.com',
+      name: 'Dr. Anand Deshmukh',
+      role: 'hod',
+      designation: 'Professor & Head of Department',
+      department: 'Department of Computer Engineering',
+      status: 'active',
+      _demoPassword: 'hod1234'
     },
     'hod@university.edu': {
       uid: 'usr_hod_2001',
       email: 'hod@university.edu',
       name: 'Dr. Anand Deshmukh',
       role: 'hod',
+      designation: 'Professor & Head of Department',
       department: 'Department of Computer Engineering',
-      status: 'active'
+      status: 'active',
+      _demoPassword: 'hod1234'
     },
     'admin@university.edu': {
       uid: 'usr_adm_3001',
       email: 'admin@university.edu',
       name: 'Super Administrator',
       role: 'super_admin',
-      status: 'active'
+      department: 'Platform Administration',
+      status: 'active',
+      _demoPassword: 'Admin@2026'
     }
   };
 
@@ -116,20 +131,30 @@ const AuthService = (() => {
     // Fallback: Local Demo / Evaluation Mode
     await new Promise(r => setTimeout(r, 450)); // Realistic network latency simulation
 
-    const userProfile = DEMO_USERS[cleanEmail] || {
-      uid: 'usr_generic_' + Math.random().toString(36).substr(2, 6),
-      email: cleanEmail,
-      name: cleanEmail.split('@')[0].replace('.', ' ').replace(/\b\w/g, l => l.toUpperCase()),
-      role: 'student',
-      studentId: 'STU-2024-9901',
-      program: 'B.Tech Computer Science & Engineering',
-      department: 'Department of Computer Engineering',
-      semester: 4,
-      section: 'A',
-      academicYear: '2025–2026',
-      cgpa: 8.5,
-      status: 'active'
-    };
+    const isHodAttempt = cleanEmail === 'hod@gmail.com' || cleanEmail.includes('hod');
+
+    // Check demo user and validate password
+    if (!DEMO_USERS[cleanEmail]) {
+      if (isHodAttempt) {
+        throw new Error('Invalid HOD email or password.');
+      }
+      throw new Error('Invalid institutional email or password.');
+    }
+
+    const demoUser = DEMO_USERS[cleanEmail];
+    const expectedPass = demoUser._demoPassword || 'Student@2026';
+    const isValidPass = (cleanPass === expectedPass) || 
+      (demoUser.role === 'hod' && cleanPass === 'Hod@2026');
+
+    if (!isValidPass) {
+      if (demoUser.role === 'hod' || isHodAttempt) {
+        throw new Error('Invalid HOD email or password.');
+      }
+      throw new Error('Invalid institutional email or password.');
+    }
+
+    const userProfile = { ...demoUser };
+    delete userProfile._demoPassword;
 
     saveSession(userProfile, rememberMe);
     return userProfile;
@@ -223,7 +248,7 @@ const AuthService = (() => {
    * Resolve appropriate login URL based on directory depth
    */
   function getLoginUrl() {
-    if (window.location.pathname.includes('/student/') || window.location.pathname.includes('/faculty/')) {
+    if (window.location.pathname.includes('/student/') || window.location.pathname.includes('/administrator/') || window.location.pathname.includes('/faculty/') || window.location.pathname.includes('/hod/')) {
       return '../login.html';
     }
     return 'login.html';

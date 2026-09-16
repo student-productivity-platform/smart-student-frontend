@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Department Reports — HOD Portal</title>
+  <meta name="description" content="View departmental academic, faculty workload, timetable utilization and operational performance reports.">
+
+  <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+  <link rel="alternate icon" href="../favicon.ico">
+  <link rel="stylesheet" href="../css/main.css">
+  <link rel="stylesheet" href="../css/dashboard.css">
+  <link rel="stylesheet" href="../css/hod.css">
+  <link rel="stylesheet" href="../css/responsive.css">
+
+  <script src="../js/hod-auth-guard.js"></script>
+</head>
+
+<body>
+
+  <div id="toast-container" aria-live="polite"></div>
+  <div class="sidebar-backdrop"></div>
+
+  <div class="app-container">
+    <!-- Sidebar -->
+    <aside class="app-sidebar" aria-label="HOD Navigation">
+      <div class="sidebar-header">
+        <a href="dashboard.html" class="sidebar-brand">
+          <div class="sidebar-brand-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+              <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
+              <path d="M6 12v5c3 3 9 3 12 0v-5" />
+            </svg>
+          </div>
+          <div class="sidebar-brand-text">
+            <h2>Smart Student</h2>
+            <span>HOD PORTAL</span>
+          </div>
+        </a>
+      </div>
+
+      <nav class="sidebar-nav-container">
+        <div class="nav-section-label">Departmental Core</div>
+
+        <a href="dashboard.html" class="nav-link">
+          <span class="nav-link-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+          </span>
+          <span>Overview</span>
+        </a>
+
+        <a href="faculty-allocation.html" class="nav-link">
+          <span class="nav-link-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><polyline points="16 11 18 13 22 9"/></svg>
+          </span>
+          <span>Faculty Allocation</span>
+        </a>
+
+        <a href="students.html" class="nav-link">
+          <span class="nav-link-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          </span>
+          <span>Students</span>
+        </a>
+
+        <a href="faculty.html" class="nav-link">
+          <span class="nav-link-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          </span>
+          <span>Faculty</span>
+        </a>
+
+        <a href="timetable.html" class="nav-link">
+          <span class="nav-link-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          </span>
+          <span>Timetable</span>
+        </a>
+
+        <a href="approvals.html" class="nav-link">
+          <span class="nav-link-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="m9 15 2 2 4-4"/></svg>
+          </span>
+          <span>Approvals</span>
+          <span class="nav-badge" id="nav-badge-approvals" style="background-color: var(--hod-accent);">5</span>
+        </a>
+
+        <div class="nav-section-label">Analytics & Insights</div>
+
+        <a href="reports.html" class="nav-link active">
+          <span class="nav-link-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+          </span>
+          <span>Reports</span>
+        </a>
+
+        <a href="settings.html" class="nav-link">
+          <span class="nav-link-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          </span>
+          <span>Settings</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <a href="profile.html" class="sidebar-user-card">
+          <div class="user-avatar" style="background: linear-gradient(135deg, #7C3AED 0%, #4F46E5 100%);">
+            <span class="user-avatar-initials">AD</span>
+          </div>
+          <div class="user-info-text">
+            <div class="user-name" id="sidebar-user-name">Dr. Anand Deshmukh</div>
+            <span class="user-role-tag" id="sidebar-user-role">Head of Department</span>
+          </div>
+        </a>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="app-main">
+      <header class="app-topbar">
+        <div class="topbar-left">
+          <button type="button" class="mobile-nav-toggle" id="mobile-nav-toggle" aria-label="Open Navigation">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+          </button>
+          <div class="topbar-page-title">
+            <h1>Department Reports (F36)</h1>
+          </div>
+        </div>
+
+        <div class="topbar-search-box">
+          <svg class="topbar-search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="search" id="global-search-input" class="topbar-search-input" placeholder="Search report metrics, cohorts, stats..." aria-label="Global Search">
+        </div>
+
+        <div class="topbar-right">
+          <button type="button" class="btn-hod-primary" id="export-report-btn">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            <span>Export Department Digest</span>
+          </button>
+
+          <!-- Quick Portal Switcher -->
+          <a href="../student/dashboard.html" class="badge badge-subtle" style="text-decoration: none; padding: 0.4rem 0.75rem; font-size: 0.75rem; border-radius: 20px; color: #7C3AED; background: #EDE9FE;" title="Switch view to Student Portal">
+            <span>⇄ Student View</span>
+          </a>
+
+          <!-- Notification Dropdown -->
+          <div class="dropdown-container">
+            <button type="button" class="icon-button" data-dropdown-toggle="notification-dropdown" aria-label="Notifications">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+                <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+              </svg>
+              <span class="unread-badge" id="notif-badge">5</span>
+            </button>
+
+            <div id="notification-dropdown" class="menu-dropdown notification-dropdown">
+              <div class="dropdown-header">
+                <h4>Department Notifications</h4>
+                <a href="approvals.html" style="font-size: 0.75rem; color: var(--hod-accent);">View all approvals</a>
+              </div>
+              <ul class="dropdown-list" id="notifications-list-container">
+                <li class="dropdown-item">
+                  <div style="font-size: 0.8125rem; font-weight: 600; color: #0F172A;">Leave Request Pending</div>
+                  <div style="font-size: 0.75rem; color: #64748B;">Prof. Amit Kulkarni submitted 3-day medical leave.</div>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- User Menu Dropdown -->
+          <div class="dropdown-container">
+            <button type="button" class="user-menu-btn" data-dropdown-toggle="user-dropdown" aria-label="HOD Profile Menu">
+              <div class="user-avatar-sm" style="background: linear-gradient(135deg, #7C3AED 0%, #4F46E5 100%); color: #FFFFFF;">
+                <span class="user-avatar-initials">AD</span>
+              </div>
+              <div class="user-menu-info">
+                <div class="user-menu-name" id="topbar-user-name">Dr. Anand Deshmukh</div>
+                <div class="user-menu-sub">HOD • Computer Engg</div>
+              </div>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="6 9 12 15 18 9" />
+              </svg>
+            </button>
+
+            <div id="user-dropdown" class="menu-dropdown profile-dropdown-menu">
+              <div class="dropdown-header">
+                <h4>Dr. Anand Deshmukh</h4>
+                <span style="font-size: 0.75rem; color: #64748B;">Head of Department (CSE)</span>
+              </div>
+              <a href="profile.html">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                <span>My Profile</span>
+              </a>
+              <a href="settings.html">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                <span>Department Settings</span>
+              </a>
+              <button type="button" id="logout-action-btn" class="logout-action">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                <span>Sign Out</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <main class="app-content-body">
+        <!-- Report Category Navigation Tabs -->
+        <div class="approval-tab-bar">
+          <button type="button" class="approval-tab-btn active" data-category="academic">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+            <span>Academic Reports</span>
+          </button>
+          <button type="button" class="approval-tab-btn" data-category="faculty">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            <span>Faculty Workload Reports</span>
+          </button>
+          <button type="button" class="approval-tab-btn" data-category="operational">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            <span>Operational & Lab Reports</span>
+          </button>
+        </div>
+
+        <!-- Filter Controls -->
+        <div class="hod-filter-bar">
+          <div class="hod-filter-group">
+            <select id="report-program" class="hod-select" aria-label="Program">
+              <option value="all">All Programs</option>
+              <option value="B.Tech CSE">B.Tech Computer Science & Eng.</option>
+              <option value="M.Tech CSE">M.Tech Computer Science & Eng.</option>
+              <option value="B.Tech AI&DS">B.Tech Artificial Intelligence & Data Sci.</option>
+            </select>
+
+            <select id="report-semester" class="hod-select" aria-label="Semester">
+              <option value="all">All Semesters</option>
+              <option value="4">Semester 4</option>
+              <option value="6">Semester 6</option>
+              <option value="8">Semester 8</option>
+            </select>
+
+            <select id="report-term" class="hod-select" aria-label="Academic Term">
+              <option value="2025-2026">Spring 2026 (Current Term)</option>
+              <option value="2025-fall">Fall 2025 (Previous Term)</option>
+            </select>
+          </div>
+
+          <div style="font-size: 0.75rem; color: #64748B;">
+            Generated for: <strong>Department of Computer Engineering</strong>
+          </div>
+        </div>
+
+        <!-- Category 1: Academic Reports Section -->
+        <div id="section-academic-reports">
+          <div class="dept-dashboard-grid">
+            <div class="dept-card">
+              <div class="dept-card-header">
+                <h3 class="dept-card-title">Grade & Performance Distribution</h3>
+                <span class="dept-banner-chip" style="background:#F8FAFC; color:#334155; border-color:#E2E8F0;">248 Students</span>
+              </div>
+              <div id="academic-grade-dist-bars">
+                <!-- Injected via JS -->
+              </div>
+            </div>
+
+            <div class="dept-card">
+              <div class="dept-card-header">
+                <h3 class="dept-card-title">Attendance Brackets Summary</h3>
+                <span class="status-badge healthy">84.8% Average</span>
+              </div>
+              <div id="academic-attendance-brackets">
+                <!-- Injected via JS -->
+              </div>
+            </div>
+          </div>
+
+          <!-- Top Performing Subjects Table -->
+          <div class="dept-card" style="margin-top: 1rem;">
+            <div class="dept-card-header">
+              <h3 class="dept-card-title">Subject Academic Performance & Pass Rates</h3>
+              <span style="font-size: 0.75rem; color: #64748B;">Mid-Term Evaluation Period</span>
+            </div>
+            <div class="hod-table-wrapper">
+              <table class="hod-table">
+                <thead>
+                  <tr>
+                    <th>Subject Code & Title</th>
+                    <th>Course Coordinator</th>
+                    <th>Average Score</th>
+                    <th>Pass Rate</th>
+                    <th>Performance Rating</th>
+                  </tr>
+                </thead>
+                <tbody id="top-subjects-table-body">
+                  <!-- Injected via JS -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Category 2: Faculty Reports Section (Initially Hidden / Toggled) -->
+        <div id="section-faculty-reports" style="display: none;">
+          <div class="hod-stats-grid">
+            <div class="hod-stat-card">
+              <span class="hod-stat-label">Total Teaching Hours / Wk</span>
+              <div class="hod-stat-value">198 hrs</div>
+              <div class="hod-stat-meta"><span>Across 18 department faculty</span></div>
+            </div>
+            <div class="hod-stat-card">
+              <span class="hod-stat-label">Avg Load per Faculty</span>
+              <div class="hod-stat-value">15.2 hrs</div>
+              <div class="hod-stat-meta"><span class="trend-badge up">Optimal Band</span></div>
+            </div>
+            <div class="hod-stat-card">
+              <span class="hod-stat-label">Optimal Load Faculty</span>
+              <div class="hod-stat-value" style="color: #16A34A;">13</div>
+              <div class="hod-stat-meta"><span>14–18 teaching hours/wk</span></div>
+            </div>
+            <div class="hod-stat-card">
+              <span class="hod-stat-label">Workload Alerts</span>
+              <div class="hod-stat-value" style="color: #DC2626;">1</div>
+              <div class="hod-stat-meta"><span>&gt;20 hrs weekly overload</span></div>
+            </div>
+          </div>
+
+          <div class="dept-card">
+            <div class="dept-card-header">
+              <h3 class="dept-card-title">Faculty Workload Distribution</h3>
+            </div>
+            <div id="faculty-dist-table-container">
+              <!-- Injected via JS -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Category 3: Operational Reports Section -->
+        <div id="section-operational-reports" style="display: none;">
+          <div class="hod-stats-grid">
+            <div class="hod-stat-card">
+              <span class="hod-stat-label">Lab Facility Utilization</span>
+              <div class="hod-stat-value" style="color: #16A34A;">88.4%</div>
+              <div class="hod-stat-meta"><span>Computer Labs 1, 2, 3</span></div>
+            </div>
+            <div class="hod-stat-card">
+              <span class="hod-stat-label">Smart Classroom Hours</span>
+              <div class="hod-stat-value">34 hrs/wk</div>
+              <div class="hod-stat-meta"><span>Room 302 Smart Block</span></div>
+            </div>
+            <div class="hod-stat-card">
+              <span class="hod-stat-label">Approvals Processed</span>
+              <div class="hod-stat-value">28</div>
+              <div class="hod-stat-meta"><span>This Academic Term</span></div>
+            </div>
+            <div class="hod-stat-card">
+              <span class="hod-stat-label">Avg Turnaround Time</span>
+              <div class="hod-stat-value" style="color: var(--hod-accent);">18.5 hrs</div>
+              <div class="hod-stat-meta"><span>Approval SLA compliance</span></div>
+            </div>
+          </div>
+
+          <div class="dept-card">
+            <div class="dept-card-header">
+              <h3 class="dept-card-title">Operational Summary & Governance Health</h3>
+            </div>
+            <div style="font-size: 0.84375rem; color: #334155; line-height: 1.6;">
+              <p>• <strong>Timetable Conflict Auditing:</strong> 0 room/faculty double-booking collisions detected across all active sections.</p>
+              <p>• <strong>Syllabus Coverage Audit:</strong> 76.5% of scheduled curriculum completed on schedule across all 14 active subjects.</p>
+              <p>• <strong>Lab Hardware Status:</strong> 120 client machines active across Lab 1 (SE Lab), Lab 2 (Networks Lab), and Lab 3 (DBMS Lab). AI Server requisition pending HOD sign-off.</p>
+            </div>
+          </div>
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- Application Services -->
+  <script src="../data/mock-student.js"></script>
+  <script src="../data/mock-hod.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/hod-service.js"></script>
+  <script src="../js/ui.js"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const reports = HODService.getReports();
+
+      // Render Academic Grade Dist
+      const gradeContainer = document.getElementById('academic-grade-dist-bars');
+      if (gradeContainer && reports.academic) {
+        gradeContainer.innerHTML = reports.academic.performanceDistribution.map(g => `
+          <div class="dist-bar-item">
+            <div class="dist-bar-label">
+              <span>${g.grade}</span>
+              <span><strong>${g.count} Students</strong> (${g.percentage}%)</span>
+            </div>
+            <div class="dist-bar-track">
+              <div class="dist-bar-fill" style="width: ${g.percentage}%; background: var(--hod-accent);"></div>
+            </div>
+          </div>
+        `).join('');
+      }
+
+      // Render Attendance Brackets
+      const attendContainer = document.getElementById('academic-attendance-brackets');
+      if (attendContainer && reports.academic) {
+        attendContainer.innerHTML = reports.academic.attendanceBrackets.map(b => {
+          let col = '#10B981';
+          if (b.bracket.includes('75%')) col = '#3B82F6';
+          if (b.bracket.includes('65%')) col = '#F59E0B';
+          if (b.bracket.includes('<')) col = '#EF4444';
+
+          return `
+            <div class="dist-bar-item">
+              <div class="dist-bar-label">
+                <span>${b.bracket}</span>
+                <span><strong>${b.count}</strong> (${b.percentage}%)</span>
+              </div>
+              <div class="dist-bar-track">
+                <div class="dist-bar-fill" style="width: ${b.percentage}%; background: ${col};"></div>
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+
+      // Render Top Subjects Table
+      const subTable = document.getElementById('top-subjects-table-body');
+      if (subTable && reports.academic) {
+        subTable.innerHTML = reports.academic.topPerformingSubjects.map(s => `
+          <tr>
+            <td>
+              <div style="font-weight: 700; color: #0F172A;">${s.code} — ${s.name}</div>
+            </td>
+            <td>${s.faculty}</td>
+            <td><strong>${s.avgScore} / 100</strong></td>
+            <td><span style="font-weight: 800; color: #16A34A;">${s.passRate}%</span></td>
+            <td><span class="status-badge optimal">● High Performance</span></td>
+          </tr>
+        `).join('');
+      }
+
+      // Render Faculty Distribution Table
+      const facDistContainer = document.getElementById('faculty-dist-table-container');
+      if (facDistContainer && reports.faculty) {
+        facDistContainer.innerHTML = `
+          <table class="hod-table">
+            <thead>
+              <tr>
+                <th>Faculty Member</th>
+                <th>Weekly Hours</th>
+                <th>Capacity</th>
+                <th>Workload Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${reports.faculty.distribution.map(d => `
+                <tr>
+                  <td><strong>${d.faculty}</strong></td>
+                  <td>${d.hours} Hours / Wk</td>
+                  <td>Max ${d.max} Hours</td>
+                  <td><span class="status-badge ${d.status.toLowerCase()}">● ${d.status}</span></td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        `;
+      }
+
+      // Category Switching Tabs
+      const catTabs = document.querySelectorAll('.approval-tab-btn');
+      const secAcademic = document.getElementById('section-academic-reports');
+      const secFaculty = document.getElementById('section-faculty-reports');
+      const secOperational = document.getElementById('section-operational-reports');
+
+      catTabs.forEach(btn => {
+        btn.addEventListener('click', () => {
+          catTabs.forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          const cat = btn.getAttribute('data-category');
+
+          secAcademic.style.display = cat === 'academic' ? 'block' : 'none';
+          secFaculty.style.display = cat === 'faculty' ? 'block' : 'none';
+          secOperational.style.display = cat === 'operational' ? 'block' : 'none';
+        });
+      });
+
+      // Export Digest Button
+      document.getElementById('export-report-btn').addEventListener('click', () => {
+        UI.showToast('info', 'Exporting Digest', 'Preparing Departmental Academic Summary Report PDF...');
+        setTimeout(() => {
+          window.print();
+        }, 600);
+      });
+    });
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Platform Reports — Smart Admin</title>
+  <meta name="description" content="Platform-wide academic performance analytics and reports for Super Admin.">
+  <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+  <link rel="stylesheet" href="../css/main.css">
+  <link rel="stylesheet" href="../css/dashboard.css">
+  <link rel="stylesheet" href="../css/responsive.css">
+  <script src="../js/admin-auth-guard.js"></script>
+  <style>
+    :root { --admin-accent:#F59E0B; --admin-accent-dark:#D97706; --admin-accent-bg:#FFFBEB; }
+    .sidebar-brand-icon { background:linear-gradient(135deg,#F59E0B,#D97706)!important; box-shadow:0 4px 12px rgba(245,158,11,.4)!important; }
+    .nav-link.active { background:rgba(245,158,11,.14)!important; color:#F59E0B!important; }
+    .nav-link.active .nav-link-icon { color:#F59E0B!important; }
+    .nav-link:hover { background:rgba(245,158,11,.08)!important; }
+    .page-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:1.5rem; }
+    .page-title { font-size:1.5rem; font-weight:800; color:var(--text-primary); letter-spacing:-.02em; }
+    .page-sub { font-size:.84375rem; color:var(--text-tertiary); margin-top:.2rem; }
+    .btn-primary-admin { display:inline-flex; align-items:center; gap:.4rem; background:linear-gradient(135deg,#F59E0B,#D97706); color:#fff; font-size:.84375rem; font-weight:700; padding:.6rem 1.1rem; border-radius:10px; border:none; cursor:pointer; transition:all .18s; box-shadow:0 4px 12px rgba(245,158,11,.3); }
+
+    /* KPI row */
+    .rpt-kpis { display:grid; grid-template-columns:repeat(4,1fr); gap:1rem; margin-bottom:1.5rem; }
+    .rpt-kpi { background:#fff; border:1px solid var(--border-default); border-radius:14px; padding:1.25rem; }
+    .rpt-kpi-val { font-size:2rem; font-weight:800; color:var(--text-primary); letter-spacing:-.03em; }
+    .rpt-kpi-lbl { font-size:.75rem; font-weight:600; color:var(--text-tertiary); text-transform:uppercase; letter-spacing:.06em; margin-top:.25rem; }
+    .rpt-kpi-delta { font-size:.75rem; font-weight:600; margin-top:.35rem; }
+    .delta-up { color:#16A34A; } .delta-down { color:#DC2626; }
+
+    /* 2-col */
+    .rpt-grid { display:grid; grid-template-columns:1fr 1fr; gap:1.25rem; margin-bottom:1.25rem; }
+    .rpt-card { background:#fff; border:1px solid var(--border-default); border-radius:16px; overflow:hidden; }
+    .rpt-card-header { padding:1rem 1.25rem; border-bottom:1px solid var(--border-light); display:flex; align-items:center; justify-content:space-between; }
+    .rpt-card-title { font-size:.9375rem; font-weight:700; color:var(--text-primary); display:flex; align-items:center; gap:.5rem; }
+    .rpt-card-body { padding:1.25rem; }
+
+    /* Bar chart */
+    .bar-chart { display:flex; flex-direction:column; gap:.75rem; }
+    .bar-row { display:flex; align-items:center; gap:.75rem; }
+    .bar-label { font-size:.78125rem; font-weight:600; color:var(--text-secondary); width:120px; flex-shrink:0; }
+    .bar-track { flex:1; height:10px; background:#E2E8F0; border-radius:5px; overflow:hidden; }
+    .bar-fill { height:100%; border-radius:5px; transition:width 1.2s cubic-bezier(.25,1,.5,1); }
+    .bar-pct { font-size:.75rem; font-weight:700; color:var(--text-tertiary); width:36px; text-align:right; }
+
+    /* Table */
+    .rpt-table { width:100%; border-collapse:collapse; font-size:.84375rem; }
+    .rpt-table th { background:#F8FAFC; padding:.6rem 1rem; text-align:left; font-size:.71875rem; font-weight:700; text-transform:uppercase; letter-spacing:.06em; color:var(--text-tertiary); border-bottom:1px solid var(--border-default); }
+    .rpt-table td { padding:.75rem 1rem; border-bottom:1px solid var(--border-light); color:var(--text-secondary); }
+    .rpt-table tr:last-child td { border-bottom:none; }
+    .rpt-table tr:hover td { background:#F8FAFC; }
+
+    /* Export row */
+    .export-row { display:flex; gap:.75rem; flex-wrap:wrap; }
+    .btn-export { display:inline-flex; align-items:center; gap:.4rem; padding:.6rem 1rem; border-radius:9px; border:1px solid var(--border-default); background:#fff; font-size:.84375rem; font-weight:600; color:var(--text-secondary); cursor:pointer; transition:all .18s; font-family:inherit; }
+    .btn-export:hover { border-color:var(--admin-accent); color:var(--admin-accent); background:var(--admin-accent-bg); }
+
+    @media(max-width:900px){ .rpt-kpis { grid-template-columns:1fr 1fr; } .rpt-grid { grid-template-columns:1fr; } }
+  </style>
+</head>
+<body>
+  <div id="toast-container"></div>
+  <div class="sidebar-backdrop"></div>
+  <div class="app-container">
+    <aside class="app-sidebar">
+      <div class="sidebar-header"><a href="dashboard.html" class="sidebar-brand"><div class="sidebar-brand-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div><div class="sidebar-brand-text"><h2>Smart Admin</h2><span>Admin Portal</span></div></a></div>
+      <nav class="sidebar-nav-container">
+        <div class="nav-section-label">Platform Overview</div>
+        <a href="dashboard.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg></span><span>Overview</span></a>
+        <a href="profile.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span><span>My Profile</span></a>
+        <div class="nav-section-label">User & Access</div>
+        <a href="users.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span><span>User Management</span></a>
+        <a href="roles-permissions.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span><span>Roles & Permissions</span></a>
+        <div class="nav-section-label">Academic Admin</div>
+        <a href="academic-structure.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg></span><span>Academic Structure</span></a>
+        <a href="courses.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></span><span>Courses</span></a>
+        <div class="nav-section-label">Platform Ops</div>
+        <a href="reports.html" class="nav-link active"><span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></span><span>Reports</span></a>
+        <a href="audit-logs.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></span><span>Audit Logs</span><span class="nav-badge" style="background:#DC2626">5</span></a>
+        <a href="notifications.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></span><span>Notifications</span></a>
+        <a href="system-config.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span><span>System Config</span></a>
+      </nav>
+      <div class="sidebar-footer"><a href="profile.html" class="sidebar-user-card"><div class="user-avatar"><span class="user-avatar-initials">SA</span></div><div class="user-info-text"><div class="user-name" id="sidebar-user-name">Super Administrator</div><span class="user-role-tag">Platform Admin</span></div></a></div>
+    </aside>
+
+    <div class="app-main">
+      <header class="app-topbar">
+        <div class="topbar-left">
+          <button type="button" class="mobile-nav-toggle" id="mobile-nav-toggle"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
+          <div class="topbar-page-title"><h1>Platform Reports</h1></div>
+        </div>
+        <div class="topbar-right">
+          <div class="dropdown-container">
+            <button type="button" class="user-menu-btn" data-dropdown-toggle="user-dropdown-menu">
+              <div class="user-avatar-sm" style="background:linear-gradient(135deg,#F59E0B,#D97706)"><span class="user-avatar-initials">SA</span></div>
+              <div class="user-menu-info"><div class="user-menu-name">Super Administrator</div><div class="user-menu-sub">Platform Admin</div></div>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div id="user-dropdown-menu" class="menu-dropdown profile-dropdown-menu">
+              <a href="profile.html"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span>My Profile</span></a>
+              <button type="button" id="logout-action-btn" class="logout-action"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg><span>Sign Out</span></button>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <main class="app-content">
+        <div class="page-header">
+          <div><div class="page-title">Platform Reports</div><div class="page-sub">Academic performance analytics, enrollment trends and institutional reports</div></div>
+          <div class="export-row">
+            <button class="btn-export" onclick="UI.showToast('success','Export','Generating PDF report...')">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+              Export PDF
+            </button>
+            <button class="btn-export" onclick="UI.showToast('success','Export','Generating Excel file...')">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+              Export Excel
+            </button>
+          </div>
+        </div>
+
+        <!-- KPIs -->
+        <div class="rpt-kpis">
+          <div class="rpt-kpi">
+            <div class="rpt-kpi-val">8.41</div>
+            <div class="rpt-kpi-lbl">Platform Avg. CGPA</div>
+            <div class="rpt-kpi-delta delta-up">↑ 0.12 from last semester</div>
+          </div>
+          <div class="rpt-kpi">
+            <div class="rpt-kpi-val">84.6<span style="font-size:1.25rem">%</span></div>
+            <div class="rpt-kpi-lbl">Overall Attendance</div>
+            <div class="rpt-kpi-delta delta-up">↑ 1.2% from last month</div>
+          </div>
+          <div class="rpt-kpi">
+            <div class="rpt-kpi-val">92.3<span style="font-size:1.25rem">%</span></div>
+            <div class="rpt-kpi-lbl">Assignment Submission Rate</div>
+            <div class="rpt-kpi-delta delta-down">↓ 0.8% this semester</div>
+          </div>
+          <div class="rpt-kpi">
+            <div class="rpt-kpi-val">1,719</div>
+            <div class="rpt-kpi-lbl">Active Students</div>
+            <div class="rpt-kpi-delta delta-up">↑ 24 this month</div>
+          </div>
+        </div>
+
+        <!-- Charts & Tables -->
+        <div class="rpt-grid">
+          <!-- Dept Performance Chart -->
+          <div class="rpt-card">
+            <div class="rpt-card-header">
+              <div class="rpt-card-title"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>Avg. CGPA by Department</div>
+              <span style="font-size:.75rem;color:var(--text-tertiary)">Current Semester</span>
+            </div>
+            <div class="rpt-card-body">
+              <div class="bar-chart">
+                <div class="bar-row"><span class="bar-label">B.Tech</span><div class="bar-track"><div class="bar-fill" style="width:88%;background:linear-gradient(90deg,#8B5CF6,#6D28D9)"></div></div><span class="bar-pct">8.82</span></div>
+                <div class="bar-row"><span class="bar-label">BBA</span><div class="bar-track"><div class="bar-fill" style="width:86%;background:linear-gradient(90deg,#F59E0B,#D97706)"></div></div><span class="bar-pct">8.65</span></div>
+                <div class="bar-row"><span class="bar-label">MBA</span><div class="bar-track"><div class="bar-fill" style="width:84%;background:linear-gradient(90deg,#16A34A,#15803D)"></div></div><span class="bar-pct">8.48</span></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Attendance chart -->
+          <div class="rpt-card">
+            <div class="rpt-card-header">
+              <div class="rpt-card-title"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>Attendance by Department</div>
+              <span style="font-size:.75rem;color:var(--text-tertiary)">Current Month</span>
+            </div>
+            <div class="rpt-card-body">
+              <div class="bar-chart">
+                <div class="bar-row"><span class="bar-label">B.Tech</span><div class="bar-track"><div class="bar-fill" style="width:88%;background:linear-gradient(90deg,#2563EB,#1D4ED8)"></div></div><span class="bar-pct">88%</span></div>
+                <div class="bar-row"><span class="bar-label">BBA</span><div class="bar-track"><div class="bar-fill" style="width:85%;background:linear-gradient(90deg,#F59E0B,#D97706)"></div></div><span class="bar-pct">85%</span></div>
+                <div class="bar-row"><span class="bar-label">MBA</span><div class="bar-track"><div class="bar-fill" style="width:82%;background:linear-gradient(90deg,#16A34A,#15803D)"></div></div><span class="bar-pct">82%</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Top Performers Table -->
+        <div class="rpt-card">
+          <div class="rpt-card-header">
+            <div class="rpt-card-title"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>Top Student Performers</div>
+            <span style="font-size:.75rem;color:var(--text-tertiary)">By CGPA — Across 3 Departments</span>
+          </div>
+          <div style="overflow-x:auto">
+            <table class="rpt-table">
+              <thead><tr><th>#</th><th>Student</th><th>Department</th><th>Semester</th><th>CGPA</th><th>Attendance</th></tr></thead>
+              <tbody>
+                <tr><td><strong style="color:#F59E0B">🥇 1</strong></td><td><strong>Riddhi Zunjarrao</strong></td><td>B.Tech</td><td>Sem 4 • Sec A</td><td><strong style="color:#16A34A">9.82</strong></td><td>94%</td></tr>
+                <tr><td><strong style="color:#94A3B8">🥈 2</strong></td><td>Arjun Kulkarni</td><td>B.Tech</td><td>Sem 4 • Sec A</td><td><strong style="color:#16A34A">9.71</strong></td><td>91%</td></tr>
+                <tr><td><strong style="color:#CD853F">🥉 3</strong></td><td>Pooja Rawat</td><td>BBA</td><td>Sem 6 • Sec B</td><td><strong style="color:#16A34A">9.65</strong></td><td>89%</td></tr>
+                <tr><td>4</td><td>Siddharth More</td><td>BBA</td><td>Sem 2 • Sec A</td><td><strong style="color:#2563EB">9.48</strong></td><td>92%</td></tr>
+                <tr><td>5</td><td>Kavya Menon</td><td>MBA</td><td>Sem 2 • Sec B</td><td><strong style="color:#2563EB">9.31</strong></td><td>88%</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script src="../js/firebase-config.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/ui.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const user = AuthService.getCurrentUser();
+      if (user) document.getElementById('sidebar-user-name').textContent = user.name || 'Super Admin';
+      document.getElementById('logout-action-btn').addEventListener('click', async () => await AuthService.logout());
+      const toggle = document.getElementById('mobile-nav-toggle');
+      const sidebar = document.querySelector('.app-sidebar');
+      const backdrop = document.querySelector('.sidebar-backdrop');
+      if (toggle) { toggle.addEventListener('click', () => { sidebar.classList.toggle('mobile-open'); backdrop.classList.toggle('visible'); }); backdrop.addEventListener('click', () => { sidebar.classList.remove('mobile-open'); backdrop.classList.remove('visible'); }); }
+      document.querySelectorAll('[data-dropdown-toggle]').forEach(btn => { btn.addEventListener('click', e => { e.stopPropagation(); const d = document.getElementById(btn.getAttribute('data-dropdown-toggle')); if (d) { document.querySelectorAll('.menu-dropdown.open').forEach(x => { if(x!==d) x.classList.remove('open'); }); d.classList.toggle('open'); } }); });
+      document.addEventListener('click', () => document.querySelectorAll('.menu-dropdown.open').forEach(d => d.classList.remove('open')));
+      // Animate bars
+      setTimeout(() => {
+        document.querySelectorAll('.bar-fill').forEach(b => { const w = b.style.width; b.style.width = '0'; requestAnimationFrame(() => { b.style.width = w; }); });
+      }, 200);
+    });
+  </script>
+</body>
+</html>

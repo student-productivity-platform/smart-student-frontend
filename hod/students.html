@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Monitoring — HOD Portal</title>
+  <meta name="description" content="Monitor departmental student attendance, academic performance and early academic intervention triggers.">
+
+  <!-- Core Design System & Stylesheets -->
+  <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+  <link rel="alternate icon" href="../favicon.ico">
+  <link rel="stylesheet" href="../css/main.css">
+  <link rel="stylesheet" href="../css/dashboard.css">
+  <link rel="stylesheet" href="../css/hod.css">
+  <link rel="stylesheet" href="../css/responsive.css">
+
+  <script src="../js/hod-auth-guard.js"></script>
+</head>
+
+<body>
+
+  <div id="toast-container" aria-live="polite"></div>
+  <div class="sidebar-backdrop"></div>
+
+  <div class="app-container">
+    <!-- Sidebar -->
+    <aside class="app-sidebar" aria-label="HOD Navigation">
+      <div class="sidebar-header">
+        <a href="dashboard.html" class="sidebar-brand">
+          <div class="sidebar-brand-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+              <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
+              <path d="M6 12v5c3 3 9 3 12 0v-5" />
+            </svg>
+          </div>
+          <div class="sidebar-brand-text">
+            <h2>Smart Student</h2>
+            <span>HOD PORTAL</span>
+          </div>
+        </a>
+      </div>
+
+      <nav class="sidebar-nav-container">
+        <div class="nav-section-label">Departmental Core</div>
+
+        <a href="dashboard.html" class="nav-link">
+          <span class="nav-link-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+          </span>
+          <span>Overview</span>
+        </a>
+
+        <a href="faculty-allocation.html" class="nav-link">
+          <span class="nav-link-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><polyline points="16 11 18 13 22 9"/></svg>
+          </span>
+          <span>Faculty Allocation</span>
+        </a>
+
+        <a href="students.html" class="nav-link active">
+          <span class="nav-link-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          </span>
+          <span>Students</span>
+        </a>
+
+        <a href="faculty.html" class="nav-link">
+          <span class="nav-link-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          </span>
+          <span>Faculty</span>
+        </a>
+
+        <a href="timetable.html" class="nav-link">
+          <span class="nav-link-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          </span>
+          <span>Timetable</span>
+        </a>
+
+        <a href="approvals.html" class="nav-link">
+          <span class="nav-link-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="m9 15 2 2 4-4"/></svg>
+          </span>
+          <span>Approvals</span>
+          <span class="nav-badge" id="nav-badge-approvals" style="background-color: var(--hod-accent);">5</span>
+        </a>
+
+        <div class="nav-section-label">Analytics & Insights</div>
+
+        <a href="reports.html" class="nav-link">
+          <span class="nav-link-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+          </span>
+          <span>Reports</span>
+        </a>
+
+        <a href="settings.html" class="nav-link">
+          <span class="nav-link-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          </span>
+          <span>Settings</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <a href="profile.html" class="sidebar-user-card">
+          <div class="user-avatar" style="background: linear-gradient(135deg, #7C3AED 0%, #4F46E5 100%);">
+            <span class="user-avatar-initials">AD</span>
+          </div>
+          <div class="user-info-text">
+            <div class="user-name" id="sidebar-user-name">Dr. Anand Deshmukh</div>
+            <span class="user-role-tag" id="sidebar-user-role">Head of Department</span>
+          </div>
+        </a>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="app-main">
+      <header class="app-topbar">
+        <div class="topbar-left">
+          <button type="button" class="mobile-nav-toggle" id="mobile-nav-toggle" aria-label="Open Navigation">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+          </button>
+          <div class="topbar-page-title">
+            <h1>Student Monitoring (F32)</h1>
+          </div>
+        </div>
+
+        <div class="topbar-search-box">
+          <svg class="topbar-search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="search" id="global-search-input" class="topbar-search-input" placeholder="Search student by name, roll no, email..." aria-label="Global Search">
+        </div>
+
+        <div class="topbar-right">
+          <a href="reports.html" class="btn-hod-secondary" style="font-size: 0.75rem;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+            <span>Performance Report</span>
+          </a>
+
+          <!-- Quick Portal Switcher -->
+          <a href="../student/dashboard.html" class="badge badge-subtle" style="text-decoration: none; padding: 0.4rem 0.75rem; font-size: 0.75rem; border-radius: 20px; color: #7C3AED; background: #EDE9FE;" title="Switch view to Student Portal">
+            <span>⇄ Student View</span>
+          </a>
+
+          <!-- Notification Dropdown -->
+          <div class="dropdown-container">
+            <button type="button" class="icon-button" data-dropdown-toggle="notification-dropdown" aria-label="Notifications">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+                <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+              </svg>
+              <span class="unread-badge" id="notif-badge">5</span>
+            </button>
+
+            <div id="notification-dropdown" class="menu-dropdown notification-dropdown">
+              <div class="dropdown-header">
+                <h4>Department Notifications</h4>
+                <a href="approvals.html" style="font-size: 0.75rem; color: var(--hod-accent);">View all approvals</a>
+              </div>
+              <ul class="dropdown-list" id="notifications-list-container">
+                <li class="dropdown-item">
+                  <div style="font-size: 0.8125rem; font-weight: 600; color: #0F172A;">Leave Request Pending</div>
+                  <div style="font-size: 0.75rem; color: #64748B;">Prof. Amit Kulkarni submitted 3-day medical leave.</div>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- User Menu Dropdown -->
+          <div class="dropdown-container">
+            <button type="button" class="user-menu-btn" data-dropdown-toggle="user-dropdown" aria-label="HOD Profile Menu">
+              <div class="user-avatar-sm" style="background: linear-gradient(135deg, #7C3AED 0%, #4F46E5 100%); color: #FFFFFF;">
+                <span class="user-avatar-initials">AD</span>
+              </div>
+              <div class="user-menu-info">
+                <div class="user-menu-name" id="topbar-user-name">Dr. Anand Deshmukh</div>
+                <div class="user-menu-sub">HOD • Computer Engg</div>
+              </div>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="6 9 12 15 18 9" />
+              </svg>
+            </button>
+
+            <div id="user-dropdown" class="menu-dropdown profile-dropdown-menu">
+              <div class="dropdown-header">
+                <h4>Dr. Anand Deshmukh</h4>
+                <span style="font-size: 0.75rem; color: #64748B;">Head of Department (CSE)</span>
+              </div>
+              <a href="profile.html">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                <span>My Profile</span>
+              </a>
+              <a href="settings.html">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                <span>Department Settings</span>
+              </a>
+              <button type="button" id="logout-action-btn" class="logout-action">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                <span>Sign Out</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <main class="app-content-body">
+        <!-- Quick Roster Metric Cards -->
+        <div class="hod-stats-grid" style="margin-bottom: 1.25rem;">
+          <div class="hod-stat-card">
+            <div class="hod-stat-header">
+              <span class="hod-stat-label">Monitored Cohort</span>
+              <div class="hod-stat-icon blue">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+              </div>
+            </div>
+            <div class="hod-stat-value">248</div>
+            <div class="hod-stat-meta"><span>Active departmental records</span></div>
+          </div>
+
+          <div class="hod-stat-card">
+            <div class="hod-stat-header">
+              <span class="hod-stat-label">Good Standing (Healthy)</span>
+              <div class="hod-stat-icon green">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+              </div>
+            </div>
+            <div class="hod-stat-value" style="color: #16A34A;">222</div>
+            <div class="hod-stat-meta"><span>Attendance ≥ 80% • CGPA ≥ 7.0</span></div>
+          </div>
+
+          <div class="hod-stat-card">
+            <div class="hod-stat-header">
+              <span class="hod-stat-label">Needs Attention</span>
+              <div class="hod-stat-icon amber">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+              </div>
+            </div>
+            <div class="hod-stat-value" style="color: #D97706;">18</div>
+            <div class="hod-stat-meta"><span>Attendance 75–80% warning zone</span></div>
+          </div>
+
+          <div class="hod-stat-card">
+            <div class="hod-stat-header">
+              <span class="hod-stat-label">At Academic Risk</span>
+              <div class="hod-stat-icon red">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="7.86 2 16.14 2 22 7.86 22 16.14 16.14 22 7.86 22 2 16.14 2 7.86 7.86 2"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+              </div>
+            </div>
+            <div class="hod-stat-value" style="color: #DC2626;">8</div>
+            <div class="hod-stat-meta"><span>&lt;75% Attendance / &lt;6.0 CGPA</span></div>
+          </div>
+        </div>
+
+        <!-- Filter Controls Bar -->
+        <div class="hod-filter-bar">
+          <div class="hod-filter-group">
+            <div class="hod-search-box">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              <input type="text" id="stu-search" placeholder="Search student by name, roll no, ID...">
+            </div>
+
+            <select id="filter-program" class="hod-select" aria-label="Filter Program">
+              <option value="all">All Programs</option>
+              <option value="B.Tech CSE">B.Tech CSE</option>
+              <option value="M.Tech CSE">M.Tech CSE</option>
+              <option value="B.Tech AI&DS">B.Tech AI&DS</option>
+            </select>
+
+            <select id="filter-semester" class="hod-select" aria-label="Filter Semester">
+              <option value="all">All Semesters</option>
+              <option value="4">Semester 4</option>
+              <option value="6">Semester 6</option>
+              <option value="8">Semester 8</option>
+            </select>
+
+            <select id="filter-section" class="hod-select" aria-label="Filter Section">
+              <option value="all">All Sections</option>
+              <option value="A">Section A</option>
+              <option value="B">Section B</option>
+            </select>
+
+            <select id="filter-status" class="hod-select" aria-label="Filter Status">
+              <option value="all">All Statuses</option>
+              <option value="Healthy">Healthy</option>
+              <option value="Needs Attention">Needs Attention</option>
+              <option value="At Risk">At Risk</option>
+            </select>
+
+            <select id="filter-attendance" class="hod-select" aria-label="Filter Attendance Bracket">
+              <option value="all">All Attendance</option>
+              <option value="good">≥ 75% (Good)</option>
+              <option value="warning">65% – 74% (Warning)</option>
+              <option value="critical">&lt; 65% (Critical)</option>
+            </select>
+          </div>
+
+          <button type="button" class="btn-hod-secondary" id="reset-stu-filters" style="padding: 0.45rem 0.85rem; font-size: 0.75rem;">
+            Reset
+          </button>
+        </div>
+
+        <!-- Student Roster Table -->
+        <div class="hod-table-wrapper">
+          <table class="hod-table" id="student-roster-table">
+            <thead>
+              <tr>
+                <th>Student</th>
+                <th>Roll No / ID</th>
+                <th>Program & Class</th>
+                <th>Attendance</th>
+                <th>CGPA / Score</th>
+                <th>Status</th>
+                <th style="text-align: right;">Action</th>
+              </tr>
+            </thead>
+            <tbody id="student-table-body">
+              <!-- Rendered dynamically -->
+            </tbody>
+          </table>
+        </div>
+
+        <div id="student-pagination" class="pagination-container" style="margin-top: 1rem; display: flex; justify-content: space-between; align-items: center;">
+          <!-- Pagination injected via JS -->
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- Student 360° Detail Modal -->
+  <div id="student-detail-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="stu-modal-title" aria-hidden="true">
+    <div class="modal-card" style="max-width: 650px;">
+      <div class="modal-header">
+        <h3 id="stu-modal-title" class="modal-title">Student 360° Academic Overview</h3>
+        <button type="button" class="modal-close-btn" id="close-stu-modal" aria-label="Close dialog">&times;</button>
+      </div>
+      <div class="modal-body" id="stu-modal-body">
+        <!-- Rendered via JS -->
+      </div>
+      <div class="modal-footer" style="display: flex; justify-content: space-between;">
+        <button type="button" class="btn-hod-secondary" id="close-stu-btn">Done</button>
+        <button type="button" class="btn-hod-primary" id="flag-intervention-btn">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>
+          Notify Faculty Mentor
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Application Services -->
+  <script src="../data/mock-student.js"></script>
+  <script src="../data/mock-hod.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/hod-service.js"></script>
+  <script src="../js/ui.js"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      let currentStudents = [];
+      let currentPage = 1;
+      const pageSize = 8;
+
+      const searchInput = document.getElementById('stu-search');
+      const progSelect = document.getElementById('filter-program');
+      const semSelect = document.getElementById('filter-semester');
+      const secSelect = document.getElementById('filter-section');
+      const statusSelect = document.getElementById('filter-status');
+      const attendSelect = document.getElementById('filter-attendance');
+      const tableBody = document.getElementById('student-table-body');
+
+      function loadStudents() {
+        const filters = {
+          search: searchInput.value.trim(),
+          program: progSelect.value,
+          semester: semSelect.value,
+          section: secSelect.value,
+          status: statusSelect.value,
+          attendanceStatus: attendSelect.value
+        };
+
+        currentStudents = HODService.getStudents(filters);
+        renderTable(currentPage);
+      }
+
+      function renderTable(page) {
+        currentPage = page;
+        if (currentStudents.length === 0) {
+          tableBody.innerHTML = `
+            <tr>
+              <td colspan="7" style="text-align: center; padding: 2.5rem 1rem; color: #64748B;">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="margin-bottom: 0.5rem; color: #94A3B8;"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                <div>No student records found matching the applied filters.</div>
+              </td>
+            </tr>
+          `;
+          UI.renderPagination('student-pagination', 0, 1, pageSize, () => {});
+          return;
+        }
+
+        const start = (page - 1) * pageSize;
+        const pagedData = currentStudents.slice(start, start + pageSize);
+
+        tableBody.innerHTML = pagedData.map(s => {
+          let statusBadgeClass = 'healthy';
+          if (s.status === 'Needs Attention') statusBadgeClass = 'attention';
+          if (s.status === 'At Risk') statusBadgeClass = 'risk';
+
+          let attendColor = '#16A34A';
+          if (s.attendance < 75) attendColor = '#D97706';
+          if (s.attendance < 65) attendColor = '#DC2626';
+
+          return `
+            <tr>
+              <td>
+                <div style="display: flex; align-items: center; gap: 0.65rem;">
+                  <div class="user-avatar" style="width: 32px; height: 32px; font-size: 0.75rem; background: #EDE9FE; color: var(--hod-accent);">
+                    ${s.name.split(' ').map(n=>n[0]).join('').substring(0,2)}
+                  </div>
+                  <div>
+                    <div style="font-weight: 700; color: #0F172A;">${s.name}</div>
+                    <div style="font-size: 0.7rem; color: #64748B;">${s.email}</div>
+                  </div>
+                </div>
+              </td>
+              <td>
+                <div style="font-weight: 700; color: #0F172A;">${s.rollNo}</div>
+                <div style="font-size: 0.7rem; color: #64748B;">${s.studentId}</div>
+              </td>
+              <td>
+                <div style="font-weight: 600; font-size: 0.8125rem;">Sem ${s.semester} • Sec ${s.section}</div>
+                <div style="font-size: 0.7rem; color: #64748B;">${s.program}</div>
+              </td>
+              <td>
+                <div style="font-weight: 800; font-size: 0.875rem; color: ${attendColor};">${s.attendance}%</div>
+                <div class="dist-bar-track" style="width: 70px; height: 4px; margin-top: 3px;">
+                  <div class="dist-bar-fill" style="width: ${Math.min(100, s.attendance)}%; background: ${attendColor};"></div>
+                </div>
+              </td>
+              <td>
+                <span style="font-weight: 800; font-size: 0.875rem; color: #0F172A;">${s.cgpa.toFixed(1)}</span>
+                <span style="font-size: 0.7rem; color: #64748B;">/ 10.0</span>
+              </td>
+              <td><span class="status-badge ${statusBadgeClass}">● ${s.status}</span></td>
+              <td style="text-align: right;">
+                <button type="button" class="btn-table-action view-stu-btn" data-id="${s.id}">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                  View Details
+                </button>
+              </td>
+            </tr>
+          `;
+        }).join('');
+
+        UI.renderPagination('student-pagination', currentStudents.length, page, pageSize, renderTable);
+      }
+
+      // Filter events
+      searchInput.addEventListener('input', () => loadStudents());
+      progSelect.addEventListener('change', () => loadStudents());
+      semSelect.addEventListener('change', () => loadStudents());
+      secSelect.addEventListener('change', () => loadStudents());
+      statusSelect.addEventListener('change', () => loadStudents());
+      attendSelect.addEventListener('change', () => loadStudents());
+
+      document.getElementById('reset-stu-filters').addEventListener('click', () => {
+        searchInput.value = '';
+        progSelect.value = 'all';
+        semSelect.value = 'all';
+        secSelect.value = 'all';
+        statusSelect.value = 'all';
+        attendSelect.value = 'all';
+        loadStudents();
+        UI.showToast('info', 'Filters Cleared', 'Displaying all departmental students.');
+      });
+
+      // View Modal Delegate
+      tableBody.addEventListener('click', (e) => {
+        const btn = e.target.closest('.view-stu-btn');
+        if (btn) {
+          const id = btn.getAttribute('data-id');
+          const student = HODService.getStudentById(id);
+          if (student) {
+            let statusBadgeClass = 'healthy';
+            if (student.status === 'Needs Attention') statusBadgeClass = 'attention';
+            if (student.status === 'At Risk') statusBadgeClass = 'risk';
+
+            const subjectsHtml = (student.subjectGrades || []).map(g => `
+              <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 0; border-bottom: 1px solid #E2E8F0; font-size: 0.8125rem;">
+                <div>
+                  <strong>${g.code}</strong> — ${g.name}
+                  <div style="font-size: 0.7rem; color: #64748B;">Attendance: ${g.attendance}%</div>
+                </div>
+                <div style="text-align: right;">
+                  <span style="font-weight: 800; color: #0F172A;">${g.marks}/100</span>
+                  <span class="status-badge optimal" style="margin-left: 0.4rem; padding: 1px 6px;">Grade ${g.grade}</span>
+                </div>
+              </div>
+            `).join('') || '<div style="color: #64748B; font-size: 0.75rem;">Subject details loading...</div>';
+
+            document.getElementById('stu-modal-body').innerHTML = `
+              <div style="display: flex; align-items: center; justify-content: space-between; background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 12px; padding: 1rem; margin-bottom: 1rem;">
+                <div style="display: flex; align-items: center; gap: 0.75rem;">
+                  <div class="user-avatar" style="width: 44px; height: 44px; font-size: 1rem; background: #EDE9FE; color: var(--hod-accent);">
+                    ${student.name.split(' ').map(n=>n[0]).join('').substring(0,2)}
+                  </div>
+                  <div>
+                    <div style="font-size: 1.0625rem; font-weight: 800; color: #0F172A;">${student.name}</div>
+                    <div style="font-size: 0.75rem; color: #64748B;">${student.rollNo} • ${student.studentId} • ${student.program}</div>
+                  </div>
+                </div>
+                <span class="status-badge ${statusBadgeClass}">● ${student.status}</span>
+              </div>
+
+              <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem; margin-bottom: 1rem;">
+                <div style="background: #F8FAFC; border: 1px solid #E2E8F0; padding: 0.75rem; border-radius: 8px; text-align: center;">
+                  <div style="font-size: 0.7rem; color: #64748B; font-weight: 600;">ATTENDANCE</div>
+                  <div style="font-size: 1.25rem; font-weight: 800; color: ${student.attendance < 75 ? '#DC2626' : '#16A34A'}; margin-top: 2px;">${student.attendance}%</div>
+                </div>
+                <div style="background: #F8FAFC; border: 1px solid #E2E8F0; padding: 0.75rem; border-radius: 8px; text-align: center;">
+                  <div style="font-size: 0.7rem; color: #64748B; font-weight: 600;">CUMULATIVE GPA</div>
+                  <div style="font-size: 1.25rem; font-weight: 800; color: #0F172A; margin-top: 2px;">${student.cgpa.toFixed(1)}</div>
+                </div>
+                <div style="background: #F8FAFC; border: 1px solid #E2E8F0; padding: 0.75rem; border-radius: 8px; text-align: center;">
+                  <div style="font-size: 0.7rem; color: #64748B; font-weight: 600;">FACULTY MENTOR</div>
+                  <div style="font-size: 0.8125rem; font-weight: 700; color: var(--hod-accent); margin-top: 5px;">${student.mentor || 'Prof. Sunita Mehta'}</div>
+                </div>
+              </div>
+
+              <div style="margin-bottom: 1rem;">
+                <div style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: #64748B; margin-bottom: 0.5rem;">Subject Performance Breakdown</div>
+                <div style="border: 1px solid #E2E8F0; border-radius: 8px; padding: 0.5rem 0.85rem; background: #FFFFFF;">
+                  ${subjectsHtml}
+                </div>
+              </div>
+
+              <div style="background: #FFFBEB; border: 1px solid #FDE68A; border-radius: 8px; padding: 0.75rem 1rem;">
+                <div style="font-size: 0.75rem; font-weight: 700; color: #B45309; margin-bottom: 2px;">Recent Academic Log & Intervention History:</div>
+                <div style="font-size: 0.8125rem; color: #78350F;">${student.recentActivity || 'Regular attendance observed. No intervention needed.'}</div>
+              </div>
+            `;
+            UI.openModal('student-detail-modal');
+          }
+        }
+      });
+
+      document.getElementById('close-stu-modal').addEventListener('click', () => UI.closeModal('student-detail-modal'));
+      document.getElementById('close-stu-btn').addEventListener('click', () => UI.closeModal('student-detail-modal'));
+      document.getElementById('flag-intervention-btn').addEventListener('click', () => {
+        UI.closeModal('student-detail-modal');
+        UI.showToast('success', 'Mentor Notified', 'Notification email and dashboard alert sent to the faculty mentor.');
+      });
+
+      loadStudents();
+    });
+  </script>
+</body>
+
+</html>

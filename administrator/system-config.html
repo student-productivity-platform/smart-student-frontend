@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>System Configuration — Smart Admin</title>
+  <meta name="description" content="Platform-level system configuration and Firebase settings for Super Admin.">
+  <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+  <link rel="stylesheet" href="../css/main.css">
+  <link rel="stylesheet" href="../css/dashboard.css">
+  <link rel="stylesheet" href="../css/responsive.css">
+  <script src="../js/admin-auth-guard.js"></script>
+  <style>
+    :root { --admin-accent:#F59E0B; --admin-accent-dark:#D97706; --admin-accent-bg:#FFFBEB; }
+    .sidebar-brand-icon { background:linear-gradient(135deg,#F59E0B,#D97706)!important; box-shadow:0 4px 12px rgba(245,158,11,.4)!important; }
+    .nav-link.active { background:rgba(245,158,11,.14)!important; color:#F59E0B!important; }
+    .nav-link.active .nav-link-icon { color:#F59E0B!important; }
+    .nav-link:hover { background:rgba(245,158,11,.08)!important; }
+    .page-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:1.5rem; }
+    .page-title { font-size:1.5rem; font-weight:800; color:var(--text-primary); letter-spacing:-.02em; }
+    .page-sub { font-size:.84375rem; color:var(--text-tertiary); margin-top:.2rem; }
+    .btn-primary-admin { display:inline-flex; align-items:center; gap:.4rem; background:linear-gradient(135deg,#F59E0B,#D97706); color:#fff; font-size:.84375rem; font-weight:700; padding:.6rem 1.1rem; border-radius:10px; border:none; cursor:pointer; transition:all .18s; box-shadow:0 4px 12px rgba(245,158,11,.3); font-family:inherit; }
+
+    /* Config sections layout */
+    .config-grid { display:grid; grid-template-columns:1fr 1fr; gap:1.25rem; }
+    .config-card { background:#fff; border:1px solid var(--border-default); border-radius:16px; overflow:hidden; }
+    .config-card-header { padding:1rem 1.25rem; border-bottom:1px solid var(--border-light); display:flex; align-items:center; gap:.6rem; }
+    .config-card-icon { width:36px; height:36px; border-radius:9px; display:flex; align-items:center; justify-content:center; }
+    .config-card-title { font-size:.9375rem; font-weight:700; color:var(--text-primary); }
+    .config-card-body { padding:1.25rem; display:flex; flex-direction:column; gap:.875rem; }
+
+    /* Config row */
+    .config-row { display:flex; align-items:center; justify-content:space-between; padding:.5rem 0; border-bottom:1px solid var(--border-light); }
+    .config-row:last-child { border-bottom:none; }
+    .config-row-label { font-size:.84375rem; font-weight:600; color:var(--text-primary); }
+    .config-row-sub { font-size:.75rem; color:var(--text-tertiary); }
+    .config-value { font-size:.84375rem; font-family:monospace; color:var(--text-secondary); }
+
+    /* Toggle switch */
+    .toggle-wrap { display:flex; align-items:center; gap:.5rem; }
+    .toggle { position:relative; width:40px; height:22px; }
+    .toggle input { opacity:0; width:0; height:0; }
+    .toggle-slider { position:absolute; cursor:pointer; inset:0; background:#E2E8F0; border-radius:22px; transition:.3s; }
+    .toggle-slider:before { position:absolute; content:""; height:16px; width:16px; left:3px; bottom:3px; background:white; border-radius:50%; transition:.3s; box-shadow:0 1px 3px rgba(0,0,0,.2); }
+    input:checked + .toggle-slider { background:var(--admin-accent); }
+    input:checked + .toggle-slider:before { transform:translateX(18px); }
+    .toggle-label { font-size:.75rem; font-weight:600; color:var(--text-tertiary); }
+
+    /* Form inputs */
+    .form-input { border:1px solid var(--border-default); border-radius:8px; padding:.5rem .75rem; font-size:.84375rem; font-family:inherit; color:var(--text-primary); background:#fff; width:100%; }
+    .form-input:focus { outline:none; border-color:var(--admin-accent); }
+
+    /* Service status row */
+    .service-status { display:flex; align-items:center; gap:.5rem; font-size:.84375rem; font-weight:600; }
+    .svc-dot { width:8px; height:8px; border-radius:50%; }
+    .svc-dot.ok { background:#16A34A; } .svc-dot.warn { background:#D97706; } .svc-dot.down { background:#DC2626; }
+    .svc-ok { color:#16A34A; } .svc-warn { color:#D97706; } .svc-down { color:#DC2626; }
+
+    /* Danger zone */
+    .danger-zone { background:#FFF5F5; border:1px solid #FCA5A5; border-radius:16px; padding:1.5rem; margin-top:1.25rem; }
+    .danger-title { font-size:.9375rem; font-weight:700; color:#991B1B; margin-bottom:.75rem; display:flex; align-items:center; gap:.5rem; }
+    .danger-action { display:flex; align-items:center; justify-content:space-between; padding:.75rem 0; border-bottom:1px solid #FECACA; }
+    .danger-action:last-child { border-bottom:none; }
+    .danger-action-label { font-size:.84375rem; font-weight:600; color:var(--text-primary); }
+    .danger-action-sub { font-size:.75rem; color:var(--text-tertiary); }
+    .btn-danger { display:inline-flex; padding:.4rem .875rem; border-radius:8px; border:1px solid #FCA5A5; background:#FFF5F5; color:#DC2626; font-size:.8125rem; font-weight:700; cursor:pointer; font-family:inherit; transition:all .18s; }
+    .btn-danger:hover { background:#DC2626; color:#fff; border-color:#DC2626; }
+
+    @media(max-width:900px){ .config-grid { grid-template-columns:1fr; } }
+  </style>
+</head>
+<body>
+  <div id="toast-container"></div>
+  <div class="sidebar-backdrop"></div>
+  <div class="app-container">
+    <aside class="app-sidebar">
+      <div class="sidebar-header"><a href="dashboard.html" class="sidebar-brand"><div class="sidebar-brand-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div><div class="sidebar-brand-text"><h2>Smart Admin</h2><span>Admin Portal</span></div></a></div>
+      <nav class="sidebar-nav-container">
+        <div class="nav-section-label">Platform Overview</div>
+        <a href="dashboard.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg></span><span>Overview</span></a>
+        <a href="profile.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span><span>My Profile</span></a>
+        <div class="nav-section-label">User & Access</div>
+        <a href="users.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span><span>User Management</span></a>
+        <a href="roles-permissions.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span><span>Roles & Permissions</span></a>
+        <div class="nav-section-label">Academic Admin</div>
+        <a href="academic-structure.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg></span><span>Academic Structure</span></a>
+        <a href="courses.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></span><span>Courses</span></a>
+        <div class="nav-section-label">Platform Ops</div>
+        <a href="reports.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></span><span>Reports</span></a>
+        <a href="audit-logs.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></span><span>Audit Logs</span><span class="nav-badge" style="background:#DC2626">5</span></a>
+        <a href="notifications.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></span><span>Notifications</span></a>
+        <a href="system-config.html" class="nav-link active"><span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span><span>System Config</span></a>
+      </nav>
+      <div class="sidebar-footer"><a href="profile.html" class="sidebar-user-card"><div class="user-avatar"><span class="user-avatar-initials">SA</span></div><div class="user-info-text"><div class="user-name" id="sidebar-user-name">Super Administrator</div><span class="user-role-tag">Platform Admin</span></div></a></div>
+    </aside>
+
+    <div class="app-main">
+      <header class="app-topbar">
+        <div class="topbar-left">
+          <button type="button" class="mobile-nav-toggle" id="mobile-nav-toggle"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
+          <div class="topbar-page-title"><h1>System Configuration</h1></div>
+        </div>
+        <div class="topbar-right">
+          <div class="dropdown-container">
+            <button type="button" class="user-menu-btn" data-dropdown-toggle="user-dropdown-menu">
+              <div class="user-avatar-sm" style="background:linear-gradient(135deg,#F59E0B,#D97706)"><span class="user-avatar-initials">SA</span></div>
+              <div class="user-menu-info"><div class="user-menu-name">Super Administrator</div><div class="user-menu-sub">Platform Admin</div></div>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div id="user-dropdown-menu" class="menu-dropdown profile-dropdown-menu">
+              <a href="profile.html"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span>My Profile</span></a>
+              <button type="button" id="logout-action-btn" class="logout-action"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg><span>Sign Out</span></button>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <main class="app-content">
+        <div class="page-header">
+          <div><div class="page-title">System Configuration</div><div class="page-sub">Manage platform-level configuration, Firebase services and system toggles (AD-04, AD-05)</div></div>
+          <button class="btn-primary-admin" onclick="UI.showToast('success','Saved','System configuration saved successfully.')">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            Save Changes
+          </button>
+        </div>
+
+        <div class="config-grid">
+          <!-- General Settings -->
+          <div class="config-card">
+            <div class="config-card-header">
+              <div class="config-card-icon" style="background:#DBEAFE;color:#2563EB"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></div>
+              <div class="config-card-title">General Platform Settings</div>
+            </div>
+            <div class="config-card-body">
+              <div class="config-row"><div><div class="config-row-label">Platform Name</div></div><input type="text" class="form-input" value="Smart Student Platform" style="width:200px"></div>
+              <div class="config-row"><div><div class="config-row-label">Academic Year</div></div><input type="text" class="form-input" value="2025–2026" style="width:120px"></div>
+              <div class="config-row"><div><div class="config-row-label">Current Semester</div></div><input type="text" class="form-input" value="Semester 4" style="width:120px"></div>
+              <div class="config-row"><div><div class="config-row-label">Maintenance Mode</div><div class="config-row-sub">Puts platform in read-only mode for all users</div></div><div class="toggle-wrap"><label class="toggle"><input type="checkbox" id="maintenance-toggle"><span class="toggle-slider"></span></label><span class="toggle-label" id="maintenance-label">Off</span></div></div>
+              <div class="config-row"><div><div class="config-row-label">New User Registrations</div></div><div class="toggle-wrap"><label class="toggle"><input type="checkbox" checked id="registration-toggle"><span class="toggle-slider"></span></label><span class="toggle-label" id="registration-label">On</span></div></div>
+              <div class="config-row"><div><div class="config-row-label">Email Notifications</div></div><div class="toggle-wrap"><label class="toggle"><input type="checkbox" checked id="email-toggle"><span class="toggle-slider"></span></label><span class="toggle-label" id="email-label">On</span></div></div>
+            </div>
+          </div>
+
+          <!-- Firebase Config -->
+          <div class="config-card">
+            <div class="config-card-header">
+              <div class="config-card-icon" style="background:#FEF3C7;color:#D97706"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+              <div class="config-card-title">Firebase Configuration (AD-05)</div>
+            </div>
+            <div class="config-card-body">
+              <div class="config-row"><div class="config-row-label">Project ID</div><span class="config-value">smart-student-prod</span></div>
+              <div class="config-row"><div class="config-row-label">Auth Service</div><div class="service-status"><div class="svc-dot ok"></div><span class="svc-ok">Connected</span></div></div>
+              <div class="config-row"><div class="config-row-label">Firestore</div><div class="service-status"><div class="svc-dot ok"></div><span class="svc-ok">Connected</span></div></div>
+              <div class="config-row"><div class="config-row-label">Realtime Database</div><div class="service-status"><div class="svc-dot ok"></div><span class="svc-ok">Connected</span></div></div>
+              <div class="config-row"><div class="config-row-label">Storage</div><div class="service-status"><div class="svc-dot warn"></div><span class="svc-warn">62% Used</span></div></div>
+              <div class="config-row"><div><div class="config-row-label">SDK Version</div></div><span class="config-value">v10.7.1 (compat)</span></div>
+            </div>
+          </div>
+
+          <!-- Security Settings -->
+          <div class="config-card">
+            <div class="config-card-header">
+              <div class="config-card-icon" style="background:#DCFCE7;color:#16A34A"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+              <div class="config-card-title">Security & Access Settings</div>
+            </div>
+            <div class="config-card-body">
+              <div class="config-row"><div><div class="config-row-label">Session Timeout</div><div class="config-row-sub">Auto-logout after inactivity</div></div><input type="text" class="form-input" value="8 hours" style="width:110px"></div>
+              <div class="config-row"><div><div class="config-row-label">Max Login Attempts</div></div><input type="number" class="form-input" value="5" style="width:80px"></div>
+              <div class="config-row"><div><div class="config-row-label">Two-Factor Auth</div></div><div class="toggle-wrap"><label class="toggle"><input type="checkbox" id="tfa-toggle"><span class="toggle-slider"></span></label><span class="toggle-label" id="tfa-label">Off</span></div></div>
+              <div class="config-row"><div><div class="config-row-label">Force Password Reset</div><div class="config-row-sub">On next login for flagged accounts</div></div><div class="toggle-wrap"><label class="toggle"><input type="checkbox" id="force-reset-toggle"><span class="toggle-slider"></span></label><span class="toggle-label" id="force-reset-label">Off</span></div></div>
+              <div class="config-row"><div class="config-row-label">Audit Log Retention</div><div class="config-value">365 days</div></div>
+            </div>
+          </div>
+
+          <!-- Academic Config -->
+          <div class="config-card">
+            <div class="config-card-header">
+              <div class="config-card-icon" style="background:#EDE9FE;color:#7C3AED"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg></div>
+              <div class="config-card-title">Academic Configuration</div>
+            </div>
+            <div class="config-card-body">
+              <div class="config-row"><div><div class="config-row-label">Minimum Attendance</div><div class="config-row-sub">Required for exam eligibility</div></div><input type="text" class="form-input" value="75%" style="width:80px"></div>
+              <div class="config-row"><div class="config-row-label">Grading Scale</div><div class="config-value">10-point CGPA</div></div>
+              <div class="config-row"><div><div class="config-row-label">AI Doubt Solver</div></div><div class="toggle-wrap"><label class="toggle"><input type="checkbox" checked id="ai-toggle"><span class="toggle-slider"></span></label><span class="toggle-label" id="ai-label">On</span></div></div>
+              <div class="config-row"><div><div class="config-row-label">Study Groups</div></div><div class="toggle-wrap"><label class="toggle"><input type="checkbox" checked id="sg-toggle"><span class="toggle-slider"></span></label><span class="toggle-label" id="sg-label">On</span></div></div>
+              <div class="config-row"><div class="config-row-label">Max Sections per Dept.</div><div class="config-value">4 (A, B, C, D)</div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Danger Zone -->
+        <div class="danger-zone">
+          <div class="danger-title"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#991B1B" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>Danger Zone</div>
+          <div class="danger-action"><div><div class="danger-action-label">Clear All Sessions</div><div class="danger-action-sub">Force logout all currently logged-in users</div></div><button class="btn-danger" onclick="UI.showToast('warning','Confirm Action','This will log out all 1,719 active users.')">Clear Sessions</button></div>
+          <div class="danger-action"><div><div class="danger-action-label">Reset Platform Cache</div><div class="danger-action-sub">Clears all cached data. May cause temporary slowdown.</div></div><button class="btn-danger" onclick="UI.showToast('info','Cache Reset','Platform cache is being cleared...')">Reset Cache</button></div>
+          <div class="danger-action"><div><div class="danger-action-label">Export Platform Data</div><div class="danger-action-sub">Full platform data export (GDPR compliance)</div></div><button class="btn-danger" onclick="UI.showToast('success','Export Started','Platform data export started. You will be notified.')">Export Data</button></div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script src="../js/firebase-config.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/ui.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const user = AuthService.getCurrentUser();
+      if (user) document.getElementById('sidebar-user-name').textContent = user.name || 'Super Admin';
+
+      // Toggle labels
+      ['maintenance','registration','email','tfa','force-reset','ai','sg'].forEach(id => {
+        const el = document.getElementById(id + '-toggle');
+        const label = document.getElementById(id + '-label');
+        if (el && label) {
+          el.addEventListener('change', () => { label.textContent = el.checked ? 'On' : 'Off'; });
+        }
+      });
+
+      document.getElementById('logout-action-btn').addEventListener('click', async () => await AuthService.logout());
+      const toggle = document.getElementById('mobile-nav-toggle');
+      const sidebar = document.querySelector('.app-sidebar');
+      const backdrop = document.querySelector('.sidebar-backdrop');
+      if (toggle) { toggle.addEventListener('click', () => { sidebar.classList.toggle('mobile-open'); backdrop.classList.toggle('visible'); }); backdrop.addEventListener('click', () => { sidebar.classList.remove('mobile-open'); backdrop.classList.remove('visible'); }); }
+      document.querySelectorAll('[data-dropdown-toggle]').forEach(btn => { btn.addEventListener('click', e => { e.stopPropagation(); const d = document.getElementById(btn.getAttribute('data-dropdown-toggle')); if (d) { document.querySelectorAll('.menu-dropdown.open').forEach(x => { if(x!==d) x.classList.remove('open'); }); d.classList.toggle('open'); } }); });
+      document.addEventListener('click', () => document.querySelectorAll('.menu-dropdown.open').forEach(d => d.classList.remove('open')));
+    });
+  </script>
+</body>
+</html>

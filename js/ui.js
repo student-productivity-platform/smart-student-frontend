@@ -187,20 +187,23 @@ const UI = (() => {
   }
 
   /**
-   * Populate Global Identity into Header & Profile Widgets (Student & Faculty)
+   * Populate Global Identity into Header & Profile Widgets (Student, Faculty & HOD)
    */
   async function syncStudentIdentity() {
+    const isHOD = window.location.pathname.includes('/hod/');
     const isFaculty = window.location.pathname.includes('/faculty/');
     let user = null;
 
     if (typeof AuthService !== 'undefined' && AuthService.getCurrentUser()) {
       user = AuthService.getCurrentUser();
+    } else if (isHOD && typeof HODService !== 'undefined') {
+      user = HODService.getProfile();
     } else if (isFaculty && typeof FacultyService !== 'undefined') {
       user = FacultyService.getProfile();
     } else if (window.mockStudent) {
       user = window.mockStudent;
     } else {
-      user = { name: isFaculty ? 'Prof. Sunita Mehta' : 'Riddhi Zunjarrao', role: isFaculty ? 'faculty' : 'student' };
+      user = { name: isHOD ? 'Dr. Anand Deshmukh' : (isFaculty ? 'Prof. Sunita Mehta' : 'Riddhi Zunjarrao'), role: isHOD ? 'hod' : (isFaculty ? 'faculty' : 'student') };
     }
 
     // Sync Topbar Name
@@ -209,11 +212,13 @@ const UI = (() => {
 
     const topbarSubEl = document.querySelector('.user-menu-sub');
     if (topbarSubEl) {
-      topbarSubEl.textContent = isFaculty ? (user.designation || 'Faculty • CSE') : (user.program || 'B.Tech CSE');
+      topbarSubEl.textContent = isHOD
+        ? 'HOD • Computer Engineering'
+        : (isFaculty ? (user.designation || 'Faculty • CSE') : (user.program || 'B.Tech CSE'));
     }
 
     // Sync Avatar Initials
-    const initials = (user.name || 'SS').split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+    const initials = (user.name || 'AD').split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
     document.querySelectorAll('.user-avatar-initials').forEach(el => {
       el.textContent = initials;
     });
@@ -224,16 +229,16 @@ const UI = (() => {
 
     const sidebarRoleEl = document.getElementById('sidebar-user-role');
     if (sidebarRoleEl) {
-      sidebarRoleEl.textContent = isFaculty
-        ? (user.designation || 'Associate Professor')
-        : `Sem ${user.semester || 4} • Sec ${user.section || 'A'}`;
+      sidebarRoleEl.textContent = isHOD
+        ? 'Head of Department'
+        : (isFaculty ? (user.designation || 'Associate Professor') : `Sem ${user.semester || 4} • Sec ${user.section || 'A'}`);
     }
 
     // Sync Banner
-    const bannerGreeting = document.getElementById('banner-student-name') || document.getElementById('banner-faculty-name');
+    const bannerGreeting = document.getElementById('banner-student-name') || document.getElementById('banner-faculty-name') || document.getElementById('banner-hod-name');
     if (bannerGreeting) {
       const firstName = user.name.split(' ')[0];
-      bannerGreeting.textContent = user.role === 'faculty' ? user.name : firstName;
+      bannerGreeting.textContent = (user.role === 'faculty' || user.role === 'hod') ? user.name : firstName;
     }
 
     const bannerProgram = document.getElementById('banner-program-name');
@@ -243,9 +248,9 @@ const UI = (() => {
 
     const bannerSem = document.getElementById('banner-semester-info');
     if (bannerSem) {
-      bannerSem.textContent = isFaculty
-        ? (user.officeRoom || 'Cabin 304 • CSE Block')
-        : `Semester ${user.semester || 4} • Section ${user.section || 'A'}`;
+      bannerSem.textContent = isHOD
+        ? 'Academic Block 3 • HOD Office'
+        : (isFaculty ? (user.officeRoom || 'Cabin 304 • CSE Block') : `Semester ${user.semester || 4} • Section ${user.section || 'A'}`);
     }
 
     // Live Date Formatter
@@ -261,6 +266,7 @@ const UI = (() => {
    */
   function initGlobalSearch() {
     const searchInput = document.getElementById('global-search-input');
+    const isHOD = window.location.pathname.includes('/hod/');
     const isFaculty = window.location.pathname.includes('/faculty/');
 
     if (searchInput) {
@@ -269,7 +275,25 @@ const UI = (() => {
           const query = searchInput.value.trim().toLowerCase();
           if (!query) return;
 
-          if (isFaculty) {
+          if (isHOD) {
+            if (query.includes('alloc') || query.includes('assign') || query.includes('workload')) {
+              window.location.href = 'faculty-allocation.html';
+            } else if (query.includes('student') || query.includes('attend') || query.includes('risk') || query.includes('performance')) {
+              window.location.href = 'students.html';
+            } else if (query.includes('faculty') || query.includes('prof') || query.includes('teacher')) {
+              window.location.href = 'faculty.html';
+            } else if (query.includes('time') || query.includes('schedule') || query.includes('class') || query.includes('slot')) {
+              window.location.href = 'timetable.html';
+            } else if (query.includes('approv') || query.includes('leave') || query.includes('requisition') || query.includes('request')) {
+              window.location.href = 'approvals.html';
+            } else if (query.includes('report') || query.includes('stat') || query.includes('analytic') || query.includes('export')) {
+              window.location.href = 'reports.html';
+            } else if (query.includes('setting') || query.includes('config') || query.includes('profile')) {
+              window.location.href = 'settings.html';
+            } else {
+              showToast('info', 'Department Search', `Searching records for "${searchInput.value.trim()}"...`);
+            }
+          } else if (isFaculty) {
             if (query.includes('student') || query.includes('roster') || query.includes('section') || query.includes('map')) {
               window.location.href = 'academic-mapping.html';
             } else if (query.includes('assign') || query.includes('create')) {
@@ -334,7 +358,7 @@ const UI = (() => {
         } else {
           sessionStorage.removeItem('smart_student_session');
           localStorage.removeItem('smart_student_session');
-          window.location.href = window.location.pathname.includes('/student/') ? '../login.html' : 'login.html';
+          window.location.href = (window.location.pathname.includes('/student/') || window.location.pathname.includes('/faculty/') || window.location.pathname.includes('/hod/') || window.location.pathname.includes('/administrator/')) ? '../login.html' : 'login.html';
         }
       }
     });
