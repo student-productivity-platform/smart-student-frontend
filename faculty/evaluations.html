@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Assignment Evaluation & Grading — Smart Student Faculty</title>
+  <meta name="description" content="Review student submissions, assign marks, grade with rubrics, and provide feedback.">
+
+  <!-- Core Design System & Stylesheets -->
+  <link rel="stylesheet" href="../css/main.css">
+  <link rel="stylesheet" href="../css/dashboard.css">
+  <link rel="stylesheet" href="../css/responsive.css">
+
+  <script src="../js/auth-guard.js"></script>
+</head>
+
+<body>
+  <div id="toast-container"></div>
+  <div class="sidebar-backdrop"></div>
+
+  <div class="app-container">
+    <!-- Sidebar Navigation -->
+    <aside class="app-sidebar" aria-label="Main Navigation">
+      <div class="sidebar-header">
+        <a href="dashboard.html" class="sidebar-brand">
+          <div class="sidebar-brand-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
+              <path d="M6 12v5c3 3 9 3 12 0v-5" />
+            </svg>
+          </div>
+          <div class="sidebar-brand-text">
+            <h2>Smart Student</h2>
+            <span>Faculty Portal</span>
+          </div>
+        </a>
+      </div>
+
+      <nav class="sidebar-nav-container">
+        <div class="nav-section-label">Academic Core</div>
+        <a href="dashboard.html" class="nav-link">
+          <span class="nav-link-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="3" width="7" height="7" /><rect x="14" y="3" width="7" height="7" />
+              <rect x="14" y="14" width="7" height="7" /><rect x="3" y="14" width="7" height="7" />
+            </svg>
+          </span>
+          <span>Overview</span>
+        </a>
+
+        <a href="academic-mapping.html" class="nav-link">
+          <span class="nav-link-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" />
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87" /><path d="M16 3.13a4 4 0 0 1 0 7.75" />
+            </svg>
+          </span>
+          <span>Academic Mapping</span>
+        </a>
+
+        <a href="materials.html" class="nav-link">
+          <span class="nav-link-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+              <polyline points="14 2 14 8 20 8" />
+            </svg>
+          </span>
+          <span>Course Materials</span>
+        </a>
+
+        <a href="assignments.html" class="nav-link">
+          <span class="nav-link-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" />
+              <rect x="8" y="2" width="8" height="4" rx="1" ry="1" />
+            </svg>
+          </span>
+          <span>Assignments</span>
+        </a>
+
+        <a href="evaluations.html" class="nav-link active">
+          <span class="nav-link-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="9 11 12 14 22 4" />
+              <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
+            </svg>
+          </span>
+          <span>Evaluations</span>
+        </a>
+
+        <a href="attendance.html" class="nav-link">
+          <span class="nav-link-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+              <polyline points="22 4 12 14.01 9 11.01" />
+            </svg>
+          </span>
+          <span>Attendance</span>
+        </a>
+
+        <a href="exams.html" class="nav-link">
+          <span class="nav-link-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10" />
+              <polyline points="12 6 12 12 14 14" />
+            </svg>
+          </span>
+          <span>Examinations</span>
+        </a>
+
+        <div class="nav-section-label">Connect & Schedule</div>
+
+        <a href="meetings.html" class="nav-link">
+          <span class="nav-link-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polygon points="23 7 16 12 23 17 23 7" /><rect x="1" y="5" width="15" height="14" rx="2" ry="2" />
+            </svg>
+          </span>
+          <span>Online Classes</span>
+        </a>
+
+        <a href="communication.html" class="nav-link">
+          <span class="nav-link-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+            </svg>
+          </span>
+          <span>Communication & Doubts</span>
+        </a>
+
+        <div class="nav-section-label">Account & Profile</div>
+
+        <a href="profile.html" class="nav-link">
+          <span class="nav-link-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+              <circle cx="12" cy="7" r="4" />
+            </svg>
+          </span>
+          <span>Faculty Profile</span>
+        </a>
+
+        <a href="settings.html" class="nav-link">
+          <span class="nav-link-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="3" />
+              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l-.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06-.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
+            </svg>
+          </span>
+          <span>Settings</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <a href="profile.html" class="sidebar-user-card">
+          <div class="user-avatar" style="background: linear-gradient(135deg, #6366F1 0%, #4338CA 100%);">
+            <span class="user-avatar-initials">SM</span>
+          </div>
+          <div class="user-info-text">
+            <div class="user-name">Prof. Sunita Mehta</div>
+            <span class="user-role-tag">Associate Professor</span>
+          </div>
+        </a>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="app-main">
+      <header class="app-topbar">
+        <div class="topbar-left">
+          <button type="button" class="mobile-nav-toggle" id="mobile-nav-toggle" aria-label="Open Navigation">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="3" y1="12" x2="21" y2="12" /><line x1="3" y1="6" x2="21" y2="6" /><line x1="3" y1="18" x2="21" y2="18" />
+            </svg>
+          </button>
+          <div class="topbar-page-title">
+            <h1>Assignment Evaluation & Grading (F25)</h1>
+          </div>
+        </div>
+
+        <div class="topbar-search-box">
+          <svg class="topbar-search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
+          </svg>
+          <input type="search" id="global-search-input" class="topbar-search-input" placeholder="Search student name, roll number, submission..." aria-label="Search Submissions">
+        </div>
+
+        <div class="topbar-right">
+          <button type="button" id="export-grades-btn" class="btn btn-secondary btn-sm" style="gap: 0.4rem;">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            <span>Export Grade Sheet (CSV)</span>
+          </button>
+        </div>
+      </header>
+
+      <main class="app-content" style="padding: 1.5rem 2rem; width: 100%; box-sizing: border-box;">
+        <!-- Top Metrics Overview Strip (4 Balanced KPI Cards) -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
+          <div style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 14px; padding: 1.1rem 1.25rem; display: flex; align-items: center; gap: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.03);">
+            <div style="width: 44px; height: 44px; border-radius: 10px; background: #EEF2FF; color: #4F46E5; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+            </div>
+            <div>
+              <div style="font-size: 0.75rem; color: #64748B; font-weight: 600; text-transform: uppercase; letter-spacing: 0.03em;">Total Submissions</div>
+              <div style="font-size: 1.35rem; font-weight: 800; color: #0F172A;">194</div>
+              <div style="font-size: 0.72rem; color: #4F46E5; font-weight: 600;">Across All Subjects</div>
+            </div>
+          </div>
+
+          <div style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 14px; padding: 1.1rem 1.25rem; display: flex; align-items: center; gap: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.03);">
+            <div style="width: 44px; height: 44px; border-radius: 10px; background: #FEF3C7; color: #D97706; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 14 14"/></svg>
+            </div>
+            <div>
+              <div style="font-size: 0.75rem; color: #64748B; font-weight: 600; text-transform: uppercase; letter-spacing: 0.03em;">Pending Grading</div>
+              <div style="font-size: 1.35rem; font-weight: 800; color: #D97706;">65</div>
+              <div style="font-size: 0.72rem; color: #64748B; font-weight: 600;">Action Required</div>
+            </div>
+          </div>
+
+          <div style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 14px; padding: 1.1rem 1.25rem; display: flex; align-items: center; gap: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.03);">
+            <div style="width: 44px; height: 44px; border-radius: 10px; background: #ECFDF5; color: #059669; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+            </div>
+            <div>
+              <div style="font-size: 0.75rem; color: #64748B; font-weight: 600; text-transform: uppercase; letter-spacing: 0.03em;">Evaluated & Graded</div>
+              <div style="font-size: 1.35rem; font-weight: 800; color: #059669;">129</div>
+              <div style="font-size: 0.72rem; color: #10B981; font-weight: 600;">Marks Published</div>
+            </div>
+          </div>
+
+          <div style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 14px; padding: 1.1rem 1.25rem; display: flex; align-items: center; gap: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.03);">
+            <div style="width: 44px; height: 44px; border-radius: 10px; background: #EFF6FF; color: #2563EB; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+            </div>
+            <div>
+              <div style="font-size: 0.75rem; color: #64748B; font-weight: 600; text-transform: uppercase; letter-spacing: 0.03em;">Average Cohort Score</div>
+              <div style="font-size: 1.35rem; font-weight: 800; color: #0F172A;">88.4%</div>
+              <div style="font-size: 0.72rem; color: #2563EB; font-weight: 600;">Standard Class Performance</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Page Header & Filters -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 1rem;">
+          <div>
+            <h2 style="font-size: 1.25rem; font-weight: 800; color: #0F172A; letter-spacing: -0.01em;">Evaluation Center</h2>
+            <p style="font-size: 0.8125rem; color: #64748B; margin-top: 0.2rem;">
+              Review student uploaded files, enter marks, apply rubrics, and provide constructive feedback.
+            </p>
+          </div>
+
+          <div style="display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap;">
+            <!-- Page Size Selector -->
+            <div style="display: flex; align-items: center; gap: 0.4rem;">
+              <label for="eval-page-size" style="font-size: 0.8125rem; color: #64748B; font-weight: 600;">Show:</label>
+              <select id="eval-page-size" class="pagination-size-select">
+                <option value="5" selected>5 / page</option>
+                <option value="10">10 / page</option>
+                <option value="20">20 / page</option>
+              </select>
+            </div>
+
+            <!-- Assignment Selector -->
+            <select id="eval-assignment-select" class="form-input" style="padding: 0.4rem 0.85rem; font-size: 0.8125rem; height: auto; max-width: 280px; border-radius: 8px;">
+              <option value="all">All Assignments</option>
+              <option value="fac_asg_001">CS402: Normalization & Schema Design</option>
+              <option value="fac_asg_002">CS404: Process Synchronization</option>
+              <option value="fac_asg_003">CS402L: Complex SQL & Triggers</option>
+            </select>
+
+            <!-- Status Selector -->
+            <select id="eval-status-select" class="form-input" style="padding: 0.4rem 0.85rem; font-size: 0.8125rem; height: auto; border-radius: 8px;">
+              <option value="all">All Statuses</option>
+              <option value="submitted">Pending Review (Amber)</option>
+              <option value="graded">Graded (Green)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Submissions Table Card -->
+        <div class="table-card">
+          <div class="table-card-header">
+            <h3 class="table-card-title">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg>
+              <span>Student Assignment Submissions Queue</span>
+            </h3>
+          </div>
+
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th style="min-width: 200px;">Student & Roll No</th>
+                  <th style="min-width: 240px;">Assignment Title</th>
+                  <th style="width: 110px;">Subject</th>
+                  <th style="width: 150px;">Submitted On</th>
+                  <th style="width: 180px;">Student Attachment</th>
+                  <th style="width: 130px;">Evaluation Score</th>
+                  <th style="width: 110px;">Status</th>
+                  <th style="width: 120px; text-align: right;">Action</th>
+                </tr>
+              </thead>
+              <tbody id="evaluations-tbody">
+                <!-- Populated by JS -->
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Evaluations Pagination Bar -->
+          <div id="evaluations-pagination" class="table-pagination-container"></div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- Grading Evaluation Modal -->
+  <div id="grade-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="modal-dialog" style="max-width: 540px;">
+      <div class="modal-header">
+        <h3 class="modal-title">Assignment Assessment & Grading</h3>
+        <button type="button" class="toast-close" onclick="UI.closeModal('grade-modal')">&times;</button>
+      </div>
+      <form id="grade-submission-form">
+        <input type="hidden" id="grade-sub-id">
+        <div class="modal-body" style="display: flex; flex-direction: column; gap: 1.15rem;">
+          <!-- Student Info Header -->
+          <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 10px; padding: 0.875rem; display: flex; justify-content: space-between; align-items: center;">
+            <div>
+              <div style="font-weight: 700; color: #0F172A;" id="modal-student-name">Riddhi Zunjarrao</div>
+              <div style="font-size: 0.75rem; color: #64748B;" id="modal-student-meta">Roll No: CS24-042 • Section A</div>
+            </div>
+            <div style="text-align: right;">
+              <div style="font-size: 0.75rem; color: #94A3B8;">Submitted File:</div>
+              <a href="https://res.cloudinary.com/demo/image/upload/sample.pdf" target="_blank" id="modal-file-link" class="badge badge-primary" style="text-decoration: none; font-size: 0.72rem; display: inline-flex; align-items: center; gap: 0.25rem;">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                <span>Download File</span>
+              </a>
+            </div>
+          </div>
+
+          <!-- Marks Input -->
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <div class="form-group">
+              <label for="grade-marks-input" class="form-label">Marks Awarded <span class="required">*</span></label>
+              <div style="display: flex; align-items: center; gap: 0.5rem;">
+                <input type="number" id="grade-marks-input" class="form-input" min="0" max="25" step="0.5" placeholder="e.g. 18" required style="font-size: 1.1rem; font-weight: 700;">
+                <span style="font-weight: 700; color: #64748B;" id="modal-max-marks-label">/ 20</span>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Grade Category</label>
+              <div id="modal-grade-tier-preview" style="font-weight: 700; font-size: 1.1rem; color: #16A34A; padding-top: 0.4rem;">
+                Pending Mark Entry
+              </div>
+            </div>
+          </div>
+
+          <!-- Evaluation Rubric Checklist -->
+          <div class="form-group">
+            <label class="form-label">Rubric Assessment Criteria</label>
+            <div style="display: flex; flex-direction: column; gap: 0.5rem; background: #FAF5FF; padding: 0.75rem; border-radius: 8px; border: 1px solid #E9D5FF; font-size: 0.8125rem;">
+              <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                <input type="checkbox" id="rubric-completeness" checked> Technical Completeness & Correct Schema Logic
+              </label>
+              <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                <input type="checkbox" id="rubric-clarity" checked> Clear Justification & Decomposition Steps
+              </label>
+              <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                <input type="checkbox" id="rubric-presentation" checked> Proper Formatting & Diagrammatic Presentation
+              </label>
+            </div>
+          </div>
+
+          <!-- Feedback Box -->
+          <div class="form-group">
+            <label for="grade-feedback-input" class="form-label">Faculty Feedback & Guidance for Student</label>
+            <textarea id="grade-feedback-input" class="form-input" rows="3" placeholder="e.g. Flawless functional dependency graphs. Minor deduction on 3NF decomposition justification..."></textarea>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="UI.closeModal('grade-modal')">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save & Publish Grade</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Application Services -->
+  <script src="../data/mock-faculty.js"></script>
+  <script src="../data/mock-student.js"></script>
+  <script src="../js/faculty-service.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/ui.js"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const asgSelect = document.getElementById('eval-assignment-select');
+      const statusSelect = document.getElementById('eval-status-select');
+      const tbody = document.getElementById('evaluations-tbody');
+      const gradeForm = document.getElementById('grade-submission-form');
+      const marksInput = document.getElementById('grade-marks-input');
+      const tierPreview = document.getElementById('modal-grade-tier-preview');
+      const exportBtn = document.getElementById('export-grades-btn');
+
+      // Check URL search parameters
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('assignmentId')) {
+        asgSelect.value = params.get('assignmentId');
+      }
+
+      let evalCurrentPage = 1;
+      const evalPageSizeSelect = document.getElementById('eval-page-size');
+
+      function renderEvaluations(resetPage = false) {
+        if (resetPage) evalCurrentPage = 1;
+        const asgId = asgSelect.value;
+        const status = statusSelect.value;
+        const pageSize = parseInt(evalPageSizeSelect ? evalPageSizeSelect.value : '5', 10);
+        const list = FacultyService.getSubmissions(asgId, status);
+
+        if (list.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="8" style="text-align: center; color: #64748B; padding: 2.5rem;">No submissions found for the selected filter.</td></tr>`;
+          UI.renderPagination('evaluations-pagination', 0, 1, pageSize, () => {});
+          return;
+        }
+
+        const totalPages = Math.ceil(list.length / pageSize);
+        if (evalCurrentPage > totalPages) evalCurrentPage = totalPages;
+
+        const startIndex = (evalCurrentPage - 1) * pageSize;
+        const paginatedList = list.slice(startIndex, startIndex + pageSize);
+
+        tbody.innerHTML = paginatedList.map(sub => {
+          const isGraded = sub.status === 'graded';
+          const statusBadge = isGraded
+            ? `<span class="badge badge-success">Graded</span>`
+            : `<span class="badge badge-warning">Pending Review</span>`;
+
+          const marksDisplay = isGraded
+            ? `<strong style="color: #16A34A; font-size: 0.9375rem;">${sub.marks}</strong> / ${sub.maxMarks}`
+            : `<span style="color: #94A3B8;">— / ${sub.maxMarks}</span>`;
+
+          return `
+            <tr>
+              <td>
+                <div style="font-weight: 700; color: #0F172A; font-size: 0.9rem;">${sub.studentName}</div>
+                <div style="font-size: 0.775rem; color: #64748B; margin-top: 0.2rem; display: flex; align-items: center; gap: 0.4rem;">
+                  <span class="roll-badge">${sub.rollNo}</span>
+                  <span class="sec-badge">Sec ${sub.section}</span>
+                </div>
+              </td>
+              <td>
+                <div style="font-weight: 600; font-size: 0.875rem; color: #1E293B;">${sub.assignmentTitle}</div>
+              </td>
+              <td><span class="badge badge-primary" style="font-weight: 700;">${sub.subjectCode}</span></td>
+              <td style="font-size: 0.84375rem; color: #475569;">${sub.submittedAt}</td>
+              <td>
+                <a href="https://res.cloudinary.com/demo/image/upload/sample.pdf" target="_blank" class="badge badge-subtle" style="text-decoration: none; font-size: 0.775rem; padding: 0.3rem 0.65rem; display: inline-flex; align-items: center; gap: 0.3rem;" title="Download student file">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                  <span>${sub.fileName || 'submission.pdf'}</span>
+                </a>
+              </td>
+              <td>${marksDisplay}</td>
+              <td>${statusBadge}</td>
+              <td style="text-align: right;">
+                <button type="button" class="btn-table-action ${isGraded ? 'btn-table-action-outline' : 'btn-table-action-assignments'}" onclick="openGradeModal('${sub.id}')" style="display: inline-flex; align-items: center; gap: 0.35rem;">
+                  ${isGraded ? '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg><span>Edit Grade</span>' : '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><span>Grade Now</span>'}
+                </button>
+              </td>
+            </tr>
+          `;
+        }).join('');
+
+        UI.renderPagination('evaluations-pagination', list.length, evalCurrentPage, pageSize, (newPage) => {
+          evalCurrentPage = newPage;
+          renderEvaluations(false);
+        });
+      }
+
+      asgSelect.addEventListener('change', () => renderEvaluations(true));
+      statusSelect.addEventListener('change', () => renderEvaluations(true));
+      if (evalPageSizeSelect) evalPageSizeSelect.addEventListener('change', () => renderEvaluations(true));
+      renderEvaluations(true);
+
+      // Open Modal
+      window.openGradeModal = function(submissionId) {
+        const list = FacultyService.getSubmissions();
+        const sub = list.find(s => s.id === submissionId);
+        if (!sub) return;
+
+        document.getElementById('grade-sub-id').value = sub.id;
+        document.getElementById('modal-student-name').textContent = sub.studentName;
+        document.getElementById('modal-student-meta').textContent = `Roll No: ${sub.rollNo} • Section ${sub.section} • ${sub.subjectCode}`;
+        document.getElementById('modal-max-marks-label').textContent = `/ ${sub.maxMarks}`;
+        document.getElementById('modal-file-link').innerHTML = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><span>${sub.fileName || 'View Submission'}</span>`;
+
+        marksInput.max = sub.maxMarks;
+        marksInput.value = sub.marks !== null ? sub.marks : '';
+        document.getElementById('grade-feedback-input').value = sub.feedback || '';
+
+        updateGradeTier();
+        UI.openModal('grade-modal');
+      };
+
+      // Check URL for direct evaluation ID
+      if (params.get('id')) {
+        setTimeout(() => openGradeModal(params.get('id')), 150);
+      }
+
+      function updateGradeTier() {
+        const val = Number(marksInput.value);
+        const max = Number(marksInput.max) || 20;
+        if (isNaN(val) || val === 0) {
+          tierPreview.textContent = 'Enter marks to calculate grade';
+          tierPreview.style.color = '#64748B';
+          return;
+        }
+
+        const pct = (val / max) * 100;
+        if (pct >= 90) {
+          tierPreview.textContent = `Grade: Outstanding (O) • ${pct.toFixed(0)}%`;
+          tierPreview.style.color = '#16A34A';
+        } else if (pct >= 80) {
+          tierPreview.textContent = `Grade: Excellent (A+) • ${pct.toFixed(0)}%`;
+          tierPreview.style.color = '#2563EB';
+        } else if (pct >= 70) {
+          tierPreview.textContent = `Grade: Very Good (A) • ${pct.toFixed(0)}%`;
+          tierPreview.style.color = '#7C3AED';
+        } else if (pct >= 50) {
+          tierPreview.textContent = `Grade: Satisfactory (B) • ${pct.toFixed(0)}%`;
+          tierPreview.style.color = '#D97706';
+        } else {
+          tierPreview.textContent = `Grade: Needs Revision (F) • ${pct.toFixed(0)}%`;
+          tierPreview.style.color = '#DC2626';
+        }
+      }
+
+      marksInput.addEventListener('input', updateGradeTier);
+
+      // Handle Save Grade
+      gradeForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const subId = document.getElementById('grade-sub-id').value;
+        const marks = marksInput.value;
+        const feedback = document.getElementById('grade-feedback-input').value.trim();
+        const rubric = {
+          completeness: document.getElementById('rubric-completeness').checked,
+          clarity: document.getElementById('rubric-clarity').checked,
+          presentation: document.getElementById('rubric-presentation').checked
+        };
+
+        FacultyService.gradeSubmission(subId, { marks, feedback, rubric });
+        UI.closeModal('grade-modal');
+        UI.showToast('success', 'Grade Published', `Marks and feedback recorded for student.`);
+        renderEvaluations();
+      });
+
+      // Export CSV
+      if (exportBtn) {
+        exportBtn.addEventListener('click', () => {
+          const list = FacultyService.getSubmissions(asgSelect.value, statusSelect.value);
+          let csv = 'Roll No,Student Name,Section,Assignment,Subject,Submitted At,Marks,Max Marks,Status,Feedback\n';
+          list.forEach(s => {
+            csv += `"${s.rollNo}","${s.studentName}","${s.section}","${s.assignmentTitle}","${s.subjectCode}","${s.submittedAt}",${s.marks !== null ? s.marks : 0},${s.maxMarks},"${s.status}","${(s.feedback || '').replace(/"/g, '""')}"\n`;
+          });
+
+          const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+          const link = document.createElement('a');
+          link.href = URL.createObjectURL(blob);
+          link.download = `Faculty_Evaluation_Grades_${new Date().toISOString().split('T')[0]}.csv`;
+          link.click();
+          UI.showToast('success', 'Grade Sheet Exported', 'Evaluation CSV downloaded successfully.');
+        });
+      }
+    });
+  </script>
+</body>
+
+</html>

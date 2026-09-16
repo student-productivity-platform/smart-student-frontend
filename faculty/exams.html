@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Assessment & Exam Evaluation — Smart Student Faculty</title>
+  <meta name="description" content="Evaluate quizzes, mid-term examinations, enter student marks and publish results with grading metrics.">
+
+  <!-- Core Design System & Stylesheets -->
+  <link rel="stylesheet" href="../css/main.css">
+  <link rel="stylesheet" href="../css/dashboard.css">
+  <link rel="stylesheet" href="../css/responsive.css">
+
+  <script src="../js/auth-guard.js"></script>
+</head>
+
+<body>
+  <div id="toast-container"></div>
+  <div class="sidebar-backdrop"></div>
+
+  <div class="app-container">
+    <!-- Sidebar Navigation -->
+    <aside class="app-sidebar" aria-label="Main Navigation">
+      <div class="sidebar-header">
+        <a href="dashboard.html" class="sidebar-brand">
+          <div class="sidebar-brand-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
+              <path d="M6 12v5c3 3 9 3 12 0v-5" />
+            </svg>
+          </div>
+          <div class="sidebar-brand-text">
+            <h2>Smart Student</h2>
+            <span>Faculty Portal</span>
+          </div>
+        </a>
+      </div>
+
+      <nav class="sidebar-nav-container">
+        <div class="nav-section-label">Academic Core</div>
+        <a href="dashboard.html" class="nav-link">
+          <span class="nav-link-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="3" width="7" height="7" /><rect x="14" y="3" width="7" height="7" />
+              <rect x="14" y="14" width="7" height="7" /><rect x="3" y="14" width="7" height="7" />
+            </svg>
+          </span>
+          <span>Overview</span>
+        </a>
+
+        <a href="academic-mapping.html" class="nav-link">
+          <span class="nav-link-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" />
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87" /><path d="M16 3.13a4 4 0 0 1 0 7.75" />
+            </svg>
+          </span>
+          <span>Academic Mapping</span>
+        </a>
+
+        <a href="materials.html" class="nav-link">
+          <span class="nav-link-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+              <polyline points="14 2 14 8 20 8" />
+            </svg>
+          </span>
+          <span>Course Materials</span>
+        </a>
+
+        <a href="assignments.html" class="nav-link">
+          <span class="nav-link-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" />
+              <rect x="8" y="2" width="8" height="4" rx="1" ry="1" />
+            </svg>
+          </span>
+          <span>Assignments</span>
+        </a>
+
+        <a href="evaluations.html" class="nav-link">
+          <span class="nav-link-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="9 11 12 14 22 4" />
+              <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
+            </svg>
+          </span>
+          <span>Evaluations</span>
+        </a>
+
+        <a href="attendance.html" class="nav-link">
+          <span class="nav-link-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+              <polyline points="22 4 12 14.01 9 11.01" />
+            </svg>
+          </span>
+          <span>Attendance</span>
+        </a>
+
+        <a href="exams.html" class="nav-link active">
+          <span class="nav-link-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10" />
+              <polyline points="12 6 12 12 14 14" />
+            </svg>
+          </span>
+          <span>Examinations</span>
+        </a>
+
+        <div class="nav-section-label">Connect & Schedule</div>
+
+        <a href="meetings.html" class="nav-link">
+          <span class="nav-link-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polygon points="23 7 16 12 23 17 23 7" /><rect x="1" y="5" width="15" height="14" rx="2" ry="2" />
+            </svg>
+          </span>
+          <span>Online Classes</span>
+        </a>
+
+        <a href="communication.html" class="nav-link">
+          <span class="nav-link-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+            </svg>
+          </span>
+          <span>Communication & Doubts</span>
+        </a>
+
+        <div class="nav-section-label">Account & Profile</div>
+
+        <a href="profile.html" class="nav-link">
+          <span class="nav-link-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+              <circle cx="12" cy="7" r="4" />
+            </svg>
+          </span>
+          <span>Faculty Profile</span>
+        </a>
+
+        <a href="settings.html" class="nav-link">
+          <span class="nav-link-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="3" />
+              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
+            </svg>
+          </span>
+          <span>Settings</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <a href="profile.html" class="sidebar-user-card">
+          <div class="user-avatar" style="background: linear-gradient(135deg, #6366F1 0%, #4338CA 100%);">
+            <span class="user-avatar-initials">SM</span>
+          </div>
+          <div class="user-info-text">
+            <div class="user-name">Prof. Sunita Mehta</div>
+            <span class="user-role-tag">Associate Professor</span>
+          </div>
+        </a>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="app-main">
+      <header class="app-topbar">
+        <div class="topbar-left">
+          <button type="button" class="mobile-nav-toggle" id="mobile-nav-toggle" aria-label="Open Navigation">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="3" y1="12" x2="21" y2="12" /><line x1="3" y1="6" x2="21" y2="6" /><line x1="3" y1="18" x2="21" y2="18" />
+            </svg>
+          </button>
+          <div class="topbar-page-title">
+            <h1>Assessment & Examination Evaluation (F27)</h1>
+          </div>
+        </div>
+
+        <div class="topbar-search-box">
+          <svg class="topbar-search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
+          </svg>
+          <input type="search" id="global-search-input" class="topbar-search-input" placeholder="Search exam name or student marks..." aria-label="Search Exams">
+        </div>
+
+        <div class="topbar-right">
+          <button type="button" class="btn btn-primary btn-sm" onclick="UI.openModal('create-exam-modal')" style="gap: 0.4rem;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            <span>Create New Exam / Test</span>
+          </button>
+        </div>
+      </header>
+
+      <main class="app-content" style="padding: 1.5rem 2rem;">
+        <!-- Top Selector & Controls -->
+        <div style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 16px; padding: 1.5rem; margin-bottom: 1.5rem; box-shadow: var(--shadow-sm);">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 1rem;">
+            <div>
+              <h2 style="font-size: 1.25rem; font-weight: 800; color: #0F172A;">Exam Marks Entry & Grading</h2>
+              <p style="font-size: 0.8125rem; color: #64748B;">
+                Select test/examination to enter student marks, evaluate performance, and publish results.
+              </p>
+            </div>
+
+            <div style="display: flex; gap: 0.5rem; align-items: center;">
+              <select id="selected-exam-dropdown" class="form-input" style="padding: 0.45rem 0.85rem; font-size: 0.84375rem; font-weight: 600; min-width: 280px;">
+                <!-- Populated by JS -->
+              </select>
+            </div>
+          </div>
+
+          <!-- Class Performance Analytics Cards -->
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 1rem; background: #F8FAFC; padding: 1rem; border-radius: 12px; border: 1px solid #E2E8F0;" id="exam-stats-container">
+            <div style="text-align: center;">
+              <div style="font-size: 1.4rem; font-weight: 800; color: #2563EB;" id="stat-avg">20.4</div>
+              <div style="font-size: 0.72rem; color: #64748B;">Class Average</div>
+            </div>
+            <div style="text-align: center;">
+              <div style="font-size: 1.4rem; font-weight: 800; color: #16A34A;" id="stat-high">25</div>
+              <div style="font-size: 0.72rem; color: #64748B;">Highest Marks</div>
+            </div>
+            <div style="text-align: center;">
+              <div style="font-size: 1.4rem; font-weight: 800; color: #DC2626;" id="stat-low">12</div>
+              <div style="font-size: 0.72rem; color: #64748B;">Lowest Marks</div>
+            </div>
+            <div style="text-align: center;">
+              <div style="font-size: 1.4rem; font-weight: 800; color: #7C3AED;" id="stat-pass">97.3%</div>
+              <div style="font-size: 0.72rem; color: #64748B;">Pass Percentage</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Exam Marks Matrix Table Card -->
+        <div class="table-card">
+          <div class="table-card-header">
+            <div style="display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap;">
+              <h3 class="table-card-title" id="marks-matrix-title">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+                <span>Student Marks Entry Matrix</span>
+              </h3>
+              <div style="display: flex; align-items: center; gap: 0.35rem;">
+                <label for="exam-page-size" style="font-size: 0.8125rem; color: #64748B; font-weight: 600;">Show:</label>
+                <select id="exam-page-size" class="pagination-size-select">
+                  <option value="6" selected>6 / page</option>
+                  <option value="10">10 / page</option>
+                  <option value="25">25 / page</option>
+                </select>
+              </div>
+            </div>
+            
+            <div class="table-card-actions">
+              <button type="button" id="export-exam-csv" class="btn btn-secondary btn-sm" style="font-weight: 600; padding: 0.45rem 0.85rem; gap: 0.4rem;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                <span>Export Marksheet (CSV)</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th style="width: 140px;">Roll No</th>
+                  <th style="min-width: 260px;">Student Name</th>
+                  <th style="width: 120px;">Section</th>
+                  <th style="width: 180px;">Marks Scored</th>
+                  <th style="width: 140px;">Calculated Grade</th>
+                  <th style="width: 140px; text-align: right;">Result Status</th>
+                </tr>
+              </thead>
+              <tbody id="exam-marks-tbody">
+                <!-- Populated by JS -->
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Exam Marks Pagination Bar -->
+          <div id="exam-marks-pagination" class="table-pagination-container"></div>
+
+          <!-- Bottom Action Buttons -->
+          <div style="display: flex; justify-content: flex-end; gap: 0.75rem; padding: 1.25rem 1.5rem; background: #FFFFFF; border-top: 1px solid #E2E8F0;">
+            <button type="button" id="save-exam-draft-btn" class="btn btn-secondary" style="font-weight: 600;">Save Draft</button>
+            <button type="button" id="publish-exam-btn" class="btn btn-primary" style="font-weight: 700; box-shadow: 0 2px 8px rgba(99, 102, 241, 0.3); gap: 0.4rem;">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+              <span>Publish Marks to Student Portal</span>
+            </button>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- Create Exam Modal -->
+  <div id="create-exam-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="modal-dialog" style="max-width: 540px;">
+      <div class="modal-header">
+        <h3 class="modal-title">Create Assessment / Examination (F27)</h3>
+        <button type="button" class="toast-close" onclick="UI.closeModal('create-exam-modal')">&times;</button>
+      </div>
+      <form id="create-exam-form">
+        <div class="modal-body" style="display: flex; flex-direction: column; gap: 1rem;">
+          <div class="form-group">
+            <label for="new-exam-title" class="form-label">Exam / Quiz Title <span class="required">*</span></label>
+            <input type="text" id="new-exam-title" class="form-input" placeholder="e.g. DBMS Unit Test 2 (Normalization & Transactions)" required>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+            <div class="form-group">
+              <label for="new-exam-subject" class="form-label">Subject <span class="required">*</span></label>
+              <select id="new-exam-subject" class="form-input" required>
+                <option value="CS402">CS402 — Database Management Systems</option>
+                <option value="CS404">CS404 — Operating Systems</option>
+                <option value="CS402L">CS402L — DBMS Practical & Lab</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="new-exam-weight" class="form-label">Weightage (%)</label>
+              <input type="text" id="new-exam-weight" class="form-input" placeholder="e.g. 15%" value="15%">
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.75rem;">
+            <div class="form-group">
+              <label for="new-exam-date" class="form-label">Date <span class="required">*</span></label>
+              <input type="date" id="new-exam-date" class="form-input" required>
+            </div>
+
+            <div class="form-group">
+              <label for="new-exam-time" class="form-label">Time</label>
+              <input type="text" id="new-exam-time" class="form-input" value="11:00 AM - 12:00 PM">
+            </div>
+
+            <div class="form-group">
+              <label for="new-exam-max" class="form-label">Max Marks <span class="required">*</span></label>
+              <input type="number" id="new-exam-max" class="form-input" min="10" max="100" value="25" required>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="UI.closeModal('create-exam-modal')">Cancel</button>
+          <button type="submit" class="btn btn-primary">Create Examination</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Application Services -->
+  <script src="../data/mock-faculty.js"></script>
+  <script src="../data/mock-student.js"></script>
+  <script src="../js/faculty-service.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/ui.js"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const examDropdown = document.getElementById('selected-exam-dropdown');
+      const tbody = document.getElementById('exam-marks-tbody');
+      const titleEl = document.getElementById('marks-matrix-title');
+      const saveDraftBtn = document.getElementById('save-exam-draft-btn');
+      const publishBtn = document.getElementById('publish-exam-btn');
+      const exportBtn = document.getElementById('export-exam-csv');
+      const createExamForm = document.getElementById('create-exam-form');
+      const newExamDate = document.getElementById('new-exam-date');
+
+      if (newExamDate) {
+        newExamDate.value = new Date().toISOString().split('T')[0];
+      }
+
+      function populateExamOptions() {
+        const exams = FacultyService.getExams();
+        examDropdown.innerHTML = exams.map(e => `
+          <option value="${e.id}">${e.title} (${e.subjectCode} • Max: ${e.maxMarks})</option>
+        `).join('');
+      }
+
+      let examCurrentPage = 1;
+      const examPageSizeSelect = document.getElementById('exam-page-size');
+      let examMarksCache = {};
+
+      function loadExamMatrix(resetPage = false) {
+        if (resetPage) {
+          examCurrentPage = 1;
+          examMarksCache = {};
+        }
+
+        const exams = FacultyService.getExams();
+        const selectedId = examDropdown.value;
+        const exam = exams.find(e => e.id === selectedId) || exams[0];
+        if (!exam) return;
+
+        titleEl.textContent = `${exam.title} (${exam.subjectCode} • Max Marks: ${exam.maxMarks})`;
+        const max = exam.maxMarks || 25;
+        const pageSize = parseInt(examPageSizeSelect ? examPageSizeSelect.value : '6', 10);
+
+        // Load stats if available
+        if (exam.stats) {
+          document.getElementById('stat-avg').textContent = exam.stats.average || '0';
+          document.getElementById('stat-high').textContent = exam.stats.highest || '0';
+          document.getElementById('stat-low').textContent = exam.stats.lowest || '0';
+          document.getElementById('stat-pass').textContent = `${exam.stats.passRate || 0}%`;
+        } else {
+          document.getElementById('stat-avg').textContent = '—';
+          document.getElementById('stat-high').textContent = '—';
+          document.getElementById('stat-low').textContent = '—';
+          document.getElementById('stat-pass').textContent = '—';
+        }
+
+        // Build student rows
+        const students = FacultyService.getStudents('all');
+        const existingMarks = exam.studentMarks || [];
+
+        // Initialize cache for all students if empty
+        students.forEach(s => {
+          if (examMarksCache[s.id] === undefined) {
+            const recorded = existingMarks.find(m => m.studentId === s.id || m.rollNo === s.rollNo);
+            examMarksCache[s.id] = recorded ? recorded.marks : Math.floor(Math.random() * 8) + (max - 8);
+          }
+        });
+
+        const totalPages = Math.ceil(students.length / pageSize) || 1;
+        if (examCurrentPage > totalPages) examCurrentPage = totalPages;
+
+        const startIndex = (examCurrentPage - 1) * pageSize;
+        const paginatedStudents = students.slice(startIndex, startIndex + pageSize);
+
+        tbody.innerHTML = paginatedStudents.map(s => {
+          const score = examMarksCache[s.id];
+          const pct = (score / max) * 100;
+          const grade = calculateGrade(pct);
+          const isPass = score >= (max * 0.4);
+
+          return `
+            <tr data-student-id="${s.id}" data-roll="${s.rollNo}" data-name="${s.name}" data-section="${s.section}">
+              <td><span class="roll-badge">${s.rollNo}</span></td>
+              <td><div style="font-weight: 700; color: #0F172A; font-size: 0.9rem;">${s.name}</div></td>
+              <td><span class="sec-badge">Sec ${s.section}</span></td>
+              <td>
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                  <input type="number" class="form-input mark-input" value="${score}" min="0" max="${max}" style="width: 80px; font-weight: 800; font-size: 0.9375rem; text-align: center; padding: 0.35rem 0.5rem; border-radius: 8px;" onchange="recalcRow('${s.id}', this, ${max})">
+                  <span style="font-size: 0.8125rem; color: #64748B; font-weight: 600;">/ ${max}</span>
+                </div>
+              </td>
+              <td>
+                <span class="badge badge-primary grade-badge" style="font-weight: 800; font-size: 0.8125rem; padding: 0.3rem 0.75rem;">${grade}</span>
+              </td>
+              <td style="text-align: right;">
+                <span class="badge ${isPass ? 'badge-success' : 'badge-danger'} status-badge">${isPass ? 'Pass' : 'Fail'}</span>
+              </td>
+            </tr>
+          `;
+        }).join('');
+
+        UI.renderPagination('exam-marks-pagination', students.length, examCurrentPage, pageSize, (newPage) => {
+          examCurrentPage = newPage;
+          loadExamMatrix(false);
+        });
+      }
+
+      function calculateGrade(pct) {
+        if (pct >= 90) return 'O';
+        if (pct >= 80) return 'A+';
+        if (pct >= 70) return 'A';
+        if (pct >= 60) return 'B+';
+        if (pct >= 50) return 'B';
+        if (pct >= 40) return 'C';
+        return 'F';
+      }
+
+      window.recalcRow = function(studentId, input, max) {
+        const row = input.closest('tr');
+        const score = Number(input.value) || 0;
+        examMarksCache[studentId] = score;
+
+        const pct = (score / max) * 100;
+        const gradeBadge = row.querySelector('.grade-badge');
+        const statusBadge = row.querySelector('.status-badge');
+
+        const grade = calculateGrade(pct);
+        const isPass = score >= (max * 0.4);
+
+        if (gradeBadge) gradeBadge.textContent = grade;
+        if (statusBadge) {
+          statusBadge.textContent = isPass ? 'Pass' : 'Fail';
+          statusBadge.className = `badge ${isPass ? 'badge-success' : 'badge-danger'} status-badge`;
+        }
+      };
+
+      function collectMarks() {
+        const students = FacultyService.getStudents('all');
+        const exam = FacultyService.getExams().find(e => e.id === examDropdown.value);
+        const max = exam ? exam.maxMarks : 25;
+
+        return students.map(s => {
+          const score = examMarksCache[s.id] !== undefined ? examMarksCache[s.id] : (max - 5);
+          const pct = (score / max) * 100;
+          return {
+            studentId: s.id,
+            rollNo: s.rollNo,
+            name: s.name,
+            section: s.section,
+            marks: score,
+            grade: calculateGrade(pct),
+            status: score >= (max * 0.4) ? 'Pass' : 'Fail'
+          };
+        });
+      }
+
+      saveDraftBtn.addEventListener('click', () => {
+        const marks = collectMarks();
+        const examId = examDropdown.value;
+        FacultyService.saveExamMarks(examId, marks, false);
+        UI.showToast('info', 'Draft Saved', 'Marks draft saved successfully.');
+        loadExamMatrix(false);
+      });
+
+      publishBtn.addEventListener('click', () => {
+        const marks = collectMarks();
+        const examId = examDropdown.value;
+        FacultyService.saveExamMarks(examId, marks, true);
+        UI.showToast('success', 'Results Published', 'Exam evaluation published to student portal!');
+        loadExamMatrix(false);
+      });
+
+      examDropdown.addEventListener('change', () => loadExamMatrix(true));
+      if (examPageSizeSelect) examPageSizeSelect.addEventListener('change', () => loadExamMatrix(true));
+
+      // Create Exam
+      createExamForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const title = document.getElementById('new-exam-title').value.trim();
+        const subjectCode = document.getElementById('new-exam-subject').value;
+        const weightage = document.getElementById('new-exam-weight').value.trim();
+        const date = document.getElementById('new-exam-date').value;
+        const time = document.getElementById('new-exam-time').value.trim();
+        const maxMarks = Number(document.getElementById('new-exam-max').value) || 25;
+
+        const subjects = FacultyService.getSubjects();
+        const subjectObj = subjects.find(s => s.code === subjectCode);
+
+        const newExam = FacultyService.createExam({
+          title,
+          subjectCode,
+          subjectName: subjectObj ? subjectObj.name : subjectCode,
+          weightage,
+          date,
+          time,
+          maxMarks,
+          sections: ["A", "B"],
+          totalStudents: 74
+        });
+
+        UI.closeModal('create-exam-modal');
+        createExamForm.reset();
+        UI.showToast('success', 'Exam Created', `"${title}" added to examination directory.`);
+        populateExamOptions();
+        examDropdown.value = newExam.id;
+        loadExamMatrix();
+      });
+
+      // Export CSV
+      exportBtn.addEventListener('click', () => {
+        const marks = collectMarks();
+        const exams = FacultyService.getExams();
+        const exam = exams.find(e => e.id === examDropdown.value);
+        let csv = `Roll No,Student Name,Section,Marks Scored,Max Marks,Grade,Status\n`;
+        marks.forEach(m => {
+          csv += `"${m.rollNo}","${m.name}","${m.section}",${m.marks},${exam ? exam.maxMarks : 25},"${m.grade}","${m.status}"\n`;
+        });
+
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = `Exam_Marksheet_${exam ? exam.subjectCode : 'Assessment'}_${new Date().toISOString().split('T')[0]}.csv`;
+        link.click();
+        UI.showToast('success', 'Marksheet Exported', 'CSV marksheet downloaded.');
+      });
+
+      // Init
+      populateExamOptions();
+      loadExamMatrix();
+    });
+  </script>
+</body>
+
+</html>

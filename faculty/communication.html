@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Faculty Communication & Doubts — Smart Student Faculty</title>
+  <meta name="description" content="Issue departmental announcements and answer student questions and doubts.">
+
+  <!-- Core Design System & Stylesheets -->
+  <link rel="stylesheet" href="../css/main.css">
+  <link rel="stylesheet" href="../css/dashboard.css">
+  <link rel="stylesheet" href="../css/responsive.css">
+
+  <script src="../js/auth-guard.js"></script>
+</head>
+
+<body>
+  <div id="toast-container"></div>
+  <div class="sidebar-backdrop"></div>
+
+  <div class="app-container">
+    <!-- Sidebar Navigation -->
+    <aside class="app-sidebar" aria-label="Main Navigation">
+      <div class="sidebar-header">
+        <a href="dashboard.html" class="sidebar-brand">
+          <div class="sidebar-brand-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
+              <path d="M6 12v5c3 3 9 3 12 0v-5" />
+            </svg>
+          </div>
+          <div class="sidebar-brand-text">
+            <h2>Smart Student</h2>
+            <span>Faculty Portal</span>
+          </div>
+        </a>
+      </div>
+
+      <nav class="sidebar-nav-container">
+        <div class="nav-section-label">Academic Core</div>
+        <a href="dashboard.html" class="nav-link">
+          <span class="nav-link-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="3" width="7" height="7" /><rect x="14" y="3" width="7" height="7" />
+              <rect x="14" y="14" width="7" height="7" /><rect x="3" y="14" width="7" height="7" />
+            </svg>
+          </span>
+          <span>Overview</span>
+        </a>
+
+        <a href="academic-mapping.html" class="nav-link">
+          <span class="nav-link-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" />
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87" /><path d="M16 3.13a4 4 0 0 1 0 7.75" />
+            </svg>
+          </span>
+          <span>Academic Mapping</span>
+        </a>
+
+        <a href="materials.html" class="nav-link">
+          <span class="nav-link-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+              <polyline points="14 2 14 8 20 8" />
+            </svg>
+          </span>
+          <span>Course Materials</span>
+        </a>
+
+        <a href="assignments.html" class="nav-link">
+          <span class="nav-link-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" />
+              <rect x="8" y="2" width="8" height="4" rx="1" ry="1" />
+            </svg>
+          </span>
+          <span>Assignments</span>
+        </a>
+
+        <a href="evaluations.html" class="nav-link">
+          <span class="nav-link-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="9 11 12 14 22 4" />
+              <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
+            </svg>
+          </span>
+          <span>Evaluations</span>
+        </a>
+
+        <a href="attendance.html" class="nav-link">
+          <span class="nav-link-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+              <polyline points="22 4 12 14.01 9 11.01" />
+            </svg>
+          </span>
+          <span>Attendance</span>
+        </a>
+
+        <a href="exams.html" class="nav-link">
+          <span class="nav-link-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10" />
+              <polyline points="12 6 12 12 14 14" />
+            </svg>
+          </span>
+          <span>Examinations</span>
+        </a>
+
+        <div class="nav-section-label">Connect & Schedule</div>
+
+        <a href="meetings.html" class="nav-link">
+          <span class="nav-link-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polygon points="23 7 16 12 23 17 23 7" /><rect x="1" y="5" width="15" height="14" rx="2" ry="2" />
+            </svg>
+          </span>
+          <span>Online Classes</span>
+        </a>
+
+        <a href="communication.html" class="nav-link active">
+          <span class="nav-link-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+            </svg>
+          </span>
+          <span>Communication & Doubts</span>
+        </a>
+
+        <div class="nav-section-label">Account & Profile</div>
+
+        <a href="profile.html" class="nav-link">
+          <span class="nav-link-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+              <circle cx="12" cy="7" r="4" />
+            </svg>
+          </span>
+          <span>Faculty Profile</span>
+        </a>
+
+        <a href="settings.html" class="nav-link">
+          <span class="nav-link-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="3" />
+              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
+            </svg>
+          </span>
+          <span>Settings</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <a href="profile.html" class="sidebar-user-card">
+          <div class="user-avatar" style="background: linear-gradient(135deg, #6366F1 0%, #4338CA 100%);">
+            <span class="user-avatar-initials">SM</span>
+          </div>
+          <div class="user-info-text">
+            <div class="user-name">Prof. Sunita Mehta</div>
+            <span class="user-role-tag">Associate Professor</span>
+          </div>
+        </a>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="app-main">
+      <header class="app-topbar">
+        <div class="topbar-left">
+          <button type="button" class="mobile-nav-toggle" id="mobile-nav-toggle" aria-label="Open Navigation">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="3" y1="12" x2="21" y2="12" /><line x1="3" y1="6" x2="21" y2="6" /><line x1="3" y1="18" x2="21" y2="18" />
+            </svg>
+          </button>
+          <div class="topbar-page-title">
+            <h1>Communication & Doubts (F29)</h1>
+          </div>
+        </div>
+
+        <div class="topbar-search-box">
+          <svg class="topbar-search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
+          </svg>
+          <input type="search" id="global-search-input" class="topbar-search-input" placeholder="Search doubts, questions, announcements..." aria-label="Search Communication">
+        </div>
+
+        <div class="topbar-right">
+          <button type="button" class="btn btn-primary btn-sm" onclick="UI.openModal('new-announcement-modal')" style="gap: 0.4rem;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+            <span>Post Notice</span>
+          </button>
+        </div>
+      </header>
+
+      <main class="app-content" style="padding: 1.5rem 2rem; width: 100%; box-sizing: border-box;">
+        <!-- Top Metrics Overview Strip (4 Balanced KPI Cards) -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
+          <div style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 14px; padding: 1.1rem 1.25rem; display: flex; align-items: center; gap: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.03);">
+            <div style="width: 44px; height: 44px; border-radius: 10px; background: #EEF2FF; color: #4F46E5; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            </div>
+            <div>
+              <div style="font-size: 0.75rem; color: #64748B; font-weight: 600; text-transform: uppercase; letter-spacing: 0.03em;">Total Inquiries</div>
+              <div style="font-size: 1.35rem; font-weight: 800; color: #0F172A;">6</div>
+              <div style="font-size: 0.72rem; color: #4F46E5; font-weight: 600;">Student Doubts</div>
+            </div>
+          </div>
+
+          <div style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 14px; padding: 1.1rem 1.25rem; display: flex; align-items: center; gap: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.03);">
+            <div style="width: 44px; height: 44px; border-radius: 10px; background: #FEF3C7; color: #D97706; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            </div>
+            <div>
+              <div style="font-size: 0.75rem; color: #64748B; font-weight: 600; text-transform: uppercase; letter-spacing: 0.03em;">Unresolved Doubts</div>
+              <div style="font-size: 1.35rem; font-weight: 800; color: #D97706;">2</div>
+              <div style="font-size: 0.72rem; color: #D97706; font-weight: 600;">Awaiting Reply</div>
+            </div>
+          </div>
+
+          <div style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 14px; padding: 1.1rem 1.25rem; display: flex; align-items: center; gap: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.03);">
+            <div style="width: 44px; height: 44px; border-radius: 10px; background: #EFF6FF; color: #2563EB; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+            </div>
+            <div>
+              <div style="font-size: 0.75rem; color: #64748B; font-weight: 600; text-transform: uppercase; letter-spacing: 0.03em;">Active Notices</div>
+              <div style="font-size: 1.35rem; font-weight: 800; color: #0F172A;">3</div>
+              <div style="font-size: 0.72rem; color: #2563EB; font-weight: 600;">Broadcasted Live</div>
+            </div>
+          </div>
+
+          <div style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 14px; padding: 1.1rem 1.25rem; display: flex; align-items: center; gap: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.03);">
+            <div style="width: 44px; height: 44px; border-radius: 10px; background: #ECFDF5; color: #059669; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+            <div>
+              <div style="font-size: 0.75rem; color: #64748B; font-weight: 600; text-transform: uppercase; letter-spacing: 0.03em;">Avg Resolution Time</div>
+              <div style="font-size: 1.35rem; font-weight: 800; color: #059669;">3.2 Hrs</div>
+              <div style="font-size: 0.72rem; color: #10B981; font-weight: 600;">Fast Response Rate</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Hub Tab Switcher Bar -->
+        <div class="ref-tab-switcher-bar" style="margin-bottom: 1.5rem;">
+          <button type="button" class="ref-tab-btn active" id="tab-btn-doubts" onclick="switchTab('doubts')">
+            <span style="display: inline-flex; align-items: center; gap: 0.4rem;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span>Student Doubts & Q&A Desk</span></span>
+            <span class="badge badge-warning" id="tab-doubts-badge" style="font-size: 0.75rem; padding: 0.2rem 0.55rem; margin-left: 0.4rem;">2 Pending</span>
+          </button>
+          <button type="button" class="ref-tab-btn" id="tab-btn-announcements" onclick="switchTab('announcements')">
+            <span style="display: inline-flex; align-items: center; gap: 0.4rem;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><span>Department & Class Announcements</span></span>
+          </button>
+        </div>
+
+        <!-- Section 1: Doubts Hub in Table Card -->
+        <div id="pane-doubts">
+          <!-- Filters Row -->
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 0.75rem;">
+            <div style="display: flex; gap: 0.5rem; align-items: center;">
+              <button type="button" class="btn btn-sm doubt-status-filter active" data-status="all" onclick="filterDoubts('all', this)">All Questions</button>
+              <button type="button" class="btn btn-sm btn-outline doubt-status-filter" data-status="unanswered" onclick="filterDoubts('unanswered', this)">Unresolved Only</button>
+              <button type="button" class="btn btn-sm btn-outline doubt-status-filter" data-status="resolved" onclick="filterDoubts('resolved', this)">Resolved</button>
+            </div>
+
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+              <label for="doubt-subject-filter" style="font-size: 0.8125rem; color: #64748B; font-weight: 600;">Filter Subject:</label>
+              <select id="doubt-subject-filter" class="form-input" style="padding: 0.4rem 0.85rem; font-size: 0.8125rem; height: auto; border-radius: 8px;">
+                <option value="all">All Subjects</option>
+                <option value="CS402">CS402 — Database Management Systems</option>
+                <option value="CS404">CS404 — Operating Systems</option>
+                <option value="CS402L">CS402L — DBMS Lab</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Doubts Table Card -->
+          <div class="table-card">
+            <div class="table-card-header">
+              <h3 class="table-card-title">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                <span>Student Academic Inquiries & Doubts</span>
+              </h3>
+            </div>
+
+            <div class="table-responsive">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th style="width: 180px;">Student & Roll No</th>
+                    <th style="width: 110px;">Subject</th>
+                    <th style="min-width: 280px;">Question / Doubt Details</th>
+                    <th style="width: 130px;">Asked Timeline</th>
+                    <th style="width: 120px;">Status</th>
+                    <th style="min-width: 240px;">Faculty Resolution</th>
+                    <th style="width: 120px; text-align: right;">Action</th>
+                  </tr>
+                </thead>
+                <tbody id="doubts-table-tbody">
+                  <!-- Populated by JS in clean table format -->
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Doubts Pagination Bar -->
+            <div id="doubts-pagination" class="table-pagination-container"></div>
+          </div>
+        </div>
+
+        <!-- Section 2: Announcements Hub in Table Card -->
+        <div id="pane-announcements" class="hidden">
+          <div class="table-card">
+            <div class="table-card-header">
+              <h3 class="table-card-title">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+                <span>Published Circulars & Notice Board</span>
+              </h3>
+              <button type="button" class="btn btn-primary btn-sm" onclick="UI.openModal('new-announcement-modal')" style="font-weight: 700;">+ Issue Announcement</button>
+            </div>
+
+            <div class="table-responsive">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th style="width: 110px;">Priority</th>
+                    <th style="min-width: 300px;">Notice Title & Content</th>
+                    <th style="width: 120px;">Subject</th>
+                    <th style="width: 140px;">Target Sections</th>
+                    <th style="width: 140px;">Posted Date</th>
+                    <th style="width: 100px; text-align: right;">Action</th>
+                  </tr>
+                </thead>
+                <tbody id="announcements-table-tbody">
+                  <!-- Populated by JS in clean table format -->
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Announcements Pagination Bar -->
+            <div id="announcements-pagination" class="table-pagination-container"></div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- Answer Doubt Modal -->
+  <div id="answer-doubt-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="modal-dialog" style="max-width: 580px;">
+      <div class="modal-header">
+        <h3 class="modal-title">Answer Student Doubt (F29)</h3>
+        <button type="button" class="toast-close" onclick="UI.closeModal('answer-doubt-modal')">&times;</button>
+      </div>
+      <form id="answer-doubt-form">
+        <input type="hidden" id="answer-doubt-id">
+        <div class="modal-body" style="display: flex; flex-direction: column; gap: 1rem;">
+          <!-- Student Query Header -->
+          <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 10px; padding: 0.875rem;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 0.35rem;">
+              <span style="font-weight: 700; color: #0F172A;" id="modal-doubt-student">Student Name</span>
+              <span class="badge" style="background: rgba(139, 92, 246, 0.1); color: #7C3AED; font-weight: 700;" id="modal-doubt-subject">CS402</span>
+            </div>
+            <p style="font-size: 0.84375rem; color: #334155; font-style: italic; line-height: 1.45;" id="modal-doubt-question">
+              Question text goes here...
+            </p>
+          </div>
+
+          <div class="form-group">
+            <label for="doubt-answer-input" class="form-label">Detailed Explanation / Answer <span class="required">*</span></label>
+            <textarea id="doubt-answer-input" class="form-input" rows="5" placeholder="Provide step-by-step guidance, code clarification, or algorithm breakdown..." required></textarea>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="UI.closeModal('answer-doubt-modal')">Cancel</button>
+          <button type="submit" class="btn btn-primary">Send Resolution to Student</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Post Announcement Modal -->
+  <div id="new-announcement-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="modal-dialog" style="max-width: 560px;">
+      <div class="modal-header">
+        <h3 class="modal-title">Issue Course Announcement (F29)</h3>
+        <button type="button" class="toast-close" onclick="UI.closeModal('new-announcement-modal')">&times;</button>
+      </div>
+      <form id="new-announcement-form">
+        <div class="modal-body" style="display: flex; flex-direction: column; gap: 1rem;">
+          <div class="form-group">
+            <label for="anc-title-input" class="form-label">Announcement Title <span class="required">*</span></label>
+            <input type="text" id="anc-title-input" class="form-input" placeholder="e.g. Mid-Term Question Paper Format & Formula Sheets" required>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+            <div class="form-group">
+              <label for="anc-subject-input" class="form-label">Subject <span class="required">*</span></label>
+              <select id="anc-subject-input" class="form-input" required>
+                <option value="CS402">CS402 — Database Management Systems</option>
+                <option value="CS404">CS404 — Operating Systems</option>
+                <option value="CS402L">CS402L — DBMS Practical & Lab</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="anc-priority-input" class="form-label">Priority Level <span class="required">*</span></label>
+              <select id="anc-priority-input" class="form-input">
+                <option value="normal">Normal Priority</option>
+                <option value="high" selected>High Priority</option>
+                <option value="urgent">Urgent Notice</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Target Sections</label>
+            <div style="display: flex; gap: 1.5rem; margin-top: 0.25rem;">
+              <label style="display: flex; align-items: center; gap: 0.4rem; font-size: 0.84375rem; cursor: pointer;">
+                <input type="checkbox" id="anc-sec-a" checked> Section A
+              </label>
+              <label style="display: flex; align-items: center; gap: 0.4rem; font-size: 0.84375rem; cursor: pointer;">
+                <input type="checkbox" id="anc-sec-b" checked> Section B
+              </label>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="anc-content-input" class="form-label">Announcement Description <span class="required">*</span></label>
+            <textarea id="anc-content-input" class="form-input" rows="4" placeholder="Write message to broadcast to students..." required></textarea>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="UI.closeModal('new-announcement-modal')">Cancel</button>
+          <button type="submit" class="btn btn-primary">Broadcast Notice</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Application Services -->
+  <script src="../data/mock-faculty.js"></script>
+  <script src="../data/mock-student.js"></script>
+  <script src="../js/faculty-service.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/ui.js"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      let currentDoubtStatus = 'all';
+      const doubtSubjectFilter = document.getElementById('doubt-subject-filter');
+      const doubtsTbody = document.getElementById('doubts-table-tbody');
+      const ancTbody = document.getElementById('announcements-table-tbody');
+      const answerForm = document.getElementById('answer-doubt-form');
+      const ancForm = document.getElementById('new-announcement-form');
+
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('action') === 'new-anc') {
+        switchTab('announcements');
+        UI.openModal('new-announcement-modal');
+      }
+
+      window.switchTab = function(tabName) {
+        document.getElementById('pane-doubts').classList.toggle('hidden', tabName !== 'doubts');
+        document.getElementById('pane-announcements').classList.toggle('hidden', tabName !== 'announcements');
+        document.getElementById('tab-btn-doubts').classList.toggle('active', tabName === 'doubts');
+        document.getElementById('tab-btn-announcements').classList.toggle('active', tabName === 'announcements');
+      };
+
+      let doubtsCurrentPage = 1;
+      const doubtsPageSize = 5;
+      let ancCurrentPage = 1;
+      const ancPageSize = 5;
+
+      window.filterDoubts = function(status, btn) {
+        currentDoubtStatus = status;
+        document.querySelectorAll('.doubt-status-filter').forEach(b => {
+          b.classList.remove('btn-primary', 'active');
+          b.classList.add('btn-outline');
+        });
+        btn.classList.add('btn-primary', 'active');
+        btn.classList.remove('btn-outline');
+        renderDoubts(true);
+      };
+
+      function renderDoubts(resetPage = false) {
+        if (resetPage) doubtsCurrentPage = 1;
+        const subject = doubtSubjectFilter.value;
+        const list = FacultyService.getDoubts(currentDoubtStatus, subject);
+
+        const pendingCount = FacultyService.getDoubts('unanswered').length;
+        const badgeEl = document.getElementById('tab-doubts-badge');
+        if (badgeEl) badgeEl.textContent = `${pendingCount} Pending`;
+
+        if (list.length === 0) {
+          doubtsTbody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: #64748B; padding: 2.5rem;">No student queries matching this filter.</td></tr>`;
+          UI.renderPagination('doubts-pagination', 0, 1, doubtsPageSize, () => {});
+          return;
+        }
+
+        const totalPages = Math.ceil(list.length / doubtsPageSize);
+        if (doubtsCurrentPage > totalPages) doubtsCurrentPage = totalPages;
+
+        const startIndex = (doubtsCurrentPage - 1) * doubtsPageSize;
+        const paginatedList = list.slice(startIndex, startIndex + doubtsPageSize);
+
+        doubtsTbody.innerHTML = paginatedList.map(d => {
+          const isResolved = d.status === 'resolved';
+
+          return `
+            <tr>
+              <td>
+                <div style="font-weight: 700; color: #0F172A; font-size: 0.9rem;">${d.studentName}</div>
+                <div style="margin-top: 0.2rem;"><span class="roll-badge">${d.rollNo}</span></div>
+              </td>
+              <td><span class="badge badge-primary" style="font-weight: 700;">${d.subjectCode}</span></td>
+              <td>
+                <div style="font-size: 0.875rem; color: #0F172A; font-weight: 600; max-width: 360px; line-height: 1.4;">
+                  "${d.question}"
+                </div>
+              </td>
+              <td style="font-size: 0.84375rem; color: #64748B; white-space: nowrap;">${d.createdAt}</td>
+              <td>
+                <span class="badge ${isResolved ? 'badge-success' : 'badge-warning'}">${isResolved ? 'Resolved' : 'Unresolved'}</span>
+              </td>
+              <td>
+                ${isResolved ? `
+                  <div style="font-size: 0.8125rem; color: #047857; max-width: 300px; line-height: 1.4; background: #ECFDF5; padding: 0.4rem 0.65rem; border-radius: 6px; border: 1px solid #A7F3D0;">
+                    ${d.answer.substring(0, 95)}...
+                  </div>
+                ` : `<span style="color: #94A3B8; font-size: 0.8125rem;">Awaiting Answer</span>`}
+              </td>
+              <td style="text-align: right;">
+                <button type="button" class="btn-table-action ${isResolved ? 'btn-table-action-outline' : 'btn-table-action-assignments'}" onclick="openAnswerModal('${d.id}')" style="display: inline-flex; align-items: center; gap: 0.35rem;">
+                  ${isResolved ? '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg><span>Edit Answer</span>' : '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span>Answer Query</span>'}
+                </button>
+              </td>
+            </tr>
+          `;
+        }).join('');
+
+        UI.renderPagination('doubts-pagination', list.length, doubtsCurrentPage, doubtsPageSize, (newPage) => {
+          doubtsCurrentPage = newPage;
+          renderDoubts(false);
+        });
+      }
+
+      function renderAnnouncements(resetPage = false) {
+        if (resetPage) ancCurrentPage = 1;
+        const list = FacultyService.getAnnouncements();
+
+        if (list.length === 0) {
+          ancTbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: #64748B; padding: 2.5rem;">No announcements posted yet.</td></tr>`;
+          UI.renderPagination('announcements-pagination', 0, 1, ancPageSize, () => {});
+          return;
+        }
+
+        const totalPages = Math.ceil(list.length / ancPageSize);
+        if (ancCurrentPage > totalPages) ancCurrentPage = totalPages;
+
+        const startIndex = (ancCurrentPage - 1) * ancPageSize;
+        const paginatedList = list.slice(startIndex, startIndex + ancPageSize);
+
+        ancTbody.innerHTML = paginatedList.map(a => {
+          let badgeClass = 'badge-primary';
+          if (a.priority === 'urgent') badgeClass = 'badge-danger';
+          if (a.priority === 'high') badgeClass = 'badge-warning';
+
+          return `
+            <tr>
+              <td><span class="badge ${badgeClass}" style="text-transform: uppercase; font-size: 0.72rem; font-weight: 700;">${a.priority}</span></td>
+              <td>
+                <div style="font-weight: 700; color: #0F172A; font-size: 0.9rem; margin-bottom: 0.2rem;">${a.title}</div>
+                <div style="font-size: 0.8125rem; color: #475569; max-width: 420px; line-height: 1.4;">${a.content}</div>
+              </td>
+              <td><span class="badge badge-primary" style="font-weight: 700;">${a.subjectCode}</span></td>
+              <td><span class="sec-badge">Sec ${(a.targetSections || ['A', 'B']).join(', ')}</span></td>
+              <td style="font-size: 0.84375rem; color: #64748B; white-space: nowrap;">${a.postedAt}</td>
+              <td style="text-align: right;">
+                <button type="button" class="btn-table-action" onclick="deleteAnc('${a.id}')" style="background: #FEF2F2; color: #DC2626; border-color: #FECACA; padding: 0.35rem 0.5rem;" title="Delete">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                </button>
+              </td>
+            </tr>
+          `;
+        }).join('');
+
+        UI.renderPagination('announcements-pagination', list.length, ancCurrentPage, ancPageSize, (newPage) => {
+          ancCurrentPage = newPage;
+          renderAnnouncements(false);
+        });
+      }
+
+      doubtSubjectFilter.addEventListener('change', () => renderDoubts(true));
+
+      window.openAnswerModal = function(id) {
+        const doubts = FacultyService.getDoubts();
+        const d = doubts.find(item => item.id === id);
+        if (!d) return;
+
+        document.getElementById('answer-doubt-id').value = d.id;
+        document.getElementById('modal-doubt-student').textContent = `${d.studentName} (${d.rollNo})`;
+        document.getElementById('modal-doubt-subject').textContent = d.subjectCode;
+        document.getElementById('modal-doubt-question').textContent = `"${d.question}"`;
+        document.getElementById('doubt-answer-input').value = d.answer || '';
+
+        UI.openModal('answer-doubt-modal');
+      };
+
+      if (params.get('doubtId')) {
+        setTimeout(() => openAnswerModal(params.get('doubtId')), 150);
+      }
+
+      answerForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const id = document.getElementById('answer-doubt-id').value;
+        const answer = document.getElementById('doubt-answer-input').value.trim();
+
+        FacultyService.answerDoubt(id, answer);
+        UI.closeModal('answer-doubt-modal');
+        UI.showToast('success', 'Doubt Answered', 'Your response was published to the student.');
+        renderDoubts();
+      });
+
+      ancForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const title = document.getElementById('anc-title-input').value.trim();
+        const subjectCode = document.getElementById('anc-subject-input').value;
+        const priority = document.getElementById('anc-priority-input').value;
+        const content = document.getElementById('anc-content-input').value.trim();
+
+        const targetSections = [];
+        if (document.getElementById('anc-sec-a').checked) targetSections.push('A');
+        if (document.getElementById('anc-sec-b').checked) targetSections.push('B');
+        if (targetSections.length === 0) targetSections.push('A');
+
+        const subjects = FacultyService.getSubjects();
+        const subjectObj = subjects.find(s => s.code === subjectCode);
+
+        FacultyService.postAnnouncement({
+          title,
+          subjectCode,
+          subjectName: subjectObj ? subjectObj.name : subjectCode,
+          priority,
+          targetSections,
+          content
+        });
+
+        UI.closeModal('new-announcement-modal');
+        ancForm.reset();
+        UI.showToast('success', 'Notice Broadcasted', `"${title}" has been published to student circulars.`);
+        renderAnnouncements();
+      });
+
+      window.deleteAnc = function(id) {
+        if (confirm('Delete this announcement?')) {
+          FacultyService.deleteAnnouncement(id);
+          UI.showToast('info', 'Announcement Deleted', 'Removed from circular board.');
+          renderAnnouncements();
+        }
+      };
+
+      renderDoubts();
+      renderAnnouncements();
+    });
+  </script>
+</body>
+
+</html>

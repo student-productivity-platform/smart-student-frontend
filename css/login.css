@@ -145,6 +145,7 @@ body {
   letter-spacing: -0.025em;
   color: #0F172A;
   margin-bottom: 1.75rem;
+  white-space: nowrap;
 }
 
 /* Quick-Fill Demo Bar */
@@ -420,6 +421,7 @@ body {
   font-size: 0.75rem;
   color: #64748B;
   font-weight: 500;
+  white-space: nowrap;
 }
 
 /* --------------------------------------------------------------------------

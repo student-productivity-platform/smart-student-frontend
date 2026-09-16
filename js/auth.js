@@ -45,7 +45,11 @@ const AuthService = (() => {
       email: 'faculty@university.edu',
       name: 'Prof. Sunita Mehta',
       role: 'faculty',
+      facultyId: 'FAC-2024-1001',
+      designation: 'Associate Professor',
       department: 'Department of Computer Engineering',
+      school: 'School of Computing & Information Technology',
+      officeRoom: 'Academic Block 3, Cabin 304',
       status: 'active'
     },
     'hod@university.edu': {
@@ -219,7 +223,7 @@ const AuthService = (() => {
    * Resolve appropriate login URL based on directory depth
    */
   function getLoginUrl() {
-    if (window.location.pathname.includes('/student/')) {
+    if (window.location.pathname.includes('/student/') || window.location.pathname.includes('/faculty/')) {
       return '../login.html';
     }
     return 'login.html';

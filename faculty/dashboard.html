@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Faculty Dashboard — Smart Student</title>
+  <meta name="description" content="Role-based homepage summarizing assigned classes, submissions, pending evaluations and online lectures.">
+
+  <!-- Core Design System & Stylesheets -->
+  <link rel="stylesheet" href="../css/main.css">
+  <link rel="stylesheet" href="../css/dashboard.css">
+  <link rel="stylesheet" href="../css/responsive.css">
+
+  <!-- Synchronous Route Guard -->
+  <script src="../js/auth-guard.js"></script>
+</head>
+
+<body>
+
+  <!-- Toast Notification Container -->
+  <div id="toast-container"></div>
+
+  <!-- Mobile Drawer Backdrop -->
+  <div class="sidebar-backdrop"></div>
+
+  <div class="app-container">
+    <!-- ====================================================================
+         Sidebar Navigation (Faculty Portal)
+         ==================================================================== -->
+    <aside class="app-sidebar" aria-label="Main Navigation">
+      <div class="sidebar-header">
+        <a href="dashboard.html" class="sidebar-brand">
+          <div class="sidebar-brand-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
+              <path d="M6 12v5c3 3 9 3 12 0v-5" />
+            </svg>
+          </div>
+          <div class="sidebar-brand-text">
+            <h2>Smart Student</h2>
+            <span>Faculty Portal</span>
+          </div>
+        </a>
+      </div>
+
+      <nav class="sidebar-nav-container">
+        <div class="nav-section-label">Academic Core</div>
+
+        <a href="dashboard.html" class="nav-link active">
+          <span class="nav-link-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="3" width="7" height="7" />
+              <rect x="14" y="3" width="7" height="7" />
+              <rect x="14" y="14" width="7" height="7" />
+              <rect x="3" y="14" width="7" height="7" />
+            </svg>
+          </span>
+          <span>Overview</span>
+        </a>
+
+        <a href="academic-mapping.html" class="nav-link">
+          <span class="nav-link-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+              <circle cx="9" cy="7" r="4" />
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+              <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+            </svg>
+          </span>
+          <span>Academic Mapping</span>
+        </a>
+
+        <a href="materials.html" class="nav-link">
+          <span class="nav-link-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+              <polyline points="14 2 14 8 20 8" />
+            </svg>
+          </span>
+          <span>Course Materials</span>
+        </a>
+
+        <a href="assignments.html" class="nav-link">
+          <span class="nav-link-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" />
+              <rect x="8" y="2" width="8" height="4" rx="1" ry="1" />
+            </svg>
+          </span>
+          <span>Assignments</span>
+        </a>
+
+        <a href="evaluations.html" class="nav-link">
+          <span class="nav-link-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="9 11 12 14 22 4" />
+              <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
+            </svg>
+          </span>
+          <span>Evaluations</span>
+          <span class="nav-badge" id="nav-badge-evaluations" style="background-color: var(--status-warning);">4</span>
+        </a>
+
+        <a href="attendance.html" class="nav-link">
+          <span class="nav-link-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+              <polyline points="22 4 12 14.01 9 11.01" />
+            </svg>
+          </span>
+          <span>Attendance</span>
+        </a>
+
+        <a href="exams.html" class="nav-link">
+          <span class="nav-link-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10" />
+              <polyline points="12 6 12 12 14 14" />
+            </svg>
+          </span>
+          <span>Examinations</span>
+        </a>
+
+        <div class="nav-section-label">Connect & Schedule</div>
+
+        <a href="meetings.html" class="nav-link">
+          <span class="nav-link-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polygon points="23 7 16 12 23 17 23 7" />
+              <rect x="1" y="5" width="15" height="14" rx="2" ry="2" />
+            </svg>
+          </span>
+          <span>Online Classes</span>
+          <span class="nav-badge" style="background: #10B981;">Meet</span>
+        </a>
+
+        <a href="communication.html" class="nav-link">
+          <span class="nav-link-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+            </svg>
+          </span>
+          <span>Communication & Doubts</span>
+          <span class="nav-badge" id="nav-badge-doubts" style="background-color: #8B5CF6;">2</span>
+        </a>
+
+        <div class="nav-section-label">Account & Profile</div>
+
+        <a href="profile.html" class="nav-link">
+          <span class="nav-link-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+              <circle cx="12" cy="7" r="4" />
+            </svg>
+          </span>
+          <span>Faculty Profile</span>
+        </a>
+
+        <a href="settings.html" class="nav-link">
+          <span class="nav-link-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="3" />
+              <path
+                d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
+            </svg>
+          </span>
+          <span>Settings</span>
+        </a>
+      </nav>
+
+      <!-- Sidebar Bottom Profile Card -->
+      <div class="sidebar-footer">
+        <a href="profile.html" class="sidebar-user-card">
+          <div class="user-avatar" style="background: linear-gradient(135deg, #6366F1 0%, #4338CA 100%);">
+            <span class="user-avatar-initials">SM</span>
+          </div>
+          <div class="user-info-text">
+            <div class="user-name" id="sidebar-user-name">Prof. Sunita Mehta</div>
+            <span class="user-role-tag" id="sidebar-user-role">Associate Professor</span>
+          </div>
+        </a>
+      </div>
+    </aside>
+
+    <!-- ====================================================================
+         Main Application Layout & Topbar
+         ==================================================================== -->
+    <div class="app-main">
+      <header class="app-topbar">
+        <div class="topbar-left">
+          <button type="button" class="mobile-nav-toggle" id="mobile-nav-toggle" aria-label="Open Navigation">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="3" y1="12" x2="21" y2="12" />
+              <line x1="3" y1="6" x2="21" y2="6" />
+              <line x1="3" y1="18" x2="21" y2="18" />
+            </svg>
+          </button>
+          <div class="topbar-page-title">
+            <h1>Faculty Dashboard</h1>
+          </div>
+        </div>
+
+        <div class="topbar-search-box">
+          <svg class="topbar-search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8" />
+            <line x1="21" y1="21" x2="16.65" y2="16.65" />
+          </svg>
+          <input type="search" id="global-search-input" class="topbar-search-input"
+            placeholder="Search students, submissions, courses, exams (Press Enter)..." aria-label="Faculty Global Search">
+        </div>
+
+        <div class="topbar-right">
+          <!-- Quick Portal Switcher (For Pair Testing) -->
+          <a href="../student/dashboard.html" class="badge badge-subtle" style="text-decoration: none; padding: 0.4rem 0.75rem; font-size: 0.75rem; border-radius: 20px; color: #64748B; background: #F1F5F9;" title="Switch view to Student Portal">
+            <span>⇄ Student View</span>
+          </a>
+
+          <!-- Notification Dropdown -->
+          <div class="dropdown-container">
+            <button type="button" class="icon-button" data-dropdown-toggle="notification-dropdown" aria-label="Notifications">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+                <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+              </svg>
+              <span class="unread-badge" id="notif-badge">3</span>
+            </button>
+
+            <div id="notification-dropdown" class="menu-dropdown notification-dropdown">
+              <div class="dropdown-header">
+                <h4>Faculty Notifications</h4>
+                <a href="#" id="mark-all-read-btn" style="font-size: 0.75rem;">Mark all as read</a>
+              </div>
+              <ul class="dropdown-list" id="notifications-list-container">
+                <li class="dropdown-item">
+                  <div style="font-size: 0.8125rem; font-weight: 600; color: #0F172A;">4 New DBMS Submissions</div>
+                  <div style="font-size: 0.75rem; color: #64748B;">Riddhi Zunjarrao and 3 others submitted Assignment 1.</div>
+                </li>
+                <li class="dropdown-item">
+                  <div style="font-size: 0.8125rem; font-weight: 600; color: #0F172A;">Student Doubt Alert</div>
+                  <div style="font-size: 0.75rem; color: #64748B;">Devansh Patel asked a query on Peterson's Algorithm.</div>
+                </li>
+                <li class="dropdown-item">
+                  <div style="font-size: 0.8125rem; font-weight: 600; color: #0F172A;">Upcoming Online Class</div>
+                  <div style="font-size: 0.75rem; color: #64748B;">DBMS Workshop on Google Meet scheduled for today 04:00 PM.</div>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- User Profile Dropdown -->
+          <div class="dropdown-container">
+            <button type="button" class="user-menu-btn" data-dropdown-toggle="user-dropdown-menu" aria-label="User Menu">
+              <div class="user-avatar-sm" style="background: linear-gradient(135deg, #6366F1 0%, #4338CA 100%);">
+                <span class="user-avatar-initials">SM</span>
+              </div>
+              <div class="user-menu-info">
+                <div class="user-menu-name" id="topbar-user-name">Prof. Sunita Mehta</div>
+                <div class="user-menu-sub">Associate Professor</div>
+              </div>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="6 9 12 15 18 9" />
+              </svg>
+            </button>
+
+            <div id="user-dropdown-menu" class="menu-dropdown profile-dropdown-menu">
+              <a href="profile.html">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                  <circle cx="12" cy="7" r="4" />
+                </svg>
+                <span>Faculty Profile</span>
+              </a>
+              <a href="settings.html">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="3" />
+                  <path
+                    d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
+                </svg>
+                <span>Settings</span>
+              </a>
+              <button type="button" id="logout-action-btn" class="logout-action">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                  <polyline points="16 17 21 12 16 7" />
+                  <line x1="21" y1="12" x2="9" y2="12" />
+                </svg>
+                <span>Sign Out</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- ====================================================================
+           Faculty Dashboard Content Area (F21)
+           ==================================================================== -->
+      <main class="app-content">
+        <div class="ref-dashboard-grid">
+
+          <!-- Left Main Column -->
+          <div class="ref-col-left">
+
+            <!-- 1. Greeting & Academic Header -->
+            <div class="ref-greeting-header">
+              <div>
+                <div class="ref-greeting-sub">Welcome back,</div>
+                <h1 class="ref-greeting-title" id="banner-faculty-name">Prof. Sunita Mehta</h1>
+                <p style="font-size: 0.8125rem; color: #64748B; margin-top: 0.25rem;">
+                  Department of Computer Engineering • Academic Year 2025–2026
+                </p>
+              </div>
+              <div class="dropdown-container">
+                <button type="button" class="ref-header-bell-btn" data-dropdown-toggle="notification-dropdown" aria-label="Notifications">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+                    <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+                  </svg>
+                  <span class="ref-bell-dot"></span>
+                </button>
+              </div>
+            </div>
+
+            <!-- 2. Faculty Hero Banner: Next Scheduled Session -->
+            <div class="ref-hero-banner" style="background: linear-gradient(135deg, #6366F1 0%, #4338CA 50%, #312E81 100%);">
+              <div class="ref-hero-content">
+                <span class="ref-hero-tag" style="background: rgba(255, 255, 255, 0.2); color: #FFFFFF;">Next Class Today</span>
+                <h2 class="ref-hero-title">CS402: Database Management Systems (Sec A)</h2>
+                <p style="font-size: 0.875rem; color: #E0E7FF; margin-bottom: 1rem;">
+                  11:00 AM – 12:00 PM • Room 302 / Smart Classroom • 38 Students
+                </p>
+                <div class="ref-hero-actions">
+                  <a href="attendance.html" class="ref-btn-white" style="color: #4338CA;">Mark Attendance</a>
+                  <a href="meetings.html" class="ref-btn-ghost" style="border-color: rgba(255, 255, 255, 0.4); color: #FFFFFF;">Start Google Meet</a>
+                </div>
+              </div>
+              <div class="ref-hero-artwork" aria-hidden="true">
+                <svg width="180" height="150" viewBox="0 0 200 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <ellipse cx="100" cy="148" rx="80" ry="10" fill="rgba(0,0,0,0.15)" />
+                  <!-- Podium / Whiteboard -->
+                  <rect x="40" y="40" width="120" height="75" rx="6" fill="#1E293B" stroke="#818CF8" stroke-width="2" />
+                  <rect x="50" y="52" width="100" height="50" rx="3" fill="#0F172A" />
+                  <rect x="58" y="60" width="50" height="4" rx="2" fill="#818CF8" />
+                  <rect x="58" y="70" width="75" height="3" rx="1.5" fill="#E2E8F0" />
+                  <rect x="58" y="78" width="60" height="3" rx="1.5" fill="#E2E8F0" />
+                  <circle cx="126" cy="62" r="6" fill="#10B981" />
+                  <!-- Stand -->
+                  <rect x="96" y="115" width="8" height="30" fill="#475569" />
+                  <path d="M75 145L125 145" stroke="#334155" stroke-width="4" stroke-linecap="round" />
+                </svg>
+              </div>
+            </div>
+
+            <!-- 3. Key Operational Metrics (KPIs) -->
+            <section class="ref-pinned-section">
+              <div class="ref-pinned-header">
+                <h3 class="ref-section-title">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
+                  <span>Academic Overview</span>
+                </h3>
+                <a href="academic-mapping.html" class="ref-btn-add-new" style="text-decoration: none;">
+                  <span>View All Subjects</span>
+                  <span>→</span>
+                </a>
+              </div>
+
+              <div class="ref-pinned-grid">
+                <!-- Card 1: Assigned Subjects & Total Students -->
+                <div class="ref-pinned-card" onclick="window.location.href='academic-mapping.html'">
+                  <div class="ref-pinned-icon ref-icon-purple">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+                      <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+                    </svg>
+                  </div>
+                  <div class="ref-pinned-info">
+                    <div class="ref-pinned-label">Assigned Subjects</div>
+                    <div class="ref-pinned-val" id="kpi-subjects-count">3 <span class="ref-pinned-unit">(74 Students)</span></div>
+                  </div>
+                </div>
+
+                <!-- Card 2: Pending Submissions to Grade -->
+                <div class="ref-pinned-card" onclick="window.location.href='evaluations.html'">
+                  <div class="ref-pinned-icon ref-icon-red">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" />
+                      <rect x="8" y="2" width="8" height="4" rx="1" ry="1" />
+                    </svg>
+                  </div>
+                  <div class="ref-pinned-info">
+                    <div class="ref-pinned-label">Pending Evaluations</div>
+                    <div class="ref-pinned-val" id="kpi-pending-evals" style="color: #EF4444;">4 <span class="ref-pinned-unit">To Grade</span></div>
+                  </div>
+                </div>
+
+                <!-- Card 3: Unanswered Student Doubts -->
+                <div class="ref-pinned-card" onclick="window.location.href='communication.html'">
+                  <div class="ref-pinned-icon ref-icon-green">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+                    </svg>
+                  </div>
+                  <div class="ref-pinned-info">
+                    <div class="ref-pinned-label">Student Doubts</div>
+                    <div class="ref-pinned-val" id="kpi-doubts-count">2 <span class="ref-pinned-unit">Unresolved</span></div>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <!-- 4. Quick Actions Command Bar -->
+            <div style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 16px; padding: 1.25rem; margin-bottom: 1.5rem; box-shadow: var(--shadow-sm);">
+              <h4 style="font-size: 0.875rem; font-weight: 700; color: #0F172A; margin-bottom: 0.875rem; display: flex; align-items: center; gap: 0.5rem;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                <span>Quick Actions</span>
+              </h4>
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 0.75rem;">
+                <a href="assignments.html?action=new" class="btn btn-outline btn-sm" style="justify-content: center; gap: 0.4rem; padding: 0.6rem;">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                  <span>New Assignment</span>
+                </a>
+                <a href="attendance.html" class="btn btn-outline btn-sm" style="justify-content: center; gap: 0.4rem; padding: 0.6rem;">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                  <span>Mark Attendance</span>
+                </a>
+                <a href="meetings.html?action=schedule" class="btn btn-outline btn-sm" style="justify-content: center; gap: 0.4rem; padding: 0.6rem;">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+                  <span>Schedule Class</span>
+                </a>
+                <a href="materials.html?action=upload" class="btn btn-outline btn-sm" style="justify-content: center; gap: 0.4rem; padding: 0.6rem;">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                  <span>Upload Material</span>
+                </a>
+                <a href="communication.html?action=new-anc" class="btn btn-outline btn-sm" style="justify-content: center; gap: 0.4rem; padding: 0.6rem;">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+                  <span>Post Notice</span>
+                </a>
+              </div>
+            </div>
+
+            <!-- 5. Visual Analytics: Class Attendance & Academic Progression -->
+            <div class="ref-analytics-duo">
+              <!-- Left: Attendance by Subject -->
+              <div class="ref-analytics-card">
+                <div class="ref-analytics-header">
+                  <h4 class="ref-analytics-title">Assigned Subjects Attendance Rate</h4>
+                  <a href="attendance.html" class="ref-view-more-link">Details</a>
+                </div>
+
+                <div class="ref-cylinders-chart-wrap">
+                  <div class="ref-chart-y-axis">
+                    <span>100%</span>
+                    <span>75%</span>
+                    <span>50%</span>
+                  </div>
+                  <div class="ref-cylinders-stage">
+                    <div class="ref-cylinder-column">
+                      <div class="ref-cylinder-track" title="CS402: 85.6%">
+                        <div class="ref-cylinder-fill fill-purple" style="height: 85.6%;"></div>
+                      </div>
+                      <span class="ref-cylinder-label">CS402</span>
+                    </div>
+                    <div class="ref-cylinder-column">
+                      <div class="ref-cylinder-track" title="CS404: 83.2%">
+                        <div class="ref-cylinder-fill fill-violet" style="height: 83.2%;"></div>
+                      </div>
+                      <span class="ref-cylinder-label">CS404</span>
+                    </div>
+                    <div class="ref-cylinder-column">
+                      <div class="ref-cylinder-track" title="CS402L: 91.4%">
+                        <div class="ref-cylinder-fill fill-emerald" style="height: 91.4%;"></div>
+                      </div>
+                      <span class="ref-cylinder-label">CS402L</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Right: Syllabus Completion Progress -->
+              <div class="ref-analytics-card">
+                <div class="ref-analytics-header">
+                  <h4 class="ref-analytics-title">Curriculum & Hours Progress</h4>
+                  <a href="materials.html" class="ref-view-more-link">Syllabus</a>
+                </div>
+
+                <div class="ref-donut-chart-wrap">
+                  <div class="ref-donut-svg-stage">
+                    <svg width="130" height="130" viewBox="0 0 100 100">
+                      <circle cx="50" cy="50" r="38" fill="transparent" stroke="#F1F5F9" stroke-width="13" />
+                      <!-- CS402: 24/45 (53%) -->
+                      <circle cx="50" cy="50" r="38" fill="transparent" stroke="#8B5CF6" stroke-width="13"
+                        stroke-dasharray="126 238" stroke-dashoffset="0" />
+                      <!-- CS404: 22/45 (48%) -->
+                      <circle cx="50" cy="50" r="38" fill="transparent" stroke="#6366F1" stroke-width="13"
+                        stroke-dasharray="50 238" stroke-dashoffset="-126" />
+                    </svg>
+
+                    <div class="ref-donut-center-info">
+                      <div class="ref-donut-center-val">62 / 120</div>
+                      <div class="ref-donut-center-sub">Total Hours (51.6%)</div>
+                    </div>
+                  </div>
+
+                  <div class="ref-donut-legends">
+                    <div class="ref-legend-item">
+                      <span class="ref-legend-dot dot-purple"></span>
+                      <span>CS402 DBMS (24h)</span>
+                    </div>
+                    <div class="ref-legend-item">
+                      <span class="ref-legend-dot dot-indigo"></span>
+                      <span>CS404 OS (22h)</span>
+                    </div>
+                    <div class="ref-legend-item">
+                      <span class="ref-legend-dot dot-lavender"></span>
+                      <span>CS402L Lab (16h)</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 6. Pending Submissions Grading Queue -->
+            <div class="ref-secondary-hub-card">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                <h3 style="font-size: 0.9375rem; font-weight: 700; color: #0F172A; display: flex; align-items: center; gap: 0.5rem;">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                  <span>Pending Assignment Submissions</span>
+                </h3>
+                <a href="evaluations.html" class="ref-btn-view-more-purple">Open Evaluation Center →</a>
+              </div>
+
+              <div class="table-responsive">
+                <table class="data-table" style="width: 100%;">
+                  <thead>
+                    <tr>
+                      <th>Student</th>
+                      <th>Roll No</th>
+                      <th>Assignment</th>
+                      <th>Submitted At</th>
+                      <th>File</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody id="dash-submissions-tbody">
+                    <!-- Populated by JS -->
+                  </tbody>
+                </table>
+              </div>
+
+              <!-- Dashboard Submissions Pagination Bar -->
+              <div id="dash-submissions-pagination" class="table-pagination-container"></div>
+            </div>
+
+          </div>
+
+          <!-- Right Column -->
+          <div class="ref-col-right">
+
+            <!-- Today's Teaching Schedule -->
+            <div class="ref-right-header">
+              <h2 class="ref-right-title">Today's Schedule</h2>
+              <a href="meetings.html" class="ref-btn-circle-plus" title="Schedule Online Session">+</a>
+            </div>
+
+            <!-- Schedule Card -->
+            <div class="ref-lineup-card">
+              <div class="ref-lineup-header">
+                <h3 class="ref-lineup-title">Class Timetable</h3>
+                <span class="ref-lineup-date-tag" id="live-current-date">Today</span>
+              </div>
+
+              <div class="ref-lineup-list" id="faculty-schedule-list">
+                <!-- Class 1 -->
+                <div class="ref-lineup-item" style="border-left: 3px solid #8B5CF6;">
+                  <div class="ref-lineup-time">11:00 AM</div>
+                  <div class="ref-lineup-details">
+                    <div class="ref-lineup-subject" style="font-weight: 700; color: #0F172A;">CS402: DBMS Lecture</div>
+                    <div class="ref-lineup-room">Room 302 • Semester 4 (Sec A)</div>
+                  </div>
+                  <a href="attendance.html" class="badge badge-primary" style="text-decoration: none; font-size: 0.75rem;">Attendance</a>
+                </div>
+
+                <!-- Class 2 -->
+                <div class="ref-lineup-item" style="border-left: 3px solid #6366F1;">
+                  <div class="ref-lineup-time">02:00 PM</div>
+                  <div class="ref-lineup-details">
+                    <div class="ref-lineup-subject" style="font-weight: 700; color: #0F172A;">CS402L: DBMS Lab</div>
+                    <div class="ref-lineup-room">Lab 3 (Ground Floor) • Sec B</div>
+                  </div>
+                  <a href="attendance.html" class="badge badge-primary" style="text-decoration: none; font-size: 0.75rem;">Attendance</a>
+                </div>
+
+                <!-- Class 3 -->
+                <div class="ref-lineup-item" style="border-left: 3px solid #10B981;">
+                  <div class="ref-lineup-time">04:00 PM</div>
+                  <div class="ref-lineup-details">
+                    <div class="ref-lineup-subject" style="font-weight: 700; color: #0F172A;">DBMS Mid-Term Workshop</div>
+                    <div class="ref-lineup-room">Google Meet • Online Stream</div>
+                  </div>
+                  <a href="https://meet.google.com/qwe-rtyu-iop" target="_blank" class="badge badge-success" style="text-decoration: none; font-size: 0.75rem;">Launch Meet</a>
+                </div>
+              </div>
+            </div>
+
+            <!-- Recent Doubts from Students -->
+            <div class="ref-previous-card">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.875rem;">
+                <h3 class="ref-previous-title" style="margin: 0;">Unresolved Doubts</h3>
+                <span class="badge badge-warning" style="font-size: 0.7rem;">2 Pending</span>
+              </div>
+
+              <div class="ref-previous-list" id="faculty-doubts-preview">
+                <!-- Populated by JS -->
+              </div>
+
+              <div class="ref-previous-footer">
+                <a href="communication.html" class="ref-btn-view-more-purple">Respond in Doubt Center →</a>
+              </div>
+            </div>
+
+            <!-- Published Notices / Circulars -->
+            <div class="ref-previous-card">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.875rem;">
+                <h3 class="ref-previous-title" style="margin: 0;">Recent Announcements</h3>
+                <a href="communication.html" class="ref-btn-view-more-purple" style="font-size: 0.75rem;">Manage</a>
+              </div>
+
+              <div class="ref-previous-list" id="faculty-announcements-preview">
+                <!-- Populated by JS -->
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- Application Services -->
+  <script src="../data/mock-faculty.js"></script>
+  <script src="../data/mock-student.js"></script>
+  <script src="../js/faculty-service.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/ui.js"></script>
+
+  <!-- Faculty Dashboard Controller -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // 1. Load Stats
+      const stats = FacultyService.getDashboardStats();
+      const subjectsCountEl = document.getElementById('kpi-subjects-count');
+      const pendingEvalsEl = document.getElementById('kpi-pending-evals');
+      const doubtsCountEl = document.getElementById('kpi-doubts-count');
+      const badgeEvalsEl = document.getElementById('nav-badge-evaluations');
+      const badgeDoubtsEl = document.getElementById('nav-badge-doubts');
+
+      if (subjectsCountEl) subjectsCountEl.innerHTML = `${stats.totalSubjects} <span class="ref-pinned-unit">(${stats.totalStudents} Students)</span>`;
+      if (pendingEvalsEl) pendingEvalsEl.innerHTML = `${stats.pendingSubmissions} <span class="ref-pinned-unit">To Grade</span>`;
+      if (doubtsCountEl) doubtsCountEl.innerHTML = `${stats.unansweredDoubts} <span class="ref-pinned-unit">Unresolved</span>`;
+      if (badgeEvalsEl) badgeEvalsEl.textContent = stats.pendingSubmissions;
+      if (badgeDoubtsEl) badgeDoubtsEl.textContent = stats.unansweredDoubts;
+
+      // 2. Load Pending Submissions Table with Interactive Pagination
+      const allSubmissions = FacultyService.getSubmissions('all', 'submitted');
+      const tbody = document.getElementById('dash-submissions-tbody');
+      let dashSubCurrentPage = 1;
+      const dashSubPageSize = 3;
+
+      function renderDashSubmissions(page = 1) {
+        dashSubCurrentPage = page;
+        if (!tbody) return;
+
+        if (allSubmissions.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: #64748B; padding: 1.5rem;">All submissions are evaluated! Great job.</td></tr>`;
+          if (document.getElementById('dash-submissions-pagination')) {
+            document.getElementById('dash-submissions-pagination').innerHTML = '';
+          }
+          return;
+        }
+
+        const startIdx = (page - 1) * dashSubPageSize;
+        const pageItems = allSubmissions.slice(startIdx, startIdx + dashSubPageSize);
+
+        tbody.innerHTML = pageItems.map(sub => `
+          <tr>
+            <td>
+              <div style="font-weight: 700; color: #0F172A; font-size: 0.9rem;">${sub.studentName}</div>
+              <div style="font-size: 0.775rem; color: #64748B;">Sec ${sub.section}</div>
+            </td>
+            <td><span class="roll-badge">${sub.rollNo}</span></td>
+            <td>
+              <div style="font-weight: 600; font-size: 0.875rem; color: #1E293B;">${sub.assignmentTitle}</div>
+              <div style="font-size: 0.775rem; color: #64748B;">${sub.subjectCode}</div>
+            </td>
+            <td style="font-size: 0.84375rem; color: #475569;">${sub.submittedAt}</td>
+            <td>
+              <span class="badge badge-subtle" style="font-size: 0.75rem; display: inline-flex; align-items: center; gap: 0.3rem;">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                <span>${sub.fileName}</span>
+              </span>
+            </td>
+            <td style="text-align: right;">
+              <a href="evaluations.html?id=${sub.id}" class="btn-table-action btn-table-action-assignments" style="font-size: 0.8125rem; padding: 0.4rem 0.85rem;">
+                Grade Now →
+              </a>
+            </td>
+          </tr>
+        `).join('');
+
+        if (typeof UI !== 'undefined' && UI.renderPagination) {
+          UI.renderPagination(
+            'dash-submissions-pagination',
+            allSubmissions.length,
+            dashSubCurrentPage,
+            dashSubPageSize,
+            (newPage) => renderDashSubmissions(newPage)
+          );
+        }
+      }
+
+      renderDashSubmissions(1);
+
+      // 3. Load Unresolved Doubts Preview
+      const doubts = FacultyService.getDoubts('unanswered');
+      const doubtsPreview = document.getElementById('faculty-doubts-preview');
+
+      if (doubtsPreview) {
+        if (doubts.length === 0) {
+          doubtsPreview.innerHTML = `<div style="font-size: 0.8125rem; color: #64748B; padding: 0.5rem 0;">No pending doubts.</div>`;
+        } else {
+          doubtsPreview.innerHTML = doubts.slice(0, 2).map(d => `
+            <div class="ref-previous-item" style="align-items: flex-start;">
+              <div class="ref-previous-icon ref-prev-icon-yellow" style="margin-top: 2px;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="10"/>
+                  <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
+                  <line x1="12" y1="17" x2="12.01" y2="17"/>
+                </svg>
+              </div>
+              <div class="ref-previous-info" style="flex: 1;">
+                <div class="ref-previous-item-title" style="font-size: 0.8125rem; line-height: 1.3;">${d.question}</div>
+                <div class="ref-previous-item-sub">${d.studentName} (${d.rollNo}) • ${d.subjectCode} • ${d.createdAt}</div>
+              </div>
+              <a href="communication.html?doubtId=${d.id}" class="ref-previous-link" style="white-space: nowrap;">Answer</a>
+            </div>
+          `).join('');
+        }
+      }
+
+      // 4. Load Recent Announcements Preview
+      const announcements = FacultyService.getAnnouncements();
+      const ancPreview = document.getElementById('faculty-announcements-preview');
+
+      if (ancPreview) {
+        ancPreview.innerHTML = announcements.slice(0, 2).map(a => `
+          <div class="ref-previous-item">
+            <div class="ref-previous-icon ref-prev-icon-green">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+                <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+              </svg>
+            </div>
+            <div class="ref-previous-info">
+              <div class="ref-previous-item-title" style="font-size: 0.8125rem;">${a.title}</div>
+              <div class="ref-previous-item-sub">${a.subjectCode} • Sec ${a.targetSections.join(', ')} • ${a.postedAt}</div>
+            </div>
+          </div>
+        `).join('');
+      }
+    });
+  </script>
+</body>
+
+</html>

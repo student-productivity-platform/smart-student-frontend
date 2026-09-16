@@ -1598,7 +1598,6 @@ You just derived the principle of **${topic || 'this engineering concept'}** fro
   }
 
   const DEFAULT_GEMINI_KEY = 'AQ.Ab8RN6LABhsLaHlfYpb1lhO0WBKaxYZW0RkGSLbYFVBnAHFoIg';
-
   function getGeminiApiKey() {
     try {
       if (typeof localStorage !== 'undefined') {
@@ -1647,6 +1646,7 @@ You just derived the principle of **${topic || 'this engineering concept'}** fro
     } catch (e) { }
   }
 
+  /**
   /**
    * Sync Gemini key/model to backend environment
    */
