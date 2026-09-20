@@ -41,9 +41,13 @@ const AdminService = (() => {
       return clean;
     }
 
-    // If running on Live Server (e.g. 5500) or other dev port, target the backend server
-    const host = (hostname === '127.0.0.1') ? '127.0.0.1' : (hostname || 'localhost');
-    return `http://${host}:${BACKEND_PORT}${clean}`;
+    // Only target local backend port when running on local machine
+    if (hostname === 'localhost' || hostname === '127.0.0.1') {
+      return `http://${hostname}:${BACKEND_PORT}${clean}`;
+    }
+
+    // When deployed (e.g. Vercel, Firebase, Custom Domain), use relative path
+    return clean;
   }
 
   async function apiFetch(endpoint, options = {}) {
@@ -253,9 +257,14 @@ const AdminService = (() => {
   async function getCourses() {
     try {
       const res = await apiFetch('/api/courses');
-      if (res && res.success) return res.courses;
+      if (res && res.success && Array.isArray(res.courses) && res.courses.length > 0) return res.courses;
     } catch (e) {}
-    return [];
+    return [
+      { id: 'crs_btech_cse', code: 'CS-BS', name: 'B.Tech Computer Science & Engineering', departmentId: 'dept_btech', department: 'Department of Computer Engineering', degree: 'Bachelor of Technology', durationYears: 4, totalSemesters: 8, academicYear: '2025–2026', status: 'active', studentCount: 420, facultyCount: 24, subjectsCount: 38 },
+      { id: 'crs_btech_ai', code: 'AI-BS', name: 'B.Tech Artificial Intelligence & Data Science', departmentId: 'dept_btech', department: 'Department of Computer Engineering', degree: 'Bachelor of Technology', durationYears: 4, totalSemesters: 8, academicYear: '2025–2026', status: 'active', studentCount: 360, facultyCount: 18, subjectsCount: 34 },
+      { id: 'crs_bba_fin', code: 'BBA-FIN', name: 'BBA Financial Management & Analytics', departmentId: 'dept_bba', department: 'Department of Business Administration', degree: 'Bachelor of Business Administration', durationYears: 3, totalSemesters: 6, academicYear: '2025–2026', status: 'active', studentCount: 380, facultyCount: 24, subjectsCount: 22 },
+      { id: 'crs_mba_exec', code: 'MBA-EXEC', name: 'Master of Business Administration (Executive)', departmentId: 'dept_mba', department: 'School of Management & Business Studies', degree: 'Master of Business Administration', durationYears: 2, totalSemesters: 4, academicYear: '2025–2026', status: 'active', studentCount: 320, facultyCount: 28, subjectsCount: 30 }
+    ];
   }
 
   async function createCourse(courseData) {
@@ -285,9 +294,16 @@ const AdminService = (() => {
   async function getSubjects() {
     try {
       const res = await apiFetch('/api/subjects');
-      if (res && res.success) return res.subjects;
+      if (res && res.success && Array.isArray(res.subjects) && res.subjects.length > 0) return res.subjects;
     } catch (e) {}
-    return [];
+    return [
+      { id: 'sub_cs402', code: 'CS402', name: 'Database Management Systems (DBMS)', credits: 4, semester: 4, courseId: 'crs_btech_cse', courseName: 'B.Tech Computer Science & Engineering', departmentId: 'dept_btech', department: 'Department of Computer Engineering', facultyUid: 'usr_fac_1001', facultyName: 'Prof. Sunita Mehta', status: 'active' },
+      { id: 'sub_cs401', code: 'CS401', name: 'Design & Analysis of Algorithms', credits: 4, semester: 4, courseId: 'crs_btech_cse', courseName: 'B.Tech Computer Science & Engineering', departmentId: 'dept_btech', department: 'Department of Computer Engineering', facultyUid: 'usr_fac_1002', facultyName: 'Dr. Vikram Joshi', status: 'active' },
+      { id: 'sub_cs403', code: 'CS403', name: 'Operating Systems & Concurrency', credits: 4, semester: 4, courseId: 'crs_btech_cse', courseName: 'B.Tech Computer Science & Engineering', departmentId: 'dept_btech', department: 'Department of Computer Engineering', facultyUid: 'usr_fac_1003', facultyName: 'Prof. Amit Verma', status: 'active' },
+      { id: 'sub_ai405', code: 'AI405', name: 'Machine Learning & Pattern Recognition', credits: 4, semester: 4, courseId: 'crs_btech_ai', courseName: 'B.Tech Artificial Intelligence & Data Science', departmentId: 'dept_btech', department: 'Department of Computer Engineering', facultyUid: 'usr_fac_1004', facultyName: 'Dr. Rohit Saxena', status: 'active' },
+      { id: 'sub_bba204', code: 'BBA204', name: 'Corporate Financial Accounting', credits: 3, semester: 4, courseId: 'crs_bba_fin', courseName: 'BBA Financial Management & Analytics', departmentId: 'dept_bba', department: 'Department of Business Administration', facultyUid: 'usr_fac_bba_1', facultyName: 'Prof. Priya Nair', status: 'active' },
+      { id: 'sub_mba601', code: 'MBA601', name: 'Strategic Global Leadership', credits: 4, semester: 4, courseId: 'crs_mba_exec', courseName: 'Master of Business Administration (Executive)', departmentId: 'dept_mba', department: 'School of Management & Business Studies', facultyUid: 'usr_fac_mba_1', facultyName: 'Dr. Rajesh Patil', status: 'active' }
+    ];
   }
 
   async function createSubject(subjectData) {
@@ -444,16 +460,20 @@ const AdminService = (() => {
       kpis: {
         totalStudents: 2180,
         totalFaculty: 142,
-        totalHods: 16,
+        totalHods: 3,
         totalAdmins: 8,
-        totalDepartments: 5,
-        totalCourses: 6,
+        totalDepartments: 3,
+        totalCourses: 4,
         activeAcademicYear: '2025–2026',
         activeSemester: 4,
         activeUsers: 2346,
         overallAttendancePct: 87.4
       },
-      deptPerformance: [],
+      deptPerformance: [
+        { id: 'dept_btech', name: 'Department of Computer Engineering', code: 'B.Tech', hodName: 'Dr. Anand Deshmukh', durationYears: 4, totalSemesters: 8, studentCount: 780, facultyCount: 42, coursesCount: 2, activeSubjects: 38, avgAttendance: 88.4, avgGpa: 8.42 },
+        { id: 'dept_bba', name: 'Department of Business Administration', code: 'BBA', hodName: 'Dr. Meera Sen', durationYears: 3, totalSemesters: 6, studentCount: 380, facultyCount: 24, coursesCount: 1, activeSubjects: 22, avgAttendance: 84.6, avgGpa: 7.95 },
+        { id: 'dept_mba', name: 'School of Management & Business Studies', code: 'MBA', hodName: 'Dr. Rajesh Patil', durationYears: 2, totalSemesters: 4, studentCount: 320, facultyCount: 28, coursesCount: 1, activeSubjects: 30, avgAttendance: 91.0, avgGpa: 8.65 }
+      ],
       enrollmentTrend: [],
       userDistribution: [],
       aiUsage: { totalDoubtsSolved: 14280, practiceQuestionsGenerated: 6420 }
