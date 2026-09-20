@@ -1,20 +1,26 @@
 /**
  * ==========================================================================
  * SMART STUDENT — Assignment Service Layer
- * Manages upcoming assignments, submissions, and Cloudinary upload references
+ * Manages upcoming assignments, submissions, Cloudinary uploads, and evaluations
  * ==========================================================================
  */
 
 const AssignmentService = (() => {
+  function getDb() {
+    return (window.SmartStudentFirebase && window.SmartStudentFirebase.isInitialized())
+      ? window.SmartStudentFirebase.getDb()
+      : null;
+  }
+
   /**
    * Get Assignments with optional status filter
    */
   async function getAssignments(statusFilter = null) {
     let list = [];
+    const db = getDb();
 
-    if (window.SmartStudentFirebase && window.SmartStudentFirebase.isInitialized()) {
+    if (db) {
       try {
-        const db = window.SmartStudentFirebase.getDb();
         let query = db.collection('assignments');
         if (statusFilter) {
           query = query.where('status', '==', statusFilter);
@@ -24,7 +30,7 @@ const AssignmentService = (() => {
           list = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
         }
       } catch (err) {
-        console.warn("Firestore assignments fetch failed:", err);
+        console.warn("Firestore assignments fetch note:", err);
       }
     }
 
@@ -33,6 +39,27 @@ const AssignmentService = (() => {
       if (statusFilter) {
         list = list.filter(item => item.status === statusFilter);
       }
+    }
+
+    return list;
+  }
+
+  /**
+   * Get Submissions for current student
+   */
+  async function getMySubmissions() {
+    const activeSession = AuthService.getCurrentUser();
+    const uid = activeSession ? activeSession.uid : 'usr_stu_8842';
+    const db = getDb();
+    let list = [];
+
+    if (db) {
+      try {
+        const snap = await db.collection('submissions').where('studentId', '==', uid).get();
+        if (!snap.empty) {
+          list = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        }
+      } catch (e) {}
     }
 
     return list;
@@ -48,6 +75,7 @@ const AssignmentService = (() => {
       assignmentId: assignmentId,
       studentId: activeSession ? activeSession.uid : 'usr_stu_8842',
       studentName: activeSession ? activeSession.name : 'Riddhi Zunjarrao',
+      studentRollNo: activeSession ? (activeSession.rollNo || activeSession.studentId) : 'CS24-042',
       submittedAt: new Date().toISOString(),
       status: 'submitted',
       fileName: fileData.name || 'submission.pdf',
@@ -56,13 +84,17 @@ const AssignmentService = (() => {
       fileSize: fileData.size || '2.1 MB'
     };
 
-    if (window.SmartStudentFirebase && window.SmartStudentFirebase.isInitialized()) {
-      const db = window.SmartStudentFirebase.getDb();
-      await db.collection('submissions').add(submissionRecord);
-      await db.collection('assignments').doc(assignmentId).update({ status: 'submitted' });
+    const db = getDb();
+    if (db) {
+      try {
+        const subId = `sub_${assignmentId}_${submissionRecord.studentId}`;
+        await db.collection('submissions').doc(subId).set(submissionRecord, { merge: true });
+        await db.collection('assignments').doc(assignmentId).update({ status: 'submitted' });
+      } catch (e) {
+        console.warn("Firestore submission write note:", e);
+      }
     }
 
-    // Update local mock array
     if (window.mockAssignments) {
       const match = window.mockAssignments.find(a => a.id === assignmentId);
       if (match) {
@@ -76,6 +108,7 @@ const AssignmentService = (() => {
 
   return {
     getAssignments,
+    getMySubmissions,
     submitAssignment
   };
 })();

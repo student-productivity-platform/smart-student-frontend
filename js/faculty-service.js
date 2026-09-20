@@ -1,8 +1,9 @@
 /**
  * ==========================================================================
  * SMART STUDENT — Faculty Portal Service Layer (F21–F29)
- * Handles state persistence (LocalStorage) and business operations for:
- * F21: Faculty Dashboard
+ * Full Integration with Cloud Firestore, Cloud Functions & Cloudinary
+ * Handles:
+ * F21: Faculty Dashboard & KPI Overview
  * F22: Academic Mapping (Subjects, Sections & Students)
  * F23: Course / Content Management (Upload, Filter, Categorize)
  * F24: Assignment Creation & Management
@@ -29,9 +30,12 @@ const FacultyService = (() => {
     DOUBTS: 'smart_faculty_doubts'
   };
 
-  /**
-   * Initialize LocalStorage from mock data if not already present
-   */
+  function getDb() {
+    return (window.SmartStudentFirebase && window.SmartStudentFirebase.isInitialized())
+      ? window.SmartStudentFirebase.getDb()
+      : null;
+  }
+
   function initStorage() {
     const rawMock = (typeof mockFaculty !== 'undefined') ? mockFaculty : {};
 
@@ -70,14 +74,12 @@ const FacultyService = (() => {
     }
   }
 
-  // --- Helper Getters / Setters ---
   function getStored(key, fallback = []) {
     initStorage();
     try {
       const data = localStorage.getItem(key);
       return data ? JSON.parse(data) : fallback;
     } catch (e) {
-      console.warn(`Error reading ${key} from storage:`, e);
       return fallback;
     }
   }
@@ -117,13 +119,26 @@ const FacultyService = (() => {
   // F22: Academic Mapping (Subjects, Sections & Students)
   // =========================================================================
   function getProfile() {
-    return getStored(STORAGE_KEYS.PROFILE, (typeof mockFaculty !== 'undefined' ? mockFaculty.profile : {}));
+    const user = AuthService.getCurrentUser();
+    const stored = getStored(STORAGE_KEYS.PROFILE, (typeof mockFaculty !== 'undefined' ? mockFaculty.profile : {}));
+    if (user && user.role === 'faculty') {
+      return { ...stored, ...user };
+    }
+    return stored;
   }
 
   function updateProfile(updatedData) {
     const current = getProfile();
     const merged = { ...current, ...updatedData };
     setStored(STORAGE_KEYS.PROFILE, merged);
+
+    const db = getDb();
+    if (db && current.uid) {
+      try {
+        db.collection('users').doc(current.uid).set(updatedData, { merge: true });
+      } catch (e) {}
+    }
+
     return merged;
   }
 
@@ -169,6 +184,14 @@ const FacultyService = (() => {
     };
     list.unshift(newMaterial);
     setStored(STORAGE_KEYS.MATERIALS, list);
+
+    const db = getDb();
+    if (db) {
+      try {
+        db.collection('materials').doc(newMaterial.id).set(newMaterial);
+      } catch (e) {}
+    }
+
     return newMaterial;
   }
 
@@ -176,6 +199,13 @@ const FacultyService = (() => {
     let list = getMaterials();
     list = list.filter(m => m.id !== id);
     setStored(STORAGE_KEYS.MATERIALS, list);
+
+    const db = getDb();
+    if (db) {
+      try {
+        db.collection('materials').doc(id).delete();
+      } catch (e) {}
+    }
     return true;
   }
 
@@ -204,6 +234,22 @@ const FacultyService = (() => {
     };
     list.unshift(newAssignment);
     setStored(STORAGE_KEYS.ASSIGNMENTS, list);
+
+    const db = getDb();
+    if (db) {
+      try {
+        db.collection('assignments').doc(newAssignment.id).set(newAssignment);
+        // Create notification
+        db.collection('notifications').add({
+          title: "New Assignment Published",
+          message: `${newAssignment.subjectCode}: "${newAssignment.title}" due ${newAssignment.dueDate}`,
+          type: "assignment",
+          isUnread: true,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+      } catch (e) {}
+    }
+
     return newAssignment;
   }
 
@@ -211,6 +257,13 @@ const FacultyService = (() => {
     let list = getAssignments();
     list = list.filter(a => a.id !== id);
     setStored(STORAGE_KEYS.ASSIGNMENTS, list);
+
+    const db = getDb();
+    if (db) {
+      try {
+        db.collection('assignments').doc(id).delete();
+      } catch (e) {}
+    }
     return true;
   }
 
@@ -252,6 +305,19 @@ const FacultyService = (() => {
       setStored(STORAGE_KEYS.ASSIGNMENTS, assignments);
     }
 
+    const db = getDb();
+    if (db) {
+      try {
+        db.collection('submissions').doc(submissionId).update({
+          marks: Number(marks),
+          feedback: feedback || '',
+          rubric: rubric || {},
+          status: 'graded',
+          gradedAt: new Date().toISOString().split('T')[0]
+        });
+      } catch (e) {}
+    }
+
     return list[index];
   }
 
@@ -274,6 +340,14 @@ const FacultyService = (() => {
     };
     list.unshift(newRecord);
     setStored(STORAGE_KEYS.ATTENDANCE, list);
+
+    const db = getDb();
+    if (db) {
+      try {
+        db.collection('attendance').doc(newRecord.id).set(newRecord);
+      } catch (e) {}
+    }
+
     return newRecord;
   }
 
@@ -299,6 +373,14 @@ const FacultyService = (() => {
     };
     list.unshift(newExam);
     setStored(STORAGE_KEYS.EXAMS, list);
+
+    const db = getDb();
+    if (db) {
+      try {
+        db.collection('exams').doc(newExam.id).set(newExam);
+      } catch (e) {}
+    }
+
     return newExam;
   }
 
@@ -324,6 +406,40 @@ const FacultyService = (() => {
     list[index].stats = { average, highest, lowest, passRate };
 
     setStored(STORAGE_KEYS.EXAMS, list);
+
+    const db = getDb();
+    if (db) {
+      try {
+        db.collection('exams').doc(examId).update({
+          studentMarks: studentMarksList,
+          evaluatedCount: studentMarksList.length,
+          status: isPublished ? 'published' : 'evaluated',
+          isPublished: isPublished,
+          stats: list[index].stats
+        });
+
+        if (isPublished) {
+          studentMarksList.forEach(st => {
+            const resId = `res_${examId}_${st.id || st.rollNo}`;
+            db.collection('results').doc(resId).set({
+              id: resId,
+              examId: examId,
+              examTitle: list[index].title,
+              subjectCode: list[index].subjectCode,
+              studentId: st.id,
+              studentRollNo: st.rollNo,
+              studentName: st.name,
+              marksObtained: st.marks,
+              maxMarks: maxMarks,
+              grade: st.grade || 'A',
+              isPublished: true,
+              publishedAt: new Date().toISOString()
+            }, { merge: true });
+          });
+        }
+      } catch (e) {}
+    }
+
     return list[index];
   }
 
@@ -353,6 +469,21 @@ const FacultyService = (() => {
     };
     list.unshift(newMeeting);
     setStored(STORAGE_KEYS.MEETINGS, list);
+
+    const db = getDb();
+    if (db) {
+      try {
+        db.collection('meetings').doc(newMeeting.id).set(newMeeting);
+        db.collection('notifications').add({
+          title: "Online Class Scheduled",
+          message: `${newMeeting.subjectCode}: "${newMeeting.title}" on ${newMeeting.date} at ${newMeeting.time}. Link: ${newMeeting.meetUrl}`,
+          type: "meeting",
+          isUnread: true,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+      } catch (e) {}
+    }
+
     return newMeeting;
   }
 
@@ -360,6 +491,13 @@ const FacultyService = (() => {
     let list = getMeetings();
     list = list.filter(m => m.id !== id);
     setStored(STORAGE_KEYS.MEETINGS, list);
+
+    const db = getDb();
+    if (db) {
+      try {
+        db.collection('meetings').doc(id).delete();
+      } catch (e) {}
+    }
     return true;
   }
 
@@ -385,6 +523,14 @@ const FacultyService = (() => {
     };
     list.unshift(newAnc);
     setStored(STORAGE_KEYS.ANNOUNCEMENTS, list);
+
+    const db = getDb();
+    if (db) {
+      try {
+        db.collection('announcements').doc(newAnc.id).set(newAnc);
+      } catch (e) {}
+    }
+
     return newAnc;
   }
 
@@ -392,6 +538,13 @@ const FacultyService = (() => {
     let list = getAnnouncements();
     list = list.filter(a => a.id !== id);
     setStored(STORAGE_KEYS.ANNOUNCEMENTS, list);
+
+    const db = getDb();
+    if (db) {
+      try {
+        db.collection('announcements').doc(id).delete();
+      } catch (e) {}
+    }
     return true;
   }
 
@@ -416,6 +569,18 @@ const FacultyService = (() => {
     list[index].answeredAt = new Date().toLocaleString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' });
 
     setStored(STORAGE_KEYS.DOUBTS, list);
+
+    const db = getDb();
+    if (db) {
+      try {
+        db.collection('doubts').doc(id).update({
+          answer: answerText,
+          status: 'resolved',
+          answeredAt: list[index].answeredAt
+        });
+      } catch (e) {}
+    }
+
     return list[index];
   }
 

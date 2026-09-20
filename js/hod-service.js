@@ -19,7 +19,12 @@ const HODService = (() => {
   const STORAGE_KEY_APPROVALS = 'smart_student_hod_approvals';
   const STORAGE_KEY_SETTINGS = 'smart_student_hod_settings';
 
-  // Helper to load or initialize dataset from mock data
+  function getDb() {
+    return (window.SmartStudentFirebase && window.SmartStudentFirebase.isInitialized())
+      ? window.SmartStudentFirebase.getDb()
+      : null;
+  }
+
   function getStoredOrMock(storageKey, defaultData) {
     const raw = localStorage.getItem(storageKey);
     if (!raw) {
@@ -29,7 +34,6 @@ const HODService = (() => {
     try {
       return JSON.parse(raw);
     } catch (e) {
-      console.warn(`[HODService] Failed to parse ${storageKey}, resetting to default.`, e);
       localStorage.setItem(storageKey, JSON.stringify(defaultData));
       return JSON.parse(JSON.stringify(defaultData));
     }
@@ -39,7 +43,6 @@ const HODService = (() => {
     localStorage.setItem(storageKey, JSON.stringify(data));
   }
 
-  // Ensure mock data availability
   function getRawMock() {
     return window.mockHOD || {
       profile: { name: 'Dr. Anand Deshmukh', role: 'hod' },
@@ -56,6 +59,10 @@ const HODService = (() => {
 
   // --- Profile & Department Info ---
   function getProfile() {
+    const user = AuthService.getCurrentUser();
+    if (user && (user.role === 'hod' || user.role === 'domain_admin')) {
+      return { ...getRawMock().profile, ...user };
+    }
     return getRawMock().profile;
   }
 
@@ -65,13 +72,12 @@ const HODService = (() => {
     const pendingCount = approvals.filter(a => a.status === 'Pending').length;
     const faculty = getFacultyList();
     const students = getStudents();
-    const allocations = getAllocations();
 
     return {
       ...mock.department,
       kpis: {
         ...mock.department.kpis,
-        totalStudents: students.length > 0 ? 248 : 0, // Department cohort
+        totalStudents: students.length > 0 ? 248 : 0,
         totalFaculty: faculty.length,
         activeSubjects: 14,
         pendingApprovals: pendingCount
@@ -110,24 +116,32 @@ const HODService = (() => {
   function saveAllocation(allocationData) {
     const mock = getRawMock();
     const list = getStoredOrMock(STORAGE_KEY_ALLOCATIONS, mock.allocations);
+    let targetItem = null;
 
     if (allocationData.id) {
-      // Edit existing
       const index = list.findIndex(a => a.id === allocationData.id);
       if (index !== -1) {
         list[index] = { ...list[index], ...allocationData };
+        targetItem = list[index];
       }
     } else {
-      // Create new
-      const newAllocation = {
+      targetItem = {
         id: 'alloc_' + Date.now().toString(36),
         status: 'Allocated',
         academicYear: '2025–2026',
         ...allocationData
       };
-      list.unshift(newAllocation);
+      list.unshift(targetItem);
     }
     saveToStorage(STORAGE_KEY_ALLOCATIONS, list);
+
+    const db = getDb();
+    if (db && targetItem) {
+      try {
+        db.collection('facultyAssignments').doc(targetItem.id).set(targetItem, { merge: true });
+      } catch (e) {}
+    }
+
     return true;
   }
 
@@ -136,6 +150,13 @@ const HODService = (() => {
     let list = getStoredOrMock(STORAGE_KEY_ALLOCATIONS, mock.allocations);
     list = list.filter(a => a.id !== id);
     saveToStorage(STORAGE_KEY_ALLOCATIONS, list);
+
+    const db = getDb();
+    if (db) {
+      try {
+        db.collection('facultyAssignments').doc(id).delete();
+      } catch (e) {}
+    }
     return true;
   }
 
@@ -246,20 +267,30 @@ const HODService = (() => {
   function saveTimetableEntry(entryData) {
     const mock = getRawMock();
     const list = getStoredOrMock(STORAGE_KEY_TIMETABLE, mock.timetable);
+    let target = null;
 
     if (entryData.id) {
       const index = list.findIndex(t => t.id === entryData.id);
       if (index !== -1) {
         list[index] = { ...list[index], ...entryData };
+        target = list[index];
       }
     } else {
-      const newEntry = {
+      target = {
         id: 'tt_' + Date.now().toString(36),
         ...entryData
       };
-      list.push(newEntry);
+      list.push(target);
     }
     saveToStorage(STORAGE_KEY_TIMETABLE, list);
+
+    const db = getDb();
+    if (db && target) {
+      try {
+        db.collection('timetable').doc(target.id).set(target, { merge: true });
+      } catch (e) {}
+    }
+
     return true;
   }
 
@@ -268,6 +299,14 @@ const HODService = (() => {
     let list = getStoredOrMock(STORAGE_KEY_TIMETABLE, mock.timetable);
     list = list.filter(t => t.id !== id);
     saveToStorage(STORAGE_KEY_TIMETABLE, list);
+
+    const db = getDb();
+    if (db) {
+      try {
+        db.collection('timetable').doc(id).delete();
+      } catch (e) {}
+    }
+
     return true;
   }
 
@@ -297,6 +336,13 @@ const HODService = (() => {
       item.reviewedAt = new Date().toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' });
       item.reviewNotes = reviewNote || 'Approved by HOD.';
       saveToStorage(STORAGE_KEY_APPROVALS, list);
+
+      const db = getDb();
+      if (db) {
+        try {
+          db.collection('approvals').doc(id).set(item, { merge: true });
+        } catch (e) {}
+      }
       return true;
     }
     return false;
@@ -312,6 +358,13 @@ const HODService = (() => {
       item.reviewedAt = new Date().toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' });
       item.reviewNotes = reason || 'Rejected by HOD.';
       saveToStorage(STORAGE_KEY_APPROVALS, list);
+
+      const db = getDb();
+      if (db) {
+        try {
+          db.collection('approvals').doc(id).set(item, { merge: true });
+        } catch (e) {}
+      }
       return true;
     }
     return false;
@@ -333,6 +386,14 @@ const HODService = (() => {
     const current = getSettings();
     const updated = { ...current, ...settingsData };
     saveToStorage(STORAGE_KEY_SETTINGS, updated);
+
+    const db = getDb();
+    if (db) {
+      try {
+        db.collection('systemSettings').doc('hod_settings').set(updated, { merge: true });
+      } catch (e) {}
+    }
+
     return true;
   }
 

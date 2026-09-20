@@ -355,10 +355,10 @@
               <label class="form-label">Target Sections</label>
               <div style="display: flex; gap: 1rem; align-items: center; padding-top: 0.4rem;">
                 <label style="display: flex; align-items: center; gap: 0.35rem; font-size: 0.8125rem;">
-                  <input type="checkbox" name="target-section" value="A" checked> Sec A
+                  <input type="checkbox" id="asg-sec-a" name="target-section" value="A" checked> Sec A
                 </label>
                 <label style="display: flex; align-items: center; gap: 0.35rem; font-size: 0.8125rem;">
-                  <input type="checkbox" name="target-section" value="B" checked> Sec B
+                  <input type="checkbox" id="asg-sec-b" name="target-section" value="B" checked> Sec B
                 </label>
               </div>
             </div>
@@ -367,6 +367,11 @@
           <div class="form-group">
             <label for="asg-desc" class="form-label">Instructions & Rubric Description</label>
             <textarea id="asg-desc" class="form-input" rows="3" placeholder="Specify problem statement, input constraints, and grading criteria..." required></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="asg-attach" class="form-label">Problem Sheet / Attachment File Name</label>
+            <input type="text" id="asg-attach" class="form-input" placeholder="e.g. Specification_Lab3.pdf (Optional)">
           </div>
         </div>
         <div class="modal-footer">
@@ -378,10 +383,15 @@
   </div>
 
   <!-- Application Services -->
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
   <script src="../data/mock-faculty.js"></script>
   <script src="../data/mock-student.js"></script>
-  <script src="../js/faculty-service.js"></script>
+  <script src="../js/firebase-config.js"></script>
   <script src="../js/auth.js"></script>
+  <script src="../js/faculty-service.js"></script>
   <script src="../js/ui.js"></script>
 
   <script>
@@ -511,18 +521,21 @@
 
       form.addEventListener('submit', (e) => {
         e.preventDefault();
-        const title = document.getElementById('asg-title').value.trim();
-        const subjectCode = document.getElementById('asg-subject').value;
-        const submissionType = document.getElementById('asg-format').value;
-        const dueDate = document.getElementById('asg-date').value;
-        const dueTime = document.getElementById('asg-time').value;
-        const maxMarks = Number(document.getElementById('asg-marks').value) || 20;
-        const description = document.getElementById('asg-desc').value.trim();
-        const attachmentName = document.getElementById('asg-attach').value.trim() || 'Specification.pdf';
+        const title = (document.getElementById('asg-title')?.value || '').trim();
+        const subjectCode = document.getElementById('asg-subject')?.value || 'CS402';
+        const submissionType = document.getElementById('asg-format')?.value || 'PDF Document (.pdf)';
+        const dueDate = document.getElementById('asg-date')?.value || '';
+        const dueTime = document.getElementById('asg-time')?.value || '23:59';
+        const maxMarks = Number(document.getElementById('asg-marks')?.value) || 20;
+        const description = (document.getElementById('asg-desc')?.value || '').trim();
+        const attachEl = document.getElementById('asg-attach');
+        const attachmentName = (attachEl && attachEl.value ? attachEl.value.trim() : '') || `${subjectCode}_Specification.pdf`;
 
         const sections = [];
-        if (document.getElementById('asg-sec-a').checked) sections.push('A');
-        if (document.getElementById('asg-sec-b').checked) sections.push('B');
+        const secA = document.getElementById('asg-sec-a');
+        const secB = document.getElementById('asg-sec-b');
+        if (secA && secA.checked) sections.push('A');
+        if (secB && secB.checked) sections.push('B');
         if (sections.length === 0) sections.push('A');
 
         const subjects = FacultyService.getSubjects();

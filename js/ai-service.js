@@ -1833,39 +1833,50 @@ Always output clean, readable, well-structured GitHub-Flavored Markdown.`;
 
     if (onStageProgress) onStageProgress('Synthesizing academic derivation with Gemini...');
 
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${encodeURIComponent(apiKey)}`;
+    const candidateModels = [model, 'gemini-3.6-flash', 'gemini-2.5-flash'].filter((v, i, a) => a.indexOf(v) === i);
+    let lastErrorMsg = '';
 
-    const requestBody = {
-      contents,
-      system_instruction: {
-        parts: [{ text: systemInstruction }]
-      },
-      generationConfig: {
-        temperature: isTutorMode ? 0.4 : 0.2,
-        topP: 0.95,
-        maxOutputTokens: 3000
+    for (const candModel of candidateModels) {
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/${candModel}:generateContent?key=${encodeURIComponent(apiKey)}`;
+
+      const requestBody = {
+        contents,
+        system_instruction: {
+          parts: [{ text: systemInstruction }]
+        },
+        generationConfig: {
+          temperature: isTutorMode ? 0.4 : 0.2,
+          topP: 0.95,
+          maxOutputTokens: 3000
+        }
+      };
+
+      try {
+        const response = await fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(requestBody)
+        });
+
+        if (!response.ok) {
+          const errJson = await response.json().catch(() => ({}));
+          lastErrorMsg = (errJson && errJson.error && errJson.error.message) ? errJson.error.message : `HTTP ${response.status}`;
+          console.warn(`[AIService Gemini Warning - ${candModel}]:`, lastErrorMsg);
+          continue;
+        }
+
+        const data = await response.json();
+        if (data.candidates && data.candidates[0]?.content?.parts) {
+          const generatedText = data.candidates[0].content.parts.map(p => p.text || '').join('');
+          return generatedText;
+        }
+      } catch (networkErr) {
+        lastErrorMsg = networkErr.message || 'Network error';
+        console.warn(`[AIService Network Warning - ${candModel}]:`, networkErr);
       }
-    };
-
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(requestBody)
-    });
-
-    if (!response.ok) {
-      const errJson = await response.json().catch(() => ({}));
-      const msg = (errJson && errJson.error && errJson.error.message) ? errJson.error.message : `HTTP ${response.status}`;
-      throw new Error(`Gemini API Error: ${msg}`);
     }
 
-    const data = await response.json();
-    if (data.candidates && data.candidates[0]?.content?.parts) {
-      const generatedText = data.candidates[0].content.parts.map(p => p.text || '').join('');
-      return generatedText;
-    }
-
-    throw new Error('Gemini returned an empty candidate response.');
+    throw new Error(`Gemini API Error: ${lastErrorMsg || 'All models temporarily busy.'}`);
   }
 
   /**
@@ -1893,40 +1904,44 @@ You must respond STRICTLY with a valid JSON object formatted as:
   "explanation": "A rigorous step-by-step derivation explaining why the correct choice holds and why others are invalid."
 }`;
 
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${encodeURIComponent(apiKey)}`;
-    try {
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          contents: [{ parts: [{ text: prompt }] }],
-          generationConfig: {
-            response_mime_type: 'application/json',
-            temperature: 0.3
-          }
-        })
-      });
+    const candidateModels = [model, 'gemini-3.6-flash', 'gemini-2.5-flash'].filter((v, i, a) => a.indexOf(v) === i);
 
-      if (!response.ok) return null;
-      const data = await response.json();
-      if (data.candidates && data.candidates[0]?.content?.parts[0]?.text) {
-        const raw = data.candidates[0].content.parts[0].text.trim();
-        const cleaned = raw.replace(/^```json/i, '').replace(/^```/, '').replace(/```$/, '').trim();
-        const parsed = JSON.parse(cleaned);
-        if (parsed && parsed.question && Array.isArray(parsed.options) && typeof parsed.correctIndex === 'number') {
-          return {
-            id: 'pq_gemini_' + Date.now(),
-            topic: topic,
-            subject: subject,
-            question: parsed.question,
-            options: parsed.options,
-            correctIndex: parsed.correctIndex,
-            explanation: parsed.explanation || 'Solution derived from canonical academic theory.'
-          };
+    for (const candModel of candidateModels) {
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/${candModel}:generateContent?key=${encodeURIComponent(apiKey)}`;
+      try {
+        const response = await fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            contents: [{ parts: [{ text: prompt }] }],
+            generationConfig: {
+              response_mime_type: 'application/json',
+              temperature: 0.3
+            }
+          })
+        });
+
+        if (!response.ok) continue;
+        const data = await response.json();
+        if (data.candidates && data.candidates[0]?.content?.parts[0]?.text) {
+          const raw = data.candidates[0].content.parts[0].text.trim();
+          const cleaned = raw.replace(/^```json/i, '').replace(/^```/, '').replace(/```$/, '').trim();
+          const parsed = JSON.parse(cleaned);
+          if (parsed && parsed.question && Array.isArray(parsed.options) && typeof parsed.correctIndex === 'number') {
+            return {
+              id: 'pq_gemini_' + Date.now(),
+              topic: topic,
+              subject: subject,
+              question: parsed.question,
+              options: parsed.options,
+              correctIndex: parsed.correctIndex,
+              explanation: parsed.explanation || 'Solution derived from canonical academic theory.'
+            };
+          }
         }
+      } catch (e) {
+        console.warn(`[AIService Practice Warning - ${candModel}]:`, e);
       }
-    } catch (e) {
-      console.warn('Gemini practice question generation fallback:', e);
     }
     return null;
   }

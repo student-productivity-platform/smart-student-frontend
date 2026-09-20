@@ -37,6 +37,9 @@
       } else if (user.role === 'hod') {
         window.location.replace('../hod/dashboard.html');
         return;
+      } else if (user.role === 'super_admin' || user.role === 'administrator' || user.role === 'admin') {
+        window.location.replace('../administrator/dashboard.html');
+        return;
       }
       window.location.replace('../login.html');
       return;
@@ -49,6 +52,9 @@
         return;
       } else if (user.role === 'hod') {
         window.location.replace('../hod/dashboard.html');
+        return;
+      } else if (user.role === 'super_admin' || user.role === 'administrator' || user.role === 'admin') {
+        window.location.replace('../administrator/dashboard.html');
         return;
       }
       window.location.replace('../login.html');

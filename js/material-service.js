@@ -6,19 +6,39 @@
  */
 
 const MaterialService = (() => {
-  async function getRecentMaterials() {
-    if (window.SmartStudentFirebase && window.SmartStudentFirebase.isInitialized()) {
+  function getDb() {
+    return (window.SmartStudentFirebase && window.SmartStudentFirebase.isInitialized())
+      ? window.SmartStudentFirebase.getDb()
+      : null;
+  }
+
+  async function getRecentMaterials(category = 'all', subjectCode = 'all') {
+    const db = getDb();
+    let list = [];
+
+    if (db) {
       try {
-        const db = window.SmartStudentFirebase.getDb();
-        const snap = await db.collection('materials').orderBy('uploadedAt', 'desc').limit(6).get();
+        const snap = await db.collection('materials').get();
         if (!snap.empty) {
-          return snap.docs.map(d => ({ id: d.id, ...d.data() }));
+          list = snap.docs.map(d => ({ id: d.id, ...d.data() }));
         }
       } catch (e) {
-        console.warn('Materials fetch error:', e);
+        console.warn('Materials fetch note:', e);
       }
     }
-    return window.mockMaterials || [];
+
+    if (list.length === 0) {
+      list = [...(window.mockMaterials || [])];
+    }
+
+    if (category && category !== 'all') {
+      list = list.filter(m => (m.category || '').toLowerCase() === category.toLowerCase());
+    }
+    if (subjectCode && subjectCode !== 'all') {
+      list = list.filter(m => m.subjectCode === subjectCode);
+    }
+
+    return list;
   }
 
   /**
@@ -28,7 +48,7 @@ const MaterialService = (() => {
     if (material.fileUrl) {
       return material.fileUrl;
     }
-    return `https://res.cloudinary.com/demo/image/upload/fl_attachment/${material.cloudinaryPublicId || 'sample'}.pdf`;
+    return `https://res.cloudinary.com/demo/image/upload/sample.pdf`;
   }
 
   return {

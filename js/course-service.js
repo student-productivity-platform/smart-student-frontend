@@ -1,26 +1,27 @@
 /**
  * ==========================================================================
- * SMART STUDENT — Course Service Layer
+ * SMART STUDENT — Course & Subject Service Layer
+ * Fetches enrolled subjects, credits, syllabus links from Firestore
  * ==========================================================================
  */
 
 const CourseService = (() => {
-  const COURSES = [
+  const COURSES_DEFAULT = [
     {
       id: "crs_cs401",
       code: "CS401",
       name: "Data Structures & Algorithms",
       faculty: "Prof. Rajesh Sharma",
-      department: "Computer Engineering",
+      department: "B.Tech",
       credits: 4,
       semester: 4,
       attendance: 92,
       progress: 78,
       nextClass: "Tomorrow • 09:00 AM",
       nextRoom: "Room 204",
-      upcomingAssignment: "Balanced Trees & DP (Due Sep 18)",
+      upcomingAssignment: "Balanced Trees & DP (Due Sep 25)",
       officeHours: "Mon & Wed 03:00 PM – 04:30 PM",
-      syllabusUrl: "https://res.cloudinary.com/demo/image/upload/syllabus_cs401.pdf",
+      syllabusUrl: "https://res.cloudinary.com/demo/image/upload/sample.pdf",
       units: [
         { unit: "Unit 1", title: "Linear Structures & Analysis", status: "Completed" },
         { unit: "Unit 2", title: "Trees, AVL & B-Trees", status: "Completed" },
@@ -33,16 +34,16 @@ const CourseService = (() => {
       code: "CS402",
       name: "Database Management Systems",
       faculty: "Prof. Sunita Mehta",
-      department: "Computer Engineering",
+      department: "B.Tech",
       credits: 4,
       semester: 4,
       attendance: 84,
       progress: 72,
       nextClass: "Today • 11:00 AM",
       nextRoom: "Room 302",
-      upcomingAssignment: "Normalization & 3NF Design (Due Sep 08)",
+      upcomingAssignment: "Normalization & 3NF Design (Due Tomorrow)",
       officeHours: "Tue & Thu 02:00 PM – 03:30 PM",
-      syllabusUrl: "https://res.cloudinary.com/demo/image/upload/syllabus_cs402.pdf",
+      syllabusUrl: "https://res.cloudinary.com/demo/image/upload/sample.pdf",
       units: [
         { unit: "Unit 1", title: "ER Model & Relational Algebra", status: "Completed" },
         { unit: "Unit 2", title: "SQL & Complex Queries", status: "Completed" },
@@ -55,16 +56,16 @@ const CourseService = (() => {
       code: "CS403",
       name: "Machine Learning Fundamentals",
       faculty: "Prof. Arvind Patil",
-      department: "Computer Engineering",
+      department: "B.Tech",
       credits: 3,
       semester: 4,
       attendance: 89,
       progress: 65,
       nextClass: "Today • 02:00 PM",
       nextRoom: "Online (Google Meet)",
-      upcomingAssignment: "Logistic Regression Notebook (Due Sep 10)",
+      upcomingAssignment: "Logistic Regression Notebook",
       officeHours: "Wed & Fri 11:00 AM – 12:30 PM",
-      syllabusUrl: "https://res.cloudinary.com/demo/image/upload/syllabus_cs403.pdf",
+      syllabusUrl: "https://res.cloudinary.com/demo/image/upload/sample.pdf",
       units: [
         { unit: "Unit 1", title: "Supervised Learning & Cost Functions", status: "Completed" },
         { unit: "Unit 2", title: "Linear & Logistic Regression", status: "Completed" },
@@ -76,17 +77,17 @@ const CourseService = (() => {
       id: "crs_cs404",
       code: "CS404",
       name: "Operating Systems",
-      faculty: "Prof. Priya Kulkarni",
-      department: "Computer Engineering",
+      faculty: "Prof. Sunita Mehta",
+      department: "B.Tech",
       credits: 4,
       semester: 4,
       attendance: 83,
       progress: 68,
-      nextClass: "Friday • 03:30 PM",
-      nextRoom: "Computer Lab 3",
-      upcomingAssignment: "Process Synchronization (Due Sep 12)",
+      nextClass: "Wednesday • 10:00 AM",
+      nextRoom: "Room 204",
+      upcomingAssignment: "Process Synchronization (Due Sep 22)",
       officeHours: "Mon & Thu 04:00 PM – 05:00 PM",
-      syllabusUrl: "https://res.cloudinary.com/demo/image/upload/syllabus_cs404.pdf",
+      syllabusUrl: "https://res.cloudinary.com/demo/image/upload/sample.pdf",
       units: [
         { unit: "Unit 1", title: "OS Architecture & System Calls", status: "Completed" },
         { unit: "Unit 2", title: "Process Scheduling & IPC", status: "Completed" },
@@ -99,16 +100,16 @@ const CourseService = (() => {
       code: "CS405",
       name: "Computer Networks",
       faculty: "Dr. Vikram Joshi",
-      department: "Computer Engineering",
+      department: "B.Tech",
       credits: 3,
       semester: 4,
       attendance: 88,
       progress: 58,
       nextClass: "Monday • 10:00 AM",
       nextRoom: "Room 105",
-      upcomingAssignment: "IPv4 Subnetting & CIDR (Graded)",
+      upcomingAssignment: "IPv4 Subnetting & CIDR",
       officeHours: "Tue & Fri 03:00 PM – 04:00 PM",
-      syllabusUrl: "https://res.cloudinary.com/demo/image/upload/syllabus_cs405.pdf",
+      syllabusUrl: "https://res.cloudinary.com/demo/image/upload/sample.pdf",
       units: [
         { unit: "Unit 1", title: "OSI & TCP/IP Layered Architecture", status: "Completed" },
         { unit: "Unit 2", title: "Data Link Layer & MAC Protocols", status: "Completed" },
@@ -127,10 +128,10 @@ const CourseService = (() => {
           return snap.docs.map(d => ({ id: d.id, ...d.data() }));
         }
       } catch (e) {
-        console.warn('Courses fetch error:', e);
+        console.warn('Courses fetch note:', e);
       }
     }
-    return COURSES;
+    return COURSES_DEFAULT;
   }
 
   return { getEnrolledCourses };

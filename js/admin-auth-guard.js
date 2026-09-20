@@ -23,7 +23,7 @@
   try {
     const user = JSON.parse(sessionRaw);
 
-    if (user.role !== 'super_admin') {
+    if (user.role !== 'super_admin' && user.role !== 'administrator' && user.role !== 'admin') {
       console.warn(`🔒 [AdminAuthGuard] Access Denied: Role "${user.role}" cannot access Administrator Portal.`);
 
       if (user.role === 'student') {

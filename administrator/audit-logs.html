@@ -174,50 +174,48 @@
     </div>
   </div>
 
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+
   <script src="../js/firebase-config.js"></script>
   <script src="../js/auth.js"></script>
+  <script src="../js/admin-service.js"></script>
   <script src="../js/ui.js"></script>
   <script>
-    const AUDIT_DATA = [
-      { ts:'Sep 16, 2026 04:02', type:'security', severity:'critical', desc:'5 consecutive failed login attempts', actor:'Unknown', ip:'192.168.1.45' },
-      { ts:'Sep 16, 2026 03:44', type:'user', severity:'low', desc:'New user created — Arjun Kulkarni (STU-2026-0124)', actor:'admin@university.edu', ip:'10.0.0.1' },
-      { ts:'Sep 16, 2026 03:18', type:'user', severity:'medium', desc:'Role modified — Prof. Sunita Mehta → Senior Faculty', actor:'admin@university.edu', ip:'10.0.0.1' },
-      { ts:'Sep 16, 2026 01:22', type:'academic', severity:'low', desc:'Course published — Advanced ML (CS601) for Sem 6', actor:'hod@university.edu', ip:'10.0.0.14' },
-      { ts:'Sep 15, 2026 23:58', type:'security', severity:'high', desc:'Account deactivated — Vikram Nair (STU-2024-7731)', actor:'admin@university.edu', ip:'10.0.0.1' },
-      { ts:'Sep 15, 2026 22:10', type:'system', severity:'low', desc:'Automated backup completed successfully (248 GB)', actor:'System', ip:'internal' },
-      { ts:'Sep 15, 2026 20:30', type:'config', severity:'medium', desc:'System config updated — email notification settings changed', actor:'admin@university.edu', ip:'10.0.0.1' },
-      { ts:'Sep 15, 2026 18:45', type:'user', severity:'low', desc:'Password reset requested — pooja.r@university.edu', actor:'pooja.r@university.edu', ip:'192.168.2.12' },
-      { ts:'Sep 15, 2026 16:00', type:'academic', severity:'low', desc:'Result published — Sem 4 DSA midterm results', actor:'s.mehta@university.edu', ip:'10.0.0.22' },
-      { ts:'Sep 15, 2026 14:30', type:'security', severity:'high', desc:'Suspicious login location detected — login from new city', actor:'hod@university.edu', ip:'103.214.45.88' },
-    ];
+    let auditLogsList = [];
 
     function renderLogs(data) {
       document.getElementById('audit-tbody').innerHTML = data.map(l => `
         <tr>
-          <td class="log-meta">${l.ts}</td>
-          <td><span class="event-type-badge ${l.type}">${l.type.charAt(0).toUpperCase()+l.type.slice(1)}</span></td>
-          <td><span class="severity-badge ${l.severity}">${l.severity.charAt(0).toUpperCase()+l.severity.slice(1)}</span></td>
-          <td><div class="log-description">${l.desc}</div></td>
-          <td class="log-meta">${l.actor}</td>
-          <td class="log-meta" style="font-family:monospace">${l.ip}</td>
+          <td class="log-meta">${l.createdAt ? new Date(l.createdAt).toLocaleDateString([], {month:'short', day:'numeric', hour:'2-digit', minute:'2-digit'}) : (l.ts || 'Just now')}</td>
+          <td><span class="event-type-badge ${l.category || l.type || 'academic'}">${(l.category || l.type || 'academic').toUpperCase()}</span></td>
+          <td><span class="severity-badge ${l.severity || 'low'}">${(l.severity || 'low').toUpperCase()}</span></td>
+          <td><div class="log-description">${l.description || l.desc || l.action}</div></td>
+          <td class="log-meta">${l.actorEmail || l.actor || 'System'}</td>
+          <td class="log-meta" style="font-family:monospace">${l.ipAddress || l.ip || '127.0.0.1'}</td>
         </tr>`).join('');
     }
 
-    document.addEventListener('DOMContentLoaded', () => {
-      renderLogs(AUDIT_DATA);
+    document.addEventListener('DOMContentLoaded', async () => {
       const user = AuthService.getCurrentUser();
       if (user) document.getElementById('sidebar-user-name').textContent = user.name || 'Super Admin';
+
+      auditLogsList = await AdminService.getAuditLogs();
+      renderLogs(auditLogsList);
+
       document.getElementById('log-search').addEventListener('input', e => {
         const q = e.target.value.toLowerCase();
-        renderLogs(AUDIT_DATA.filter(l => l.desc.toLowerCase().includes(q) || l.actor.toLowerCase().includes(q)));
+        renderLogs(auditLogsList.filter(l => (l.description || l.desc || '').toLowerCase().includes(q) || (l.actorEmail || l.actor || '').toLowerCase().includes(q)));
       });
       document.getElementById('filter-type').addEventListener('change', e => {
         const t = e.target.value.toLowerCase();
-        renderLogs(t ? AUDIT_DATA.filter(l => l.type === t) : AUDIT_DATA);
+        renderLogs(t ? auditLogsList.filter(l => (l.category || l.type) === t) : auditLogsList);
       });
       document.getElementById('filter-severity').addEventListener('change', e => {
         const s = e.target.value.toLowerCase();
-        renderLogs(s ? AUDIT_DATA.filter(l => l.severity === s) : AUDIT_DATA);
+        renderLogs(s ? auditLogsList.filter(l => l.severity === s) : auditLogsList);
       });
       document.getElementById('logout-action-btn').addEventListener('click', async () => await AuthService.logout());
       const toggle = document.getElementById('mobile-nav-toggle');

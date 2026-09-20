@@ -274,29 +274,25 @@
     </div>
   </div>
 
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+
   <script src="../js/firebase-config.js"></script>
   <script src="../js/auth.js"></script>
+  <script src="../js/admin-service.js"></script>
   <script src="../js/ui.js"></script>
   <script>
-    const DEMO_USERS_LIST = [
-      { name:'Riddhi Zunjarrao', email:'riddhi.z@university.edu', role:'student', dept:'B.Tech', id:'STU-2024-8842', status:'active', joined:'Aug 1, 2024', color:'#8B5CF6' },
-      { name:'Prof. Sunita Mehta', email:'s.mehta@university.edu', role:'faculty', dept:'BBA', id:'FAC-2022-1001', status:'active', joined:'Jul 15, 2022', color:'#2563EB' },
-      { name:'Dr. Anand Deshmukh', email:'hod@university.edu', role:'hod', dept:'B.Tech', id:'HOD-2020-2001', status:'active', joined:'Jun 1, 2020', color:'#16A34A' },
-      { name:'Arjun Kulkarni', email:'arjun.k@university.edu', role:'student', dept:'B.Tech', id:'STU-2026-0124', status:'active', joined:'Sep 12, 2026', color:'#F59E0B' },
-      { name:'Pooja Rawat', email:'pooja.r@university.edu', role:'student', dept:'BBA', id:'STU-2025-0312', status:'active', joined:'Aug 5, 2025', color:'#EC4899' },
-      { name:'Vikram Nair', email:'vikram.n@university.edu', role:'student', dept:'MBA', id:'STU-2024-7731', status:'inactive', joined:'Sep 3, 2024', color:'#DC2626' },
-      { name:'Dr. Priya Joshi', email:'p.joshi@university.edu', role:'faculty', dept:'MBA', id:'FAC-2021-1042', status:'active', joined:'Jan 10, 2021', color:'#0F766E' },
-      { name:'Siddharth More', email:'sid.more@university.edu', role:'student', dept:'B.Tech', id:'STU-2025-0891', status:'active', joined:'Aug 8, 2025', color:'#7C3AED' },
-      { name:'Neha Sharma', email:'neha.s@university.edu', role:'student', dept:'BBA', id:'STU-2023-4421', status:'inactive', joined:'Jul 30, 2023', color:'#D97706' },
-      { name:'Super Administrator', email:'admin@university.edu', role:'super_admin', dept:'Platform Admin', id:'ADM-0001', status:'active', joined:'Jan 1, 2024', color:'#F59E0B' },
-    ];
+    let currentUsersList = [];
 
     function getInitials(name) {
+      if (!name) return 'U';
       return name.split(' ').map(w => w[0]).join('').substring(0,2).toUpperCase();
     }
     function getRoleBadge(role) {
       const map = { student:'student', faculty:'faculty', hod:'hod', super_admin:'admin' };
-      return `<span class="role-badge ${map[role]||'student'}">${role.replace('_',' ')}</span>`;
+      return `<span class="role-badge ${map[role]||'student'}">${(role||'student').replace('_',' ')}</span>`;
     }
 
     function renderTable(list) {
@@ -309,7 +305,7 @@
         <tr>
           <td>
             <div class="user-cell">
-              <div class="user-mini-avatar" style="background:${u.color}">${getInitials(u.name)}</div>
+              <div class="user-mini-avatar" style="background:${u.color || '#8B5CF6'}">${getInitials(u.name)}</div>
               <div>
                 <div class="user-mini-name">${u.name}</div>
                 <div class="user-mini-email">${u.email}</div>
@@ -317,29 +313,53 @@
             </div>
           </td>
           <td>${getRoleBadge(u.role)}</td>
-          <td>${u.dept}</td>
-          <td><code style="font-size:.78125rem;color:var(--text-secondary)">${u.id}</code></td>
-          <td><span class="status-dot ${u.status}">${u.status === 'active' ? 'Active' : 'Inactive'}</span></td>
-          <td>${u.joined}</td>
+          <td>${u.department || u.dept || 'B.Tech'}</td>
+          <td><code style="font-size:.78125rem;color:var(--text-secondary)">${u.studentId || u.facultyId || u.id || u.uid}</code></td>
+          <td><span class="status-dot ${u.status === 'active' ? 'active' : 'inactive'}">${u.status === 'active' ? 'Active' : 'Inactive'}</span></td>
+          <td>${u.joinedAt || u.joined || 'Aug 1, 2024'}</td>
           <td>
             <div class="table-actions">
-              <button class="btn-icon-sm" title="Edit user" onclick="UI.showToast('info','Edit User','Opening editor for ${u.name}')">
+              <button class="btn-icon-sm" title="Edit user" onclick="handleEditUser('${u.uid || u.id}', '${u.name}')">
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
               </button>
-              <button class="btn-icon-sm danger" title="Delete user" onclick="UI.showToast('warning','Delete','Are you sure you want to delete ${u.name}?')">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+              <button class="btn-icon-sm danger" title="Toggle Status" onclick="handleToggleUserStatus('${u.uid || u.id}', '${u.name}', '${u.status}')">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
               </button>
             </div>
           </td>
         </tr>`).join('');
     }
 
-    document.addEventListener('DOMContentLoaded', () => {
+    window.handleEditUser = function(userId, name) {
+      const newName = prompt(`Edit user name for ${name}:`, name);
+      if (newName && newName.trim() !== name) {
+        const u = currentUsersList.find(x => (x.uid === userId || x.id === userId));
+        if (u) {
+          u.name = newName.trim();
+          renderTable(currentUsersList);
+          UI.showToast('success', 'User Updated', `Updated name to "${newName.trim()}"`);
+        }
+      }
+    };
+
+    window.handleToggleUserStatus = async function(userId, name, currentStatus) {
+      const nextStatus = currentStatus === 'active' ? 'inactive' : 'active';
+      await AdminService.toggleUserStatus(userId, nextStatus);
+      const u = currentUsersList.find(x => (x.uid === userId || x.id === userId));
+      if (u) u.status = nextStatus;
+      renderTable(currentUsersList);
+      UI.showToast('info', 'Status Updated', `User ${name} is now ${nextStatus}`);
+    };
+
+    document.addEventListener('DOMContentLoaded', async () => {
       const user = AuthService.getCurrentUser();
       if (user) {
         document.getElementById('sidebar-user-name').textContent = user.name || 'Super Admin';
         document.getElementById('topbar-user-name').textContent = user.name || 'Super Admin';
       }
+
+      currentUsersList = await AdminService.getUsers();
+      renderTable(currentUsersList);
 
       function applyFilters() {
         const q = (document.getElementById('user-search').value || '').toLowerCase();
@@ -347,25 +367,33 @@
         const dept = document.getElementById('filter-dept').value;
         const status = document.getElementById('filter-status').value;
 
-        const filtered = DEMO_USERS_LIST.filter(u => {
-          const matchQ = !q || u.name.toLowerCase().includes(q) || u.email.toLowerCase().includes(q) || u.id.toLowerCase().includes(q);
+        const filtered = currentUsersList.filter(u => {
+          const matchQ = !q || (u.name||'').toLowerCase().includes(q) || (u.email||'').toLowerCase().includes(q) || (u.id||u.uid||'').toLowerCase().includes(q);
           const matchRole = !role || u.role === role;
-          const matchDept = !dept || u.dept === dept;
+          const matchDept = !dept || (u.department || u.dept || '').includes(dept);
           const matchStatus = !status || u.status === status;
           return matchQ && matchRole && matchDept && matchStatus;
         });
         renderTable(filtered);
       }
 
-      renderTable(DEMO_USERS_LIST);
-
       document.getElementById('user-search').addEventListener('input', applyFilters);
       document.getElementById('filter-role').addEventListener('change', applyFilters);
       document.getElementById('filter-dept').addEventListener('change', applyFilters);
       document.getElementById('filter-status').addEventListener('change', applyFilters);
 
-      document.getElementById('add-user-btn').addEventListener('click', () => {
-        UI.showToast('info', 'Add User', 'User creation form will open here.');
+      document.getElementById('add-user-btn').addEventListener('click', async () => {
+        const email = prompt('Enter new institutional email (e.g., student.name@university.edu):');
+        if (!email || !email.includes('@')) return;
+        const name = prompt('Enter full name:', email.split('@')[0]);
+        if (!name) return;
+        const role = prompt('Enter role (student / faculty / hod / super_admin):', 'student') || 'student';
+        const dept = prompt('Enter Department (B.Tech / BBA / MBA):', 'B.Tech') || 'B.Tech';
+
+        const created = await AdminService.createUser({ email, name, role, department: dept });
+        currentUsersList.unshift(created);
+        renderTable(currentUsersList);
+        UI.showToast('success', 'User Created', `Created account for ${name} (${role})`);
       });
 
       document.getElementById('logout-action-btn').addEventListener('click', async () => { await AuthService.logout(); });
