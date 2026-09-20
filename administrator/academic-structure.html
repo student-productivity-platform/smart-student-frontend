@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Academic Structure — Smart Admin</title>
-  <meta name="description" content="Configure departments, programs, semesters, sections and subjects.">
+  <title>Departments & Academic Periods — Smart Admin</title>
+  <meta name="description" content="Manage institutional departments, assign Head of Departments (HODs), configure academic years, and manage active semester periods.">
   <link rel="icon" type="image/svg+xml" href="../favicon.svg">
   <link rel="stylesheet" href="../css/main.css">
   <link rel="stylesheet" href="../css/dashboard.css">
@@ -13,80 +13,167 @@
   <style>
     :root { --admin-accent:#F59E0B; --admin-accent-dark:#D97706; --admin-accent-bg:#FFFBEB; }
     .sidebar-brand-icon { background:linear-gradient(135deg,#F59E0B,#D97706)!important; box-shadow:0 4px 12px rgba(245,158,11,.4)!important; }
-    .nav-link.active { background:rgba(245,158,11,.14)!important; color:#F59E0B!important; }
+    .nav-link.active { background:rgba(245,158,11,.16)!important; color:#FBBF24!important; border:1px solid rgba(245,158,11,.28)!important; }
     .nav-link.active .nav-link-icon { color:#F59E0B!important; }
-    .nav-link:hover { background:rgba(245,158,11,.08)!important; }
+    .nav-link.active .nav-link-text,
+    .nav-link.active > span:not(.nav-link-icon):not(.nav-badge) { color:#FBBF24!important; font-weight:700!important; }
 
-    .page-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:1.5rem; }
+    .page-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:1.25rem; flex-wrap:wrap; gap:1rem; }
     .page-title { font-size:1.5rem; font-weight:800; color:var(--text-primary); letter-spacing:-.02em; }
     .page-sub { font-size:.84375rem; color:var(--text-tertiary); margin-top:.2rem; }
-    .btn-primary-admin { display:inline-flex; align-items:center; gap:.4rem; background:linear-gradient(135deg,#F59E0B,#D97706); color:#fff; font-size:.84375rem; font-weight:700; padding:.6rem 1.1rem; border-radius:10px; border:none; cursor:pointer; text-decoration:none; transition:all .18s; box-shadow:0 4px 12px rgba(245,158,11,.3); }
-    .btn-primary-admin:hover { transform:translateY(-1px); box-shadow:0 6px 16px rgba(245,158,11,.4); }
 
-    /* Tabs */
-    .tabs-bar { display:flex; gap:.25rem; background:#F1F5F9; border-radius:10px; padding:.25rem; margin-bottom:1.5rem; width:fit-content; }
-    .tab-btn { padding:.45rem 1rem; border-radius:8px; border:none; background:transparent; font-size:.84375rem; font-weight:600; color:var(--text-tertiary); cursor:pointer; transition:all .18s; font-family:inherit; }
-    .tab-btn.active { background:#FFFFFF; color:var(--text-primary); box-shadow:0 1px 4px rgba(15,23,42,.1); }
+    /* Navigation Tabs */
+    .section-tabs-bar {
+      display: flex; gap: 0.35rem; background: #F1F5F9; padding: 0.3rem; border-radius: 12px; margin-bottom: 1.5rem; width: fit-content;
+    }
+    .sec-tab-btn {
+      padding: 0.5rem 1.15rem; border-radius: 9px; border: none; background: transparent; font-size: 0.84375rem; font-weight: 700; color: var(--text-tertiary); cursor: pointer; transition: all 0.18s; font-family: inherit; display: flex; align-items: center; gap: 0.45rem;
+    }
+    .sec-tab-btn.active { background: #FFFFFF; color: var(--text-primary); box-shadow: 0 2px 6px rgba(15,23,42,0.08); }
 
-    /* Structure Cards Grid */
-    .structure-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1rem; }
-    .struct-card { background:#fff; border:1px solid var(--border-default); border-radius:16px; overflow:hidden; transition:box-shadow .2s,transform .2s; }
-    .struct-card:hover { box-shadow:var(--shadow-md); transform:translateY(-2px); }
-    .struct-card-header { padding:1rem 1.25rem; border-bottom:1px solid var(--border-light); display:flex; align-items:center; justify-content:space-between; }
-    .struct-card-icon { width:38px; height:38px; border-radius:10px; display:flex; align-items:center; justify-content:center; }
-    .struct-card-title { font-size:.9375rem; font-weight:700; color:var(--text-primary); }
-    .struct-card-sub { font-size:.75rem; color:var(--text-tertiary); margin-top:.15rem; }
-    .struct-card-body { padding:1rem 1.25rem; }
-    .struct-meta-row { display:flex; align-items:center; justify-content:space-between; padding:.4rem 0; border-bottom:1px solid var(--border-light); font-size:.8125rem; color:var(--text-secondary); }
-    .struct-meta-row:last-child { border-bottom:none; }
-    .struct-meta-label { font-weight:600; color:var(--text-primary); }
-    .struct-badge { display:inline-flex; padding:.15rem .5rem; border-radius:6px; font-size:.6875rem; font-weight:700; background:var(--admin-accent-bg); color:var(--admin-accent-dark); }
-    .struct-card-footer { padding:.75rem 1.25rem; background:#F8FAFC; display:flex; gap:.5rem; justify-content:flex-end; border-top:1px solid var(--border-light); }
-    .btn-sm-ghost { padding:.3rem .7rem; border-radius:7px; border:1px solid var(--border-default); background:#fff; font-size:.75rem; font-weight:600; color:var(--text-secondary); cursor:pointer; font-family:inherit; transition:all .15s; }
-    .btn-sm-ghost:hover { border-color:var(--admin-accent); color:var(--admin-accent); }
+    /* Dept Grid */
+    .dept-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem; margin-bottom: 1.5rem; }
+    .dept-card {
+      background: #FFFFFF; border: 1px solid var(--border-default); border-radius: 16px; overflow: hidden; display: flex; flex-direction: column; justify-content: space-between; transition: all 0.2s; box-shadow: var(--shadow-sm);
+    }
+    .dept-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); border-color: #CBD5E1; }
+    .dept-card-header { padding: 1.15rem 1.25rem; border-bottom: 1px solid var(--border-light); display: flex; align-items: flex-start; justify-content: space-between; gap: 0.75rem; }
+    .dept-card-title { font-size: 1rem; font-weight: 800; color: var(--text-primary); line-height: 1.3; }
+    .dept-card-code { font-size: 0.71875rem; font-weight: 700; background: var(--admin-accent-bg); color: var(--admin-accent-dark); padding: 0.2rem 0.5rem; border-radius: 6px; }
+    .dept-card-body { padding: 1rem 1.25rem; flex: 1; font-size: 0.8125rem; }
+    .dept-stat-row { display: flex; justify-content: space-between; padding: 0.45rem 0; border-bottom: 1px solid var(--border-light); }
+    .dept-stat-row:last-child { border-bottom: none; }
+    .dept-stat-label { color: var(--text-tertiary); }
+    .dept-stat-val { font-weight: 700; color: var(--text-primary); }
 
-    /* Stats cards at top */
-    .structure-stats { display:grid; grid-template-columns:repeat(5,1fr); gap:.875rem; margin-bottom:1.5rem; }
-    .ss-card { background:#fff; border:1px solid var(--border-default); border-radius:12px; padding:.875rem 1rem; display:flex; align-items:center; gap:.75rem; }
-    .ss-icon { width:36px; height:36px; border-radius:9px; display:flex; align-items:center; justify-content:center; }
-    .ss-val { font-size:1.35rem; font-weight:800; color:var(--text-primary); letter-spacing:-.02em; }
-    .ss-lbl { font-size:.71875rem; font-weight:600; color:var(--text-tertiary); text-transform:uppercase; letter-spacing:.04em; }
+    .dept-card-footer { padding: 0.75rem 1.25rem; background: #F8FAFC; border-top: 1px solid var(--border-light); display: flex; justify-content: flex-end; gap: 0.5rem; }
+    .btn-sm-action {
+      padding: 0.35rem 0.75rem; border-radius: 7px; border: 1px solid var(--border-default); background: #FFFFFF; font-size: 0.75rem; font-weight: 700; color: var(--text-secondary); cursor: pointer; transition: all 0.15s; font-family: inherit; text-decoration: none; display: inline-flex; align-items: center; gap: 0.3rem;
+    }
+    .btn-sm-action:hover { border-color: var(--admin-accent); color: var(--admin-accent-dark); background: var(--admin-accent-bg); }
 
-    @media(max-width:1100px){ .structure-grid { grid-template-columns:1fr 1fr; } .structure-stats { grid-template-columns:repeat(3,1fr); } }
-    @media(max-width:700px){ .structure-grid { grid-template-columns:1fr; } }
+    /* Academic Year & Semester Cards */
+    .period-list-card { background: #fff; border: 1px solid var(--border-default); border-radius: 16px; overflow: hidden; margin-bottom: 1.5rem; }
+    .period-table { width: 100%; border-collapse: collapse; font-size: 0.84375rem; }
+    .period-table th { background: #F8FAFC; padding: 0.75rem 1.25rem; text-align: left; font-size: 0.71875rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-tertiary); border-bottom: 1px solid var(--border-default); }
+    .period-table td { padding: 0.9rem 1.25rem; border-bottom: 1px solid var(--border-light); color: var(--text-secondary); vertical-align: middle; }
+    .period-table tr:last-child td { border-bottom: none; }
+
+    .active-badge { display: inline-flex; align-items: center; gap: 0.3rem; background: #DCFCE7; color: #166534; font-size: 0.71875rem; font-weight: 700; padding: 0.2rem 0.6rem; border-radius: 20px; }
+    .active-badge::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: #16A34A; }
+
+    .btn-primary-admin {
+      display: inline-flex; align-items: center; gap: 0.45rem; background: linear-gradient(135deg,#F59E0B,#D97706); color: #fff; font-size: 0.8125rem; font-weight: 700; padding: 0.55rem 1.15rem; border-radius: 9px; border: none; cursor: pointer; text-decoration: none; transition: all 0.18s; box-shadow: 0 4px 12px rgba(245,158,11,.3); font-family: inherit;
+    }
+    .btn-primary-admin:hover { transform: translateY(-1px); box-shadow: 0 6px 16px rgba(245,158,11,.4); }
+
+    /* Modal Form Styles */
+    .modal-overlay {
+      position: fixed !important;
+      inset: 0 !important;
+      background: rgba(15, 23, 42, 0.65) !important;
+      backdrop-filter: blur(4px) !important;
+      display: none !important;
+      align-items: center !important;
+      justify-content: center !important;
+      z-index: 99999 !important;
+      padding: 1rem !important;
+      opacity: 0 !important;
+      visibility: hidden !important;
+      pointer-events: none !important;
+    }
+    .modal-overlay.open,
+    .modal-overlay.active {
+      display: flex !important;
+      opacity: 1 !important;
+      visibility: visible !important;
+      pointer-events: auto !important;
+    }
+    .modal-card {
+      background: #FFFFFF !important;
+      border-radius: 18px !important;
+      width: 100% !important;
+      max-width: 580px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.24) !important;
+      overflow: hidden !important;
+      position: relative !important;
+      z-index: 100000 !important;
+      animation: modalIn 0.22s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    }
+    @keyframes modalIn {
+      from { transform: scale(0.94) translateY(8px); opacity: 0; }
+      to { transform: scale(1) translateY(0); opacity: 1; }
+    }
+    .modal-header { padding: 1.15rem 1.5rem; border-bottom: 1px solid var(--border-light); display: flex; align-items: center; justify-content: space-between; }
+    .modal-title { font-size: 1.05rem; font-weight: 800; color: var(--text-primary); }
+    .modal-body { padding: 1.25rem 1.5rem; max-height: 75vh; overflow-y: auto; }
+    .modal-footer { padding: 1rem 1.5rem; border-top: 1px solid var(--border-light); background: #F8FAFC; display: flex; justify-content: flex-end; gap: 0.65rem; }
+    .form-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0.85rem; }
+    .form-group { margin-bottom: 0.85rem; display: flex; flex-direction: column; gap: 0.35rem; }
+    .form-label { font-size: 0.8125rem; font-weight: 700; color: var(--text-primary); }
+    .modal-input {
+      width: 100%; height: 40px; padding: 0 0.85rem; border-radius: 9px; border: 1px solid #CBD5E1; background: #F8FAFC; font-size: 0.84375rem; font-family: inherit; color: var(--text-primary); box-sizing: border-box;
+    }
+    .modal-input:focus { outline: none; border-color: var(--admin-accent); background: #fff; box-shadow: 0 0 0 3px rgba(245,158,11,0.15); }
+
+    @media (max-width: 1100px) { .dept-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 700px) { .dept-grid { grid-template-columns: 1fr; } }
   </style>
 </head>
-<body>
+
+<body class="admin-portal">
   <div id="toast-container"></div>
   <div class="sidebar-backdrop"></div>
+
   <div class="app-container">
-    <aside class="app-sidebar">
+    <!-- Super Admin Navigation Sidebar -->
+    <aside class="app-sidebar admin-sidebar" aria-label="Admin Navigation">
       <div class="sidebar-header">
         <a href="dashboard.html" class="sidebar-brand">
           <div class="sidebar-brand-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
-          <div class="sidebar-brand-text"><h2>Smart Admin</h2><span>Admin Portal</span></div>
+          <div class="sidebar-brand-text"><h2>Smart Admin</h2><span>Super Admin Portal</span></div>
         </a>
       </div>
+
       <nav class="sidebar-nav-container">
-        <div class="nav-section-label">Platform Overview</div>
-        <a href="dashboard.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg></span><span>Overview</span></a>
-        <a href="profile.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span><span>My Profile</span></a>
-        <div class="nav-section-label">User & Access</div>
-        <a href="users.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span><span>User Management</span></a>
+        <div class="nav-section-label">Main Dashboard</div>
+        <a href="dashboard.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg></span><span>Dashboard</span></a>
+
+        <div class="nav-section-label">User Management</div>
+        <a href="users.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span><span>All Users</span></a>
+
+        <div class="nav-section-label">Academic Management</div>
+        <a href="academic-structure.html" class="nav-link active"><span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg></span><span>Departments & Periods</span></a>
+        <a href="courses.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></span><span>Courses & Subjects</span></a>
+
+        <div class="nav-section-label">Access Control</div>
         <a href="roles-permissions.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span><span>Roles & Permissions</span></a>
-        <div class="nav-section-label">Academic Admin</div>
-        <a href="academic-structure.html" class="nav-link active"><span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg></span><span>Academic Structure</span></a>
-        <a href="courses.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></span><span>Courses</span></a>
-        <div class="nav-section-label">Platform Ops</div>
-        <a href="reports.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></span><span>Reports</span></a>
-        <a href="audit-logs.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></span><span>Audit Logs</span><span class="nav-badge" style="background:#DC2626">5</span></a>
-        <a href="notifications.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></span><span>Notifications</span></a>
-        <a href="system-config.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span><span>System Config</span></a>
+
+        <div class="nav-section-label">Communication</div>
+        <a href="announcements.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></span><span>Announcements</span></a>
+
+        <div class="nav-section-label">Reports & Analytics</div>
+        <a href="reports.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></span><span>Reports & Analytics</span></a>
+
+        <div class="nav-section-label">Platform System</div>
+        <a href="system-health.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></span><span>System Health & Backup</span></a>
+        <a href="audit-logs.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></span><span>Audit Logs</span></a>
+        <a href="security.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span><span>Security Center</span></a>
+        <a href="system-config.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span><span>System Settings</span></a>
+
+        <div class="nav-section-label">Account</div>
+        <a href="profile.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span><span>Super Admin Profile</span></a>
       </nav>
+
       <div class="sidebar-footer">
         <a href="profile.html" class="sidebar-user-card">
-          <div class="user-avatar"><span class="user-avatar-initials">SA</span></div>
-          <div class="user-info-text"><div class="user-name" id="sidebar-user-name">Super Administrator</div><span class="user-role-tag">Platform Admin</span></div>
+          <div class="user-avatar" style="background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%); box-shadow: 0 4px 10px rgba(245, 158, 11, 0.35);">
+            <span class="user-avatar-initials" id="sidebar-initials">SA</span>
+          </div>
+          <div class="user-info-text">
+            <div class="user-name" id="sidebar-user-name">Super Administrator</div>
+            <span class="user-role-tag" id="sidebar-user-role">Platform Root</span>
+          </div>
         </a>
       </div>
     </aside>
@@ -94,14 +181,18 @@
     <div class="app-main">
       <header class="app-topbar">
         <div class="topbar-left">
-          <button type="button" class="mobile-nav-toggle" id="mobile-nav-toggle"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
-          <div class="topbar-page-title"><h1>Academic Structure</h1></div>
+          <button type="button" class="mobile-nav-toggle" id="mobile-nav-toggle">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+          </button>
+          <div class="topbar-page-title">
+            <h1>Academic Structure & Periods</h1>
+          </div>
         </div>
         <div class="topbar-right">
           <div class="dropdown-container">
             <button type="button" class="user-menu-btn" data-dropdown-toggle="user-dropdown-menu">
               <div class="user-avatar-sm" style="background:linear-gradient(135deg,#F59E0B,#D97706)"><span class="user-avatar-initials">SA</span></div>
-              <div class="user-menu-info"><div class="user-menu-name">Super Administrator</div><div class="user-menu-sub">Platform Admin</div></div>
+              <div class="user-menu-info"><div class="user-menu-name">Super Administrator</div><div class="user-menu-sub">Root Authority</div></div>
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
             </button>
             <div id="user-dropdown-menu" class="menu-dropdown profile-dropdown-menu">
@@ -115,162 +206,75 @@
       <main class="app-content">
         <div class="page-header">
           <div>
-            <div class="page-title">Academic Structure</div>
-            <div class="page-sub">Configure departments, programs, semesters, sections and subjects</div>
+            <div class="page-title">Departments & Academic Periods</div>
+            <div class="page-sub">Configure academic departments, assign HOD leadership, manage academic years and semester cycles</div>
           </div>
-          <button class="btn-primary-admin" onclick="UI.showToast('info','New Department','Department creation dialog will open here.')">
+          <button class="btn-primary-admin" id="btn-tab-action" onclick="handleHeaderAction()">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-            Add Department
+            <span id="btn-action-text">Create Department</span>
           </button>
         </div>
 
-        <!-- Stats -->
-        <div class="structure-stats">
-          <div class="ss-card"><div class="ss-icon" style="background:#DBEAFE;color:#2563EB"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg></div><div><div class="ss-val">3</div><div class="ss-lbl">Departments</div></div></div>
-          <div class="ss-card"><div class="ss-icon" style="background:#EDE9FE;color:#7C3AED"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg></div><div><div class="ss-val">3</div><div class="ss-lbl">Programs</div></div></div>
-          <div class="ss-card"><div class="ss-icon" style="background:#FEF3C7;color:#D97706"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div><div><div class="ss-val">8</div><div class="ss-lbl">Semesters</div></div></div>
-          <div class="ss-card"><div class="ss-icon" style="background:#DCFCE7;color:#16A34A"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div><div><div class="ss-val">18</div><div class="ss-lbl">Sections</div></div></div>
-          <div class="ss-card"><div class="ss-icon" style="background:#FEE2E2;color:#DC2626"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></div><div><div class="ss-val">96</div><div class="ss-lbl">Subjects</div></div></div>
+        <!-- Section Tabs -->
+        <div class="section-tabs-bar">
+          <button class="sec-tab-btn active" id="tab-btn-depts" onclick="switchTab('departments')">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+            <span>Departments</span>
+          </button>
+          <button class="sec-tab-btn" id="tab-btn-years" onclick="switchTab('years')">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            <span>Academic Years</span>
+          </button>
+          <button class="sec-tab-btn" id="tab-btn-semesters" onclick="switchTab('semesters')">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+            <span>Semesters</span>
+          </button>
         </div>
 
-        <!-- Tabs -->
-        <div class="tabs-bar">
-          <button class="tab-btn active" onclick="switchTab(this,'tab-departments')">Departments (3)</button>
-          <button class="tab-btn" onclick="switchTab(this,'tab-programs')">Programs</button>
-          <button class="tab-btn" onclick="switchTab(this,'tab-semesters')">Semesters & Sections</button>
-          <button class="tab-btn" onclick="switchTab(this,'tab-subjects')">Subjects</button>
-        </div>
-
-        <!-- Departments Tab -->
-        <div id="tab-departments" class="tab-content">
-          <div class="structure-grid">
-            <!-- 1. B.Tech -->
-            <div class="struct-card">
-              <div class="struct-card-header">
-                <div>
-                  <div class="struct-card-title">B.Tech</div>
-                  <div class="struct-card-sub">Bachelor of Technology • 4 Years</div>
-                </div>
-                <div class="struct-card-icon" style="background:#DBEAFE;color:#2563EB">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
-                </div>
-              </div>
-              <div class="struct-card-body">
-                <div class="struct-meta-row"><span class="struct-meta-label">HOD</span><span>Dr. Anand Deshmukh</span></div>
-                <div class="struct-meta-row"><span class="struct-meta-label">Duration</span><span>4 Years (8 Semesters)</span></div>
-                <div class="struct-meta-row"><span class="struct-meta-label">Faculty</span><span>48 members</span></div>
-                <div class="struct-meta-row"><span class="struct-meta-label">Students</span><span>840 enrolled</span></div>
-                <div class="struct-meta-row"><span class="struct-meta-label">Courses</span><span><span class="struct-badge">44 active</span></span></div>
-              </div>
-              <div class="struct-card-footer">
-                <button class="btn-sm-ghost" onclick="UI.showToast('info','Edit','Opening editor for B.Tech Department')">Edit</button>
-                <button class="btn-sm-ghost" onclick="UI.showToast('info','View','Viewing B.Tech department details')">View</button>
-              </div>
-            </div>
-
-            <!-- 2. BBA -->
-            <div class="struct-card">
-              <div class="struct-card-header">
-                <div>
-                  <div class="struct-card-title">BBA</div>
-                  <div class="struct-card-sub">Bachelor of Business Administration • 3 Years</div>
-                </div>
-                <div class="struct-card-icon" style="background:#FEF3C7;color:#D97706">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
-                </div>
-              </div>
-              <div class="struct-card-body">
-                <div class="struct-meta-row"><span class="struct-meta-label">HOD</span><span>Prof. Sunita Mehta</span></div>
-                <div class="struct-meta-row"><span class="struct-meta-label">Duration</span><span>3 Years (6 Semesters)</span></div>
-                <div class="struct-meta-row"><span class="struct-meta-label">Faculty</span><span>24 members</span></div>
-                <div class="struct-meta-row"><span class="struct-meta-label">Students</span><span>420 enrolled</span></div>
-                <div class="struct-meta-row"><span class="struct-meta-label">Courses</span><span><span class="struct-badge">28 active</span></span></div>
-              </div>
-              <div class="struct-card-footer">
-                <button class="btn-sm-ghost" onclick="UI.showToast('info','Edit','Opening editor for BBA Department')">Edit</button>
-                <button class="btn-sm-ghost" onclick="UI.showToast('info','View','Viewing BBA department details')">View</button>
-              </div>
-            </div>
-
-            <!-- 3. MBA -->
-            <div class="struct-card">
-              <div class="struct-card-header">
-                <div>
-                  <div class="struct-card-title">MBA</div>
-                  <div class="struct-card-sub">Master of Business Administration • 2 Years</div>
-                </div>
-                <div class="struct-card-icon" style="background:#DCFCE7;color:#16A34A">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
-                </div>
-              </div>
-              <div class="struct-card-body">
-                <div class="struct-meta-row"><span class="struct-meta-label">HOD</span><span>Dr. Rajesh Patil</span></div>
-                <div class="struct-meta-row"><span class="struct-meta-label">Duration</span><span>2 Years (4 Semesters)</span></div>
-                <div class="struct-meta-row"><span class="struct-meta-label">Faculty</span><span>20 members</span></div>
-                <div class="struct-meta-row"><span class="struct-meta-label">Students</span><span>260 enrolled</span></div>
-                <div class="struct-meta-row"><span class="struct-meta-label">Courses</span><span><span class="struct-badge">24 active</span></span></div>
-              </div>
-              <div class="struct-card-footer">
-                <button class="btn-sm-ghost" onclick="UI.showToast('info','Edit','Opening editor for MBA Department')">Edit</button>
-                <button class="btn-sm-ghost" onclick="UI.showToast('info','View','Viewing MBA department details')">View</button>
-              </div>
-            </div>
-
-            <!-- Add new card -->
-            <div class="struct-card" style="border:2px dashed #E2E8F0; display:flex; align-items:center; justify-content:center; min-height:220px; cursor:pointer; background:#FAFAFA;" onclick="UI.showToast('info','New Department','Department creation dialog')">
-              <div style="text-align:center; color:var(--text-muted);">
-                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="margin-bottom:.5rem"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                <div style="font-size:.84375rem; font-weight:600;">Add Department</div>
-              </div>
-            </div>
+        <!-- Tab 1: Departments Grid -->
+        <div id="section-departments">
+          <div class="dept-grid" id="departments-grid">
+            <!-- Rendered via JS -->
           </div>
         </div>
 
-        <div id="tab-programs" class="tab-content" style="display:none">
-          <div style="background:#fff; border:1px solid var(--border-default); border-radius:12px; padding:1.5rem;">
-            <h3 style="font-size:1.1rem; font-weight:700; margin-bottom:1rem; color:var(--text-primary);">Active Programs by Department</h3>
-            <table class="rpt-table" style="width:100%">
-              <thead><tr><th>Department</th><th>Program</th><th>Degree Level</th><th>Duration</th><th>Semesters</th><th>Status</th></tr></thead>
-              <tbody>
-                <tr><td><strong style="color:#2563EB">B.Tech</strong></td><td>Bachelor of Technology</td><td>Undergraduate</td><td>4 Years</td><td>8 Semesters (1–8)</td><td><span class="struct-badge">Active</span></td></tr>
-                <tr><td><strong style="color:#D97706">BBA</strong></td><td>Bachelor of Business Administration</td><td>Undergraduate</td><td>3 Years</td><td>6 Semesters (1–6)</td><td><span class="struct-badge">Active</span></td></tr>
-                <tr><td><strong style="color:#16A34A">MBA</strong></td><td>Master of Business Administration</td><td>Post-Graduate</td><td>2 Years</td><td>4 Semesters (1–4)</td><td><span class="struct-badge">Active</span></td></tr>
+        <!-- Tab 2: Academic Years -->
+        <div id="section-years" style="display: none;">
+          <div class="period-list-card">
+            <table class="period-table">
+              <thead>
+                <tr>
+                  <th>Academic Year</th>
+                  <th>Duration</th>
+                  <th>Enrolled Students</th>
+                  <th>Programs</th>
+                  <th>Status</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="years-tbody">
+                <!-- Rendered via JS -->
               </tbody>
             </table>
           </div>
         </div>
-        <div id="tab-semesters" class="tab-content" style="display:none">
-          <div style="background:#fff; border:1px solid var(--border-default); border-radius:12px; padding:1.5rem;">
-            <h3 style="font-size:1.1rem; font-weight:700; margin-bottom:1rem; color:var(--text-primary);">Semesters & Sections Allocation</h3>
-            <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:1rem;">
-              <div style="padding:1rem; border:1px solid var(--border-light); border-radius:10px; background:#F8FAFC;">
-                <h4 style="color:#2563EB; font-weight:700; margin-bottom:.5rem;">B.Tech</h4>
-                <p style="font-size:.84375rem; color:var(--text-secondary);">Semesters 1 through 8</p>
-                <p style="font-size:.8125rem; color:var(--text-tertiary); margin-top:.25rem;">Sections: A, B, C, D per semester (8 sections active)</p>
-              </div>
-              <div style="padding:1rem; border:1px solid var(--border-light); border-radius:10px; background:#F8FAFC;">
-                <h4 style="color:#D97706; font-weight:700; margin-bottom:.5rem;">BBA</h4>
-                <p style="font-size:.84375rem; color:var(--text-secondary);">Semesters 1 through 6</p>
-                <p style="font-size:.8125rem; color:var(--text-tertiary); margin-top:.25rem;">Sections: A, B per semester (6 sections active)</p>
-              </div>
-              <div style="padding:1rem; border:1px solid var(--border-light); border-radius:10px; background:#F8FAFC;">
-                <h4 style="color:#16A34A; font-weight:700; margin-bottom:.5rem;">MBA</h4>
-                <p style="font-size:.84375rem; color:var(--text-secondary);">Semesters 1 through 4</p>
-                <p style="font-size:.8125rem; color:var(--text-tertiary); margin-top:.25rem;">Sections: A, B per semester (4 sections active)</p>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div id="tab-subjects" class="tab-content" style="display:none">
-          <div style="background:#fff; border:1px solid var(--border-default); border-radius:12px; padding:1.5rem;">
-            <h3 style="font-size:1.1rem; font-weight:700; margin-bottom:1rem; color:var(--text-primary);">Subject Distribution Across Departments</h3>
-            <p style="font-size:.875rem; color:var(--text-secondary); margin-bottom:1rem;">Total 96 active subjects distributed across B.Tech (44), BBA (28), and MBA (24).</p>
-            <table class="rpt-table" style="width:100%">
-              <thead><tr><th>Department</th><th>Core Subjects</th><th>Electives</th><th>Labs & Projects</th><th>Total</th></tr></thead>
-              <tbody>
-                <tr><td><strong style="color:#2563EB">B.Tech</strong></td><td>28 subjects</td><td>10 subjects</td><td>6 practical labs</td><td><strong>44</strong></td></tr>
-                <tr><td><strong style="color:#D97706">BBA</strong></td><td>18 subjects</td><td>6 subjects</td><td>4 project seminars</td><td><strong>28</strong></td></tr>
-                <tr><td><strong style="color:#16A34A">MBA</strong></td><td>14 subjects</td><td>6 subjects</td><td>4 capstone dissertations</td><td><strong>24</strong></td></tr>
+
+        <!-- Tab 3: Semesters -->
+        <div id="section-semesters" style="display: none;">
+          <div class="period-list-card">
+            <table class="period-table">
+              <thead>
+                <tr>
+                  <th>Semester Number</th>
+                  <th>Semester Cycle Name</th>
+                  <th>Academic Year</th>
+                  <th>Timeline</th>
+                  <th>Status</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="semesters-tbody">
+                <!-- Rendered via JS -->
               </tbody>
             </table>
           </div>
@@ -279,32 +283,698 @@
     </div>
   </div>
 
-  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
-  <script src="../js/firebase-config.js"></script>
-  <script src="../js/auth.js"></script>
-  <script src="../js/admin-service.js"></script>
+  <!-- Create/Edit Department Modal -->
+  <div class="modal-overlay" id="dept-modal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="modal-title" id="dept-modal-title">Create Academic Department</div>
+        <button type="button" class="btn-icon-sm" onclick="closeDeptModal()">&times;</button>
+      </div>
+      <form id="dept-form" onsubmit="handleDeptFormSubmit(event)">
+        <div class="modal-body">
+          <input type="hidden" id="form-dept-id">
+          <div class="form-group">
+            <label class="form-label">Department Name <span style="color:#DC2626;">*</span></label>
+            <input type="text" class="modal-input" id="form-dept-name" required placeholder="e.g. Department of Electrical Engineering">
+          </div>
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label class="form-label">Department Code <span style="color:#DC2626;">*</span></label>
+              <input type="text" class="modal-input" id="form-dept-code" required placeholder="e.g. EE">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Duration (Years)</label>
+              <input type="number" min="1" max="6" class="modal-input" id="form-dept-duration" value="4">
+            </div>
+          </div>
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label class="form-label">HOD Name</label>
+              <input type="text" class="modal-input" id="form-dept-hod" placeholder="e.g. Dr. Rajesh Sharma">
+            </div>
+            <div class="form-group">
+              <label class="form-label">HOD Email</label>
+              <input type="email" class="modal-input" id="form-dept-hodemail" placeholder="hod.ee@university.edu">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Status</label>
+            <select class="modal-input" id="form-dept-status">
+              <option value="active">Active</option>
+              <option value="inactive">Inactive</option>
+            </select>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn-sm-action" onclick="closeDeptModal()">Cancel</button>
+          <button type="submit" class="btn-primary-admin">Save Department</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Assign HOD Modal -->
+  <div class="modal-overlay" id="assign-hod-modal">
+    <div class="modal-card" style="max-width: 520px;">
+      <div class="modal-header">
+        <div class="modal-title">Assign Head of Department</div>
+        <button type="button" class="btn-icon-sm" onclick="closeAssignHodModal()">&times;</button>
+      </div>
+      <form id="assign-hod-form" onsubmit="handleAssignHodSubmit(event)">
+        <div class="modal-body">
+          <input type="hidden" id="assign-dept-id">
+          <div class="form-group">
+            <label class="form-label">Target Department</label>
+            <input type="text" class="modal-input" id="assign-dept-name" disabled style="background:#F1F5F9; font-weight:700;">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Select Faculty Member / Professor <span style="color:#DC2626;">*</span></label>
+            <select class="modal-input" id="assign-hod-select" required onchange="handleHodSelectChange()">
+              <!-- Options populated via JS -->
+            </select>
+          </div>
+          <div id="custom-hod-fields" style="display:none; margin-top:0.75rem; padding:0.85rem; background:#F8FAFC; border-radius:10px; border:1px solid #E2E8F0;">
+            <div class="form-group">
+              <label class="form-label">Custom / External HOD Full Name</label>
+              <input type="text" class="modal-input" id="custom-hod-name" placeholder="Dr. Full Name">
+            </div>
+            <div class="form-group" style="margin-bottom:0;">
+              <label class="form-label">HOD Official Email</label>
+              <input type="email" class="modal-input" id="custom-hod-email" placeholder="hod.name@university.edu">
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn-sm-action" onclick="closeAssignHodModal()">Cancel</button>
+          <button type="submit" class="btn-primary-admin">Confirm HOD Assignment</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Create Academic Year Modal -->
+  <div class="modal-overlay" id="year-modal">
+    <div class="modal-card" style="max-width: 520px;">
+      <div class="modal-header">
+        <div class="modal-title">Add Academic Year Period</div>
+        <button type="button" class="btn-icon-sm" onclick="closeYearModal()">&times;</button>
+      </div>
+      <form id="year-form" onsubmit="handleYearFormSubmit(event)">
+        <div class="modal-body">
+          <div class="form-group">
+            <label class="form-label">Academic Year Cycle Name <span style="color:#DC2626;">*</span></label>
+            <input type="text" class="modal-input" id="year-form-name" required placeholder="e.g. 2026–2027">
+          </div>
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label class="form-label">Start Date</label>
+              <input type="date" class="modal-input" id="year-form-start" value="2026-07-01">
+            </div>
+            <div class="form-group">
+              <label class="form-label">End Date</label>
+              <input type="date" class="modal-input" id="year-form-end" value="2027-06-30">
+            </div>
+          </div>
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label class="form-label">Total Programs</label>
+              <input type="number" class="modal-input" id="year-form-courses" value="22" min="1">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Lifecycle Status</label>
+              <select class="modal-input" id="year-form-status">
+                <option value="upcoming" selected>Upcoming</option>
+                <option value="active">Active Current</option>
+                <option value="archived">Archived</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group" style="margin-top:0.35rem;">
+            <label style="display:flex; align-items:center; gap:0.5rem; cursor:pointer; font-size:0.84375rem; font-weight:600; color:var(--text-primary);">
+              <input type="checkbox" id="year-form-is-current" style="width:16px; height:16px; accent-color:var(--admin-accent);">
+              <span>Set as active institutional academic cycle immediately</span>
+            </label>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn-sm-action" onclick="closeYearModal()">Cancel</button>
+          <button type="submit" class="btn-primary-admin">Save Academic Period</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Create Semester Modal -->
+  <div class="modal-overlay" id="sem-modal">
+    <div class="modal-card" style="max-width: 520px;">
+      <div class="modal-header">
+        <div class="modal-title">Add Semester Cycle</div>
+        <button type="button" class="btn-icon-sm" onclick="closeSemModal()">&times;</button>
+      </div>
+      <form id="sem-form" onsubmit="handleSemFormSubmit(event)">
+        <div class="modal-body">
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label class="form-label">Semester Number <span style="color:#DC2626;">*</span></label>
+              <input type="number" class="modal-input" id="sem-form-num" required min="1" max="12" value="5">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Academic Year</label>
+              <select class="modal-input" id="sem-form-year">
+                <!-- Populated via JS -->
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Semester Title / Cycle Name <span style="color:#DC2626;">*</span></label>
+            <input type="text" class="modal-input" id="sem-form-name" required placeholder="e.g. Semester 5 (Fall 2026)">
+          </div>
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label class="form-label">Start Date</label>
+              <input type="date" class="modal-input" id="sem-form-start" value="2026-07-15">
+            </div>
+            <div class="form-group">
+              <label class="form-label">End Date</label>
+              <input type="date" class="modal-input" id="sem-form-end" value="2026-11-30">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Lifecycle Status</label>
+            <select class="modal-input" id="sem-form-status">
+              <option value="upcoming" selected>Upcoming</option>
+              <option value="active">Active Current</option>
+              <option value="completed">Completed</option>
+            </select>
+          </div>
+          <div class="form-group" style="margin-top:0.35rem;">
+            <label style="display:flex; align-items:center; gap:0.5rem; cursor:pointer; font-size:0.84375rem; font-weight:600; color:var(--text-primary);">
+              <input type="checkbox" id="sem-form-is-current" style="width:16px; height:16px; accent-color:var(--admin-accent);">
+              <span>Set as active operational semester immediately</span>
+            </label>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn-sm-action" onclick="closeSemModal()">Cancel</button>
+          <button type="submit" class="btn-primary-admin">Save Semester Cycle</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- View Department Details Modal -->
+  <div class="modal-overlay" id="dept-details-modal">
+    <div class="modal-card" style="max-width: 600px;">
+      <div class="modal-header">
+        <div class="modal-title">Department Telemetry & Profile</div>
+        <button type="button" class="btn-icon-sm" onclick="closeDeptDetailsModal()">&times;</button>
+      </div>
+      <div class="modal-body" id="dept-details-body">
+        <!-- Rendered via JS -->
+      </div>
+      <div class="modal-footer" id="dept-details-footer">
+        <button type="button" class="btn-sm-action" onclick="closeDeptDetailsModal()">Close</button>
+      </div>
+    </div>
+  </div>
+
   <script src="../js/ui.js"></script>
+  <script src="../js/admin-service.js"></script>
+
   <script>
-    function switchTab(btn, tabId) {
-      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-      document.querySelectorAll('.tab-content').forEach(t => t.style.display = 'none');
-      btn.classList.add('active');
-      document.getElementById(tabId).style.display = '';
-    }
-    document.addEventListener('DOMContentLoaded', () => {
-      const user = AuthService.getCurrentUser();
-      if (user) document.getElementById('sidebar-user-name').textContent = user.name || 'Super Admin';
-      document.getElementById('logout-action-btn').addEventListener('click', async () => await AuthService.logout());
-      const toggle = document.getElementById('mobile-nav-toggle');
-      const sidebar = document.querySelector('.app-sidebar');
-      const backdrop = document.querySelector('.sidebar-backdrop');
-      if (toggle) { toggle.addEventListener('click', () => { sidebar.classList.toggle('mobile-open'); backdrop.classList.toggle('visible'); }); backdrop.addEventListener('click', () => { sidebar.classList.remove('mobile-open'); backdrop.classList.remove('visible'); }); }
-      document.querySelectorAll('[data-dropdown-toggle]').forEach(btn => { btn.addEventListener('click', e => { e.stopPropagation(); const d = document.getElementById(btn.getAttribute('data-dropdown-toggle')); if (d) { document.querySelectorAll('.menu-dropdown.open').forEach(x => { if(x!==d) x.classList.remove('open'); }); d.classList.toggle('open'); } }); });
-      document.addEventListener('click', () => document.querySelectorAll('.menu-dropdown.open').forEach(d => d.classList.remove('open')));
+    let departments = [];
+    let academicYears = [];
+    let semesters = [];
+    let facultyUsers = [];
+    let activeTab = 'departments';
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      if (window.UI && typeof UI.initTheme === 'function') UI.initTheme();
+
+      // Check query param
+      const urlParams = new URLSearchParams(window.location.search);
+      const tabParam = urlParams.get('tab');
+      if (tabParam === 'academic-years' || tabParam === 'years') switchTab('years');
+      else if (tabParam === 'semesters') switchTab('semesters');
+      else switchTab('departments');
+
+      // Modal backdrop click listener & Escape key listener
+      document.querySelectorAll('.modal-overlay').forEach(modal => {
+        modal.addEventListener('click', (e) => {
+          if (e.target === modal) modal.classList.remove('open', 'active');
+        });
+      });
+
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('open', 'active'));
+        }
+      });
+
+      await loadAcademicData();
     });
+
+    async function loadAcademicData() {
+      try {
+        departments = await AdminService.getDepartments();
+        academicYears = await AdminService.getAcademicYears();
+        semesters = await AdminService.getSemesters();
+        
+        try {
+          const allUsers = await AdminService.getUsers();
+          facultyUsers = (allUsers || []).filter(u => u.role === 'faculty' || u.role === 'hod');
+        } catch (e) {
+          facultyUsers = [];
+        }
+
+        // Ensure rich faculty candidate list
+        if (!facultyUsers || facultyUsers.length === 0) {
+          facultyUsers = [
+            { uid: 'usr_hod_2001', id: 'HOD-2020-2001', name: 'Dr. Anand Deshmukh', email: 'hod@university.edu', role: 'hod', department: 'Department of Computer Engineering' },
+            { uid: 'usr_fac_1001', id: 'FAC-2024-1001', name: 'Prof. Sunita Mehta', email: 'faculty@university.edu', role: 'faculty', department: 'Department of Computer Engineering' },
+            { uid: 'usr_fac_1002', id: 'FAC-2024-1002', name: 'Dr. Vikram Joshi', email: 'vikram.j@university.edu', role: 'faculty', department: 'Department of Computer Engineering' },
+            { uid: 'usr_hod_bba_1', id: 'HOD-BBA-01', name: 'Dr. Meera Sen', email: 'meera.sen@university.edu', role: 'hod', department: 'Department of Business Administration' },
+            { uid: 'usr_hod_mba_1', id: 'HOD-MBA-01', name: 'Dr. Rajesh Patil', email: 'rajesh.patil@university.edu', role: 'hod', department: 'School of Management & Business Studies' }
+          ];
+        }
+
+        renderDepartments();
+        renderAcademicYears();
+        renderSemesters();
+      } catch (err) {
+        if (window.UI) UI.showToast('error', 'Failed to load structure', err.message);
+      }
+    }
+
+    function switchTab(tab) {
+      activeTab = tab;
+      document.getElementById('tab-btn-depts').classList.toggle('active', tab === 'departments');
+      document.getElementById('tab-btn-years').classList.toggle('active', tab === 'years');
+      document.getElementById('tab-btn-semesters').classList.toggle('active', tab === 'semesters');
+
+      document.getElementById('section-departments').style.display = tab === 'departments' ? 'block' : 'none';
+      document.getElementById('section-years').style.display = tab === 'years' ? 'block' : 'none';
+      document.getElementById('section-semesters').style.display = tab === 'semesters' ? 'block' : 'none';
+
+      const btnText = document.getElementById('btn-action-text');
+      if (tab === 'departments') btnText.textContent = 'Create Department';
+      else if (tab === 'years') btnText.textContent = 'Add Academic Year';
+      else btnText.textContent = 'Add Semester';
+    }
+
+    function handleHeaderAction() {
+      if (activeTab === 'departments') openCreateDeptModal();
+      else if (activeTab === 'years') openCreateYearModal();
+      else openCreateSemModal();
+    }
+
+    // ── DEPARTMENTS RENDERING ──
+    function renderDepartments() {
+      const grid = document.getElementById('departments-grid');
+      if (!departments.length) {
+        grid.innerHTML = `<div style="grid-column:1/-1; padding:3rem; text-align:center; color:var(--text-muted);">No academic departments configured.</div>`;
+        return;
+      }
+
+      grid.innerHTML = departments.map(d => `
+        <div class="dept-card">
+          <div class="dept-card-header">
+            <div>
+              <div class="dept-card-title">${d.name}</div>
+              <div style="font-size:0.75rem; color:var(--text-tertiary); margin-top:0.2rem;">HOD: <strong style="color:var(--text-primary);">${d.hodName || 'Not Assigned'}</strong></div>
+            </div>
+            <span class="dept-card-code">${d.code}</span>
+          </div>
+
+          <div class="dept-card-body">
+            <div class="dept-stat-row">
+              <span class="dept-stat-label">Enrolled Students</span>
+              <span class="dept-stat-val">${d.studentCount || 0}</span>
+            </div>
+            <div class="dept-stat-row">
+              <span class="dept-stat-label">Active Faculty</span>
+              <span class="dept-stat-val">${d.facultyCount || 0}</span>
+            </div>
+            <div class="dept-stat-row">
+              <span class="dept-stat-label">Courses / Programs</span>
+              <span class="dept-stat-val">${d.coursesCount || 1}</span>
+            </div>
+            <div class="dept-stat-row">
+              <span class="dept-stat-label">Avg Attendance</span>
+              <span class="dept-stat-val" style="color:${(d.avgAttendance || 85) >= 85 ? '#16A34A' : '#D97706'}; font-weight:700;">${d.avgAttendance || 85.0}%</span>
+            </div>
+            <div class="dept-stat-row">
+              <span class="dept-stat-label">Avg GPA Performance</span>
+              <span class="dept-stat-val" style="color:#7C3AED; font-weight:700;">${(d.avgGpa || 8.0).toFixed(2)} / 10</span>
+            </div>
+          </div>
+
+          <div class="dept-card-footer">
+            <button type="button" class="btn-sm-action" onclick="viewDeptDetails('${d.id}')">View Details</button>
+            <button type="button" class="btn-sm-action" onclick="openAssignHodModal('${d.id}')">Assign HOD</button>
+            <button type="button" class="btn-sm-action" onclick="openEditDeptModal('${d.id}')">Edit</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // ── ACADEMIC YEARS RENDERING ──
+    function renderAcademicYears() {
+      const tbody = document.getElementById('years-tbody');
+      tbody.innerHTML = academicYears.map(y => `
+        <tr>
+          <td><strong style="color:var(--text-primary); font-size:0.9375rem;">${y.name}</strong></td>
+          <td>${y.startDate} to ${y.endDate}</td>
+          <td>${Number(y.totalStudents || 2180).toLocaleString()}</td>
+          <td>${y.totalCourses || 20} Programs</td>
+          <td>
+            ${y.isCurrent ? `<span class="active-badge">Active Current</span>` : `<span style="font-size:0.75rem; text-transform:capitalize; color:var(--text-tertiary);">${y.status}</span>`}
+          </td>
+          <td>
+            ${!y.isCurrent ? `<button type="button" class="btn-sm-action" onclick="handleSetActiveYear('${y.id}', '${y.name}')">Set Active Period</button>` : `<span style="font-size:0.75rem; color:#16A34A; font-weight:700;">Active</span>`}
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    // ── SEMESTERS RENDERING ──
+    function renderSemesters() {
+      const tbody = document.getElementById('semesters-tbody');
+      tbody.innerHTML = semesters.map(s => `
+        <tr>
+          <td><strong style="color:var(--text-primary);">Semester ${s.number}</strong></td>
+          <td>${s.name}</td>
+          <td>${s.academicYear}</td>
+          <td>${s.startDate} – ${s.endDate}</td>
+          <td>
+            ${s.isCurrent ? `<span class="active-badge">Current Active</span>` : `<span style="font-size:0.75rem; color:var(--text-tertiary); text-transform:capitalize;">${s.status}</span>`}
+          </td>
+          <td>
+            ${!s.isCurrent ? `<button type="button" class="btn-sm-action" onclick="handleSetActiveSemester('${s.id}', '${s.name}')">Set Current Sem</button>` : `<span style="font-size:0.75rem; color:#16A34A; font-weight:700;">Active</span>`}
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    async function handleSetActiveYear(yearId, yearName) {
+      const confirmChange = confirm(`⚠️ CHANGE ACTIVE ACADEMIC YEAR\n\nAre you sure you want to switch the university active academic period to "${yearName}"?\nAll course rosters, attendance logs, and exam portals will align with this period.`);
+      if (!confirmChange) return;
+
+      try {
+        await AdminService.setActiveAcademicYear(yearId);
+        if (window.UI) UI.showToast('success', 'Academic Year Updated', `Active platform academic year switched to ${yearName}`);
+        await loadAcademicData();
+      } catch (err) {
+        if (window.UI) UI.showToast('error', 'Failed to update academic year', err.message);
+      }
+    }
+
+    async function handleSetActiveSemester(semId, semName) {
+      const confirmChange = confirm(`⚠️ CHANGE CURRENT ACTIVE SEMESTER\n\nAre you sure you want to activate "${semName}"?\nTimetables and active student assessments will transition to this semester.`);
+      if (!confirmChange) return;
+
+      try {
+        await AdminService.setActiveSemester(semId);
+        if (window.UI) UI.showToast('success', 'Active Semester Updated', `${semName} is now the active operational semester.`);
+        await loadAcademicData();
+      } catch (err) {
+        if (window.UI) UI.showToast('error', 'Failed to update semester', err.message);
+      }
+    }
+
+    // ── DEPT MODAL ACTIONS ──
+    function openCreateDeptModal() {
+      document.getElementById('dept-form').reset();
+      document.getElementById('form-dept-id').value = '';
+      document.getElementById('dept-modal-title').textContent = 'Create Academic Department';
+      const m = document.getElementById('dept-modal');
+      m.classList.add('open', 'active');
+    }
+
+    function openEditDeptModal(id) {
+      const d = departments.find(x => x.id === id || x.code === id);
+      if (!d) return;
+
+      document.getElementById('form-dept-id').value = d.id;
+      document.getElementById('form-dept-name').value = d.name;
+      document.getElementById('form-dept-code').value = d.code;
+      document.getElementById('form-dept-duration').value = d.durationYears || 4;
+      document.getElementById('form-dept-hod').value = d.hodName && d.hodName !== 'Not Assigned' ? d.hodName : '';
+      document.getElementById('form-dept-hodemail').value = d.hodEmail || '';
+      document.getElementById('form-dept-status').value = d.status || 'active';
+      document.getElementById('dept-modal-title').textContent = `Edit Department: ${d.name}`;
+      const m = document.getElementById('dept-modal');
+      m.classList.add('open', 'active');
+    }
+
+    function closeDeptModal() {
+      const m = document.getElementById('dept-modal');
+      m.classList.remove('open', 'active');
+    }
+
+    async function handleDeptFormSubmit(e) {
+      e.preventDefault();
+      const id = document.getElementById('form-dept-id').value;
+      const name = document.getElementById('form-dept-name').value.trim();
+      const code = document.getElementById('form-dept-code').value.trim().toUpperCase();
+      const durationYears = document.getElementById('form-dept-duration').value;
+      const hodName = document.getElementById('form-dept-hod').value.trim() || 'Not Assigned';
+      const hodEmail = document.getElementById('form-dept-hodemail').value.trim();
+      const status = document.getElementById('form-dept-status').value;
+
+      try {
+        if (id) {
+          await AdminService.updateDepartment(id, { name, code, durationYears, hodName, hodEmail, status });
+          if (window.UI) UI.showToast('success', 'Department Updated', `Successfully saved changes for ${name}`);
+        } else {
+          await AdminService.createDepartment({ name, code, durationYears, hodName, hodEmail, status });
+          if (window.UI) UI.showToast('success', 'Department Created', `Successfully added ${name} (${code})`);
+        }
+        closeDeptModal();
+        await loadAcademicData();
+      } catch (err) {
+        if (window.UI) UI.showToast('error', 'Operation Failed', err.message);
+      }
+    }
+
+    // ── ASSIGN HOD MODAL ACTIONS ──
+    function openAssignHodModal(deptId) {
+      const d = departments.find(x => x.id === deptId || x.code === deptId);
+      if (!d) return;
+
+      document.getElementById('assign-dept-id').value = d.id;
+      document.getElementById('assign-dept-name').value = `${d.name} (${d.code})`;
+
+      const sel = document.getElementById('assign-hod-select');
+      let optionsHtml = `<option value="">-- Choose Candidate --</option>`;
+      
+      facultyUsers.forEach(f => {
+        const isCurrentHod = (d.hodEmail && f.email === d.hodEmail) || (d.hodName && f.name === d.hodName);
+        optionsHtml += `
+          <option value="${f.uid || f.id}" data-name="${f.name}" data-email="${f.email}" ${isCurrentHod ? 'selected' : ''}>
+            ${f.name} (${f.email}) — ${f.department || 'Faculty'}
+          </option>
+        `;
+      });
+
+      optionsHtml += `<option value="custom">+ Enter New / External Professor</option>`;
+      sel.innerHTML = optionsHtml;
+
+      document.getElementById('custom-hod-fields').style.display = 'none';
+      document.getElementById('custom-hod-name').value = '';
+      document.getElementById('custom-hod-email').value = '';
+
+      const m = document.getElementById('assign-hod-modal');
+      m.classList.add('open', 'active');
+    }
+
+    function handleHodSelectChange() {
+      const sel = document.getElementById('assign-hod-select');
+      const isCustom = sel.value === 'custom';
+      document.getElementById('custom-hod-fields').style.display = isCustom ? 'block' : 'none';
+    }
+
+    function closeAssignHodModal() {
+      const m = document.getElementById('assign-hod-modal');
+      m.classList.remove('open', 'active');
+    }
+
+    async function handleAssignHodSubmit(e) {
+      e.preventDefault();
+      const deptId = document.getElementById('assign-dept-id').value;
+      const sel = document.getElementById('assign-hod-select');
+
+      if (!sel.value) {
+        if (window.UI) UI.showToast('warning', 'Selection Required', 'Please choose a faculty member or enter a new candidate.');
+        return;
+      }
+
+      let hodUid = '';
+      let hodName = '';
+      let hodEmail = '';
+
+      if (sel.value === 'custom') {
+        hodName = document.getElementById('custom-hod-name').value.trim();
+        hodEmail = document.getElementById('custom-hod-email').value.trim();
+        if (!hodName) {
+          if (window.UI) UI.showToast('warning', 'Name Required', 'Please enter candidate full name.');
+          return;
+        }
+        hodUid = `usr_ext_${Date.now()}`;
+      } else {
+        const opt = sel.options[sel.selectedIndex];
+        if (!opt) return;
+        hodUid = sel.value;
+        hodName = opt.getAttribute('data-name') || opt.textContent.trim();
+        hodEmail = opt.getAttribute('data-email') || '';
+      }
+
+      try {
+        await AdminService.assignDepartmentHod(deptId, hodUid, hodName, hodEmail);
+        if (window.UI) UI.showToast('success', 'HOD Assigned', `Assigned ${hodName} as Head of Department`);
+        closeAssignHodModal();
+        await loadAcademicData();
+      } catch (err) {
+        if (window.UI) UI.showToast('error', 'Assignment Failed', err.message);
+      }
+    }
+
+    // ── ACADEMIC YEAR MODAL ACTIONS ──
+    function openCreateYearModal() {
+      document.getElementById('year-form').reset();
+      const m = document.getElementById('year-modal');
+      m.classList.add('open', 'active');
+    }
+
+    function closeYearModal() {
+      const m = document.getElementById('year-modal');
+      m.classList.remove('open', 'active');
+    }
+
+    async function handleYearFormSubmit(e) {
+      e.preventDefault();
+      const name = document.getElementById('year-form-name').value.trim();
+      const startDate = document.getElementById('year-form-start').value;
+      const endDate = document.getElementById('year-form-end').value;
+      const totalCourses = parseInt(document.getElementById('year-form-courses').value || '20', 10);
+      const status = document.getElementById('year-form-status').value;
+      const isCurrent = document.getElementById('year-form-is-current').checked;
+
+      try {
+        await AdminService.createAcademicYear({ name, startDate, endDate, totalCourses, status, isCurrent, totalStudents: 2200 });
+        if (window.UI) UI.showToast('success', 'Academic Year Created', `Successfully configured ${name}`);
+        closeYearModal();
+        await loadAcademicData();
+      } catch (err) {
+        if (window.UI) UI.showToast('error', 'Failed to create period', err.message);
+      }
+    }
+
+    // ── SEMESTER MODAL ACTIONS ──
+    function openCreateSemModal() {
+      document.getElementById('sem-form').reset();
+      const sel = document.getElementById('sem-form-year');
+      sel.innerHTML = academicYears.map(y => `<option value="${y.name}" ${y.isCurrent ? 'selected' : ''}>${y.name} (${y.status})</option>`).join('');
+      const m = document.getElementById('sem-modal');
+      m.classList.add('open', 'active');
+    }
+
+    function closeSemModal() {
+      const m = document.getElementById('sem-modal');
+      m.classList.remove('open', 'active');
+    }
+
+    async function handleSemFormSubmit(e) {
+      e.preventDefault();
+      const number = parseInt(document.getElementById('sem-form-num').value, 10);
+      const name = document.getElementById('sem-form-name').value.trim();
+      const academicYear = document.getElementById('sem-form-year').value;
+      const startDate = document.getElementById('sem-form-start').value;
+      const endDate = document.getElementById('sem-form-end').value;
+      const status = document.getElementById('sem-form-status').value;
+      const isCurrent = document.getElementById('sem-form-is-current').checked;
+
+      try {
+        await AdminService.createSemester({ number, name, academicYear, startDate, endDate, status, isCurrent });
+        if (window.UI) UI.showToast('success', 'Semester Created', `Added ${name} successfully.`);
+        closeSemModal();
+        await loadAcademicData();
+      } catch (err) {
+        if (window.UI) UI.showToast('error', 'Failed to create semester', err.message);
+      }
+    }
+
+    // ── VIEW DETAILS MODAL ACTIONS ──
+    function viewDeptDetails(deptId) {
+      const d = departments.find(x => x.id === deptId || x.code === deptId);
+      if (!d) return;
+
+      const body = document.getElementById('dept-details-body');
+      body.innerHTML = `
+        <div style="background: linear-gradient(135deg, #FFFBEB, #FEF3C7); padding: 1.25rem; border-radius: 12px; border: 1px solid #FCD34D; margin-bottom: 1.25rem;">
+          <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+            <div>
+              <h3 style="font-size:1.15rem; font-weight:800; color:#92400E;">${d.name}</h3>
+              <div style="font-size:0.8125rem; color:#B45309; margin-top:0.2rem;">Department Code: <strong>${d.code}</strong> • Duration: ${d.durationYears || 4} Years</div>
+            </div>
+            <span class="active-badge" style="text-transform:capitalize;">${d.status || 'Active'}</span>
+          </div>
+        </div>
+
+        <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem; margin-bottom: 1.25rem; text-align: center;">
+          <div style="background:#F8FAFC; padding:0.85rem; border-radius:10px; border:1px solid var(--border-default);">
+            <div style="font-size:1.3rem; font-weight:800; color:var(--text-primary);">${d.studentCount || 0}</div>
+            <div style="font-size:0.6875rem; text-transform:uppercase; color:var(--text-tertiary); font-weight:700;">Students</div>
+          </div>
+          <div style="background:#F8FAFC; padding:0.85rem; border-radius:10px; border:1px solid var(--border-default);">
+            <div style="font-size:1.3rem; font-weight:800; color:var(--text-primary);">${d.facultyCount || 0}</div>
+            <div style="font-size:0.6875rem; text-transform:uppercase; color:var(--text-tertiary); font-weight:700;">Faculty</div>
+          </div>
+          <div style="background:#F8FAFC; padding:0.85rem; border-radius:10px; border:1px solid var(--border-default);">
+            <div style="font-size:1.3rem; font-weight:800; color:#7C3AED;">${(d.avgGpa || 8.0).toFixed(2)}</div>
+            <div style="font-size:0.6875rem; text-transform:uppercase; color:var(--text-tertiary); font-weight:700;">Avg CGPA</div>
+          </div>
+        </div>
+
+        <div style="font-size:0.8125rem; display:flex; flex-direction:column; gap:0.65rem; background:#F8FAFC; padding:1rem; border-radius:10px; border:1px solid var(--border-default);">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <span style="color:var(--text-tertiary);">Assigned HOD</span>
+            <strong style="color:var(--text-primary);">${d.hodName || 'Not Assigned'}</strong>
+          </div>
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <span style="color:var(--text-tertiary);">HOD Official Email</span>
+            <span style="color:var(--text-secondary);">${d.hodEmail || 'N/A'}</span>
+          </div>
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <span style="color:var(--text-tertiary);">Overall Attendance</span>
+            <strong style="color:#16A34A;">${d.avgAttendance || 85.0}%</strong>
+          </div>
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <span style="color:var(--text-tertiary);">Total Semester Cycles</span>
+            <span style="color:var(--text-primary);">${d.totalSemesters || 8} Semesters</span>
+          </div>
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <span style="color:var(--text-tertiary);">Active Subjects Catalog</span>
+            <span style="color:var(--text-primary);">${d.activeSubjects || 10} Subjects</span>
+          </div>
+        </div>
+      `;
+
+      const footer = document.getElementById('dept-details-footer');
+      footer.innerHTML = `
+        <button type="button" class="btn-sm-action" onclick="closeDeptDetailsModal(); openAssignHodModal('${d.id}')">Assign / Change HOD</button>
+        <button type="button" class="btn-sm-action" onclick="closeDeptDetailsModal(); openEditDeptModal('${d.id}')">Edit Department</button>
+        <button type="button" class="btn-primary-admin" onclick="closeDeptDetailsModal()">Close</button>
+      `;
+
+      const m = document.getElementById('dept-details-modal');
+      m.classList.add('open', 'active');
+    }
+
+    function closeDeptDetailsModal() {
+      const m = document.getElementById('dept-details-modal');
+      m.classList.remove('open', 'active');
+    }
   </script>
 </body>
 </html>

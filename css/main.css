@@ -864,9 +864,11 @@ input[type="checkbox"]:checked+.checkbox-custom::after {
   padding: 1rem;
 }
 
-.modal-overlay.active {
-  opacity: 1;
-  visibility: visible;
+.modal-overlay.active,
+.modal-overlay.open {
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
 }
 
 .modal-dialog {

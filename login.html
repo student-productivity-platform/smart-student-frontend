@@ -64,20 +64,20 @@
           <div class="demo-bar-label">Quick-Fill Demo Account:</div>
           <div class="demo-chip-group">
             <button type="button" class="demo-btn" id="demo-student-btn" data-email="student@university.edu"
-              data-pass="Student@2026">
+              data-pass="Student@2026" data-code="STUDENT-2026">
               student@university.edu
             </button>
             <button type="button" class="demo-btn" id="demo-student2-btn" data-email="riddhi.z@university.edu"
-              data-pass="Student@2026">
+              data-pass="Student@2026" data-code="STUDENT-2026">
               riddhi.z@university.edu
             </button>
             <button type="button" class="demo-btn" id="demo-faculty-btn" data-email="faculty@university.edu"
-              data-pass="Faculty@2026"
+              data-pass="Faculty@2026" data-code="FACULTY-2026"
               style="background: rgba(139, 92, 246, 0.12); border-color: #8B5CF6; color: #7C3AED; font-weight: 600;">
               faculty@university.edu (Prof. Sunita)
             </button>
             <button type="button" class="demo-btn" id="demo-hod-btn" data-email="hod@gmail.com"
-              data-pass="hod1234"
+              data-pass="hod1234" data-code="HOD-2026"
               style="background: rgba(124, 58, 237, 0.14); border-color: #7C3AED; color: #6D28D9; font-weight: 700;">
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="flex-shrink:0">
                 <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
@@ -85,7 +85,7 @@
               </svg>
               hod@gmail.com (HOD)
             </button>
-            <button type="button" class="demo-btn demo-btn--admin" id="demo-admin-btn" data-email="admin@university.edu" data-pass="Admin@2026">
+            <button type="button" class="demo-btn demo-btn--admin" id="demo-admin-btn" data-email="admin@university.edu" data-pass="Admin@2026" data-code="ADMIN-2026">
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="flex-shrink:0">
                 <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
               </svg>
@@ -122,7 +122,7 @@
           </div>
 
           <!-- Password Input Field -->
-          <div class="form-group-custom" style="margin-bottom: 0.75rem;">
+          <div class="form-group-custom">
             <label for="institutional-password" class="form-label-caps">PASSWORD</label>
             <div class="input-pill-wrapper">
               <input type="password" id="institutional-password" name="password" class="pill-input"
@@ -137,6 +137,22 @@
               </button>
             </div>
             <span id="password-error" class="field-error-msg">Please enter your password.</span>
+          </div>
+
+          <!-- Enter Code Input Field -->
+          <div class="form-group-custom" style="margin-bottom: 0.75rem;">
+            <label for="accessCode" class="form-label-caps">ENTER CODE</label>
+            <div class="input-pill-wrapper">
+              <input type="text" id="accessCode" name="accessCode" class="pill-input"
+                placeholder="Enter your access code" autocomplete="one-time-code" spellcheck="false" required>
+              <span class="password-toggle-pill" style="pointer-events: none; color: #94A3B8;" aria-hidden="true">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                  <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                </svg>
+              </span>
+            </div>
+            <span id="code-error" class="field-error-msg">Please enter your access code.</span>
           </div>
 
           <!-- Forgot Password Link -->
@@ -212,6 +228,7 @@
       const loginForm = document.getElementById('login-form');
       const emailInput = document.getElementById('institutional-email');
       const passwordInput = document.getElementById('institutional-password');
+      const codeInput = document.getElementById('accessCode');
       const submitBtn = document.getElementById('login-submit-btn');
       const btnText = document.getElementById('btn-text');
       const btnSpinner = document.getElementById('btn-spinner');
@@ -220,6 +237,7 @@
       const alertText = document.getElementById('login-alert-text');
       const emailError = document.getElementById('email-error');
       const passwordError = document.getElementById('password-error');
+      const codeError = document.getElementById('code-error');
       const togglePasswordBtn = document.getElementById('toggle-password');
 
       // Autofill remembered email if present
@@ -260,16 +278,25 @@
         hideAlert();
       });
 
+      codeInput.addEventListener('input', () => {
+        codeInput.classList.remove('has-error');
+        codeError.classList.remove('visible');
+        hideAlert();
+      });
+
       // Demo quick-fill buttons
       document.querySelectorAll('.demo-btn').forEach(btn => {
         btn.addEventListener('click', () => {
-          emailInput.value = btn.getAttribute('data-email');
-          passwordInput.value = btn.getAttribute('data-pass');
+          emailInput.value = btn.getAttribute('data-email') || '';
+          passwordInput.value = btn.getAttribute('data-pass') || '';
+          codeInput.value = btn.getAttribute('data-code') || '';
           hideAlert();
           emailInput.classList.remove('has-error');
           passwordInput.classList.remove('has-error');
+          codeInput.classList.remove('has-error');
           emailError.classList.remove('visible');
           passwordError.classList.remove('visible');
+          codeError.classList.remove('visible');
           UI.showToast('info', 'Credentials Loaded', `Selected ${btn.getAttribute('data-email')}`);
         });
       });
@@ -290,11 +317,14 @@
         hideAlert();
         emailError.classList.remove('visible');
         passwordError.classList.remove('visible');
+        codeError.classList.remove('visible');
         emailInput.classList.remove('has-error');
         passwordInput.classList.remove('has-error');
+        codeInput.classList.remove('has-error');
 
         const email = emailInput.value.trim();
         const password = passwordInput.value.trim();
+        const accessCode = codeInput.value.trim();
 
         let hasError = false;
         if (!email) {
@@ -316,6 +346,13 @@
           hasError = true;
         }
 
+        if (!accessCode) {
+          codeError.textContent = "Please enter your access code.";
+          codeError.classList.add('visible');
+          codeInput.classList.add('has-error');
+          hasError = true;
+        }
+
         if (hasError) return;
 
         // UI Loading State ("Logging in...")
@@ -324,7 +361,7 @@
         btnSpinner.classList.remove('hidden');
 
         try {
-          const user = await AuthService.login(email, password, true);
+          const user = await AuthService.login(email, password, accessCode, true);
 
           UI.showToast('success', 'Log In Successful', `Welcome back, ${user.name}`);
 
@@ -342,7 +379,17 @@
           }, 350);
 
         } catch (err) {
-          showAlert('Invalid credentials', err.message || 'The email or password you entered is incorrect. Please try again.');
+          const errorMsg = err.message || 'The email or password you entered is incorrect. Please try again.';
+          
+          if (errorMsg.includes('access code') || errorMsg.includes('expired') || errorMsg.includes('authorized')) {
+            codeError.textContent = errorMsg;
+            codeError.classList.add('visible');
+            codeInput.classList.add('has-error');
+            showAlert('Access Verification Error', errorMsg);
+          } else {
+            showAlert('Invalid credentials', errorMsg);
+          }
+
           submitBtn.disabled = false;
           btnText.textContent = "Log In";
           btnSpinner.classList.add('hidden');

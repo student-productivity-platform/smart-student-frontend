@@ -1768,8 +1768,11 @@
         }
       }
 
-      // Initial badge sync
+      // Initial badge sync and auto-invalidation listener
       updateGeminiStatusBadge();
+      window.addEventListener('gemini-key-invalidated', () => {
+        updateGeminiStatusBadge();
+      });
 
       const btnHeaderGeminiStatus = document.getElementById('btn-header-gemini-status');
       const openGeminiModal = async () => {

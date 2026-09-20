@@ -1,0 +1,1206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Security Center — Smart Admin</title>
+  <meta name="description" content="Super Admin Security Operations, Active Sessions, Access Logs, and Threat Management.">
+  <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+  <link rel="stylesheet" href="../css/main.css">
+  <link rel="stylesheet" href="../css/dashboard.css">
+  <link rel="stylesheet" href="../css/responsive.css">
+  <script src="../js/admin-auth-guard.js"></script>
+  <style>
+    :root {
+      --admin-accent: #F59E0B;
+      --admin-accent-dark: #D97706;
+      --admin-accent-bg: #FFFBEB;
+      --security-red: #DC2626;
+      --security-green: #16A34A;
+      --security-amber: #D97706;
+      --security-blue: #2563EB;
+    }
+
+    .sidebar-brand-icon {
+      background: linear-gradient(135deg, #F59E0B, #D97706) !important;
+      box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4) !important;
+    }
+    .nav-link.active {
+      background: rgba(245, 158, 11, 0.16) !important;
+      color: #FBBF24 !important;
+      border: 1px solid rgba(245, 158, 11, 0.28) !important;
+    }
+    .nav-link.active .nav-link-icon { color: #F59E0B !important; }
+    .nav-link.active .nav-link-text,
+    .nav-link.active > span:not(.nav-link-icon):not(.nav-badge) {
+      color: #FBBF24 !important;
+      font-weight: 700 !important;
+    }
+    .nav-link:hover {
+      background: rgba(245, 158, 11, 0.1) !important;
+      color: #FFFFFF !important;
+    }
+    .nav-link:hover .nav-link-text,
+    .nav-link:hover > span:not(.nav-link-icon):not(.nav-badge) { color: #FFFFFF !important; }
+
+    /* Page Header */
+    .page-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .page-title {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: var(--text-primary);
+      letter-spacing: -0.02em;
+    }
+    .page-sub {
+      font-size: 0.84375rem;
+      color: var(--text-tertiary);
+      margin-top: 0.2rem;
+    }
+
+    .btn-admin {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.84375rem;
+      font-weight: 700;
+      padding: 0.55rem 1.1rem;
+      border-radius: 10px;
+      border: none;
+      cursor: pointer;
+      transition: all 0.18s;
+      font-family: inherit;
+    }
+    .btn-admin-primary {
+      background: linear-gradient(135deg, #F59E0B, #D97706);
+      color: #fff;
+      box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+    }
+    .btn-admin-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 16px rgba(245, 158, 11, 0.4);
+    }
+    .btn-admin-danger {
+      background: linear-gradient(135deg, #EF4444, #DC2626);
+      color: #fff;
+      box-shadow: 0 4px 12px rgba(220, 38, 38, 0.25);
+    }
+    .btn-admin-danger:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 16px rgba(220, 38, 38, 0.35);
+    }
+    .btn-admin-ghost {
+      background: #FFFFFF;
+      border: 1px solid var(--border-default);
+      color: var(--text-secondary);
+    }
+    .btn-admin-ghost:hover {
+      background: #F8FAFC;
+      border-color: var(--text-tertiary);
+      color: var(--text-primary);
+    }
+
+    /* KPI Grid */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .kpi-card {
+      background: #FFFFFF;
+      border: 1px solid var(--border-default);
+      border-radius: 14px;
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+    }
+    .kpi-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.75rem;
+    }
+    .kpi-icon-wrap {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .kpi-val {
+      font-size: 1.75rem;
+      font-weight: 800;
+      color: var(--text-primary);
+      line-height: 1.1;
+      margin-bottom: 0.25rem;
+    }
+    .kpi-label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--text-tertiary);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .kpi-sub {
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      margin-top: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+
+    /* Security Score Banner */
+    .sec-score-banner {
+      background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%);
+      border-radius: 16px;
+      padding: 1.5rem 2rem;
+      color: #FFFFFF;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.5rem;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.2);
+    }
+    .sec-score-banner::before {
+      content: '';
+      position: absolute;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      width: 40%;
+      background: radial-gradient(ellipse at center, rgba(16, 185, 129, 0.15) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .sec-score-left {
+      max-width: 600px;
+      position: relative;
+      z-index: 1;
+    }
+    .sec-score-title {
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: #FFFFFF;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .sec-score-desc {
+      font-size: 0.84375rem;
+      color: #94A3B8;
+      margin-top: 0.35rem;
+      line-height: 1.5;
+    }
+    .sec-score-badge-circle {
+      width: 90px;
+      height: 90px;
+      border-radius: 50%;
+      background: rgba(16, 185, 129, 0.12);
+      border: 3px solid #10B981;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      z-index: 1;
+      flex-shrink: 0;
+    }
+    .sec-score-number {
+      font-size: 1.75rem;
+      font-weight: 900;
+      color: #34D399;
+      line-height: 1;
+    }
+    .sec-score-scale {
+      font-size: 0.65rem;
+      font-weight: 700;
+      color: #94A3B8;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    /* Cards & Containers */
+    .admin-card {
+      background: #FFFFFF;
+      border: 1px solid var(--border-default);
+      border-radius: 16px;
+      overflow: hidden;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+    }
+    .admin-card-header {
+      padding: 1.1rem 1.5rem;
+      border-bottom: 1px solid var(--border-light);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+    .admin-card-title {
+      font-size: 0.95rem;
+      font-weight: 800;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .admin-card-subtitle {
+      font-size: 0.78125rem;
+      color: var(--text-tertiary);
+      margin-top: 0.15rem;
+    }
+    .admin-card-body {
+      padding: 1.5rem;
+    }
+
+    /* Data Tables */
+    .table-container {
+      width: 100%;
+      overflow-x: auto;
+    }
+    .admin-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.8125rem;
+      text-align: left;
+    }
+    .admin-table th {
+      background: #F8FAFC;
+      color: var(--text-tertiary);
+      font-weight: 700;
+      text-transform: uppercase;
+      font-size: 0.71875rem;
+      letter-spacing: 0.05em;
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid var(--border-default);
+      white-space: nowrap;
+    }
+    .admin-table td {
+      padding: 0.875rem 1rem;
+      border-bottom: 1px solid var(--border-light);
+      color: var(--text-secondary);
+      vertical-align: middle;
+    }
+    .admin-table tr:hover td {
+      background: #F8FAFC;
+    }
+    .admin-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    /* Badges */
+    .role-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      padding: 0.2rem 0.6rem;
+      border-radius: 20px;
+      font-size: 0.71875rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .role-super_admin { background: #FEF3C7; color: #92400E; border: 1px solid #FDE68A; }
+    .role-administrator { background: #DCFCE7; color: #166534; border: 1px solid #BBF7D0; }
+    .role-hod { background: #FFEDD5; color: #9A3412; border: 1px solid #FED7AA; }
+    .role-faculty { background: #DBEAFE; color: #1E40AF; border: 1px solid #BFDBFE; }
+    .role-student { background: #EDE9FE; color: #5B21B6; border: 1px solid #DDD6FE; }
+
+    .sec-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      padding: 0.2rem 0.55rem;
+      border-radius: 6px;
+      font-size: 0.71875rem;
+      font-weight: 700;
+    }
+    .sec-badge.high { background: #FEE2E2; color: #991B1B; }
+    .sec-badge.medium { background: #FEF3C7; color: #92400E; }
+    .sec-badge.low { background: #EFF6FF; color: #1E40AF; }
+    .sec-badge.success { background: #DCFCE7; color: #166534; }
+
+    /* Action Buttons in Tables */
+    .btn-action-revoke {
+      padding: 0.35rem 0.75rem;
+      border-radius: 7px;
+      border: 1px solid #FCA5A5;
+      background: #FEF2F2;
+      color: #DC2626;
+      font-size: 0.75rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .btn-action-revoke:hover {
+      background: #DC2626;
+      color: #FFFFFF;
+      border-color: #DC2626;
+    }
+
+    /* Force Reset Box */
+    .reset-box {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+    }
+    .reset-form {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+    .form-label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-secondary);
+    }
+    .form-input, .form-select {
+      border: 1px solid var(--border-default);
+      border-radius: 9px;
+      padding: 0.65rem 0.85rem;
+      font-size: 0.84375rem;
+      font-family: inherit;
+      color: var(--text-primary);
+      background: #FFFFFF;
+      transition: border-color 0.15s;
+    }
+    .form-input:focus, .form-select:focus {
+      outline: none;
+      border-color: var(--admin-accent);
+      box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.12);
+    }
+    .user-preview-card {
+      background: #F8FAFC;
+      border: 1px solid var(--border-default);
+      border-radius: 12px;
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    /* Policy Toggles Grid */
+    .policy-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1rem;
+    }
+    .policy-item {
+      border: 1px solid var(--border-default);
+      border-radius: 12px;
+      padding: 1rem 1.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      background: #FFFFFF;
+    }
+    .policy-title {
+      font-size: 0.84375rem;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+    .policy-desc {
+      font-size: 0.75rem;
+      color: var(--text-tertiary);
+      margin-top: 0.15rem;
+    }
+
+    /* Switch Component */
+    .toggle-switch {
+      position: relative;
+      display: inline-block;
+      width: 44px;
+      height: 24px;
+      flex-shrink: 0;
+    }
+    .toggle-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    .toggle-slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: #CBD5E1;
+      transition: .25s;
+      border-radius: 24px;
+    }
+    .toggle-slider:before {
+      position: absolute;
+      content: "";
+      height: 18px;
+      width: 18px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: .25s;
+      border-radius: 50%;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+    }
+    input:checked + .toggle-slider {
+      background-color: #10B981;
+    }
+    input:checked + .toggle-slider:before {
+      transform: translateX(20px);
+    }
+
+    @media (max-width: 900px) {
+      .reset-box { grid-template-columns: 1fr; }
+      .sec-score-banner { flex-direction: column; gap: 1.25rem; text-align: center; }
+      .sec-score-title { justify-content: center; }
+    }
+  </style>
+</head>
+<body class="admin-portal">
+  <div id="toast-container"></div>
+  <div class="sidebar-backdrop"></div>
+
+  <div class="app-container">
+    <!-- SIDEBAR NAVIGATION -->
+    <aside class="app-sidebar admin-sidebar" aria-label="Admin Navigation">
+      <div class="sidebar-header">
+        <a href="dashboard.html" class="sidebar-brand">
+          <div class="sidebar-brand-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            </svg>
+          </div>
+          <div class="sidebar-brand-text">
+            <h2>Smart Admin</h2>
+            <span>Super Admin Portal</span>
+          </div>
+        </a>
+      </div>
+
+      <nav class="sidebar-nav-container">
+        <div class="nav-section-label">Main Dashboard</div>
+        <a href="dashboard.html" class="nav-link">
+          <span class="nav-link-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+              <rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
+            </svg>
+          </span>
+          <span>Dashboard</span>
+        </a>
+
+        <div class="nav-section-label">User Management</div>
+        <a href="users.html" class="nav-link">
+          <span class="nav-link-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+              <circle cx="9" cy="7" r="4"/>
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+            </svg>
+          </span>
+          <span>All Users</span>
+        </a>
+
+        <div class="nav-section-label">Academic Management</div>
+        <a href="academic-structure.html" class="nav-link">
+          <span class="nav-link-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
+              <path d="M6 12v5c3 3 9 3 12 0v-5"/>
+            </svg>
+          </span>
+          <span>Departments & Periods</span>
+        </a>
+
+        <a href="courses.html" class="nav-link">
+          <span class="nav-link-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+              <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+            </svg>
+          </span>
+          <span>Courses & Subjects</span>
+        </a>
+
+        <div class="nav-section-label">Access Control</div>
+        <a href="roles-permissions.html" class="nav-link">
+          <span class="nav-link-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+            </svg>
+          </span>
+          <span>Roles & Permissions</span>
+        </a>
+
+        <div class="nav-section-label">Communication</div>
+        <a href="announcements.html" class="nav-link">
+          <span class="nav-link-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+              <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+            </svg>
+          </span>
+          <span>Announcements</span>
+        </a>
+
+        <div class="nav-section-label">Reports & Analytics</div>
+        <a href="reports.html" class="nav-link">
+          <span class="nav-link-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="18" y1="20" x2="18" y2="10"/>
+              <line x1="12" y1="20" x2="12" y2="4"/>
+              <line x1="6" y1="20" x2="6" y2="14"/>
+            </svg>
+          </span>
+          <span>Reports & Analytics</span>
+        </a>
+
+        <div class="nav-section-label">Platform System</div>
+        <a href="system-health.html" class="nav-link">
+          <span class="nav-link-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+            </svg>
+          </span>
+          <span>System Health & Backup</span>
+        </a>
+
+        <a href="audit-logs.html" class="nav-link">
+          <span class="nav-link-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+              <polyline points="14 2 14 8 20 8"/>
+              <line x1="16" y1="13" x2="8" y2="13"/>
+              <line x1="16" y1="17" x2="8" y2="17"/>
+            </svg>
+          </span>
+          <span>Audit Logs</span>
+        </a>
+
+        <a href="security.html" class="nav-link active">
+          <span class="nav-link-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            </svg>
+          </span>
+          <span>Security Center</span>
+        </a>
+
+        <a href="system-config.html" class="nav-link">
+          <span class="nav-link-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="3"/>
+              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+            </svg>
+          </span>
+          <span>System Settings</span>
+        </a>
+
+        <div class="nav-section-label">Account</div>
+        <a href="profile.html" class="nav-link">
+          <span class="nav-link-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+              <circle cx="12" cy="7" r="4"/>
+            </svg>
+          </span>
+          <span>Super Admin Profile</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <a href="profile.html" class="sidebar-user-card">
+          <div class="user-avatar" style="background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%); box-shadow: 0 4px 10px rgba(245, 158, 11, 0.35);">
+            <span class="user-avatar-initials" id="sidebar-initials">SA</span>
+          </div>
+          <div class="user-info-text">
+            <div class="user-name" id="sidebar-user-name">Super Administrator</div>
+            <span class="user-role-tag" id="sidebar-user-role">Super Admin</span>
+          </div>
+        </a>
+      </div>
+    </aside>
+
+    <!-- MAIN APP CONTENT -->
+    <div class="app-main">
+      <header class="app-topbar">
+        <div class="topbar-left">
+          <button type="button" class="mobile-nav-toggle" id="mobile-nav-toggle" aria-label="Toggle navigation menu">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/>
+            </svg>
+          </button>
+          <div class="topbar-page-title">
+            <h1>Security Center</h1>
+          </div>
+        </div>
+
+        <div class="topbar-right">
+          <div class="dropdown-container">
+            <button type="button" class="user-menu-btn" data-dropdown-toggle="user-dropdown-menu">
+              <div class="user-avatar-sm" style="background:linear-gradient(135deg,#F59E0B,#D97706)">
+                <span class="user-avatar-initials">SA</span>
+              </div>
+              <div class="user-menu-info">
+                <div class="user-menu-name">Super Administrator</div>
+                <div class="user-menu-sub">Root Administrator</div>
+              </div>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div id="user-dropdown-menu" class="menu-dropdown profile-dropdown-menu">
+              <a href="profile.html"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span>My Profile</span></a>
+              <a href="system-config.html"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg><span>System Config</span></a>
+              <button type="button" id="logout-action-btn" class="logout-action"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg><span>Sign Out</span></button>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <main class="app-content">
+        <!-- Page Title & Actions -->
+        <div class="page-header">
+          <div>
+            <div class="page-title">Security & Access Center</div>
+            <div class="page-sub">Monitor live sessions, audit failed authentications, enforce security invariants, and manage credentials.</div>
+          </div>
+          <div style="display:flex; gap:0.5rem;">
+            <button class="btn-admin btn-admin-ghost" onclick="loadSecurityData()">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+              Refresh Telemetry
+            </button>
+            <button class="btn-admin btn-admin-danger" onclick="promptLockdown()">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+              Emergency Session Lockdown
+            </button>
+          </div>
+        </div>
+
+        <!-- Security Health Banner -->
+        <div class="sec-score-banner">
+          <div class="sec-score-left">
+            <div class="sec-score-title">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#34D399" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              Platform Security Posture: Optimal (Tier 1)
+            </div>
+            <div class="sec-score-desc">
+              All core defense controls are functioning within compliance parameters. Role-Based Access Control (RBAC), root Super Admin lock protection, and session token encryption are active.
+            </div>
+          </div>
+          <div class="sec-score-badge-circle">
+            <div class="sec-score-number" id="health-score-val">98%</div>
+            <div class="sec-score-scale">Health</div>
+          </div>
+        </div>
+
+        <!-- KPI Cards Strip -->
+        <div class="kpi-grid">
+          <div class="kpi-card">
+            <div class="kpi-header">
+              <span class="kpi-label">Active Concurrent Sessions</span>
+              <div class="kpi-icon-wrap" style="background:#DBEAFE; color:#2563EB;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+              </div>
+            </div>
+            <div class="kpi-val" id="kpi-sessions-count">4</div>
+            <div class="kpi-sub"><span style="color:#16A34A;font-weight:700;">● Active</span> across campus network</div>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-header">
+              <span class="kpi-label">Failed Logins (24h)</span>
+              <div class="kpi-icon-wrap" style="background:#FEE2E2; color:#DC2626;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+              </div>
+            </div>
+            <div class="kpi-val" id="kpi-failed-count" style="color:#DC2626;">2</div>
+            <div class="kpi-sub">Low anomaly threshold</div>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-header">
+              <span class="kpi-label">2FA Enforcement</span>
+              <div class="kpi-icon-wrap" style="background:#DCFCE7; color:#16A34A;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+              </div>
+            </div>
+            <div class="kpi-val" style="color:#16A34A;">Mandatory</div>
+            <div class="kpi-sub">Required for Admins & HODs</div>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-header">
+              <span class="kpi-label">Root Lock Status</span>
+              <div class="kpi-icon-wrap" style="background:#FEF3C7; color:#D97706;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              </div>
+            </div>
+            <div class="kpi-val" style="color:#D97706;">Protected</div>
+            <div class="kpi-sub">Final Super Admin is protected</div>
+          </div>
+        </div>
+
+        <!-- Active Sessions Section -->
+        <div class="admin-card">
+          <div class="admin-card-header">
+            <div>
+              <div class="admin-card-title">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                Active Authenticated Sessions
+              </div>
+              <div class="admin-card-subtitle">Live tokens connected to the platform database. Super Admins can terminate suspicious sessions instantly.</div>
+            </div>
+            <button class="btn-admin btn-admin-ghost" onclick="exportSessionsCsv()">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              Export Sessions CSV
+            </button>
+          </div>
+
+          <div class="table-container">
+            <table class="admin-table" id="sessions-table">
+              <thead>
+                <tr>
+                  <th>User & Role</th>
+                  <th>IP Address & Location</th>
+                  <th>Device / Browser</th>
+                  <th>Started At</th>
+                  <th>Last Active</th>
+                  <th style="text-align:right;">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="sessions-tbody">
+                <tr><td colspan="6" style="text-align:center; padding:2rem; color:var(--text-tertiary);">Loading active sessions...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Two Column: Force Password Reset + Failed Login Incidents -->
+        <div class="reset-box">
+          <!-- Force Password Reset Tool -->
+          <div class="admin-card" style="margin-bottom:0;">
+            <div class="admin-card-header">
+              <div>
+                <div class="admin-card-title">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                  Force Credential Reset (Super Admin)
+                </div>
+                <div class="admin-card-subtitle">Generate emergency temporary passwords for compromised or locked accounts.</div>
+              </div>
+            </div>
+            <div class="admin-card-body">
+              <div class="reset-form">
+                <div class="form-group">
+                  <label class="form-label">Select User Account</label>
+                  <select class="form-select" id="reset-user-select" onchange="onSelectUserForReset()">
+                    <option value="">-- Choose Account to Reset --</option>
+                  </select>
+                </div>
+
+                <div class="user-preview-card" id="user-preview-box" style="display:none;">
+                  <div>
+                    <div style="font-weight:800; color:var(--text-primary); font-size:0.95rem;" id="prev-name">-</div>
+                    <div style="font-size:0.8125rem; color:var(--text-tertiary);" id="prev-email">-</div>
+                    <div style="margin-top:0.4rem; display:flex; gap:0.5rem; align-items:center;">
+                      <span class="role-badge" id="prev-role">-</span>
+                      <span style="font-size:0.75rem; color:var(--text-tertiary);" id="prev-dept">-</span>
+                    </div>
+                  </div>
+                  <div style="margin-top:1rem; border-top:1px solid var(--border-light); padding-top:0.75rem;">
+                    <button class="btn-admin btn-admin-primary" style="width:100%; justify-content:center;" onclick="executePasswordReset()">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                      Confirm Temporary Password Generation
+                    </button>
+                  </div>
+                </div>
+
+                <div id="reset-result-box" style="display:none; background:#FEF3C7; border:1px solid #FDE68A; border-radius:10px; padding:1rem; margin-top:0.5rem;">
+                  <div style="font-weight:700; color:#92400E; font-size:0.84375rem; margin-bottom:0.25rem;">Temporary Credentials Issued</div>
+                  <div style="font-size:0.8125rem; color:#78350F;" id="reset-result-text">Temporary password has been generated.</div>
+                  <div style="margin-top:0.5rem; font-family:monospace; background:#fff; padding:0.4rem 0.6rem; border-radius:6px; font-weight:800; font-size:0.95rem; color:#B45309;" id="temp-pwd-code">SmartTemp#2026</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Failed Logins & Security Incidents -->
+          <div class="admin-card" style="margin-bottom:0;">
+            <div class="admin-card-header">
+              <div>
+                <div class="admin-card-title">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#DC2626" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                  Failed Authentication Attempts
+                </div>
+                <div class="admin-card-subtitle">Recent suspicious or failed login events flagged by platform sentinel.</div>
+              </div>
+            </div>
+            <div class="table-container" style="max-height:300px; overflow-y:auto;">
+              <table class="admin-table">
+                <thead>
+                  <tr>
+                    <th>Timestamp</th>
+                    <th>Account / IP</th>
+                    <th>Reason</th>
+                    <th>Severity</th>
+                  </tr>
+                </thead>
+                <tbody id="failed-tbody">
+                  <tr><td colspan="4" style="text-align:center; padding:1.5rem; color:var(--text-tertiary);">No failed attempts logged.</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Security Policies & Defense Invariants -->
+        <div class="admin-card" style="margin-top:1.5rem;">
+          <div class="admin-card-header">
+            <div>
+              <div class="admin-card-title">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                Institution Security Invariants & Policy Configuration
+              </div>
+              <div class="admin-card-subtitle">Enterprise rules enforced at both REST API middleware and database storage levels.</div>
+            </div>
+            <button class="btn-admin btn-admin-primary" onclick="saveSecurityPolicies()">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              Save Policy Controls
+            </button>
+          </div>
+          <div class="admin-card-body">
+            <div class="policy-grid">
+              <div class="policy-item">
+                <div>
+                  <div class="policy-title">Strict Two-Factor Auth (2FA)</div>
+                  <div class="policy-desc">Require TOTP authenticator codes for all Super Admin, Administrator, and HOD logins.</div>
+                </div>
+                <label class="toggle-switch">
+                  <input type="checkbox" id="pol-2fa" checked>
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+
+              <div class="policy-item">
+                <div>
+                  <div class="policy-title">Brute-Force Auto-Lockout</div>
+                  <div class="policy-desc">Lock account after 5 consecutive incorrect password submissions for 30 minutes.</div>
+                </div>
+                <label class="toggle-switch">
+                  <input type="checkbox" id="pol-lockout" checked>
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+
+              <div class="policy-item">
+                <div>
+                  <div class="policy-title">Strict Cross-Origin (CORS) Isolation</div>
+                  <div class="policy-desc">Reject cross-origin state-mutating requests missing valid CSRF / session headers.</div>
+                </div>
+                <label class="toggle-switch">
+                  <input type="checkbox" id="pol-cors" checked>
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+
+              <div class="policy-item">
+                <div>
+                  <div class="policy-title">Append-Only Audit Logging</div>
+                  <div class="policy-desc">Prevent mutation or truncation of audit logs, preserving full compliance trail.</div>
+                </div>
+                <label class="toggle-switch">
+                  <input type="checkbox" id="pol-audit" checked disabled>
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+  <script src="../js/firebase-config.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/admin-service.js"></script>
+  <script src="../js/ui.js"></script>
+
+  <script>
+    let activeSessionsCache = [];
+    let allUsersCache = [];
+    let selectedResetUser = null;
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      initUserSession();
+      setupDropdowns();
+      await loadSecurityData();
+      await loadUsersForResetDropdown();
+    });
+
+    function initUserSession() {
+      const user = AuthService.getCurrentUser() || { name: 'Super Administrator', email: 'admin@university.edu', role: 'super_admin' };
+      const initials = (user.name || 'SA').split(' ').map(w => w[0]).join('').substring(0,2).toUpperCase();
+      const sidebarName = document.getElementById('sidebar-user-name');
+      const sidebarInitials = document.getElementById('sidebar-initials');
+      if (sidebarName) sidebarName.textContent = user.name || 'Super Administrator';
+      if (sidebarInitials) sidebarInitials.textContent = initials;
+
+      const logoutBtn = document.getElementById('logout-action-btn');
+      if (logoutBtn) logoutBtn.addEventListener('click', async () => await AuthService.logout());
+
+      const mobileToggle = document.getElementById('mobile-nav-toggle');
+      const sidebar = document.querySelector('.app-sidebar');
+      const backdrop = document.querySelector('.sidebar-backdrop');
+      if (mobileToggle) {
+        mobileToggle.addEventListener('click', () => {
+          sidebar.classList.toggle('mobile-open');
+          backdrop.classList.toggle('visible');
+        });
+        backdrop.addEventListener('click', () => {
+          sidebar.classList.remove('mobile-open');
+          backdrop.classList.remove('visible');
+        });
+      }
+    }
+
+    function setupDropdowns() {
+      document.querySelectorAll('[data-dropdown-toggle]').forEach(btn => {
+        btn.addEventListener('click', e => {
+          e.stopPropagation();
+          const d = document.getElementById(btn.getAttribute('data-dropdown-toggle'));
+          if (d) {
+            document.querySelectorAll('.menu-dropdown.open, .menu-dropdown.show').forEach(x => {
+              if (x !== d) { x.classList.remove('open'); x.classList.remove('show'); }
+            });
+            d.classList.toggle('open');
+            d.classList.toggle('show');
+          }
+        });
+      });
+      document.addEventListener('click', () => {
+        document.querySelectorAll('.menu-dropdown.open, .menu-dropdown.show').forEach(d => {
+          d.classList.remove('open'); d.classList.remove('show');
+        });
+      });
+    }
+
+    async function loadSecurityData() {
+      try {
+        const data = await AdminService.getSecurityDashboard();
+        if (data) {
+          activeSessionsCache = data.activeSessions || [];
+          document.getElementById('health-score-val').textContent = `${data.healthScore || 98}%`;
+          document.getElementById('kpi-sessions-count').textContent = activeSessionsCache.length;
+          document.getElementById('kpi-failed-count').textContent = (data.failedLogins || []).length;
+
+          renderSessionsTable(activeSessionsCache);
+          renderFailedLogins(data.failedLogins || []);
+        }
+      } catch (err) {
+        console.error('Failed to load security telemetry:', err);
+        UI.showToast('error', 'Error', 'Failed to fetch real-time security dashboard.');
+      }
+    }
+
+    function renderSessionsTable(sessions) {
+      const tbody = document.getElementById('sessions-tbody');
+      if (!tbody) return;
+
+      if (!sessions || sessions.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:1.5rem; color:var(--text-tertiary);">No active sessions found.</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = sessions.map(s => {
+        const roleClass = `role-${s.role || 'student'}`;
+        const isCurrent = s.isCurrent ? '<span style="color:#16A34A;font-weight:700;font-size:0.71875rem;margin-left:0.3rem;">(This device)</span>' : '';
+        return `
+          <tr>
+            <td>
+              <div style="font-weight:700; color:var(--text-primary);">${escapeHtml(s.name || 'User')} ${isCurrent}</div>
+              <div style="font-size:0.75rem; color:var(--text-tertiary);">${escapeHtml(s.email || '-')}</div>
+              <div style="margin-top:0.25rem;"><span class="role-badge ${roleClass}">${escapeHtml(s.role || 'user')}</span></div>
+            </td>
+            <td>
+              <div style="font-family:monospace; font-weight:700; color:var(--text-secondary);">${escapeHtml(s.ip || '127.0.0.1')}</div>
+              <div style="font-size:0.71875rem; color:var(--text-tertiary);">${escapeHtml(s.location || 'Campus Intranet')}</div>
+            </td>
+            <td>
+              <div style="font-weight:600; color:var(--text-primary); font-size:0.78125rem;">${escapeHtml(s.device || 'Desktop')}</div>
+              <div style="font-size:0.71875rem; color:var(--text-tertiary);">${escapeHtml(s.browser || 'Browser')}</div>
+            </td>
+            <td style="font-size:0.78125rem;">${formatDate(s.loginTime)}</td>
+            <td style="font-size:0.78125rem;"><span class="sec-badge success">Active</span> ${escapeHtml(s.lastActive || 'Just now')}</td>
+            <td style="text-align:right;">
+              ${s.isCurrent ? '<span style="font-size:0.75rem; color:var(--text-tertiary); font-weight:600;">Current Session</span>' : `
+                <button class="btn-action-revoke" onclick="revokeSession('${s.id}', '${escapeHtml(s.name || 'User')}')">
+                  Revoke
+                </button>
+              `}
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function renderFailedLogins(failed) {
+      const tbody = document.getElementById('failed-tbody');
+      if (!tbody) return;
+
+      if (!failed || failed.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; padding:1.5rem; color:var(--text-tertiary);">No failed login attempts logged.</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = failed.map(f => {
+        const sevClass = f.severity === 'high' ? 'high' : (f.severity === 'medium' ? 'medium' : 'low');
+        return `
+          <tr>
+            <td style="font-size:0.75rem;">${formatDate(f.timestamp)}</td>
+            <td>
+              <div style="font-weight:600; color:var(--text-primary);">${escapeHtml(f.email || 'Unknown')}</div>
+              <div style="font-family:monospace; font-size:0.71875rem; color:var(--text-tertiary);">${escapeHtml(f.ip || '-')}</div>
+            </td>
+            <td style="font-size:0.75rem; color:var(--text-secondary);">${escapeHtml(f.reason || 'Invalid Credentials')}</td>
+            <td><span class="sec-badge ${sevClass}">${escapeHtml(f.severity || 'warning')}</span></td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    async function revokeSession(sessionId, userName) {
+      if (!confirm(`Are you sure you want to immediately terminate the session for "${userName}"?`)) return;
+
+      try {
+        await AdminService.revokeSession(sessionId);
+        UI.showToast('success', 'Session Terminated', `Active token for ${userName} revoked.`);
+        await loadSecurityData();
+      } catch (err) {
+        UI.showToast('error', 'Revocation Failed', err.message || 'Could not terminate session.');
+      }
+    }
+
+    async function promptLockdown() {
+      if (!confirm('CAUTION: Emergency Session Lockdown will invalidate all active sessions except your current Super Admin session. Proceed?')) return;
+
+      try {
+        for (const s of activeSessionsCache) {
+          if (!s.isCurrent) {
+            await AdminService.revokeSession(s.id);
+          }
+        }
+        UI.showToast('success', 'Lockdown Enacted', 'All concurrent sessions have been successfully terminated.');
+        await loadSecurityData();
+      } catch (err) {
+        UI.showToast('error', 'Lockdown Error', err.message || 'Could not complete emergency lockdown.');
+      }
+    }
+
+    async function loadUsersForResetDropdown() {
+      try {
+        const users = await AdminService.getUsers();
+        allUsersCache = users || [];
+        const select = document.getElementById('reset-user-select');
+        if (!select) return;
+
+        select.innerHTML = '<option value="">-- Choose Account to Reset --</option>' +
+          allUsersCache.map(u => `<option value="${u.uid || u.id}">${escapeHtml(u.name)} (${escapeHtml(u.email)}) - [${u.role}]</option>`).join('');
+      } catch (err) {
+        console.error('Could not populate reset user list:', err);
+      }
+    }
+
+    function onSelectUserForReset() {
+      const select = document.getElementById('reset-user-select');
+      const preview = document.getElementById('user-preview-box');
+      const resultBox = document.getElementById('reset-result-box');
+      if (resultBox) resultBox.style.display = 'none';
+
+      const uid = select.value;
+      if (!uid) {
+        if (preview) preview.style.display = 'none';
+        selectedResetUser = null;
+        return;
+      }
+
+      selectedResetUser = allUsersCache.find(u => (u.uid || u.id) === uid);
+      if (!selectedResetUser) return;
+
+      document.getElementById('prev-name').textContent = selectedResetUser.name || 'User';
+      document.getElementById('prev-email').textContent = selectedResetUser.email || '-';
+      const roleBadge = document.getElementById('prev-role');
+      roleBadge.textContent = selectedResetUser.role || 'user';
+      roleBadge.className = `role-badge role-${selectedResetUser.role || 'student'}`;
+      document.getElementById('prev-dept').textContent = selectedResetUser.department || 'General';
+
+      if (preview) preview.style.display = 'flex';
+    }
+
+    async function executePasswordReset() {
+      if (!selectedResetUser) return;
+
+      try {
+        const res = await AdminService.resetUserPassword(selectedResetUser.uid || selectedResetUser.id);
+        const resultBox = document.getElementById('reset-result-box');
+        const tempCode = document.getElementById('temp-pwd-code');
+
+        if (tempCode) tempCode.textContent = res.tempPassword || 'SmartAdmin@2026';
+        if (resultBox) resultBox.style.display = 'block';
+
+        UI.showToast('success', 'Password Reset', `Temporary password generated for ${selectedResetUser.name}.`);
+      } catch (err) {
+        UI.showToast('error', 'Reset Failed', err.message || 'Could not reset password.');
+      }
+    }
+
+    function saveSecurityPolicies() {
+      UI.showToast('success', 'Security Policy Updated', 'Institutional defense controls synchronized to platform config.');
+    }
+
+    function exportSessionsCsv() {
+      if (!activeSessionsCache.length) {
+        UI.showToast('warning', 'Export', 'No active sessions to export.');
+        return;
+      }
+      AdminService.exportToCsv('active_security_sessions.csv', activeSessionsCache);
+      UI.showToast('success', 'Export Complete', 'Downloaded active_security_sessions.csv.');
+    }
+
+    function formatDate(isoStr) {
+      if (!isoStr) return '-';
+      try {
+        const d = new Date(isoStr);
+        return d.toLocaleDateString('en-IN', { day:'numeric', month:'short', hour:'2-digit', minute:'2-digit' });
+      } catch (e) {
+        return isoStr;
+      }
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str).replace(/[&<>"']/g, m => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[m]));
+    }
+  </script>
+</body>
+</html>

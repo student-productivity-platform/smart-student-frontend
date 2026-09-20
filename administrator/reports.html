@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Platform Reports — Smart Admin</title>
-  <meta name="description" content="Platform-wide academic performance analytics and reports for Super Admin.">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reports & Analytics — Smart Admin</title>
+  <meta name="description" content="Comprehensive institutional analytics, student performance reports, attendance audits, user enrollment telemetry, and AI service usage metrics.">
   <link rel="icon" type="image/svg+xml" href="../favicon.svg">
   <link rel="stylesheet" href="../css/main.css">
   <link rel="stylesheet" href="../css/dashboard.css">
@@ -12,88 +13,128 @@
   <style>
     :root { --admin-accent:#F59E0B; --admin-accent-dark:#D97706; --admin-accent-bg:#FFFBEB; }
     .sidebar-brand-icon { background:linear-gradient(135deg,#F59E0B,#D97706)!important; box-shadow:0 4px 12px rgba(245,158,11,.4)!important; }
-    .nav-link.active { background:rgba(245,158,11,.14)!important; color:#F59E0B!important; }
+    .nav-link.active { background:rgba(245,158,11,.16)!important; color:#FBBF24!important; border:1px solid rgba(245,158,11,.28)!important; }
     .nav-link.active .nav-link-icon { color:#F59E0B!important; }
-    .nav-link:hover { background:rgba(245,158,11,.08)!important; }
-    .page-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:1.5rem; }
+    .nav-link.active .nav-link-text,
+    .nav-link.active > span:not(.nav-link-icon):not(.nav-badge) { color:#FBBF24!important; font-weight:700!important; }
+
+    .page-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:1.25rem; flex-wrap:wrap; gap:1rem; }
     .page-title { font-size:1.5rem; font-weight:800; color:var(--text-primary); letter-spacing:-.02em; }
     .page-sub { font-size:.84375rem; color:var(--text-tertiary); margin-top:.2rem; }
-    .btn-primary-admin { display:inline-flex; align-items:center; gap:.4rem; background:linear-gradient(135deg,#F59E0B,#D97706); color:#fff; font-size:.84375rem; font-weight:700; padding:.6rem 1.1rem; border-radius:10px; border:none; cursor:pointer; transition:all .18s; box-shadow:0 4px 12px rgba(245,158,11,.3); }
 
-    /* KPI row */
-    .rpt-kpis { display:grid; grid-template-columns:repeat(4,1fr); gap:1rem; margin-bottom:1.5rem; }
-    .rpt-kpi { background:#fff; border:1px solid var(--border-default); border-radius:14px; padding:1.25rem; }
-    .rpt-kpi-val { font-size:2rem; font-weight:800; color:var(--text-primary); letter-spacing:-.03em; }
-    .rpt-kpi-lbl { font-size:.75rem; font-weight:600; color:var(--text-tertiary); text-transform:uppercase; letter-spacing:.06em; margin-top:.25rem; }
-    .rpt-kpi-delta { font-size:.75rem; font-weight:600; margin-top:.35rem; }
-    .delta-up { color:#16A34A; } .delta-down { color:#DC2626; }
+    /* Tabs */
+    .section-tabs-bar {
+      display: flex; gap: 0.35rem; background: #F1F5F9; padding: 0.3rem; border-radius: 12px; margin-bottom: 1.5rem; width: fit-content; flex-wrap: wrap;
+    }
+    .sec-tab-btn {
+      padding: 0.5rem 1.15rem; border-radius: 9px; border: none; background: transparent; font-size: 0.84375rem; font-weight: 700; color: var(--text-tertiary); cursor: pointer; transition: all 0.18s; font-family: inherit; display: flex; align-items: center; gap: 0.45rem;
+    }
+    .sec-tab-btn.active { background: #FFFFFF; color: var(--text-primary); box-shadow: 0 2px 6px rgba(15,23,42,0.08); }
 
-    /* 2-col */
-    .rpt-grid { display:grid; grid-template-columns:1fr 1fr; gap:1.25rem; margin-bottom:1.25rem; }
-    .rpt-card { background:#fff; border:1px solid var(--border-default); border-radius:16px; overflow:hidden; }
-    .rpt-card-header { padding:1rem 1.25rem; border-bottom:1px solid var(--border-light); display:flex; align-items:center; justify-content:space-between; }
-    .rpt-card-title { font-size:.9375rem; font-weight:700; color:var(--text-primary); display:flex; align-items:center; gap:.5rem; }
-    .rpt-card-body { padding:1.25rem; }
+    /* Filters Bar */
+    .filters-bar { display:flex; gap:0.75rem; align-items:center; margin-bottom:1.25rem; flex-wrap:wrap; }
+    .filter-select { height:38px; border:1px solid var(--border-default); border-radius:9px; padding:0 0.75rem; font-size:0.8125rem; font-family:inherit; color:var(--text-secondary); background:#FFFFFF; cursor:pointer; }
+    .filter-select:focus { outline:none; border-color:var(--admin-accent); }
 
-    /* Bar chart */
-    .bar-chart { display:flex; flex-direction:column; gap:.75rem; }
-    .bar-row { display:flex; align-items:center; gap:.75rem; }
-    .bar-label { font-size:.78125rem; font-weight:600; color:var(--text-secondary); width:120px; flex-shrink:0; }
-    .bar-track { flex:1; height:10px; background:#E2E8F0; border-radius:5px; overflow:hidden; }
-    .bar-fill { height:100%; border-radius:5px; transition:width 1.2s cubic-bezier(.25,1,.5,1); }
-    .bar-pct { font-size:.75rem; font-weight:700; color:var(--text-tertiary); width:36px; text-align:right; }
+    /* Report Summary KPI Cards */
+    .report-kpis { display:grid; grid-template-columns:repeat(4,1fr); gap:1rem; margin-bottom:1.5rem; }
+    .rk-card { background:#fff; border:1px solid var(--border-default); border-radius:14px; padding:1.15rem; display:flex; flex-direction:column; gap:0.35rem; }
+    .rk-lbl { font-size:0.71875rem; font-weight:700; text-transform:uppercase; color:var(--text-tertiary); letter-spacing:0.04em; }
+    .rk-val { font-size:1.6rem; font-weight:800; color:var(--text-primary); letter-spacing:-0.02em; }
+    .rk-sub { font-size:0.75rem; color:var(--text-secondary); }
 
-    /* Table */
-    .rpt-table { width:100%; border-collapse:collapse; font-size:.84375rem; }
-    .rpt-table th { background:#F8FAFC; padding:.6rem 1rem; text-align:left; font-size:.71875rem; font-weight:700; text-transform:uppercase; letter-spacing:.06em; color:var(--text-tertiary); border-bottom:1px solid var(--border-default); }
-    .rpt-table td { padding:.75rem 1rem; border-bottom:1px solid var(--border-light); color:var(--text-secondary); }
-    .rpt-table tr:last-child td { border-bottom:none; }
-    .rpt-table tr:hover td { background:#F8FAFC; }
+    /* Charts & Tables */
+    .report-card { background:#fff; border:1px solid var(--border-default); border-radius:16px; padding:1.25rem 1.5rem; margin-bottom:1.5rem; box-shadow:var(--shadow-sm); }
+    .report-card-title { font-size:1rem; font-weight:800; color:var(--text-primary); margin-bottom:1rem; display:flex; align-items:center; justify-content:space-between; }
+    .admin-table { width:100%; border-collapse:collapse; font-size:0.84375rem; }
+    .admin-table th { background:#F8FAFC; padding:0.75rem 1.15rem; text-align:left; font-size:0.71875rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:var(--text-tertiary); border-bottom:1px solid var(--border-default); }
+    .admin-table td { padding:0.85rem 1.15rem; border-bottom:1px solid var(--border-light); color:var(--text-secondary); vertical-align:middle; }
+    .admin-table tr:last-child td { border-bottom:none; }
 
-    /* Export row */
-    .export-row { display:flex; gap:.75rem; flex-wrap:wrap; }
-    .btn-export { display:inline-flex; align-items:center; gap:.4rem; padding:.6rem 1rem; border-radius:9px; border:1px solid var(--border-default); background:#fff; font-size:.84375rem; font-weight:600; color:var(--text-secondary); cursor:pointer; transition:all .18s; font-family:inherit; }
-    .btn-export:hover { border-color:var(--admin-accent); color:var(--admin-accent); background:var(--admin-accent-bg); }
+    .btn-primary-admin {
+      display:inline-flex; align-items:center; gap:.45rem; background:linear-gradient(135deg,#F59E0B,#D97706); color:#fff; font-size:.8125rem; font-weight:700; padding:.55rem 1.15rem; border-radius:9px; border:none; cursor:pointer; text-decoration:none; transition:all .18s; box-shadow:0 4px 12px rgba(245,158,11,.3); font-family:inherit;
+    }
+    .btn-secondary-admin {
+      display:inline-flex; align-items:center; gap:.45rem; background:#FFFFFF; color:var(--text-secondary); font-size:.8125rem; font-weight:700; padding:.55rem .95rem; border-radius:9px; border:1px solid var(--border-default); cursor:pointer; transition:all .18s; font-family:inherit;
+    }
+    .btn-secondary-admin:hover { background:#F8FAFC; border-color:#CBD5E1; }
 
-    @media(max-width:900px){ .rpt-kpis { grid-template-columns:1fr 1fr; } .rpt-grid { grid-template-columns:1fr; } }
+    @media (max-width:900px) { .report-kpis { grid-template-columns:1fr 1fr; } }
   </style>
 </head>
-<body>
+
+<body class="admin-portal">
   <div id="toast-container"></div>
   <div class="sidebar-backdrop"></div>
+
   <div class="app-container">
-    <aside class="app-sidebar">
-      <div class="sidebar-header"><a href="dashboard.html" class="sidebar-brand"><div class="sidebar-brand-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div><div class="sidebar-brand-text"><h2>Smart Admin</h2><span>Admin Portal</span></div></a></div>
+    <!-- Super Admin Navigation Sidebar -->
+    <aside class="app-sidebar admin-sidebar" aria-label="Admin Navigation">
+      <div class="sidebar-header">
+        <a href="dashboard.html" class="sidebar-brand">
+          <div class="sidebar-brand-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+          <div class="sidebar-brand-text"><h2>Smart Admin</h2><span>Super Admin Portal</span></div>
+        </a>
+      </div>
+
       <nav class="sidebar-nav-container">
-        <div class="nav-section-label">Platform Overview</div>
-        <a href="dashboard.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg></span><span>Overview</span></a>
-        <a href="profile.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span><span>My Profile</span></a>
-        <div class="nav-section-label">User & Access</div>
-        <a href="users.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span><span>User Management</span></a>
+        <div class="nav-section-label">Main Dashboard</div>
+        <a href="dashboard.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg></span><span>Dashboard</span></a>
+
+        <div class="nav-section-label">User Management</div>
+        <a href="users.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span><span>All Users</span></a>
+
+        <div class="nav-section-label">Academic Management</div>
+        <a href="academic-structure.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg></span><span>Departments & Periods</span></a>
+        <a href="courses.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></span><span>Courses & Subjects</span></a>
+
+        <div class="nav-section-label">Access Control</div>
         <a href="roles-permissions.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span><span>Roles & Permissions</span></a>
-        <div class="nav-section-label">Academic Admin</div>
-        <a href="academic-structure.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg></span><span>Academic Structure</span></a>
-        <a href="courses.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></span><span>Courses</span></a>
-        <div class="nav-section-label">Platform Ops</div>
-        <a href="reports.html" class="nav-link active"><span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></span><span>Reports</span></a>
-        <a href="audit-logs.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></span><span>Audit Logs</span><span class="nav-badge" style="background:#DC2626">5</span></a>
-        <a href="notifications.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></span><span>Notifications</span></a>
-        <a href="system-config.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span><span>System Config</span></a>
+
+        <div class="nav-section-label">Communication</div>
+        <a href="announcements.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></span><span>Announcements</span></a>
+
+        <div class="nav-section-label">Reports & Analytics</div>
+        <a href="reports.html" class="nav-link active"><span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></span><span>Reports & Analytics</span></a>
+
+        <div class="nav-section-label">Platform System</div>
+        <a href="system-health.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></span><span>System Health & Backup</span></a>
+        <a href="audit-logs.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></span><span>Audit Logs</span></a>
+        <a href="security.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span><span>Security Center</span></a>
+        <a href="system-config.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span><span>System Settings</span></a>
+
+        <div class="nav-section-label">Account</div>
+        <a href="profile.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span><span>Super Admin Profile</span></a>
       </nav>
-      <div class="sidebar-footer"><a href="profile.html" class="sidebar-user-card"><div class="user-avatar"><span class="user-avatar-initials">SA</span></div><div class="user-info-text"><div class="user-name" id="sidebar-user-name">Super Administrator</div><span class="user-role-tag">Platform Admin</span></div></a></div>
+
+      <div class="sidebar-footer">
+        <a href="profile.html" class="sidebar-user-card">
+          <div class="user-avatar" style="background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%); box-shadow: 0 4px 10px rgba(245, 158, 11, 0.35);">
+            <span class="user-avatar-initials" id="sidebar-initials">SA</span>
+          </div>
+          <div class="user-info-text">
+            <div class="user-name" id="sidebar-user-name">Super Administrator</div>
+            <span class="user-role-tag" id="sidebar-user-role">Platform Root</span>
+          </div>
+        </a>
+      </div>
     </aside>
 
     <div class="app-main">
       <header class="app-topbar">
         <div class="topbar-left">
-          <button type="button" class="mobile-nav-toggle" id="mobile-nav-toggle"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
-          <div class="topbar-page-title"><h1>Platform Reports</h1></div>
+          <button type="button" class="mobile-nav-toggle" id="mobile-nav-toggle">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+          </button>
+          <div class="topbar-page-title">
+            <h1>Reports & Analytics</h1>
+          </div>
         </div>
         <div class="topbar-right">
           <div class="dropdown-container">
             <button type="button" class="user-menu-btn" data-dropdown-toggle="user-dropdown-menu">
               <div class="user-avatar-sm" style="background:linear-gradient(135deg,#F59E0B,#D97706)"><span class="user-avatar-initials">SA</span></div>
-              <div class="user-menu-info"><div class="user-menu-name">Super Administrator</div><div class="user-menu-sub">Platform Admin</div></div>
+              <div class="user-menu-info"><div class="user-menu-name">Super Administrator</div><div class="user-menu-sub">Root Authority</div></div>
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
             </button>
             <div id="user-dropdown-menu" class="menu-dropdown profile-dropdown-menu">
@@ -106,92 +147,68 @@
 
       <main class="app-content">
         <div class="page-header">
-          <div><div class="page-title">Platform Reports</div><div class="page-sub">Academic performance analytics, enrollment trends and institutional reports</div></div>
-          <div class="export-row">
-            <button class="btn-export" onclick="UI.showToast('success','Export','Generating PDF report...')">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-              Export PDF
+          <div>
+            <div class="page-title">Institutional Reports & Analytics</div>
+            <div class="page-sub">Audit academic metrics, student attendance, enrollment trends, and AI platform telemetry</div>
+          </div>
+          <div style="display:flex; gap:0.6rem;">
+            <button class="btn-secondary-admin" onclick="window.print()">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+              <span>Print / PDF</span>
             </button>
-            <button class="btn-export" onclick="UI.showToast('success','Export','Generating Excel file...')">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
-              Export Excel
+            <button class="btn-primary-admin" onclick="exportCurrentReport()">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              <span>Export CSV</span>
             </button>
           </div>
         </div>
 
-        <!-- KPIs -->
-        <div class="rpt-kpis">
-          <div class="rpt-kpi">
-            <div class="rpt-kpi-val">8.41</div>
-            <div class="rpt-kpi-lbl">Platform Avg. CGPA</div>
-            <div class="rpt-kpi-delta delta-up">↑ 0.12 from last semester</div>
-          </div>
-          <div class="rpt-kpi">
-            <div class="rpt-kpi-val">84.6<span style="font-size:1.25rem">%</span></div>
-            <div class="rpt-kpi-lbl">Overall Attendance</div>
-            <div class="rpt-kpi-delta delta-up">↑ 1.2% from last month</div>
-          </div>
-          <div class="rpt-kpi">
-            <div class="rpt-kpi-val">92.3<span style="font-size:1.25rem">%</span></div>
-            <div class="rpt-kpi-lbl">Assignment Submission Rate</div>
-            <div class="rpt-kpi-delta delta-down">↓ 0.8% this semester</div>
-          </div>
-          <div class="rpt-kpi">
-            <div class="rpt-kpi-val">1,719</div>
-            <div class="rpt-kpi-lbl">Active Students</div>
-            <div class="rpt-kpi-delta delta-up">↑ 24 this month</div>
-          </div>
+        <!-- Section Tabs -->
+        <div class="section-tabs-bar">
+          <button class="sec-tab-btn active" id="tab-acad" onclick="switchReportTab('academic')">
+            <span>Academic Performance</span>
+          </button>
+          <button class="sec-tab-btn" id="tab-att" onclick="switchReportTab('attendance')">
+            <span>Attendance Telemetry</span>
+          </button>
+          <button class="sec-tab-btn" id="tab-enroll" onclick="switchReportTab('enrollment')">
+            <span>User & Enrollment</span>
+          </button>
+          <button class="sec-tab-btn" id="tab-ai" onclick="switchReportTab('ai')">
+            <span>AI & Platform Usage</span>
+          </button>
         </div>
 
-        <!-- Charts & Tables -->
-        <div class="rpt-grid">
-          <!-- Dept Performance Chart -->
-          <div class="rpt-card">
-            <div class="rpt-card-header">
-              <div class="rpt-card-title"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>Avg. CGPA by Department</div>
-              <span style="font-size:.75rem;color:var(--text-tertiary)">Current Semester</span>
-            </div>
-            <div class="rpt-card-body">
-              <div class="bar-chart">
-                <div class="bar-row"><span class="bar-label">B.Tech</span><div class="bar-track"><div class="bar-fill" style="width:88%;background:linear-gradient(90deg,#8B5CF6,#6D28D9)"></div></div><span class="bar-pct">8.82</span></div>
-                <div class="bar-row"><span class="bar-label">BBA</span><div class="bar-track"><div class="bar-fill" style="width:86%;background:linear-gradient(90deg,#F59E0B,#D97706)"></div></div><span class="bar-pct">8.65</span></div>
-                <div class="bar-row"><span class="bar-label">MBA</span><div class="bar-track"><div class="bar-fill" style="width:84%;background:linear-gradient(90deg,#16A34A,#15803D)"></div></div><span class="bar-pct">8.48</span></div>
-              </div>
-            </div>
-          </div>
+        <!-- Filters Bar -->
+        <div class="filters-bar">
+          <select class="filter-select" id="report-dept-filter" onchange="renderActiveReport()">
+            <option value="all">All Departments</option>
+            <option value="dept_btech">Computer Engineering (B.Tech)</option>
+            <option value="dept_bba">Business Administration (BBA)</option>
+            <option value="dept_mba">Management Studies (MBA)</option>
+          </select>
 
-          <!-- Attendance chart -->
-          <div class="rpt-card">
-            <div class="rpt-card-header">
-              <div class="rpt-card-title"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>Attendance by Department</div>
-              <span style="font-size:.75rem;color:var(--text-tertiary)">Current Month</span>
-            </div>
-            <div class="rpt-card-body">
-              <div class="bar-chart">
-                <div class="bar-row"><span class="bar-label">B.Tech</span><div class="bar-track"><div class="bar-fill" style="width:88%;background:linear-gradient(90deg,#2563EB,#1D4ED8)"></div></div><span class="bar-pct">88%</span></div>
-                <div class="bar-row"><span class="bar-label">BBA</span><div class="bar-track"><div class="bar-fill" style="width:85%;background:linear-gradient(90deg,#F59E0B,#D97706)"></div></div><span class="bar-pct">85%</span></div>
-                <div class="bar-row"><span class="bar-label">MBA</span><div class="bar-track"><div class="bar-fill" style="width:82%;background:linear-gradient(90deg,#16A34A,#15803D)"></div></div><span class="bar-pct">82%</span></div>
-              </div>
-            </div>
-          </div>
+          <select class="filter-select" id="report-period-filter" onchange="renderActiveReport()">
+            <option value="current">Current Academic Year (2025–2026)</option>
+            <option value="past">Previous Year (2024–2025)</option>
+          </select>
         </div>
 
-        <!-- Top Performers Table -->
-        <div class="rpt-card">
-          <div class="rpt-card-header">
-            <div class="rpt-card-title"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>Top Student Performers</div>
-            <span style="font-size:.75rem;color:var(--text-tertiary)">By CGPA — Across 3 Departments</span>
+        <!-- Report KPI Cards -->
+        <div class="report-kpis" id="report-kpi-container">
+          <!-- Injected via JS -->
+        </div>
+
+        <!-- Main Report Display Table / Chart -->
+        <div class="report-card">
+          <div class="report-card-title">
+            <span id="report-table-title">Detailed Report Data</span>
+            <span style="font-size:0.75rem; font-weight:600; color:var(--text-tertiary);" id="report-timestamp">Live Telemetry</span>
           </div>
-          <div style="overflow-x:auto">
-            <table class="rpt-table">
-              <thead><tr><th>#</th><th>Student</th><th>Department</th><th>Semester</th><th>CGPA</th><th>Attendance</th></tr></thead>
-              <tbody>
-                <tr><td><strong style="color:#F59E0B">🥇 1</strong></td><td><strong>Riddhi Zunjarrao</strong></td><td>B.Tech</td><td>Sem 4 • Sec A</td><td><strong style="color:#16A34A">9.82</strong></td><td>94%</td></tr>
-                <tr><td><strong style="color:#94A3B8">🥈 2</strong></td><td>Arjun Kulkarni</td><td>B.Tech</td><td>Sem 4 • Sec A</td><td><strong style="color:#16A34A">9.71</strong></td><td>91%</td></tr>
-                <tr><td><strong style="color:#CD853F">🥉 3</strong></td><td>Pooja Rawat</td><td>BBA</td><td>Sem 6 • Sec B</td><td><strong style="color:#16A34A">9.65</strong></td><td>89%</td></tr>
-                <tr><td>4</td><td>Siddharth More</td><td>BBA</td><td>Sem 2 • Sec A</td><td><strong style="color:#2563EB">9.48</strong></td><td>92%</td></tr>
-                <tr><td>5</td><td>Kavya Menon</td><td>MBA</td><td>Sem 2 • Sec B</td><td><strong style="color:#2563EB">9.31</strong></td><td>88%</td></tr>
-              </tbody>
+          <div style="overflow-x: auto;">
+            <table class="admin-table">
+              <thead id="report-table-thead"></thead>
+              <tbody id="report-table-tbody"></tbody>
             </table>
           </div>
         </div>
@@ -199,30 +216,190 @@
     </div>
   </div>
 
-  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
-  <script src="../js/firebase-config.js"></script>
-  <script src="../js/auth.js"></script>
-  <script src="../js/admin-service.js"></script>
   <script src="../js/ui.js"></script>
+  <script src="../js/admin-service.js"></script>
+
   <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const user = AuthService.getCurrentUser();
-      if (user) document.getElementById('sidebar-user-name').textContent = user.name || 'Super Admin';
-      document.getElementById('logout-action-btn').addEventListener('click', async () => await AuthService.logout());
-      const toggle = document.getElementById('mobile-nav-toggle');
-      const sidebar = document.querySelector('.app-sidebar');
-      const backdrop = document.querySelector('.sidebar-backdrop');
-      if (toggle) { toggle.addEventListener('click', () => { sidebar.classList.toggle('mobile-open'); backdrop.classList.toggle('visible'); }); backdrop.addEventListener('click', () => { sidebar.classList.remove('mobile-open'); backdrop.classList.remove('visible'); }); }
-      document.querySelectorAll('[data-dropdown-toggle]').forEach(btn => { btn.addEventListener('click', e => { e.stopPropagation(); const d = document.getElementById(btn.getAttribute('data-dropdown-toggle')); if (d) { document.querySelectorAll('.menu-dropdown.open').forEach(x => { if(x!==d) x.classList.remove('open'); }); d.classList.toggle('open'); } }); });
-      document.addEventListener('click', () => document.querySelectorAll('.menu-dropdown.open').forEach(d => d.classList.remove('open')));
-      // Animate bars
-      setTimeout(() => {
-        document.querySelectorAll('.bar-fill').forEach(b => { const w = b.style.width; b.style.width = '0'; requestAnimationFrame(() => { b.style.width = w; }); });
-      }, 200);
+    let reportData = null;
+    let currentTab = 'academic';
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      UI.initTheme();
+      await loadReports();
     });
+
+    async function loadReports() {
+      try {
+        reportData = await AdminService.getReportsData();
+        renderActiveReport();
+      } catch (err) {
+        UI.showToast('error', 'Failed to load reports', err.message);
+      }
+    }
+
+    function switchReportTab(tab) {
+      currentTab = tab;
+      document.getElementById('tab-acad').classList.toggle('active', tab === 'academic');
+      document.getElementById('tab-att').classList.toggle('active', tab === 'attendance');
+      document.getElementById('tab-enroll').classList.toggle('active', tab === 'enrollment');
+      document.getElementById('tab-ai').classList.toggle('active', tab === 'ai');
+      renderActiveReport();
+    }
+
+    function renderActiveReport() {
+      if (!reportData) return;
+      const kpisContainer = document.getElementById('report-kpi-container');
+      const thead = document.getElementById('report-table-thead');
+      const tbody = document.getElementById('report-table-tbody');
+      const title = document.getElementById('report-table-title');
+
+      if (currentTab === 'academic') {
+        title.textContent = 'Academic Standing & Examination Results by Department';
+        kpisContainer.innerHTML = `
+          <div class="rk-card"><span class="rk-lbl">Institution CGPA</span><div class="rk-val" style="color:#7C3AED;">8.35</div><div class="rk-sub">10-Point Scale</div></div>
+          <div class="rk-card"><span class="rk-lbl">Passing Ratio</span><div class="rk-val" style="color:#16A34A;">96.8%</div><div class="rk-sub">Current Semester</div></div>
+          <div class="rk-card"><span class="rk-lbl">Highest Dept GPA</span><div class="rk-val">8.65</div><div class="rk-sub">MBA Executive</div></div>
+          <div class="rk-card"><span class="rk-lbl">Evaluated Submissions</span><div class="rk-val">12,480</div><div class="rk-sub">Spring 2026</div></div>
+        `;
+
+        thead.innerHTML = `
+          <tr>
+            <th>Department</th>
+            <th>Program</th>
+            <th>Students</th>
+            <th>Average CGPA</th>
+            <th>Top Performer</th>
+            <th>Passing %</th>
+            <th>Standing</th>
+          </tr>
+        `;
+
+        tbody.innerHTML = (reportData.deptPerformance || []).map(d => `
+          <tr>
+            <td><strong>${d.name}</strong></td>
+            <td>${d.code}</td>
+            <td>${d.studentCount}</td>
+            <td><strong style="color:#7C3AED;">${(d.avgGpa || 8.0).toFixed(2)}</strong></td>
+            <td>9.82 CGPA</td>
+            <td><span style="color:#16A34A; font-weight:700;">97.4%</span></td>
+            <td><span class="status-badge active">Good Standing</span></td>
+          </tr>
+        `).join('');
+
+      } else if (currentTab === 'attendance') {
+        title.textContent = 'Attendance Compliance & Threshold Audit';
+        kpisContainer.innerHTML = `
+          <div class="rk-card"><span class="rk-lbl">Overall Attendance</span><div class="rk-val" style="color:#16A34A;">87.4%</div><div class="rk-sub">Campus Average</div></div>
+          <div class="rk-card"><span class="rk-lbl">Minimum Policy</span><div class="rk-val">75.0%</div><div class="rk-sub">Statutory Requirement</div></div>
+          <div class="rk-card"><span class="rk-lbl">Warning Alerts (&lt;75%)</span><div class="rk-val" style="color:#D97706;">42</div><div class="rk-sub">Students Notified</div></div>
+          <div class="rk-card"><span class="rk-lbl">Critical (&lt;65%)</span><div class="rk-val" style="color:#DC2626;">8</div><div class="rk-sub">Intervention Required</div></div>
+        `;
+
+        thead.innerHTML = `
+          <tr>
+            <th>Department</th>
+            <th>Total Enrolled</th>
+            <th>Average Attendance</th>
+            <th>Above 75%</th>
+            <th>Warning List</th>
+            <th>Critical List</th>
+            <th>Status</th>
+          </tr>
+        `;
+
+        tbody.innerHTML = (reportData.deptPerformance || []).map(d => `
+          <tr>
+            <td><strong>${d.name}</strong></td>
+            <td>${d.studentCount}</td>
+            <td><strong style="color:${d.avgAttendance >= 85 ? '#16A34A' : '#D97706'};">${d.avgAttendance}%</strong></td>
+            <td>${Math.round(d.studentCount * 0.92)}</td>
+            <td><span style="color:#D97706; font-weight:700;">${Math.round(d.studentCount * 0.06)}</span></td>
+            <td><span style="color:#DC2626; font-weight:700;">${Math.round(d.studentCount * 0.02)}</span></td>
+            <td><span class="status-badge ${d.avgAttendance >= 85 ? 'active' : 'warning'}">${d.avgAttendance >= 85 ? 'Compliant' : 'Monitored'}</span></td>
+          </tr>
+        `).join('');
+
+      } else if (currentTab === 'enrollment') {
+        title.textContent = 'Enrollment Progression & Demographics';
+        kpisContainer.innerHTML = `
+          <div class="rk-card"><span class="rk-lbl">Total Enrolled</span><div class="rk-val">2,180</div><div class="rk-sub">Active Students</div></div>
+          <div class="rk-card"><span class="rk-lbl">Faculty Members</span><div class="rk-val">142</div><div class="rk-sub">Professors & Lecturers</div></div>
+          <div class="rk-card"><span class="rk-lbl">Retention Rate</span><div class="rk-val" style="color:#16A34A;">98.2%</div><div class="rk-sub">Year-over-Year</div></div>
+          <div class="rk-card"><span class="rk-lbl">New Admissions</span><div class="rk-val">640</div><div class="rk-sub">Fall 2025 Intake</div></div>
+        `;
+
+        thead.innerHTML = `
+          <tr>
+            <th>Academic Term</th>
+            <th>Intake Cohort</th>
+            <th>Enrolled Students</th>
+            <th>Graduated</th>
+            <th>Active Courses</th>
+            <th>Growth</th>
+          </tr>
+        `;
+
+        tbody.innerHTML = `
+          <tr><td>Spring 2026 (Current)</td><td>2025–2026</td><td><strong>2,180</strong></td><td>—</td><td>20 Programs</td><td><span style="color:#16A34A; font-weight:700;">+4.2%</span></td></tr>
+          <tr><td>Fall 2025</td><td>2025–2026</td><td><strong>2,110</strong></td><td>—</td><td>20 Programs</td><td><span style="color:#16A34A; font-weight:700;">+8.7%</span></td></tr>
+          <tr><td>Spring 2025</td><td>2024–2025</td><td><strong>1,940</strong></td><td>520</td><td>18 Programs</td><td><span style="color:#16A34A; font-weight:700;">+6.1%</span></td></tr>
+        `;
+
+      } else if (currentTab === 'ai') {
+        title.textContent = 'Google Gemini Academic AI Tutor Telemetry';
+        kpisContainer.innerHTML = `
+          <div class="rk-card"><span class="rk-lbl">Doubts Resolved</span><div class="rk-val" style="color:#2563EB;">14,280</div><div class="rk-sub">Academic Questions</div></div>
+          <div class="rk-card"><span class="rk-lbl">Practice Generated</span><div class="rk-val" style="color:#7C3AED;">6,420</div><div class="rk-sub">MCQ Tests</div></div>
+          <div class="rk-card"><span class="rk-lbl">Average Latency</span><div class="rk-val">420 ms</div><div class="rk-sub">Response Time</div></div>
+          <div class="rk-card"><span class="rk-lbl">Active Model</span><div class="rk-val" style="font-size:1.15rem; color:#16A34A;">gemini-2.5-flash</div><div class="rk-sub">Google AI Studio</div></div>
+        `;
+
+        thead.innerHTML = `
+          <tr>
+            <th>Subject Domain</th>
+            <th>Doubts Solved</th>
+            <th>Practice Sets</th>
+            <th>Avg Token Usage</th>
+            <th>Faculty Escalations</th>
+            <th>Accuracy Rating</th>
+          </tr>
+        `;
+
+        tbody.innerHTML = `
+          <tr><td>Computer Science & Data Structures (B.Tech)</td><td><strong>5,840</strong></td><td>2,420</td><td>680 tokens</td><td>12 cases</td><td><span style="color:#16A34A; font-weight:700;">99.1%</span></td></tr>
+          <tr><td>Database Management & AI Systems (B.Tech)</td><td><strong>3,420</strong></td><td>1,650</td><td>540 tokens</td><td>8 cases</td><td><span style="color:#16A34A; font-weight:700;">98.8%</span></td></tr>
+          <tr><td>Business Management & Finance (BBA)</td><td><strong>2,910</strong></td><td>1,210</td><td>490 tokens</td><td>4 cases</td><td><span style="color:#16A34A; font-weight:700;">99.4%</span></td></tr>
+          <tr><td>Strategic Leadership & Marketing (MBA)</td><td><strong>2,110</strong></td><td>1,140</td><td>520 tokens</td><td>3 cases</td><td><span style="color:#16A34A; font-weight:700;">99.6%</span></td></tr>
+        `;
+      }
+    }
+
+    function exportCurrentReport() {
+      if (currentTab === 'academic') {
+        const rows = (reportData.deptPerformance || []).map(d => ({
+          Department: d.name,
+          Code: d.code,
+          Students: d.studentCount,
+          AvgCGPA: d.avgGpa,
+          PassingPercentage: '97.4%'
+        }));
+        AdminService.exportToCsv('academic_performance_report.csv', rows);
+      } else if (currentTab === 'attendance') {
+        const rows = (reportData.deptPerformance || []).map(d => ({
+          Department: d.name,
+          TotalStudents: d.studentCount,
+          AvgAttendance: d.avgAttendance + '%'
+        }));
+        AdminService.exportToCsv('attendance_telemetry_report.csv', rows);
+      } else {
+        const rows = (reportData.deptPerformance || []).map(d => ({
+          Metric: d.name,
+          Value: d.studentCount
+        }));
+        AdminService.exportToCsv('report_summary.csv', rows);
+      }
+      UI.showToast('success', 'Report Exported', 'CSV file downloaded successfully.');
+    }
   </script>
 </body>
 </html>

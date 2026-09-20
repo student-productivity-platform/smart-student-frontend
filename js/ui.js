@@ -131,15 +131,28 @@ const UI = (() => {
 
         // Close others
         allDropdowns.forEach(dd => {
-          if (dd !== targetMenu) dd.classList.remove('show');
+          if (dd !== targetMenu) {
+            dd.classList.remove('show');
+            dd.classList.remove('open');
+          }
         });
 
         if (targetMenu) {
-          targetMenu.classList.toggle('show');
+          const isOpen = targetMenu.classList.contains('show') || targetMenu.classList.contains('open');
+          if (isOpen) {
+            targetMenu.classList.remove('show');
+            targetMenu.classList.remove('open');
+          } else {
+            targetMenu.classList.add('show');
+            targetMenu.classList.add('open');
+          }
         }
       } else if (!e.target.closest('.menu-dropdown')) {
         // Clicked outside, close all
-        allDropdowns.forEach(dd => dd.classList.remove('show'));
+        allDropdowns.forEach(dd => {
+          dd.classList.remove('show');
+          dd.classList.remove('open');
+        });
       }
     });
   }
@@ -187,11 +200,12 @@ const UI = (() => {
   }
 
   /**
-   * Populate Global Identity into Header & Profile Widgets (Student, Faculty & HOD)
+   * Populate Global Identity into Header & Profile Widgets (Student, Faculty, HOD & Super Admin)
    */
   async function syncStudentIdentity() {
     const isHOD = window.location.pathname.includes('/hod/');
     const isFaculty = window.location.pathname.includes('/faculty/');
+    const isAdmin = window.location.pathname.includes('/administrator/');
     let user = null;
 
     if (typeof AuthService !== 'undefined' && AuthService.getCurrentUser()) {
@@ -200,61 +214,83 @@ const UI = (() => {
       user = HODService.getProfile();
     } else if (isFaculty && typeof FacultyService !== 'undefined') {
       user = FacultyService.getProfile();
-    } else if (window.mockStudent) {
+    } else if (window.mockStudent && !isAdmin && !isHOD && !isFaculty) {
       user = window.mockStudent;
     } else {
-      user = { name: isHOD ? 'Dr. Anand Deshmukh' : (isFaculty ? 'Prof. Sunita Mehta' : 'Riddhi Zunjarrao'), role: isHOD ? 'hod' : (isFaculty ? 'faculty' : 'student') };
+      user = {
+        name: isAdmin ? 'Super Administrator' : (isHOD ? 'Dr. Anand Deshmukh' : (isFaculty ? 'Prof. Sunita Mehta' : 'Riddhi Zunjarrao')),
+        role: isAdmin ? 'super_admin' : (isHOD ? 'hod' : (isFaculty ? 'faculty' : 'student'))
+      };
     }
+
+    const isUserAdmin = isAdmin || (user && (user.role === 'super_admin' || user.role === 'administrator' || user.role === 'admin'));
+    const displayName = user.name || (isUserAdmin ? 'Super Administrator' : 'User');
 
     // Sync Topbar Name
     const topbarNameEl = document.getElementById('topbar-user-name');
-    if (topbarNameEl) topbarNameEl.textContent = user.name;
+    if (topbarNameEl) topbarNameEl.textContent = displayName;
 
     const topbarSubEl = document.querySelector('.user-menu-sub');
     if (topbarSubEl) {
-      topbarSubEl.textContent = isHOD
-        ? 'HOD • Computer Engineering'
-        : (isFaculty ? (user.designation || 'Faculty • CSE') : (user.program || 'B.Tech CSE'));
+      topbarSubEl.textContent = isUserAdmin
+        ? 'Platform Admin'
+        : (isHOD
+          ? 'HOD • Computer Engineering'
+          : (isFaculty ? (user.designation || 'Faculty • CSE') : (user.program || 'B.Tech CSE')));
     }
 
     // Sync Avatar Initials
-    const initials = (user.name || 'AD').split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
-    document.querySelectorAll('.user-avatar-initials').forEach(el => {
+    const initials = displayName.split(' ').filter(Boolean).map(n => n[0]).join('').substring(0, 2).toUpperCase() || (isUserAdmin ? 'SA' : 'ST');
+    document.querySelectorAll('.user-avatar-initials, #sidebar-initials, #topbar-initials').forEach(el => {
       el.textContent = initials;
     });
 
+    // If Admin, ensure avatar has amber styling
+    if (isUserAdmin) {
+      document.querySelectorAll('.sidebar-user-card .user-avatar, .sidebar-user-avatar').forEach(avatar => {
+        avatar.style.background = 'linear-gradient(135deg, #F59E0B 0%, #D97706 100%)';
+        avatar.style.boxShadow = '0 4px 10px rgba(245, 158, 11, 0.35)';
+      });
+    }
+
     // Sync Sidebar Footer
     const sidebarNameEl = document.getElementById('sidebar-user-name');
-    if (sidebarNameEl) sidebarNameEl.textContent = user.name;
+    if (sidebarNameEl) sidebarNameEl.textContent = displayName;
 
-    const sidebarRoleEl = document.getElementById('sidebar-user-role');
+    const sidebarRoleEl = document.getElementById('sidebar-user-role') || document.querySelector('.sidebar-user-card .user-role-tag');
     if (sidebarRoleEl) {
-      sidebarRoleEl.textContent = isHOD
-        ? 'Head of Department'
-        : (isFaculty ? (user.designation || 'Associate Professor') : `Sem ${user.semester || 4} • Sec ${user.section || 'A'}`);
+      sidebarRoleEl.textContent = isUserAdmin
+        ? 'Platform Admin'
+        : (isHOD
+          ? 'Head of Department'
+          : (isFaculty ? (user.designation || 'Associate Professor') : `Sem ${user.semester || 4} • Sec ${user.section || 'A'}`));
     }
 
     // Sync Banner
-    const bannerGreeting = document.getElementById('banner-student-name') || document.getElementById('banner-faculty-name') || document.getElementById('banner-hod-name');
+    const bannerGreeting = document.getElementById('banner-student-name') || document.getElementById('banner-faculty-name') || document.getElementById('banner-hod-name') || document.getElementById('hero-admin-name');
     if (bannerGreeting) {
-      const firstName = user.name.split(' ')[0];
-      bannerGreeting.textContent = (user.role === 'faculty' || user.role === 'hod') ? user.name : firstName;
+      const firstName = displayName.split(' ')[0];
+      bannerGreeting.textContent = (user.role === 'faculty' || user.role === 'hod' || isUserAdmin) ? displayName : firstName;
     }
 
     const bannerProgram = document.getElementById('banner-program-name');
     if (bannerProgram) {
-      bannerProgram.textContent = user.department || user.program || 'Department of Computer Engineering';
+      bannerProgram.textContent = isUserAdmin
+        ? 'Platform Administration & Security Control'
+        : (user.department || user.program || 'Department of Computer Engineering');
     }
 
     const bannerSem = document.getElementById('banner-semester-info');
     if (bannerSem) {
-      bannerSem.textContent = isHOD
-        ? 'Academic Block 3 • HOD Office'
-        : (isFaculty ? (user.officeRoom || 'Cabin 304 • CSE Block') : `Semester ${user.semester || 4} • Section ${user.section || 'A'}`);
+      bannerSem.textContent = isUserAdmin
+        ? 'Super Admin Privileges • Full Access'
+        : (isHOD
+          ? 'Academic Block 3 • HOD Office'
+          : (isFaculty ? (user.officeRoom || 'Cabin 304 • CSE Block') : `Semester ${user.semester || 4} • Section ${user.section || 'A'}`));
     }
 
     // Live Date Formatter
-    const dateChip = document.getElementById('live-current-date');
+    const dateChip = document.getElementById('live-current-date') || document.getElementById('hero-date');
     if (dateChip) {
       const options = { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' };
       dateChip.textContent = new Date().toLocaleDateString('en-US', options);
@@ -268,6 +304,7 @@ const UI = (() => {
     const searchInput = document.getElementById('global-search-input');
     const isHOD = window.location.pathname.includes('/hod/');
     const isFaculty = window.location.pathname.includes('/faculty/');
+    const isAdmin = window.location.pathname.includes('/administrator/');
 
     if (searchInput) {
       searchInput.addEventListener('keydown', (e) => {
@@ -275,7 +312,29 @@ const UI = (() => {
           const query = searchInput.value.trim().toLowerCase();
           if (!query) return;
 
-          if (isHOD) {
+          if (isAdmin) {
+            if (query.includes('user') || query.includes('student') || query.includes('faculty') || query.includes('account')) {
+              window.location.href = 'users.html';
+            } else if (query.includes('role') || query.includes('permission') || query.includes('access')) {
+              window.location.href = 'roles-permissions.html';
+            } else if (query.includes('struct') || query.includes('dept') || query.includes('department') || query.includes('program')) {
+              window.location.href = 'academic-structure.html';
+            } else if (query.includes('course') || query.includes('subject') || query.includes('curriculum')) {
+              window.location.href = 'courses.html';
+            } else if (query.includes('report') || query.includes('stat') || query.includes('analytic') || query.includes('metric')) {
+              window.location.href = 'reports.html';
+            } else if (query.includes('audit') || query.includes('log') || query.includes('history') || query.includes('security')) {
+              window.location.href = 'audit-logs.html';
+            } else if (query.includes('notif') || query.includes('announc') || query.includes('broadcast')) {
+              window.location.href = 'announcements.html';
+            } else if (query.includes('config') || query.includes('setting') || query.includes('system') || query.includes('backup')) {
+              window.location.href = 'system-config.html';
+            } else if (query.includes('profile') || query.includes('my')) {
+              window.location.href = 'profile.html';
+            } else {
+              showToast('info', 'Platform Search', `Searching admin records for "${searchInput.value.trim()}"...`);
+            }
+          } else if (isHOD) {
             if (query.includes('alloc') || query.includes('assign') || query.includes('workload')) {
               window.location.href = 'faculty-allocation.html';
             } else if (query.includes('student') || query.includes('attend') || query.includes('risk') || query.includes('performance')) {
@@ -464,6 +523,7 @@ const UI = (() => {
 
   return {
     init,
+    initTheme,
     showToast,
     openModal,
     closeModal,

@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Audit Logs — Smart Admin</title>
-  <meta name="description" content="Full platform audit and security event logs for Super Admin.">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Security & Audit Logs — Smart Admin</title>
+  <meta name="description" content="Append-only immutable system audit logs tracking institutional mutations, access attempts, permission modifications, and administrative events.">
   <link rel="icon" type="image/svg+xml" href="../favicon.svg">
   <link rel="stylesheet" href="../css/main.css">
   <link rel="stylesheet" href="../css/dashboard.css">
@@ -12,98 +13,116 @@
   <style>
     :root { --admin-accent:#F59E0B; --admin-accent-dark:#D97706; --admin-accent-bg:#FFFBEB; }
     .sidebar-brand-icon { background:linear-gradient(135deg,#F59E0B,#D97706)!important; box-shadow:0 4px 12px rgba(245,158,11,.4)!important; }
-    .nav-link.active { background:rgba(245,158,11,.14)!important; color:#F59E0B!important; }
+    .nav-link.active { background:rgba(245,158,11,.16)!important; color:#FBBF24!important; border:1px solid rgba(245,158,11,.28)!important; }
     .nav-link.active .nav-link-icon { color:#F59E0B!important; }
-    .nav-link:hover { background:rgba(245,158,11,.08)!important; }
-    .page-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:1.5rem; }
+    .nav-link.active .nav-link-text,
+    .nav-link.active > span:not(.nav-link-icon):not(.nav-badge) { color:#FBBF24!important; font-weight:700!important; }
+
+    .page-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:1.25rem; flex-wrap:wrap; gap:1rem; }
     .page-title { font-size:1.5rem; font-weight:800; color:var(--text-primary); letter-spacing:-.02em; }
     .page-sub { font-size:.84375rem; color:var(--text-tertiary); margin-top:.2rem; }
 
-    /* Summary KPIs */
-    .audit-kpis { display:grid; grid-template-columns:repeat(4,1fr); gap:1rem; margin-bottom:1.5rem; }
-    .audit-kpi { background:#fff; border:1px solid var(--border-default); border-radius:14px; padding:1rem 1.25rem; display:flex; align-items:center; gap:.875rem; }
-    .audit-kpi-icon { width:40px; height:40px; border-radius:11px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
-    .audit-kpi-val { font-size:1.5rem; font-weight:800; color:var(--text-primary); letter-spacing:-.02em; }
-    .audit-kpi-lbl { font-size:.71875rem; font-weight:600; color:var(--text-tertiary); text-transform:uppercase; }
-
-    /* Filters */
-    .filters-bar { display:flex; gap:.75rem; align-items:center; margin-bottom:1.25rem; flex-wrap:wrap; }
-    .filter-select { height:38px; border:1px solid var(--border-default); border-radius:8px; padding:0 .75rem; font-size:.8125rem; font-family:inherit; color:var(--text-secondary); background:#fff; cursor:pointer; }
-    .filter-select:focus { outline:none; border-color:var(--admin-accent); }
-    .search-wrap { position:relative; }
-    .search-wrap svg { position:absolute; left:.6rem; top:50%; transform:translateY(-50%); color:var(--text-tertiary); pointer-events:none; }
-    .search-input { height:38px; border:1px solid var(--border-default); border-radius:8px; padding:0 .75rem 0 2rem; font-size:.8125rem; font-family:inherit; color:var(--text-secondary); background:#fff; width:260px; }
+    /* Filters Bar */
+    .filters-bar { display:flex; gap:0.75rem; align-items:center; justify-content:space-between; margin-bottom:1.25rem; flex-wrap:wrap; }
+    .filters-left { display:flex; gap:0.65rem; align-items:center; flex-wrap:wrap; }
+    .search-wrap { position:relative; width:260px; }
+    .search-wrap svg { position:absolute; left:0.75rem; top:50%; transform:translateY(-50%); color:var(--text-tertiary); pointer-events:none; }
+    .search-input { width:100%; height:38px; border:1px solid var(--border-default); border-radius:9px; padding:0 0.75rem 0 2.25rem; font-size:0.8125rem; font-family:inherit; background:#FFFFFF; }
     .search-input:focus { outline:none; border-color:var(--admin-accent); }
+    .filter-select { height:38px; border:1px solid var(--border-default); border-radius:9px; padding:0 0.75rem; font-size:0.8125rem; font-family:inherit; color:var(--text-secondary); background:#FFFFFF; cursor:pointer; }
+    .filter-select:focus { outline:none; border-color:var(--admin-accent); }
 
-    /* Log Table */
-    .audit-card { background:#fff; border:1px solid var(--border-default); border-radius:16px; overflow:hidden; }
-    .audit-table { width:100%; border-collapse:collapse; font-size:.84375rem; }
-    .audit-table th { background:#0F172A; color:#fff; padding:.7rem 1.1rem; text-align:left; font-size:.71875rem; font-weight:700; text-transform:uppercase; letter-spacing:.06em; }
-    .audit-table td { padding:.8rem 1.1rem; border-bottom:1px solid var(--border-light); color:var(--text-secondary); vertical-align:middle; }
-    .audit-table tr:last-child td { border-bottom:none; }
-    .audit-table tr:hover td { background:#F8FAFC; }
+    /* Table */
+    .data-card { background:#fff; border:1px solid var(--border-default); border-radius:16px; overflow:hidden; box-shadow:var(--shadow-sm); }
+    .admin-table { width:100%; border-collapse:collapse; font-size:0.84375rem; }
+    .admin-table th { background:#F8FAFC; padding:0.75rem 1.15rem; text-align:left; font-size:0.71875rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:var(--text-tertiary); border-bottom:1px solid var(--border-default); }
+    .admin-table td { padding:0.85rem 1.15rem; border-bottom:1px solid var(--border-light); color:var(--text-secondary); vertical-align:middle; }
+    .admin-table tr:last-child td { border-bottom:none; }
+    .admin-table tr:hover td { background:#F8FAFC; }
 
-    .event-type-badge { display:inline-flex; align-items:center; gap:.25rem; padding:.2rem .6rem; border-radius:20px; font-size:.6875rem; font-weight:700; text-transform:uppercase; letter-spacing:.04em; }
-    .event-type-badge.security { background:#FEE2E2; color:#991B1B; }
-    .event-type-badge.user     { background:#DBEAFE; color:#1D4ED8; }
-    .event-type-badge.academic { background:#DCFCE7; color:#166534; }
-    .event-type-badge.system   { background:#EDE9FE; color:#5B21B6; }
-    .event-type-badge.config   { background:#FEF3C7; color:#92400E; }
+    .result-pill { display:inline-flex; align-items:center; gap:0.25rem; padding:0.15rem 0.5rem; border-radius:6px; font-size:0.71875rem; font-weight:700; }
+    .result-pill.success { background:#DCFCE7; color:#15803D; }
+    .result-pill.blocked, .result-pill.failed { background:#FEE2E2; color:#B91C1C; }
 
-    .severity-badge { display:inline-flex; align-items:center; gap:.25rem; padding:.15rem .5rem; border-radius:6px; font-size:.6875rem; font-weight:700; }
-    .severity-badge.critical { background:#FEE2E2; color:#991B1B; }
-    .severity-badge.high     { background:#FEF3C7; color:#92400E; }
-    .severity-badge.medium   { background:#DBEAFE; color:#1D4ED8; }
-    .severity-badge.low      { background:#F1F5F9; color:#64748B; }
-
-    .log-description { max-width:320px; font-size:.8125rem; color:var(--text-primary); font-weight:500; }
-    .log-meta { font-size:.75rem; color:var(--text-tertiary); }
-
-    /* Pagination */
-    .pagination-bar { display:flex; align-items:center; justify-content:space-between; padding:.875rem 1.25rem; border-top:1px solid var(--border-light); font-size:.8125rem; color:var(--text-tertiary); }
-    .pagination-btns { display:flex; gap:.35rem; }
-    .page-btn { width:30px; height:30px; border-radius:7px; border:1px solid var(--border-default); background:#fff; cursor:pointer; font-size:.8125rem; font-family:inherit; color:var(--text-secondary); display:flex; align-items:center; justify-content:center; transition:all .15s; }
-    .page-btn.active,.page-btn:hover { background:var(--admin-accent); color:#fff; border-color:var(--admin-accent); }
-
-    @media(max-width:900px){ .audit-kpis { grid-template-columns:1fr 1fr; } }
+    .btn-secondary-admin {
+      display:inline-flex; align-items:center; gap:.45rem; background:#FFFFFF; color:var(--text-secondary); font-size:.8125rem; font-weight:700; padding:.55rem .95rem; border-radius:9px; border:1px solid var(--border-default); cursor:pointer; transition:all .18s; font-family:inherit;
+    }
+    .btn-secondary-admin:hover { background:#F8FAFC; border-color:#CBD5E1; color:var(--text-primary); }
   </style>
 </head>
-<body>
+
+<body class="admin-portal">
   <div id="toast-container"></div>
   <div class="sidebar-backdrop"></div>
+
   <div class="app-container">
-    <aside class="app-sidebar">
-      <div class="sidebar-header"><a href="dashboard.html" class="sidebar-brand"><div class="sidebar-brand-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div><div class="sidebar-brand-text"><h2>Smart Admin</h2><span>Admin Portal</span></div></a></div>
+    <!-- Super Admin Navigation Sidebar -->
+    <aside class="app-sidebar admin-sidebar" aria-label="Admin Navigation">
+      <div class="sidebar-header">
+        <a href="dashboard.html" class="sidebar-brand">
+          <div class="sidebar-brand-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+          <div class="sidebar-brand-text"><h2>Smart Admin</h2><span>Super Admin Portal</span></div>
+        </a>
+      </div>
+
       <nav class="sidebar-nav-container">
-        <div class="nav-section-label">Platform Overview</div>
-        <a href="dashboard.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg></span><span>Overview</span></a>
-        <a href="profile.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span><span>My Profile</span></a>
-        <div class="nav-section-label">User & Access</div>
-        <a href="users.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span><span>User Management</span></a>
+        <div class="nav-section-label">Main Dashboard</div>
+        <a href="dashboard.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg></span><span>Dashboard</span></a>
+
+        <div class="nav-section-label">User Management</div>
+        <a href="users.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span><span>All Users</span></a>
+
+        <div class="nav-section-label">Academic Management</div>
+        <a href="academic-structure.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg></span><span>Departments & Periods</span></a>
+        <a href="courses.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></span><span>Courses & Subjects</span></a>
+
+        <div class="nav-section-label">Access Control</div>
         <a href="roles-permissions.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span><span>Roles & Permissions</span></a>
-        <div class="nav-section-label">Academic Admin</div>
-        <a href="academic-structure.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg></span><span>Academic Structure</span></a>
-        <a href="courses.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></span><span>Courses</span></a>
-        <div class="nav-section-label">Platform Ops</div>
-        <a href="reports.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></span><span>Reports</span></a>
-        <a href="audit-logs.html" class="nav-link active"><span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></span><span>Audit Logs</span><span class="nav-badge" style="background:#DC2626">5</span></a>
-        <a href="notifications.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></span><span>Notifications</span></a>
-        <a href="system-config.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span><span>System Config</span></a>
+
+        <div class="nav-section-label">Communication</div>
+        <a href="announcements.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></span><span>Announcements</span></a>
+
+        <div class="nav-section-label">Reports & Analytics</div>
+        <a href="reports.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></span><span>Reports & Analytics</span></a>
+
+        <div class="nav-section-label">Platform System</div>
+        <a href="system-health.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></span><span>System Health & Backup</span></a>
+        <a href="audit-logs.html" class="nav-link active"><span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></span><span>Audit Logs</span></a>
+        <a href="security.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span><span>Security Center</span></a>
+        <a href="system-config.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span><span>System Settings</span></a>
+
+        <div class="nav-section-label">Account</div>
+        <a href="profile.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span><span>Super Admin Profile</span></a>
       </nav>
-      <div class="sidebar-footer"><a href="profile.html" class="sidebar-user-card"><div class="user-avatar"><span class="user-avatar-initials">SA</span></div><div class="user-info-text"><div class="user-name" id="sidebar-user-name">Super Administrator</div><span class="user-role-tag">Platform Admin</span></div></a></div>
+
+      <div class="sidebar-footer">
+        <a href="profile.html" class="sidebar-user-card">
+          <div class="user-avatar" style="background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%); box-shadow: 0 4px 10px rgba(245, 158, 11, 0.35);">
+            <span class="user-avatar-initials" id="sidebar-initials">SA</span>
+          </div>
+          <div class="user-info-text">
+            <div class="user-name" id="sidebar-user-name">Super Administrator</div>
+            <span class="user-role-tag" id="sidebar-user-role">Platform Root</span>
+          </div>
+        </a>
+      </div>
     </aside>
 
     <div class="app-main">
       <header class="app-topbar">
         <div class="topbar-left">
-          <button type="button" class="mobile-nav-toggle" id="mobile-nav-toggle"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
-          <div class="topbar-page-title"><h1>Audit & Security Logs</h1></div>
+          <button type="button" class="mobile-nav-toggle" id="mobile-nav-toggle">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+          </button>
+          <div class="topbar-page-title">
+            <h1>Platform Audit Logs</h1>
+          </div>
         </div>
         <div class="topbar-right">
           <div class="dropdown-container">
             <button type="button" class="user-menu-btn" data-dropdown-toggle="user-dropdown-menu">
               <div class="user-avatar-sm" style="background:linear-gradient(135deg,#F59E0B,#D97706)"><span class="user-avatar-initials">SA</span></div>
-              <div class="user-menu-info"><div class="user-menu-name">Super Administrator</div><div class="user-menu-sub">Platform Admin</div></div>
+              <div class="user-menu-info"><div class="user-menu-name">Super Administrator</div><div class="user-menu-sub">Root Authority</div></div>
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
             </button>
             <div id="user-dropdown-menu" class="menu-dropdown profile-dropdown-menu">
@@ -116,115 +135,165 @@
 
       <main class="app-content">
         <div class="page-header">
-          <div><div class="page-title">Audit & Security Logs</div><div class="page-sub">Full access to platform audit and security event logs (AD-06)</div></div>
-          <button style="display:inline-flex;align-items:center;gap:.4rem;padding:.6rem 1rem;border-radius:9px;border:1px solid var(--border-default);background:#fff;font-size:.84375rem;font-weight:600;color:var(--text-secondary);cursor:pointer;font-family:inherit;" onclick="UI.showToast('success','Export','Exporting audit log CSV...')">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-            Export CSV
+          <div>
+            <div class="page-title">Immutable Security & Audit Trail</div>
+            <div class="page-sub">Append-only chronological record tracking institutional mutations, access attempts, and configuration changes</div>
+          </div>
+          <button class="btn-secondary-admin" onclick="exportAuditCsv()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            <span>Export Audit Trail (CSV)</span>
           </button>
         </div>
 
-        <!-- KPIs -->
-        <div class="audit-kpis">
-          <div class="audit-kpi"><div class="audit-kpi-icon" style="background:#FEE2E2;color:#DC2626"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div><div><div class="audit-kpi-val">5</div><div class="audit-kpi-lbl">Critical / High</div></div></div>
-          <div class="audit-kpi"><div class="audit-kpi-icon" style="background:#FEF3C7;color:#D97706"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div><div><div class="audit-kpi-val">18</div><div class="audit-kpi-lbl">Security Events</div></div></div>
-          <div class="audit-kpi"><div class="audit-kpi-icon" style="background:#DBEAFE;color:#2563EB"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div><div><div class="audit-kpi-val">142</div><div class="audit-kpi-lbl">User Events (today)</div></div></div>
-          <div class="audit-kpi"><div class="audit-kpi-icon" style="background:#DCFCE7;color:#16A34A"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div><div><div class="audit-kpi-val">3,820</div><div class="audit-kpi-lbl">Total Logs (month)</div></div></div>
-        </div>
-
-        <!-- Filters -->
+        <!-- Filters Bar -->
         <div class="filters-bar">
-          <div class="search-wrap">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-            <input type="search" class="search-input" id="log-search" placeholder="Search logs by event or user...">
+          <div class="filters-left">
+            <div class="search-wrap">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              <input type="text" class="search-input" id="log-search" placeholder="Search actor, action, resource..." oninput="applyFilters()">
+            </div>
+
+            <select class="filter-select" id="log-category-filter" onchange="applyFilters()">
+              <option value="all">All Categories</option>
+              <option value="auth">Authentication</option>
+              <option value="user">User Operations</option>
+              <option value="academic">Academic Structure</option>
+              <option value="communication">Communication</option>
+              <option value="system">System & Backup</option>
+              <option value="security">Security Events</option>
+            </select>
+
+            <select class="filter-select" id="log-severity-filter" onchange="applyFilters()">
+              <option value="all">All Severities</option>
+              <option value="low">Low (Standard)</option>
+              <option value="medium">Medium (Modifications)</option>
+              <option value="high">High (Privileged / Security)</option>
+            </select>
           </div>
-          <select class="filter-select" id="filter-type"><option value="">All Event Types</option><option>Security</option><option>User</option><option>Academic</option><option>System</option><option>Config</option></select>
-          <select class="filter-select" id="filter-severity"><option value="">All Severity</option><option>Critical</option><option>High</option><option>Medium</option><option>Low</option></select>
-          <input type="date" class="filter-select" id="filter-date" style="width:140px">
+          <span style="font-size:0.8125rem; color:var(--text-tertiary);" id="log-count-text">Loading logs...</span>
         </div>
 
-        <!-- Log Table -->
-        <div class="audit-card">
-          <div style="overflow-x:auto">
-            <table class="audit-table" id="audit-table">
+        <!-- Audit Table -->
+        <div class="data-card">
+          <div style="overflow-x: auto;">
+            <table class="admin-table">
               <thead>
                 <tr>
                   <th>Timestamp</th>
-                  <th>Event Type</th>
-                  <th>Severity</th>
-                  <th>Description</th>
-                  <th>Actor</th>
-                  <th>IP Address</th>
+                  <th>Actor / User</th>
+                  <th>Role</th>
+                  <th>Action Type</th>
+                  <th>Target Resource</th>
+                  <th>IP / Device Info</th>
+                  <th>Result</th>
                 </tr>
               </thead>
-              <tbody id="audit-tbody"></tbody>
+              <tbody id="audit-tbody">
+                <tr><td colspan="7" style="text-align:center; padding:2.5rem; color:var(--text-muted);">Fetching audit records...</td></tr>
+              </tbody>
             </table>
-          </div>
-          <div class="pagination-bar">
-            <span>Showing 1–10 of 3,820 log entries</span>
-            <div class="pagination-btns">
-              <button class="page-btn">‹</button>
-              <button class="page-btn active">1</button>
-              <button class="page-btn">2</button>
-              <button class="page-btn">3</button>
-              <button class="page-btn">›</button>
-            </div>
           </div>
         </div>
       </main>
     </div>
   </div>
 
-  <!-- Firebase SDKs -->
-  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
-
-  <script src="../js/firebase-config.js"></script>
-  <script src="../js/auth.js"></script>
-  <script src="../js/admin-service.js"></script>
   <script src="../js/ui.js"></script>
-  <script>
-    let auditLogsList = [];
+  <script src="../js/admin-service.js"></script>
 
-    function renderLogs(data) {
-      document.getElementById('audit-tbody').innerHTML = data.map(l => `
-        <tr>
-          <td class="log-meta">${l.createdAt ? new Date(l.createdAt).toLocaleDateString([], {month:'short', day:'numeric', hour:'2-digit', minute:'2-digit'}) : (l.ts || 'Just now')}</td>
-          <td><span class="event-type-badge ${l.category || l.type || 'academic'}">${(l.category || l.type || 'academic').toUpperCase()}</span></td>
-          <td><span class="severity-badge ${l.severity || 'low'}">${(l.severity || 'low').toUpperCase()}</span></td>
-          <td><div class="log-description">${l.description || l.desc || l.action}</div></td>
-          <td class="log-meta">${l.actorEmail || l.actor || 'System'}</td>
-          <td class="log-meta" style="font-family:monospace">${l.ipAddress || l.ip || '127.0.0.1'}</td>
-        </tr>`).join('');
-    }
+  <script>
+    let logsList = [];
 
     document.addEventListener('DOMContentLoaded', async () => {
-      const user = AuthService.getCurrentUser();
-      if (user) document.getElementById('sidebar-user-name').textContent = user.name || 'Super Admin';
-
-      auditLogsList = await AdminService.getAuditLogs();
-      renderLogs(auditLogsList);
-
-      document.getElementById('log-search').addEventListener('input', e => {
-        const q = e.target.value.toLowerCase();
-        renderLogs(auditLogsList.filter(l => (l.description || l.desc || '').toLowerCase().includes(q) || (l.actorEmail || l.actor || '').toLowerCase().includes(q)));
-      });
-      document.getElementById('filter-type').addEventListener('change', e => {
-        const t = e.target.value.toLowerCase();
-        renderLogs(t ? auditLogsList.filter(l => (l.category || l.type) === t) : auditLogsList);
-      });
-      document.getElementById('filter-severity').addEventListener('change', e => {
-        const s = e.target.value.toLowerCase();
-        renderLogs(s ? auditLogsList.filter(l => l.severity === s) : auditLogsList);
-      });
-      document.getElementById('logout-action-btn').addEventListener('click', async () => await AuthService.logout());
-      const toggle = document.getElementById('mobile-nav-toggle');
-      const sidebar = document.querySelector('.app-sidebar');
-      const backdrop = document.querySelector('.sidebar-backdrop');
-      if (toggle) { toggle.addEventListener('click', () => { sidebar.classList.toggle('mobile-open'); backdrop.classList.toggle('visible'); }); backdrop.addEventListener('click', () => { sidebar.classList.remove('mobile-open'); backdrop.classList.remove('visible'); }); }
-      document.querySelectorAll('[data-dropdown-toggle]').forEach(btn => { btn.addEventListener('click', e => { e.stopPropagation(); const d = document.getElementById(btn.getAttribute('data-dropdown-toggle')); if (d) { document.querySelectorAll('.menu-dropdown.open').forEach(x => { if(x!==d) x.classList.remove('open'); }); d.classList.toggle('open'); } }); });
-      document.addEventListener('click', () => document.querySelectorAll('.menu-dropdown.open').forEach(d => d.classList.remove('open')));
+      UI.initTheme();
+      await fetchLogs();
     });
+
+    async function fetchLogs() {
+      try {
+        logsList = await AdminService.getAuditLogs({ limit: 100 });
+        applyFilters();
+      } catch (err) {
+        UI.showToast('error', 'Error fetching logs', err.message);
+      }
+    }
+
+    function applyFilters() {
+      const q = document.getElementById('log-search').value.toLowerCase().trim();
+      const cat = document.getElementById('log-category-filter').value;
+      const sev = document.getElementById('log-severity-filter').value;
+
+      const filtered = logsList.filter(l => {
+        if (cat !== 'all' && l.category !== cat) return false;
+        if (sev !== 'all' && l.severity !== sev) return false;
+        if (q) {
+          const match = (l.user || '').toLowerCase().includes(q) ||
+                        (l.action || '').toLowerCase().includes(q) ||
+                        (l.resource || '').toLowerCase().includes(q) ||
+                        (l.details || '').toLowerCase().includes(q);
+          if (!match) return false;
+        }
+        return true;
+      });
+
+      renderTable(filtered);
+    }
+
+    function renderTable(list) {
+      const tbody = document.getElementById('audit-tbody');
+      document.getElementById('log-count-text').textContent = `Showing ${list.length} audit event${list.length === 1 ? '' : 's'}`;
+
+      if (!list.length) {
+        tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:2.5rem; color:var(--text-muted);">No audit log records match the filters.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = list.map(l => {
+        const timeStr = new Date(l.timestamp).toLocaleString();
+        const isSuccess = l.result === 'SUCCESS';
+
+        return `
+          <tr>
+            <td style="font-size:0.75rem; white-space:nowrap;">${timeStr}</td>
+            <td>
+              <div style="font-weight:700; color:var(--text-primary);">${l.user}</div>
+              <div style="font-size:0.71875rem; color:var(--text-tertiary);">${l.userEmail || ''}</div>
+            </td>
+            <td><span class="role-badge ${l.role}">${l.role}</span></td>
+            <td>
+              <strong style="color:var(--text-primary); font-size:0.8125rem;">${l.action}</strong>
+              <div style="font-size:0.71875rem; color:var(--text-tertiary); max-width:280px;">${l.details || ''}</div>
+            </td>
+            <td><span style="font-weight:600; color:var(--text-secondary);">${l.resource || 'System'}</span></td>
+            <td style="font-size:0.75rem; color:var(--text-tertiary);">${l.ipAddress || 'Internal'}</td>
+            <td>
+              <span class="result-pill ${isSuccess ? 'success' : 'blocked'}">${l.result || 'SUCCESS'}</span>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function exportAuditCsv() {
+      if (!logsList.length) {
+        UI.showToast('info', 'No Data', 'No audit logs to export.');
+        return;
+      }
+      const data = logsList.map(l => ({
+        Timestamp: l.timestamp,
+        Actor: l.user,
+        Email: l.userEmail,
+        Role: l.role,
+        Action: l.action,
+        Category: l.category,
+        Resource: l.resource,
+        IPAddress: l.ipAddress,
+        Result: l.result,
+        Details: l.details
+      }));
+      AdminService.exportToCsv('smart_student_audit_logs.csv', data);
+      UI.showToast('success', 'Export Complete', `Exported ${data.length} audit records.`);
+    }
   </script>
 </body>
 </html>

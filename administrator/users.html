@@ -4,8 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>User Management — Smart Admin</title>
-  <meta name="description" content="Create, update, deactivate and manage all user accounts on the platform.">
+  <meta name="description" content="Centralized platform user directory for Super Admin. Create, edit, search, filter, activate/deactivate, reset passwords, and manage all institutional roles.">
   <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+  <link rel="alternate icon" href="../favicon.ico">
   <link rel="stylesheet" href="../css/main.css">
   <link rel="stylesheet" href="../css/dashboard.css">
   <link rel="stylesheet" href="../css/responsive.css">
@@ -15,129 +16,203 @@
       --admin-accent: #F59E0B; --admin-accent-dark: #D97706;
       --admin-accent-light: #FEF3C7; --admin-accent-bg: #FFFBEB;
     }
-    .sidebar-brand-icon { background: linear-gradient(135deg,#F59E0B,#D97706) !important; box-shadow:0 4px 12px rgba(245,158,11,.4) !important; }
-    .nav-link.active { background: rgba(245,158,11,.14) !important; color: #F59E0B !important; }
-    .nav-link.active .nav-link-icon { color: #F59E0B !important; }
-    .nav-link:hover { background: rgba(245,158,11,.08) !important; }
+    .sidebar-brand-icon { background: linear-gradient(135deg,#F59E0B,#D97706)!important; box-shadow:0 4px 12px rgba(245,158,11,.4)!important; }
+    .nav-link.active { background: rgba(245,158,11,.16)!important; color: #FBBF24!important; border: 1px solid rgba(245,158,11,.28)!important; }
+    .nav-link.active .nav-link-icon { color: #F59E0B!important; }
+    .nav-link.active .nav-link-text,
+    .nav-link.active > span:not(.nav-link-icon):not(.nav-badge) { color: #FBBF24!important; font-weight: 700!important; }
 
-    /* Page Header */
-    .page-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:1.5rem; }
+    .page-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:1.25rem; flex-wrap:wrap; gap:1rem; }
     .page-title { font-size:1.5rem; font-weight:800; color:var(--text-primary); letter-spacing:-.02em; }
     .page-sub { font-size:.84375rem; color:var(--text-tertiary); margin-top:.2rem; }
-    .btn-primary-admin {
-      display:inline-flex; align-items:center; gap:.4rem;
-      background:linear-gradient(135deg,#F59E0B,#D97706);
-      color:#FFFFFF; font-size:.84375rem; font-weight:700;
-      padding:.6rem 1.1rem; border-radius:10px; border:none;
-      cursor:pointer; text-decoration:none; transition:all .18s;
-      box-shadow:0 4px 12px rgba(245,158,11,.3);
-    }
-    .btn-primary-admin:hover { transform:translateY(-1px); box-shadow:0 6px 16px rgba(245,158,11,.4); }
 
-    /* Filters Bar */
+    /* Role Tabs */
+    .role-tabs-bar {
+      display: flex; gap: 0.35rem; background: #F1F5F9; padding: 0.3rem; border-radius: 12px; margin-bottom: 1.25rem; width: fit-content; flex-wrap: wrap;
+    }
+    .role-tab-btn {
+      padding: 0.5rem 1rem; border-radius: 9px; border: none; background: transparent; font-size: 0.8125rem; font-weight: 700; color: var(--text-tertiary); cursor: pointer; transition: all 0.18s; font-family: inherit; display: flex; align-items: center; gap: 0.4rem;
+    }
+    .role-tab-btn.active { background: #FFFFFF; color: var(--text-primary); box-shadow: 0 2px 6px rgba(15,23,42,0.08); }
+    .role-tab-count { padding: 0.15rem 0.45rem; border-radius: 20px; font-size: 0.6875rem; background: #E2E8F0; color: var(--text-secondary); }
+    .role-tab-btn.active .role-tab-count { background: var(--admin-accent-bg); color: var(--admin-accent-dark); }
+
+    /* Action bar & Filters */
     .filters-bar {
-      display:flex; gap:.75rem; align-items:center; margin-bottom:1.25rem; flex-wrap:wrap;
+      display: flex; gap: 0.75rem; align-items: center; justify-content: space-between; margin-bottom: 1.25rem; flex-wrap: wrap;
     }
-    .filter-select, .search-input-users {
-      height:38px; border:1px solid var(--border-default); border-radius:8px;
-      padding:0 .75rem; font-size:.8125rem; font-family:inherit;
-      color:var(--text-secondary); background:#FFFFFF; cursor:pointer;
-      transition:border-color .15s;
+    .filters-left { display: flex; gap: 0.65rem; align-items: center; flex-wrap: wrap; }
+    .search-wrap { position: relative; width: 280px; }
+    .search-wrap svg { position: absolute; left: 0.75rem; top: 50%; transform: translateY(-50%); color: var(--text-tertiary); pointer-events: none; }
+    .search-input-users {
+      width: 100%; height: 38px; border: 1px solid var(--border-default); border-radius: 9px; padding: 0 0.75rem 0 2.25rem; font-size: 0.8125rem; font-family: inherit; background: #FFFFFF; transition: border-color 0.15s;
     }
-    .filter-select:focus, .search-input-users:focus {
-      outline:none; border-color:var(--admin-accent);
+    .search-input-users:focus { outline: none; border-color: var(--admin-accent); }
+    .filter-select {
+      height: 38px; border: 1px solid var(--border-default); border-radius: 9px; padding: 0 0.75rem; font-size: 0.8125rem; font-family: inherit; color: var(--text-secondary); background: #FFFFFF; cursor: pointer;
     }
-    .search-input-users { width:260px; padding-left:2rem; position:relative; }
-    .search-wrap { position:relative; }
-    .search-wrap svg { position:absolute; left:.6rem; top:50%; transform:translateY(-50%); color:var(--text-tertiary); pointer-events:none; }
+    .filter-select:focus { outline: none; border-color: var(--admin-accent); }
 
-    /* Table */
-    .users-card { background:#fff; border:1px solid var(--border-default); border-radius:16px; overflow:hidden; }
-    .admin-table { width:100%; border-collapse:collapse; font-size:.84375rem; }
-    .admin-table th { background:#F8FAFC; padding:.65rem 1.25rem; text-align:left; font-size:.71875rem; font-weight:700; text-transform:uppercase; letter-spacing:.06em; color:var(--text-tertiary); border-bottom:1px solid var(--border-default); }
-    .admin-table td { padding:.85rem 1.25rem; border-bottom:1px solid var(--border-light); color:var(--text-secondary); vertical-align:middle; }
-    .admin-table tr:last-child td { border-bottom:none; }
-    .admin-table tr:hover td { background:#F8FAFC; }
+    .btn-primary-admin {
+      display: inline-flex; align-items: center; gap: 0.45rem; background: linear-gradient(135deg,#F59E0B,#D97706); color: #fff; font-size: 0.8125rem; font-weight: 700; padding: 0.55rem 1.15rem; border-radius: 9px; border: none; cursor: pointer; text-decoration: none; transition: all 0.18s; box-shadow: 0 4px 12px rgba(245,158,11,.3); font-family: inherit;
+    }
+    .btn-primary-admin:hover { transform: translateY(-1px); box-shadow: 0 6px 16px rgba(245,158,11,.4); }
 
-    .user-cell { display:flex; align-items:center; gap:.6rem; }
-    .user-mini-avatar { width:34px; height:34px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:.6875rem; font-weight:700; color:#fff; flex-shrink:0; }
-    .user-mini-name { font-weight:600; color:var(--text-primary); font-size:.84375rem; }
-    .user-mini-email { font-size:.75rem; color:var(--text-tertiary); }
+    .btn-secondary-admin {
+      display: inline-flex; align-items: center; gap: 0.45rem; background: #FFFFFF; color: var(--text-secondary); font-size: 0.8125rem; font-weight: 700; padding: 0.55rem 0.95rem; border-radius: 9px; border: 1px solid var(--border-default); cursor: pointer; transition: all 0.18s; font-family: inherit;
+    }
+    .btn-secondary-admin:hover { background: #F8FAFC; border-color: #CBD5E1; color: var(--text-primary); }
 
-    .role-badge { display:inline-flex; align-items:center; padding:.2rem .55rem; border-radius:20px; font-size:.71875rem; font-weight:700; text-transform:uppercase; letter-spacing:.04em; }
-    .role-badge.student { background:#EDE9FE; color:#5B21B6; }
-    .role-badge.faculty { background:#DBEAFE; color:#1D4ED8; }
-    .role-badge.hod     { background:#FEF3C7; color:#92400E; }
-    .role-badge.admin   { background:#DCFCE7; color:#166534; }
+    /* Table styles */
+    .users-card { background: #fff; border: 1px solid var(--border-default); border-radius: 16px; overflow: hidden; box-shadow: var(--shadow-sm); }
+    .admin-table { width: 100%; border-collapse: collapse; font-size: 0.84375rem; }
+    .admin-table th { background: #F8FAFC; padding: 0.75rem 1.25rem; text-align: left; font-size: 0.71875rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-tertiary); border-bottom: 1px solid var(--border-default); }
+    .admin-table td { padding: 0.85rem 1.25rem; border-bottom: 1px solid var(--border-light); color: var(--text-secondary); vertical-align: middle; }
+    .admin-table tr:last-child td { border-bottom: none; }
+    .admin-table tr:hover td { background: #F8FAFC; }
 
-    .status-badge { display:inline-flex; align-items:center; gap:.3rem; padding:.2rem .6rem; border-radius:20px; font-size:.71875rem; font-weight:700; }
-    .status-badge::before { content:''; width:6px; height:6px; border-radius:50%; }
-    .status-badge.active  { background:#DCFCE7; color:#166534; }
-    .status-badge.active::before  { background:#16A34A; }
-    .status-badge.inactive { background:#FEE2E2; color:#991B1B; }
-    .status-badge.inactive::before { background:#DC2626; }
+    .user-cell { display: flex; align-items: center; gap: 0.75rem; }
+    .user-mini-avatar { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 700; color: #fff; flex-shrink: 0; }
+    .user-mini-name { font-weight: 700; color: var(--text-primary); font-size: 0.875rem; }
+    .user-mini-email { font-size: 0.75rem; color: var(--text-tertiary); }
 
-    .action-btns { display:flex; gap:.4rem; }
+    .role-badge { display: inline-flex; align-items: center; padding: 0.2rem 0.55rem; border-radius: 20px; font-size: 0.71875rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; }
+    .role-badge.super_admin { background: #FEF3C7; color: #92400E; }
+    .role-badge.administrator { background: #DCFCE7; color: #166534; }
+    .role-badge.hod { background: #FFEDD5; color: #C2410C; }
+    .role-badge.faculty { background: #DBEAFE; color: #1D4ED8; }
+    .role-badge.student { background: #EDE9FE; color: #5B21B6; }
+
+    .status-badge { display: inline-flex; align-items: center; gap: 0.3rem; padding: 0.2rem 0.6rem; border-radius: 20px; font-size: 0.71875rem; font-weight: 700; }
+    .status-badge::before { content: ''; width: 6px; height: 6px; border-radius: 50%; }
+    .status-badge.active { background: #DCFCE7; color: #166534; }
+    .status-badge.active::before { background: #16A34A; }
+    .status-badge.inactive { background: #FEE2E2; color: #991B1B; }
+    .status-badge.inactive::before { background: #DC2626; }
+
+    .action-btns { display: flex; gap: 0.35rem; }
     .btn-icon-sm {
-      width:30px; height:30px; border-radius:7px; border:1px solid var(--border-default);
-      background:#FFFFFF; display:flex; align-items:center; justify-content:center;
-      cursor:pointer; transition:all .15s; color:var(--text-tertiary);
+      width: 32px; height: 32px; border-radius: 8px; border: 1px solid var(--border-default); background: #FFFFFF; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.15s; color: var(--text-tertiary);
     }
-    .btn-icon-sm:hover { border-color:var(--admin-accent); color:var(--admin-accent); background:var(--admin-accent-bg); }
-    .btn-icon-sm.danger:hover { border-color:#DC2626; color:#DC2626; background:#FEF2F2; }
+    .btn-icon-sm:hover { border-color: var(--admin-accent); color: var(--admin-accent-dark); background: var(--admin-accent-bg); }
+    .btn-icon-sm.danger:hover { border-color: #DC2626; color: #DC2626; background: #FEF2F2; }
+
+    /* Modal Form Styles */
+    .modal-overlay {
+      position: fixed !important;
+      inset: 0 !important;
+      background: rgba(15, 23, 42, 0.65) !important;
+      backdrop-filter: blur(4px) !important;
+      display: none !important;
+      align-items: center !important;
+      justify-content: center !important;
+      z-index: 99999 !important;
+      padding: 1rem !important;
+      opacity: 0 !important;
+      visibility: hidden !important;
+      pointer-events: none !important;
+    }
+    .modal-overlay.open,
+    .modal-overlay.active {
+      display: flex !important;
+      opacity: 1 !important;
+      visibility: visible !important;
+      pointer-events: auto !important;
+    }
+    .modal-card {
+      background: #FFFFFF !important;
+      border-radius: 18px !important;
+      width: 100% !important;
+      max-width: 580px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.24) !important;
+      overflow: hidden !important;
+      position: relative !important;
+      z-index: 100000 !important;
+      animation: modalIn 0.22s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    }
+    @keyframes modalIn {
+      from { transform: scale(0.94) translateY(8px); opacity: 0; }
+      to { transform: scale(1) translateY(0); opacity: 1; }
+    }
+    .modal-header { padding: 1.15rem 1.5rem; border-bottom: 1px solid var(--border-light); display: flex; align-items: center; justify-content: space-between; }
+    .modal-title { font-size: 1.05rem; font-weight: 800; color: var(--text-primary); }
+    .modal-body { padding: 1.25rem 1.5rem; max-height: 75vh; overflow-y: auto; }
+    .modal-footer { padding: 1rem 1.5rem; border-top: 1px solid var(--border-light); background: #F8FAFC; display: flex; justify-content: flex-end; gap: 0.65rem; }
+    .form-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0.85rem; }
+    .form-group { margin-bottom: 0.85rem; display: flex; flex-direction: column; gap: 0.35rem; }
+    .form-label { font-size: 0.8125rem; font-weight: 700; color: var(--text-primary); }
+    .modal-input {
+      width: 100%; height: 40px; padding: 0 0.85rem; border-radius: 9px; border: 1px solid #CBD5E1; background: #F8FAFC; font-size: 0.84375rem; font-family: inherit; color: var(--text-primary); box-sizing: border-box; transition: all 0.15s;
+    }
+    .modal-input:focus { outline: none; border-color: var(--admin-accent); background: #fff; box-shadow: 0 0 0 3px rgba(245,158,11,0.15); }
 
     /* Pagination */
-    .pagination-bar { display:flex; align-items:center; justify-content:space-between; padding:.875rem 1.25rem; border-top:1px solid var(--border-light); font-size:.8125rem; color:var(--text-tertiary); }
-    .pagination-btns { display:flex; gap:.35rem; }
-    .page-btn { width:30px; height:30px; border-radius:7px; border:1px solid var(--border-default); background:#fff; cursor:pointer; font-size:.8125rem; font-family:inherit; color:var(--text-secondary); display:flex; align-items:center; justify-content:center; transition:all .15s; }
-    .page-btn.active, .page-btn:hover { background:var(--admin-accent); color:#fff; border-color:var(--admin-accent); }
-
-    /* Stats row */
-    .user-stats-row { display:grid; grid-template-columns:repeat(4,1fr); gap:1rem; margin-bottom:1.5rem; }
-    .user-stat { background:#fff; border:1px solid var(--border-default); border-radius:12px; padding:1rem 1.25rem; display:flex; align-items:center; gap:.875rem; }
-    .user-stat-icon { width:38px; height:38px; border-radius:10px; display:flex; align-items:center; justify-content:center; }
-    .user-stat-val { font-size:1.4rem; font-weight:800; color:var(--text-primary); letter-spacing:-.02em; }
-    .user-stat-lbl { font-size:.71875rem; font-weight:600; color:var(--text-tertiary); text-transform:uppercase; letter-spacing:.04em; }
-
-    @media(max-width:900px){ .user-stats-row { grid-template-columns:1fr 1fr; } }
+    .pagination-bar { display: flex; align-items: center; justify-content: space-between; padding: 0.875rem 1.25rem; border-top: 1px solid var(--border-light); font-size: 0.8125rem; color: var(--text-tertiary); }
+    .pagination-btns { display: flex; gap: 0.35rem; }
+    .page-btn { width: 32px; height: 32px; border-radius: 8px; border: 1px solid var(--border-default); background: #fff; cursor: pointer; font-size: 0.8125rem; font-family: inherit; color: var(--text-secondary); display: flex; align-items: center; justify-content: center; transition: all 0.15s; }
+    .page-btn.active, .page-btn:hover { background: var(--admin-accent); color: #fff; border-color: var(--admin-accent); }
   </style>
 </head>
-<body>
+
+<body class="admin-portal">
   <div id="toast-container"></div>
   <div class="sidebar-backdrop"></div>
+
   <div class="app-container">
-    <!-- Sidebar -->
-    <aside class="app-sidebar" aria-label="Admin Navigation">
+    <!-- Super Admin Navigation Sidebar -->
+    <aside class="app-sidebar admin-sidebar" aria-label="Admin Navigation">
       <div class="sidebar-header">
         <a href="dashboard.html" class="sidebar-brand">
           <div class="sidebar-brand-icon">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            </svg>
           </div>
-          <div class="sidebar-brand-text"><h2>Smart Admin</h2><span>Admin Portal</span></div>
+          <div class="sidebar-brand-text">
+            <h2>Smart Admin</h2>
+            <span>Super Admin Portal</span>
+          </div>
         </a>
       </div>
+
       <nav class="sidebar-nav-container">
-        <div class="nav-section-label">Platform Overview</div>
-        <a href="dashboard.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg></span><span>Overview</span></a>
-        <a href="profile.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span><span>My Profile</span></a>
-        <div class="nav-section-label">User & Access</div>
-        <a href="users.html" class="nav-link active"><span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span><span>User Management</span></a>
+        <div class="nav-section-label">Main Dashboard</div>
+        <a href="dashboard.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg></span><span>Dashboard</span></a>
+
+        <div class="nav-section-label">User Management</div>
+        <a href="users.html" class="nav-link active"><span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span><span>All Users</span></a>
+
+        <div class="nav-section-label">Academic Management</div>
+        <a href="academic-structure.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg></span><span>Departments & Periods</span></a>
+        <a href="courses.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></span><span>Courses & Subjects</span></a>
+
+        <div class="nav-section-label">Access Control</div>
         <a href="roles-permissions.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span><span>Roles & Permissions</span></a>
-        <div class="nav-section-label">Academic Admin</div>
-        <a href="academic-structure.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg></span><span>Academic Structure</span></a>
-        <a href="courses.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></span><span>Courses</span></a>
-        <div class="nav-section-label">Platform Ops</div>
-        <a href="reports.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></span><span>Reports</span></a>
-        <a href="audit-logs.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></span><span>Audit Logs</span><span class="nav-badge" style="background:#DC2626">5</span></a>
-        <a href="notifications.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></span><span>Notifications</span></a>
-        <a href="system-config.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span><span>System Config</span></a>
+
+        <div class="nav-section-label">Communication</div>
+        <a href="announcements.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></span><span>Announcements</span></a>
+
+        <div class="nav-section-label">Reports & Analytics</div>
+        <a href="reports.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></span><span>Reports & Analytics</span></a>
+
+        <div class="nav-section-label">Platform System</div>
+        <a href="system-health.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></span><span>System Health & Backup</span></a>
+        <a href="audit-logs.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></span><span>Audit Logs</span></a>
+        <a href="security.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span><span>Security Center</span></a>
+        <a href="system-config.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span><span>System Settings</span></a>
+
+        <div class="nav-section-label">Account</div>
+        <a href="profile.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span><span>Super Admin Profile</span></a>
       </nav>
+
       <div class="sidebar-footer">
         <a href="profile.html" class="sidebar-user-card">
-          <div class="user-avatar"><span class="user-avatar-initials">SA</span></div>
+          <div class="user-avatar" style="background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%); box-shadow: 0 4px 10px rgba(245, 158, 11, 0.35);">
+            <span class="user-avatar-initials" id="sidebar-initials">SA</span>
+          </div>
           <div class="user-info-text">
             <div class="user-name" id="sidebar-user-name">Super Administrator</div>
-            <span class="user-role-tag">Platform Admin</span>
+            <span class="user-role-tag" id="sidebar-user-role">Platform Root</span>
           </div>
         </a>
       </div>
@@ -146,21 +221,18 @@
     <div class="app-main">
       <header class="app-topbar">
         <div class="topbar-left">
-          <button type="button" class="mobile-nav-toggle" id="mobile-nav-toggle" aria-label="Open Navigation">
+          <button type="button" class="mobile-nav-toggle" id="mobile-nav-toggle">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
           </button>
-          <div class="topbar-page-title"><h1>User Management</h1></div>
+          <div class="topbar-page-title">
+            <h1>User Management</h1>
+          </div>
         </div>
         <div class="topbar-right">
           <div class="dropdown-container">
             <button type="button" class="user-menu-btn" data-dropdown-toggle="user-dropdown-menu">
-              <div class="user-avatar-sm" style="background:linear-gradient(135deg,#F59E0B,#D97706);">
-                <span class="user-avatar-initials">SA</span>
-              </div>
-              <div class="user-menu-info">
-                <div class="user-menu-name" id="topbar-user-name">Super Administrator</div>
-                <div class="user-menu-sub">Platform Admin</div>
-              </div>
+              <div class="user-avatar-sm" style="background:linear-gradient(135deg,#F59E0B,#D97706)"><span class="user-avatar-initials">SA</span></div>
+              <div class="user-menu-info"><div class="user-menu-name">Super Administrator</div><div class="user-menu-sub">Root Authority</div></div>
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
             </button>
             <div id="user-dropdown-menu" class="menu-dropdown profile-dropdown-menu">
@@ -174,99 +246,93 @@
       <main class="app-content">
         <div class="page-header">
           <div>
-            <div class="page-title">User Management</div>
-            <div class="page-sub">Create, update, deactivate and manage all platform user accounts</div>
+            <div class="page-title">Institutional User Directory</div>
+            <div class="page-sub">Create, edit, search, filter, and govern all accounts across university portals</div>
           </div>
-          <button class="btn-primary-admin" id="add-user-btn">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-            Add User
+          <div style="display:flex; gap:0.6rem;">
+            <button class="btn-secondary-admin" onclick="exportUsersCsv()">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              <span>Export CSV</span>
+            </button>
+            <button class="btn-primary-admin" onclick="openCreateUserModal()">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              <span>Add New User</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Role Sub-Tabs -->
+        <div class="role-tabs-bar">
+          <button class="role-tab-btn active" data-role="all" onclick="filterByRoleTab('all', this)">
+            <span>All Users</span><span class="role-tab-count" id="count-all">0</span>
+          </button>
+          <button class="role-tab-btn" data-role="student" onclick="filterByRoleTab('student', this)">
+            <span>Students</span><span class="role-tab-count" id="count-student">0</span>
+          </button>
+          <button class="role-tab-btn" data-role="faculty" onclick="filterByRoleTab('faculty', this)">
+            <span>Faculty</span><span class="role-tab-count" id="count-faculty">0</span>
+          </button>
+          <button class="role-tab-btn" data-role="hod" onclick="filterByRoleTab('hod', this)">
+            <span>HODs</span><span class="role-tab-count" id="count-hod">0</span>
+          </button>
+          <button class="role-tab-btn" data-role="super_admin" onclick="filterByRoleTab('super_admin', this)">
+            <span>Super Admins</span><span class="role-tab-count" id="count-super_admin">0</span>
           </button>
         </div>
 
-        <!-- User Stats -->
-        <div class="user-stats-row">
-          <div class="user-stat">
-            <div class="user-stat-icon" style="background:#DBEAFE;color:#2563EB">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-            </div>
-            <div><div class="user-stat-val">1,842</div><div class="user-stat-lbl">Total Users</div></div>
-          </div>
-          <div class="user-stat">
-            <div class="user-stat-icon" style="background:#EDE9FE;color:#7C3AED">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>
-            </div>
-            <div><div class="user-stat-val">1,520</div><div class="user-stat-lbl">Students</div></div>
-          </div>
-          <div class="user-stat">
-            <div class="user-stat-icon" style="background:#DCFCE7;color:#16A34A">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
-            </div>
-            <div><div class="user-stat-val">312</div><div class="user-stat-lbl">Faculty & HODs</div></div>
-          </div>
-          <div class="user-stat">
-            <div class="user-stat-icon" style="background:#FEE2E2;color:#DC2626">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
-            </div>
-            <div><div class="user-stat-val">123</div><div class="user-stat-lbl">Inactive</div></div>
-          </div>
-        </div>
-
-        <!-- Filters -->
+        <!-- Filter Bar -->
         <div class="filters-bar">
-          <div class="search-wrap">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-            <input type="search" class="search-input-users" id="user-search" placeholder="Search name or email...">
+          <div class="filters-left">
+            <div class="search-wrap">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              <input type="text" class="search-input-users" id="user-search-input" placeholder="Search by name, email, ID..." oninput="handleSearchInput()">
+            </div>
+
+            <select class="filter-select" id="dept-filter" onchange="applyFilters()">
+              <option value="all">All Departments</option>
+              <option value="Department of Computer Engineering">Computer Engineering (B.Tech)</option>
+              <option value="Department of Business Administration">Business Administration (BBA)</option>
+              <option value="School of Management & Business Studies">Management Studies (MBA)</option>
+            </select>
+
+            <select class="filter-select" id="status-filter" onchange="applyFilters()">
+              <option value="all">All Statuses</option>
+              <option value="active">Active</option>
+              <option value="inactive">Inactive / Suspended</option>
+            </select>
           </div>
-          <select class="filter-select" id="filter-role">
-            <option value="">All Roles</option>
-            <option value="student">Student</option>
-            <option value="faculty">Faculty</option>
-            <option value="hod">HOD</option>
-            <option value="super_admin">Super Admin</option>
-          </select>
-          <select class="filter-select" id="filter-dept">
-            <option value="">All Departments</option>
-            <option value="B.Tech">B.Tech</option>
-            <option value="BBA">BBA</option>
-            <option value="MBA">MBA</option>
-          </select>
-          <select class="filter-select" id="filter-status">
-            <option value="">All Status</option>
-            <option value="active">Active</option>
-            <option value="inactive">Inactive</option>
-          </select>
+          <div style="font-size:0.8125rem; color:var(--text-tertiary);" id="user-count-summary">
+            Showing 0 users
+          </div>
         </div>
 
         <!-- Users Table -->
         <div class="users-card">
-          <div style="overflow-x:auto">
-            <table class="admin-table" id="users-table">
+          <div style="overflow-x: auto;">
+            <table class="admin-table">
               <thead>
                 <tr>
-                  <th>User</th>
+                  <th>User Details</th>
+                  <th>User ID</th>
                   <th>Role</th>
-                  <th>Department</th>
-                  <th>ID / Code</th>
+                  <th>Department / Course</th>
                   <th>Status</th>
-                  <th>Joined</th>
+                  <th>Last Login</th>
+                  <th>Joined Date</th>
                   <th>Actions</th>
                 </tr>
               </thead>
-              <tbody id="users-tbody">
-                <!-- Populated by JS -->
+              <tbody id="users-table-body">
+                <tr><td colspan="8" style="text-align:center; padding:2rem; color:var(--text-muted);">Loading user records...</td></tr>
               </tbody>
             </table>
           </div>
+
+          <!-- Pagination Bar -->
           <div class="pagination-bar">
-            <span id="pagination-info">Showing 1–10 of 1,842 users</span>
-            <div class="pagination-btns">
-              <button class="page-btn">‹</button>
-              <button class="page-btn active">1</button>
-              <button class="page-btn">2</button>
-              <button class="page-btn">3</button>
-              <button class="page-btn">…</button>
-              <button class="page-btn">185</button>
-              <button class="page-btn">›</button>
+            <span id="pagination-info">Page 1 of 1</span>
+            <div class="pagination-btns" id="pagination-btns">
+              <!-- Dynamically inserted buttons -->
             </div>
           </div>
         </div>
@@ -274,147 +340,479 @@
     </div>
   </div>
 
-  <!-- Firebase SDKs -->
-  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+  <!-- Create/Edit User Modal -->
+  <div class="modal-overlay" id="user-modal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="modal-title" id="user-modal-title">Create New User</div>
+        <button type="button" class="btn-icon-sm" onclick="closeUserModal()">&times;</button>
+      </div>
+      <form id="user-form" onsubmit="handleUserFormSubmit(event)">
+        <div class="modal-body">
+          <input type="hidden" id="form-user-uid">
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label class="form-label">Full Name <span style="color:#DC2626;">*</span></label>
+              <input type="text" class="modal-input" id="form-name" required placeholder="e.g. Dr. Ramesh Gupta">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Email Address <span style="color:#DC2626;">*</span></label>
+              <input type="email" class="modal-input" id="form-email" required placeholder="name@university.edu">
+            </div>
+          </div>
 
-  <script src="../js/firebase-config.js"></script>
-  <script src="../js/auth.js"></script>
-  <script src="../js/admin-service.js"></script>
-  <script src="../js/ui.js"></script>
-  <script>
-    let currentUsersList = [];
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label class="form-label">Institutional Role <span style="color:#DC2626;">*</span></label>
+              <select class="modal-input" id="form-role" required onchange="handleRoleChange()">
+                <option value="student" selected>Student</option>
+                <option value="faculty">Faculty</option>
+                <option value="hod">Head of Department (HOD)</option>
+                <option value="super_admin">Super Administrator</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Department <span style="color:#DC2626;">*</span></label>
+              <select class="modal-input" id="form-dept" required>
+                <option value="Department of Computer Engineering">Department of Computer Engineering (B.Tech)</option>
+                <option value="Department of Business Administration">Department of Business Administration (BBA)</option>
+                <option value="School of Management & Business Studies">School of Management & Business Studies (MBA)</option>
+                <option value="Platform Administration">Platform Administration</option>
+              </select>
+            </div>
+          </div>
 
-    function getInitials(name) {
-      if (!name) return 'U';
-      return name.split(' ').map(w => w[0]).join('').substring(0,2).toUpperCase();
-    }
-    function getRoleBadge(role) {
-      const map = { student:'student', faculty:'faculty', hod:'hod', super_admin:'admin' };
-      return `<span class="role-badge ${map[role]||'student'}">${(role||'student').replace('_',' ')}</span>`;
-    }
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label class="form-label">Institutional ID / Roll No</label>
+              <input type="text" class="modal-input" id="form-id" placeholder="e.g. STU-2026-9921">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Contact Phone</label>
+              <input type="tel" class="modal-input" id="form-phone" placeholder="+91 98000 00000">
+            </div>
+          </div>
 
-    function renderTable(list) {
-      const tbody = document.getElementById('users-tbody');
-      if (!list.length) {
-        tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--text-tertiary)">No users found matching filter.</td></tr>';
-        return;
-      }
-      tbody.innerHTML = list.map(u => `
-        <tr>
-          <td>
-            <div class="user-cell">
-              <div class="user-mini-avatar" style="background:${u.color || '#8B5CF6'}">${getInitials(u.name)}</div>
-              <div>
-                <div class="user-mini-name">${u.name}</div>
-                <div class="user-mini-email">${u.email}</div>
+          <div class="form-group" id="student-extra-fields">
+            <div class="form-grid-2">
+              <div class="form-group">
+                <label class="form-label">Semester</label>
+                <input type="number" min="1" max="8" class="modal-input" id="form-semester" value="4">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Division / Section</label>
+                <input type="text" class="modal-input" id="form-division" value="A">
               </div>
             </div>
-          </td>
-          <td>${getRoleBadge(u.role)}</td>
-          <td>${u.department || u.dept || 'B.Tech'}</td>
-          <td><code style="font-size:.78125rem;color:var(--text-secondary)">${u.studentId || u.facultyId || u.id || u.uid}</code></td>
-          <td><span class="status-dot ${u.status === 'active' ? 'active' : 'inactive'}">${u.status === 'active' ? 'Active' : 'Inactive'}</span></td>
-          <td>${u.joinedAt || u.joined || 'Aug 1, 2024'}</td>
-          <td>
-            <div class="table-actions">
-              <button class="btn-icon-sm" title="Edit user" onclick="handleEditUser('${u.uid || u.id}', '${u.name}')">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-              </button>
-              <button class="btn-icon-sm danger" title="Toggle Status" onclick="handleToggleUserStatus('${u.uid || u.id}', '${u.name}', '${u.status}')">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
-              </button>
-            </div>
-          </td>
-        </tr>`).join('');
-    }
+          </div>
 
-    window.handleEditUser = function(userId, name) {
-      const newName = prompt(`Edit user name for ${name}:`, name);
-      if (newName && newName.trim() !== name) {
-        const u = currentUsersList.find(x => (x.uid === userId || x.id === userId));
-        if (u) {
-          u.name = newName.trim();
-          renderTable(currentUsersList);
-          UI.showToast('success', 'User Updated', `Updated name to "${newName.trim()}"`);
-        }
-      }
-    };
+          <div class="form-group">
+            <label class="form-label">Account Status</label>
+            <select class="modal-input" id="form-status">
+              <option value="active">Active</option>
+              <option value="inactive">Inactive / Suspended</option>
+            </select>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn-secondary-admin" onclick="closeUserModal()">Cancel</button>
+          <button type="submit" class="btn-primary-admin" id="btn-save-user">Save User</button>
+        </div>
+      </form>
+    </div>
+  </div>
 
-    window.handleToggleUserStatus = async function(userId, name, currentStatus) {
-      const nextStatus = currentStatus === 'active' ? 'inactive' : 'active';
-      await AdminService.toggleUserStatus(userId, nextStatus);
-      const u = currentUsersList.find(x => (x.uid === userId || x.id === userId));
-      if (u) u.status = nextStatus;
-      renderTable(currentUsersList);
-      UI.showToast('info', 'Status Updated', `User ${name} is now ${nextStatus}`);
-    };
+  <!-- User Details Drawer/Modal -->
+  <div class="modal-overlay" id="details-modal">
+    <div class="modal-card" style="max-width: 500px;">
+      <div class="modal-header">
+        <div class="modal-title">User Account Overview</div>
+        <button type="button" class="btn-icon-sm" onclick="closeDetailsModal()">&times;</button>
+      </div>
+      <div class="modal-body" id="details-modal-body">
+        <!-- Injected via JS -->
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn-secondary-admin" onclick="closeDetailsModal()">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../js/ui.js"></script>
+  <script src="../js/admin-service.js"></script>
+
+  <script>
+    let allUsers = [];
+    let currentFiltered = [];
+    let activeRoleTab = 'all';
+    let currentPage = 1;
+    const pageSize = 8;
 
     document.addEventListener('DOMContentLoaded', async () => {
-      const user = AuthService.getCurrentUser();
-      if (user) {
-        document.getElementById('sidebar-user-name').textContent = user.name || 'Super Admin';
-        document.getElementById('topbar-user-name').textContent = user.name || 'Super Admin';
-      }
+      UI.initTheme();
 
-      currentUsersList = await AdminService.getUsers();
-      renderTable(currentUsersList);
-
-      function applyFilters() {
-        const q = (document.getElementById('user-search').value || '').toLowerCase();
-        const role = document.getElementById('filter-role').value;
-        const dept = document.getElementById('filter-dept').value;
-        const status = document.getElementById('filter-status').value;
-
-        const filtered = currentUsersList.filter(u => {
-          const matchQ = !q || (u.name||'').toLowerCase().includes(q) || (u.email||'').toLowerCase().includes(q) || (u.id||u.uid||'').toLowerCase().includes(q);
-          const matchRole = !role || u.role === role;
-          const matchDept = !dept || (u.department || u.dept || '').includes(dept);
-          const matchStatus = !status || u.status === status;
-          return matchQ && matchRole && matchDept && matchStatus;
-        });
-        renderTable(filtered);
-      }
-
-      document.getElementById('user-search').addEventListener('input', applyFilters);
-      document.getElementById('filter-role').addEventListener('change', applyFilters);
-      document.getElementById('filter-dept').addEventListener('change', applyFilters);
-      document.getElementById('filter-status').addEventListener('change', applyFilters);
-
-      document.getElementById('add-user-btn').addEventListener('click', async () => {
-        const email = prompt('Enter new institutional email (e.g., student.name@university.edu):');
-        if (!email || !email.includes('@')) return;
-        const name = prompt('Enter full name:', email.split('@')[0]);
-        if (!name) return;
-        const role = prompt('Enter role (student / faculty / hod / super_admin):', 'student') || 'student';
-        const dept = prompt('Enter Department (B.Tech / BBA / MBA):', 'B.Tech') || 'B.Tech';
-
-        const created = await AdminService.createUser({ email, name, role, department: dept });
-        currentUsersList.unshift(created);
-        renderTable(currentUsersList);
-        UI.showToast('success', 'User Created', `Created account for ${name} (${role})`);
-      });
-
-      document.getElementById('logout-action-btn').addEventListener('click', async () => { await AuthService.logout(); });
-
-      // Mobile nav
-      const toggle = document.getElementById('mobile-nav-toggle');
-      const sidebar = document.querySelector('.app-sidebar');
-      const backdrop = document.querySelector('.sidebar-backdrop');
-      if (toggle) {
-        toggle.addEventListener('click', () => { sidebar.classList.toggle('mobile-open'); backdrop.classList.toggle('visible'); });
-        backdrop.addEventListener('click', () => { sidebar.classList.remove('mobile-open'); backdrop.classList.remove('visible'); });
-      }
-      document.querySelectorAll('[data-dropdown-toggle]').forEach(btn => {
-        btn.addEventListener('click', e => {
-          e.stopPropagation();
-          const d = document.getElementById(btn.getAttribute('data-dropdown-toggle'));
-          if (d) { document.querySelectorAll('.menu-dropdown.open').forEach(x => { if(x!==d) x.classList.remove('open'); }); d.classList.toggle('open'); }
+      document.querySelectorAll('.modal-overlay').forEach(modal => {
+        modal.addEventListener('click', (e) => {
+          if (e.target === modal) modal.classList.remove('open', 'active');
         });
       });
-      document.addEventListener('click', () => document.querySelectorAll('.menu-dropdown.open').forEach(d => d.classList.remove('open')));
+
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('open', 'active'));
+        }
+      });
+
+      await fetchUsers();
     });
+
+    async function fetchUsers() {
+      try {
+        allUsers = await AdminService.getUsers();
+        updateRoleCounts();
+        applyFilters();
+      } catch (err) {
+        UI.showToast('error', 'Failed to load users', err.message);
+      }
+    }
+
+    function updateRoleCounts() {
+      document.getElementById('count-all').textContent = allUsers.length;
+      document.getElementById('count-student').textContent = allUsers.filter(u => u.role === 'student').length;
+      document.getElementById('count-faculty').textContent = allUsers.filter(u => u.role === 'faculty').length;
+      document.getElementById('count-hod').textContent = allUsers.filter(u => u.role === 'hod').length;
+      document.getElementById('count-super_admin').textContent = allUsers.filter(u => u.role === 'super_admin' || u.role === 'administrator').length;
+    }
+
+    function filterByRoleTab(role, btn) {
+      activeRoleTab = role;
+      document.querySelectorAll('.role-tab-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      currentPage = 1;
+      applyFilters();
+    }
+
+    function handleSearchInput() {
+      currentPage = 1;
+      applyFilters();
+    }
+
+    function applyFilters() {
+      const q = document.getElementById('user-search-input').value.toLowerCase().trim();
+      const dept = document.getElementById('dept-filter').value;
+      const status = document.getElementById('status-filter').value;
+
+      currentFiltered = allUsers.filter(u => {
+        if (activeRoleTab !== 'all' && u.role !== activeRoleTab) return false;
+        if (dept !== 'all' && u.department !== dept && u.departmentId !== dept) return false;
+        if (status !== 'all' && u.status !== status) return false;
+        if (q) {
+          const match = (u.name || '').toLowerCase().includes(q) ||
+                        (u.email || '').toLowerCase().includes(q) ||
+                        (u.id || '').toLowerCase().includes(q) ||
+                        (u.rollNo || '').toLowerCase().includes(q);
+          if (!match) return false;
+        }
+        return true;
+      });
+
+      renderUserTable();
+    }
+
+    function renderUserTable() {
+      const tbody = document.getElementById('users-table-body');
+      const total = currentFiltered.length;
+      document.getElementById('user-count-summary').textContent = `Showing ${total} user${total === 1 ? '' : 's'}`;
+
+      if (!total) {
+        tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding:2.5rem; color:var(--text-muted);">No users match the selected filters.</td></tr>`;
+        renderPagination(0);
+        return;
+      }
+
+      const totalPages = Math.ceil(total / pageSize);
+      if (currentPage > totalPages) currentPage = totalPages;
+      const startIdx = (currentPage - 1) * pageSize;
+      const paginated = currentFiltered.slice(startIdx, startIdx + pageSize);
+
+      const avatarColors = {
+        super_admin: '#F59E0B',
+        administrator: '#10B981',
+        hod: '#D97706',
+        faculty: '#2563EB',
+        student: '#7C3AED'
+      };
+
+      tbody.innerHTML = paginated.map(u => {
+        const initials = (u.name || 'User').split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+        const roleColor = avatarColors[u.role] || '#64748B';
+        const roleLabel = u.role === 'super_admin' ? 'Super Admin' : (u.role === 'hod' ? 'HOD' : u.role.charAt(0).toUpperCase() + u.role.slice(1));
+        const joined = u.joinedAt || (u.createdAt ? u.createdAt.split('T')[0] : '2024-08-01');
+
+        return `
+          <tr>
+            <td>
+              <div class="user-cell">
+                <div class="user-mini-avatar" style="background:${u.avatarColor || roleColor};">${initials}</div>
+                <div>
+                  <div class="user-mini-name">${u.name}</div>
+                  <div class="user-mini-email">${u.email}</div>
+                </div>
+              </div>
+            </td>
+            <td><strong style="color:var(--text-primary);">${u.id || u.rollNo || 'N/A'}</strong></td>
+            <td><span class="role-badge ${u.role}">${roleLabel}</span></td>
+            <td>
+              <div style="font-weight:600; color:var(--text-primary);">${u.department || 'General'}</div>
+              ${u.course ? `<div style="font-size:0.71875rem; color:var(--text-tertiary);">${u.course}</div>` : ''}
+            </td>
+            <td>
+              <span class="status-badge ${u.status === 'active' ? 'active' : 'inactive'}">${u.status === 'active' ? 'Active' : 'Inactive'}</span>
+            </td>
+            <td style="font-size:0.75rem;">${u.lastLogin || 'Never'}</td>
+            <td style="font-size:0.75rem;">${joined}</td>
+            <td>
+              <div class="action-btns">
+                <button class="btn-icon-sm" title="View Profile" onclick="viewUserDetails('${u.uid || u.id}')">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                </button>
+                <button class="btn-icon-sm" title="Edit User" onclick="openEditUserModal('${u.uid || u.id}')">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                </button>
+                <button class="btn-icon-sm" title="Reset Password" onclick="handleResetPassword('${u.uid || u.id}', '${u.name}')">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                </button>
+                <button class="btn-icon-sm ${u.status === 'active' ? 'danger' : ''}" title="${u.status === 'active' ? 'Deactivate' : 'Activate'}" onclick="handleToggleStatus('${u.uid || u.id}', '${u.status === 'active' ? 'inactive' : 'active'}', '${u.name}')">
+                  ${u.status === 'active' ? `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>` : `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>`}
+                </button>
+                ${u.role !== 'super_admin' ? `
+                <button class="btn-icon-sm danger" title="Delete User" onclick="handleDeleteUser('${u.uid || u.id}', '${u.name}')">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                </button>` : ''}
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+
+      renderPagination(totalPages);
+    }
+
+    function renderPagination(totalPages) {
+      const container = document.getElementById('pagination-btns');
+      document.getElementById('pagination-info').textContent = `Page ${totalPages > 0 ? currentPage : 0} of ${totalPages}`;
+      if (totalPages <= 1) { container.innerHTML = ''; return; }
+
+      let btns = '';
+      for (let i = 1; i <= totalPages; i++) {
+        btns += `<button type="button" class="page-btn ${i === currentPage ? 'active' : ''}" onclick="goToPage(${i})">${i}</button>`;
+      }
+      container.innerHTML = btns;
+    }
+
+    function goToPage(p) { currentPage = p; renderUserTable(); }
+
+    // ── MODAL OPERATIONS ──
+    function openCreateUserModal() {
+      document.getElementById('user-form').reset();
+      document.getElementById('form-user-uid').value = '';
+      document.getElementById('user-modal-title').textContent = 'Create New Institutional User';
+      document.getElementById('btn-save-user').textContent = 'Create User';
+      document.getElementById('form-email').disabled = false;
+      const m = document.getElementById('user-modal');
+      m.classList.add('open', 'active');
+      handleRoleChange();
+    }
+
+    function openEditUserModal(uidOrId) {
+      const u = allUsers.find(x => x.uid === uidOrId || x.id === uidOrId);
+      if (!u) return;
+
+      document.getElementById('form-user-uid').value = u.uid || u.id;
+      document.getElementById('form-name').value = u.name || '';
+      document.getElementById('form-email').value = u.email || '';
+      document.getElementById('form-email').disabled = true; // Email immutable
+      document.getElementById('form-role').value = u.role || 'student';
+      document.getElementById('form-dept').value = u.department || 'Department of Computer Engineering';
+      document.getElementById('form-id').value = u.id || u.rollNo || '';
+      document.getElementById('form-phone').value = u.phone || '';
+      document.getElementById('form-status').value = u.status || 'active';
+      document.getElementById('form-semester').value = u.semester || 4;
+      document.getElementById('form-division').value = u.division || 'A';
+
+      document.getElementById('user-modal-title').textContent = `Edit User: ${u.name}`;
+      document.getElementById('btn-save-user').textContent = 'Save Changes';
+      const m = document.getElementById('user-modal');
+      m.classList.add('open', 'active');
+      handleRoleChange();
+    }
+
+    function closeUserModal() {
+      const m = document.getElementById('user-modal');
+      m.classList.remove('open', 'active');
+    }
+
+    function handleRoleChange() {
+      const role = document.getElementById('form-role').value;
+      const extra = document.getElementById('student-extra-fields');
+      extra.style.display = (role === 'student') ? 'block' : 'none';
+    }
+
+    async function handleUserFormSubmit(e) {
+      e.preventDefault();
+      const uid = document.getElementById('form-user-uid').value;
+      const name = document.getElementById('form-name').value.trim();
+      const email = document.getElementById('form-email').value.trim();
+      const role = document.getElementById('form-role').value;
+      const department = document.getElementById('form-dept').value;
+      const id = document.getElementById('form-id').value.trim();
+      const phone = document.getElementById('form-phone').value.trim();
+      const status = document.getElementById('form-status').value;
+      const semester = document.getElementById('form-semester').value;
+      const division = document.getElementById('form-division').value;
+
+      try {
+        if (uid) {
+          // Edit
+          await AdminService.updateUser(uid, { name, role, department, id, phone, status, semester, division });
+          UI.showToast('success', 'User Updated', `Successfully updated profile for ${name}`);
+        } else {
+          // Create
+          await AdminService.createUser({ name, email, role, department, id, phone, status, semester, division });
+          UI.showToast('success', 'User Created', `Successfully registered ${name} (${role})`);
+        }
+        closeUserModal();
+        await fetchUsers();
+      } catch (err) {
+        UI.showToast('error', 'Operation Failed', err.message);
+      }
+    }
+
+    async function handleToggleStatus(uid, newStatus, name) {
+      const confirmAction = confirm(`Are you sure you want to ${newStatus === 'active' ? 'activate' : 'deactivate'} account for ${name}?`);
+      if (!confirmAction) return;
+
+      try {
+        await AdminService.toggleUserStatus(uid, newStatus);
+        UI.showToast('info', 'Status Updated', `${name}'s account is now ${newStatus}`);
+        await fetchUsers();
+      } catch (err) {
+        UI.showToast('error', 'Status Change Failed', err.message);
+      }
+    }
+
+    async function handleResetPassword(uid, name) {
+      const confirmAction = confirm(`Generate temporary access credentials / send password reset token for ${name}?`);
+      if (!confirmAction) return;
+
+      try {
+        const res = await AdminService.resetUserPassword(uid);
+        UI.showToast('success', 'Password Reset', res.message || `Reset instructions dispatched for ${name}`);
+      } catch (err) {
+        UI.showToast('error', 'Reset Failed', err.message);
+      }
+    }
+
+    async function handleDeleteUser(uid, name) {
+      const confirmDelete = confirm(`⚠️ DESTRUCTIVE ACTION\n\nAre you sure you want to permanently delete user account "${name}"?\nThis action cannot be undone.`);
+      if (!confirmDelete) return;
+
+      try {
+        await AdminService.deleteUser(uid);
+        UI.showToast('success', 'User Deleted', `Account ${name} removed from platform`);
+        await fetchUsers();
+      } catch (err) {
+        UI.showToast('error', 'Delete Failed', err.message);
+      }
+    }
+
+    function viewUserDetails(uid) {
+      const u = allUsers.find(x => x.uid === uid || x.id === uid);
+      if (!u) return;
+
+      const body = document.getElementById('details-modal-body');
+      body.innerHTML = `
+        <div style="display:flex; align-items:center; gap:1rem; margin-bottom:1.25rem;">
+          <div style="width:52px; height:52px; border-radius:50%; background:${u.avatarColor || '#F59E0B'}; color:#fff; display:flex; align-items:center; justify-content:center; font-size:1.2rem; font-weight:800;">
+            ${(u.name || 'U').split(' ').map(n => n[0]).join('').substring(0, 2)}
+          </div>
+          <div>
+            <div style="font-size:1.1rem; font-weight:800; color:var(--text-primary);">${u.name}</div>
+            <div style="font-size:0.8125rem; color:var(--text-tertiary);">${u.email}</div>
+          </div>
+        </div>
+
+        <div style="background:#F8FAFC; border-radius:12px; padding:1rem; border:1px solid var(--border-default); display:flex; flex-direction:column; gap:0.6rem; font-size:0.8125rem;">
+          <div style="display:flex; justify-content:space-between;">
+            <span style="color:var(--text-tertiary);">Role</span>
+            <span class="role-badge ${u.role}">${u.role}</span>
+          </div>
+          <div style="display:flex; justify-content:space-between;">
+            <span style="color:var(--text-tertiary);">User ID / Roll</span>
+            <strong style="color:var(--text-primary);">${u.id || u.rollNo || 'N/A'}</strong>
+          </div>
+          <div style="display:flex; justify-content:space-between;">
+            <span style="color:var(--text-tertiary);">Department</span>
+            <span style="color:var(--text-primary); font-weight:600;">${u.department || 'N/A'}</span>
+          </div>
+          ${u.course ? `
+          <div style="display:flex; justify-content:space-between;">
+            <span style="color:var(--text-tertiary);">Degree Course</span>
+            <span style="color:var(--text-primary);">${u.course}</span>
+          </div>` : ''}
+          ${u.gpa ? `
+          <div style="display:flex; justify-content:space-between;">
+            <span style="color:var(--text-tertiary);">Academic CGPA</span>
+            <strong style="color:#7C3AED;">${u.gpa} / 10.0</strong>
+          </div>` : ''}
+          ${u.attendance ? `
+          <div style="display:flex; justify-content:space-between;">
+            <span style="color:var(--text-tertiary);">Attendance</span>
+            <strong style="color:#16A34A;">${u.attendance}%</strong>
+          </div>` : ''}
+          <div style="display:flex; justify-content:space-between;">
+            <span style="color:var(--text-tertiary);">Account Status</span>
+            <span class="status-badge ${u.status === 'active' ? 'active' : 'inactive'}">${u.status}</span>
+          </div>
+          <div style="display:flex; justify-content:space-between;">
+            <span style="color:var(--text-tertiary);">Last Active</span>
+            <span style="color:var(--text-secondary);">${u.lastLogin || 'Never'}</span>
+          </div>
+          <div style="display:flex; justify-content:space-between;">
+            <span style="color:var(--text-tertiary);">Member Since</span>
+            <span style="color:var(--text-secondary);">${u.joinedAt || '2024-08-01'}</span>
+          </div>
+        </div>
+      `;
+
+      const m = document.getElementById('details-modal');
+      m.classList.add('open', 'active');
+    }
+
+    function closeDetailsModal() {
+      const m = document.getElementById('details-modal');
+      m.classList.remove('open', 'active');
+    }
+
+    function exportUsersCsv() {
+      if (!currentFiltered.length) {
+        UI.showToast('info', 'No Data', 'No user records to export.');
+        return;
+      }
+      const data = currentFiltered.map(u => ({
+        Name: u.name,
+        Email: u.email,
+        Role: u.role,
+        UserID: u.id || u.rollNo || '',
+        Department: u.department || '',
+        Course: u.course || '',
+        Status: u.status,
+        LastLogin: u.lastLogin || '',
+        JoinedDate: u.joinedAt || ''
+      }));
+      AdminService.exportToCsv('smart_student_users.csv', data);
+      UI.showToast('success', 'Export Complete', `Exported ${data.length} user records to CSV.`);
+    }
   </script>
 </body>
 </html>

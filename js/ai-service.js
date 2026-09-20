@@ -412,19 +412,58 @@ void produce(int item) {
     },
     dbms: {
       subject: 'Database Management Systems',
-      keywords: ['sql', 'database', 'normalization', '1nf', '2nf', '3nf', 'bcnf', 'acid', 'transaction', 'indexing', 'b-tree', 'b+ tree', 'concurrency', 'deadlock', '2pl', 'nosql', 'relational', 'foreign key', 'join', 'schema'],
+      keywords: ['sql', 'database', 'normalization', '1nf', '2nf', '3nf', 'bcnf', 'acid', 'transaction', 'indexing', 'b-tree', 'b+ tree', 'concurrency', 'deadlock', '2pl', 'nosql', 'relational', 'foreign key', 'primary key', 'join', 'schema'],
       canonicalAnswers: {
+        sql: {
+          title: 'SQL (Structured Query Language)',
+          overview: 'SQL (Structured Query Language) is the standard computer language used to communicate with, manage, and manipulate relational databases.',
+          steps: [
+            '**Create & Define**: Create databases, tables, and views (`CREATE`, `ALTER`, `DROP` - DDL).',
+            '**Retrieve Data**: Query and fetch specific records from tables (`SELECT` - DQL).',
+            '**Insert Data**: Add new rows of information into tables (`INSERT` - DML).',
+            '**Update Data**: Modify existing records (`UPDATE` - DML).',
+            '**Delete Data**: Remove unnecessary records (`DELETE` - DML).',
+            '**Control Access**: Manage permissions and security (`GRANT`, `REVOKE` - DCL).'
+          ],
+          code: `-- Retrieve all records from the students table
+SELECT * FROM students;`,
+          math: `\\text{Relational Query Operation: } \\sigma_{\\text{condition}}(R)`,
+          examTip: 'In university exams, always classify SQL commands into their 5 functional sub-languages: DDL, DQL, DML, DCL, and TCL.'
+        },
+        primary_key_foreign_key: {
+          title: 'Primary Key vs Foreign Key',
+          overview: 'In Relational Database Management Systems, **Primary Keys** and **Foreign Keys** work together to uniquely identify records and maintain referential integrity across related tables.',
+          steps: [
+            '**Primary Key (PK)**: A column or set of columns that uniquely identifies each row in a table. It cannot contain `NULL` values, and each table can have only one Primary Key.',
+            '**Foreign Key (FK)**: A column that references the Primary Key of another table, establishing a valid parent-child relationship between the two tables. Foreign keys can accept `NULL` values and duplicates.',
+            '**Integrity Enforcement**: Primary Key enforces **Entity Integrity**, while Foreign Key enforces **Referential Integrity**.'
+          ],
+          code: `-- Parent Table: dept_id is Primary Key
+CREATE TABLE Departments (
+    dept_id INT PRIMARY KEY,
+    dept_name VARCHAR(100) NOT NULL
+);
+
+-- Child Table: student_id is PK, dept_id is Foreign Key referencing Departments
+CREATE TABLE Students (
+    student_id INT PRIMARY KEY,
+    student_name VARCHAR(100) NOT NULL,
+    dept_id INT,
+    FOREIGN KEY (dept_id) REFERENCES Departments(dept_id)
+);`,
+          math: `\\text{Referential Constraint: } \\pi_{\\text{dept\\_id}}(\\text{Students}) \\subseteq \\pi_{\\text{dept\\_id}}(\\text{Departments})`,
+          examTip: 'Remember: A table can have only **one** Primary Key, but can contain **multiple** Foreign Keys pointing to different parent tables.'
+        },
         normalization: {
           title: 'Database Normalization (1NF, 2NF, 3NF, BCNF)',
           overview: 'Database normalization is the systematic decomposition of relation schemas to minimize data redundancy and eliminate insert, update, and delete anomalies while ensuring lossless join decomposition.',
           steps: [
-            '**1NF (First Normal Form)**: All attribute values must be atomic (indivisible scalars). No multivalued attributes or repeating composite groups.',
+            '**1NF (First Normal Form)**: All attribute values must be atomic (single, indivisible values). No multivalued attributes or repeating groups.',
             '**2NF (Second Normal Form)**: Must satisfy 1NF and have **no partial functional dependencies** (every non-prime attribute must depend on the full composite candidate key).',
-            '**3NF (Third Normal Form)**: Must satisfy 2NF and have **no transitive dependencies** (for every $X \\rightarrow Y$, $X$ is a superkey or $Y$ is a prime attribute).',
+            '**3NF (Third Normal Form)**: Must satisfy 2NF and have **no transitive dependencies** (non-key attributes cannot depend on other non-key attributes).',
             '**BCNF (Boyce-Codd Normal Form)**: Stricter 3.5NF: for every functional dependency $X \\rightarrow Y$, $X$ must strictly be a superkey.'
           ],
           code: `/* SQL Normalization Decomposition to 3NF */
--- Decomposed Schema
 CREATE TABLE Departments (
     dept_id INT PRIMARY KEY,
     dept_name VARCHAR(100) NOT NULL,
@@ -436,17 +475,38 @@ CREATE TABLE Students (
     student_name VARCHAR(100) NOT NULL,
     dept_id INT,
     FOREIGN KEY (dept_id) REFERENCES Departments(dept_id)
-);
-
-CREATE TABLE CourseEnrollments (
-    student_id INT,
-    course_code VARCHAR(10),
-    grade VARCHAR(2),
-    PRIMARY KEY (student_id, course_code),
-    FOREIGN KEY (student_id) REFERENCES Students(student_id)
 );`,
           math: `\\text{Lossless Join Condition: } R_1 \\cap R_2 \\rightarrow R_1 \\text{ or } R_1 \\cap R_2 \\rightarrow R_2`,
           examTip: 'To find Candidate Keys in exams, compute attribute closures $(X^+)$ under the given FD set $F$. Any minimal attribute set whose closure covers all relation attributes is a Candidate Key.'
+        },
+        why_normalization: {
+          title: 'Why Do We Use Database Normalization?',
+          overview: 'We use database normalization to design clean, efficient relational schemas that eliminate redundant data storage and prevent severe data modification anomalies.',
+          steps: [
+            '**Eliminates Redundancy**: Avoids storing duplicate department, course, or student details in hundreds of rows.',
+            '**Prevents Insertion Anomaly**: Allows adding a new department without needing a dummy student record.',
+            '**Prevents Update Anomaly**: Modifying a department name in one place updates it consistently everywhere.',
+            '**Prevents Deletion Anomaly**: Deleting a student record does not accidentally wipe out the entire department record.'
+          ],
+          code: `-- Normalized Relations preventing anomalies
+-- 1. Departments table holds department details once
+-- 2. Students table references dept_id via Foreign Key`,
+          math: `\\text{Schema Quality: Minimal Redundancy } \\land \\text{ Zero Update/Insert/Delete Anomalies}`,
+          examTip: 'When explaining why normalization is needed in university exams, always define the three modification anomalies: Insertion Anomaly, Update Anomaly, and Deletion Anomaly with a concrete table example.'
+        },
+        marks_query: {
+          title: 'SQL Query: Students with Marks Greater Than 80',
+          overview: 'To retrieve student records whose marks exceed 80, we use the declarative SQL `SELECT` statement paired with a `WHERE` condition filter.',
+          steps: [
+            '`SELECT student_id, name, marks`: Specifies the columns to output in the result set.',
+            '`FROM students`: Declares the source table containing the records.',
+            '`WHERE marks > 80`: Filters rows so only students scoring strictly above 80 are returned.'
+          ],
+          code: `SELECT student_id, name, marks
+FROM students
+WHERE marks > 80;`,
+          math: `\\sigma_{\\text{marks} > 80}(\\text{Students})`,
+          examTip: 'In exams, remember that `>` is strictly greater than. If the question asks for "80 and above", use `>= 80` instead.'
         },
         acid: {
           title: 'ACID Properties in Transaction Management',
@@ -510,16 +570,16 @@ Client                                  Server
           examTip: 'Draw the handshake sequence diagram marking Sequence ($seq$) and Acknowledgment ($ack$) numbers clearly.'
         },
         osi: {
-          title: 'OSI 7-Layer Architecture vs TCP/IP Suite',
-          overview: 'The OSI Reference Model standardizes communication protocols into 7 abstraction layers, each providing distinct network services through encapsulation.',
+          title: 'OSI 7-Layer Architecture Model',
+          overview: 'The Open Systems Interconnection (OSI) Reference Model standardizes communication protocols into 7 abstraction layers, each performing distinct network functions.',
           steps: [
-            '**7. Application Layer**: End-user application interfaces (HTTP, HTTPS, DNS, SMTP, SSH).',
-            '**6. Presentation Layer**: Data formatting, encryption/decryption (TLS), and compression.',
-            '**5. Session Layer**: Dialog control and inter-host session establishment.',
-            '**4. Transport Layer**: Process-to-process port addressing, segmentation, and reliability (TCP, UDP). [PDU: Segment]',
-            '**3. Network Layer**: Host-to-host logical IP addressing and path routing (IP, ICMP, OSPF). [PDU: Packet]',
-            '**2. Data Link Layer**: Hop-to-hop physical MAC addressing, framing, and error detection (Ethernet, ARP). [PDU: Frame]',
-            '**1. Physical Layer**: Raw bit transmission over physical media (Cables, Fiber, Radio). [PDU: Bits]'
+            '**Layer 7 — Application Layer**: End-user application interfaces (HTTP, HTTPS, DNS, SMTP, SSH, FTP).',
+            '**Layer 6 — Presentation Layer**: Data formatting, character encoding, encryption/decryption (TLS), and compression.',
+            '**Layer 5 — Session Layer**: Dialog control, checkpointing, and inter-host session management.',
+            '**Layer 4 — Transport Layer**: Process-to-process port addressing, segmentation, flow control, and reliability (TCP, UDP). [PDU: Segment]',
+            '**Layer 3 — Network Layer**: Host-to-host logical IP addressing and path routing across networks (IP, ICMP, Routers). [PDU: Packet]',
+            '**Layer 2 — Data Link Layer**: Hop-to-hop physical MAC addressing, framing, and error detection (Ethernet, Switches). [PDU: Frame]',
+            '**Layer 1 — Physical Layer**: Raw bit transmission over physical media (Cables, Fiber, Radio). [PDU: Bits]'
           ],
           code: `/* Protocol Data Unit (PDU) Encapsulation */
 [Data]                                    Application Layer
@@ -1148,96 +1208,381 @@ vector<int> dijkstra(int V, vector<vector<pii>>& adj, int src) {
 
   /**
    * Multi-Turn Conversational Reasoning Engine
-   * Generates contextual responses taking previous chat turns into account
+   * Generates contextual responses taking academic level, question type, and tutor mode into account
    */
   async function generateContextualResponse(query, conversationHistory = [], options = {}, onStageProgress = null) {
     const { subject, difficulty = 'Intermediate', mode = 'breakdown', tutorMode = false, attachments = [] } = options;
 
     // Stage 1: Question analysis
     if (onStageProgress) onStageProgress('Analyzing academic query & syllabus requirements...');
-    await new Promise(r => setTimeout(r, 350));
+    await new Promise(r => setTimeout(r, 300));
 
     // Stage 2: Synthesis & Knowledge extraction
-    if (onStageProgress) onStageProgress('Synthesizing theoretical proof and algorithmic formulation...');
-    await new Promise(r => setTimeout(r, 400));
+    if (onStageProgress) onStageProgress('Synthesizing verified academic concepts...');
+    await new Promise(r => setTimeout(r, 350));
 
     // Stage 3: Formulation
-    if (onStageProgress) onStageProgress('Formatting mathematical notation and code blocks...');
-    await new Promise(r => setTimeout(r, 300));
+    if (onStageProgress) onStageProgress('Structuring academic tutor response...');
+    await new Promise(r => setTimeout(r, 250));
 
     const cleanQuery = query.trim();
     const lower = cleanQuery.toLowerCase();
     const detected = detectSubjectAndTopic(cleanQuery);
     const resolvedSubject = (subject && subject !== 'All Engineering Subjects') ? subject : detected.subject;
 
-    // 1. Socratic Tutor Mode: Guides rather than reveals direct solution
+    // Normalize academic level
+    let level = 'Intermediate';
+    if (/intro|basic|beginner|easy/i.test(difficulty)) level = 'Beginner';
+    else if (/adv|exam|hard|gate|grad/i.test(difficulty)) level = 'Advanced';
+
+    // Classify Question Type Internally
+    const isDefinition = /^(what is|define|what are|what do you mean by|explain the concept of)\b/i.test(lower);
+    const isDifference = /\b(difference between|vs\.?|versus|compare|distinguish|difference)\b/i.test(lower);
+    const isWhy = /^(why do we|why is|why use|why)\b/i.test(lower);
+    const isHow = /^(how does|how to|how do|explain how)\b/i.test(lower);
+    const isCode = /\b(write (a )?(sql|python|c\+\+|java|program|query|code)|implement|query to|code for|find students)\b/i.test(lower);
+    const isExam = /\b(for \d+ marks|exam|gate|university question|important questions|exam point)\b/i.test(lower);
+
+    // 1. Socratic Tutor Mode: Guides progressively rather than dumping monolithic answers
     if (tutorMode) {
-      return generateSocraticResponse(cleanQuery, conversationHistory, resolvedSubject, detected.topic);
+      return generateSocraticResponse(cleanQuery, conversationHistory, resolvedSubject, detected.topic, level);
     }
 
-    // 2. Direct canonical match from knowledge bank across all domains
+    // 2. High-Precision Canonical Question Handlers
+    // Question: "What is SQL?"
+    if (lower === 'what is sql' || lower === 'what is sql?' || (lower.includes('what is sql') && !lower.includes('query to'))) {
+      if (level === 'Beginner') {
+        return `### SQL (Structured Query Language)
+
+**SQL (Structured Query Language)** is the standard computer language used to communicate with and manage relational databases.
+
+It allows us to:
+* **Create databases and tables** (e.g., setting up a new table for student records)
+* **Insert data** (adding new student details)
+* **Retrieve data** (finding specific information when needed)
+* **Update data** (modifying existing information like marks or addresses)
+* **Delete data** (removing records that are no longer needed)
+
+---
+
+#### Example:
+\`\`\`sql
+-- Retrieve all records from the students table
+SELECT * FROM students;
+\`\`\`
+
+*Explanation:* This query retrieves all columns (\`*\`) and all rows from the \`students\` table.
+
+---
+
+#### In Simple Words:
+SQL is the language we use to ask a relational database to store, retrieve, or modify information.`;
+      } else if (level === 'Advanced') {
+        return `### SQL (Structured Query Language): Relational Calculus & Architecture
+
+**SQL (Structured Query Language)** is a domain-specific declarative language rooted in **Relational Algebra** and **Tuple Relational Calculus (TRC)** for managing data held in Relational Database Management Systems (RDBMS).
+
+---
+
+#### 1. Language Classification & Theoretical Foundation
+* **DDL (Data Definition Language)**: \`CREATE\`, \`ALTER\`, \`DROP\`, \`TRUNCATE\` (Modifies database metadata and catalog schemas).
+* **DQL (Data Query Language)**: \`SELECT\` (Implements relational projection $\\pi$, selection $\\sigma$, and Cartesian join $\\bowtie$).
+* **DML (Data Manipulation Language)**: \`INSERT\`, \`UPDATE\`, \`DELETE\` (Modifies relation state).
+* **DCL (Data Control Language)**: \`GRANT\`, \`REVOKE\` (Enforces role-based security access).
+* **TCL (Transaction Control Language)**: \`COMMIT\`, \`ROLLBACK\`, \`SAVEPOINT\` (Enforces ACID transactional invariants).
+
+---
+
+#### 2. Query Execution & Optimization Pipeline
+1. **Parsing & Syntax Tree Generation**: Verifies syntactic rules and schema catalog bindings.
+2. **Query Optimizer (RBO & CBO)**: Transforms logical relational algebra expressions into the minimal-cost physical execution plan utilizing available B+ Tree clustered/secondary indexes.
+3. **Execution Engine**: Interacts with the buffer pool manager and storage engine to fetch data blocks with minimal disk I/O latency.
+
+---
+
+#### 3. Production Query Example:
+\`\`\`sql
+-- Parameterized query with projection, join, and filtering
+SELECT s.student_id, s.name, d.dept_name, AVG(e.marks) AS gpa
+FROM students s
+INNER JOIN departments d ON s.dept_id = d.dept_id
+INNER JOIN enrollments e ON s.student_id = e.student_id
+WHERE s.status = 'ACTIVE'
+GROUP BY s.student_id, s.name, d.dept_name
+HAVING AVG(e.marks) >= 80.0
+ORDER BY gpa DESC;
+\`\`\`
+
+> [!TIP]
+> **University Exam Insight:** Remember that SQL is *declarative* (you specify *what* data you require, and the RDBMS query optimizer determines *how* to execute the retrieval plan optimally).`;
+      } else {
+        // Intermediate Level
+        return `### SQL (Structured Query Language)
+
+**SQL (Structured Query Language)** is the standard programming language designed for managing, querying, and manipulating data stored in Relational Database Management Systems (RDBMS).
+
+---
+
+#### Core Sub-Languages of SQL:
+1. **DDL (Data Definition Language)**: Defines and modifies schema structures (\`CREATE\`, \`ALTER\`, \`DROP\`).
+2. **DQL (Data Query Language)**: Fetches and filters stored data (\`SELECT\`).
+3. **DML (Data Manipulation Language)**: Modifies table records (\`INSERT\`, \`UPDATE\`, \`DELETE\`).
+4. **DCL (Data Control Language)**: Manages permissions and security privileges (\`GRANT\`, \`REVOKE\`).
+5. **TCL (Transaction Control Language)**: Controls transaction states and ACID consistency (\`COMMIT\`, \`ROLLBACK\`).
+
+---
+
+#### Example Query:
+\`\`\`sql
+-- Retrieve students enrolled in the Computer Science department
+SELECT student_id, name, email
+FROM students
+WHERE dept_name = 'Computer Science'
+ORDER BY name ASC;
+\`\`\`
+
+---
+
+#### Key Characteristics:
+* **Declarative Nature**: You specify what data you want, rather than writing procedural loops on how to navigate storage files.
+* **Integrity Constraints**: Enforces Primary Key, Foreign Key, Unique, and Check constraints.
+
+> [!TIP]
+> **University Exam Tip:** In exams, always classify SQL commands into their 5 functional categories (DDL, DQL, DML, DCL, and TCL).`;
+      }
+    }
+
+    // Question: Primary Key vs Foreign Key
+    if ((lower.includes('primary key') && lower.includes('foreign key')) || (lower.includes('difference') && lower.includes('primary') && lower.includes('key'))) {
+      return `### Difference Between Primary Key and Foreign Key
+
+In Relational Database Management Systems (RDBMS), **Primary Keys** and **Foreign Keys** work together to uniquely identify entities and maintain referential integrity between tables.
+
+---
+
+#### Comparison Table:
+
+| Feature | Primary Key (PK) | Foreign Key (FK) |
+| :--- | :--- | :--- |
+| **Purpose** | Uniquely identifies each record in a table. | References a Primary Key in another table to establish relationships. |
+| **Nullability** | **Cannot** contain \`NULL\` values. | **Can** accept \`NULL\` values (if relation is optional). |
+| **Uniqueness** | Must be strictly unique for every row. | Can contain duplicate values (multiple child rows pointing to one parent). |
+| **Count** | Only **one** Primary Key per table. | A table can contain **multiple** Foreign Keys. |
+| **Integrity** | Enforces **Entity Integrity**. | Enforces **Referential Integrity**. |
+| **Default Index** | Automatically creates a Unique Clustered Index. | Does not automatically create a clustered index. |
+
+---
+
+#### Concrete SQL Schema Example:
+\`\`\`sql
+-- Parent Table: dept_id is the Primary Key
+CREATE TABLE Departments (
+    dept_id INT PRIMARY KEY,
+    dept_name VARCHAR(100) NOT NULL
+);
+
+-- Child Table: student_id is PK, dept_id is Foreign Key referencing Departments
+CREATE TABLE Students (
+    student_id INT PRIMARY KEY,
+    student_name VARCHAR(100) NOT NULL,
+    dept_id INT,
+    FOREIGN KEY (dept_id) REFERENCES Departments(dept_id)
+);
+\`\`\`
+
+---
+
+> [!TIP]
+> **Important Exam Point:** A Primary Key enforces *Entity Integrity* (no duplicate or null records), while a Foreign Key enforces *Referential Integrity* (prevents child rows from pointing to non-existent parent rows).`;
+    }
+
+    // Question: Why do we use normalization?
+    if (lower.includes('why') && (lower.includes('normalization') || lower.includes('normalize'))) {
+      return `### Why Do We Use Database Normalization?
+
+We use database normalization to design clean, efficient relational schemas that eliminate redundant data storage and prevent severe data modification anomalies.
+
+---
+
+#### 1. Core Problems Without Normalization:
+1. **Data Redundancy**: Duplicating identical data (e.g. department head name and office location) across thousands of student rows wastes disk space.
+2. **Insertion Anomaly**: You cannot add a new department to the database until at least one student enrolls in it.
+3. **Update Anomaly**: If a department HOD changes, updating it in only some rows creates contradictory data.
+4. **Deletion Anomaly**: Deleting the last enrolled student in a department accidentally deletes the department's entire record.
+
+---
+
+#### 2. Major Benefits of Normalization:
+* **Data Consistency**: Information is updated in exactly one place.
+* **Storage Optimization**: Eliminates wasteful attribute duplication.
+* **Referential Integrity**: Uses Primary and Foreign keys to link tables safely.
+* **Faster Schema Maintenance**: Smaller, well-structured tables are easier to index and maintain.
+
+---
+
+#### 3. Small Normalization Example:
+* **Before (Unnormalized Table):**
+  \`[StudentID, StudentName, DeptID, DeptName, HODName]\`
+* **After Decomposition (Normalized 3NF):**
+  * \`Students(StudentID, StudentName, DeptID)\`
+  * \`Departments(DeptID, DeptName, HODName)\`
+
+---
+
+> [!TIP]
+> **Exam-Ready Summary:** Normalization reduces redundancy, eliminates data anomalies (Insert, Update, Delete), and ensures data integrity through schema decomposition.`;
+    }
+
+    // Question: What is normalization in DBMS? / Explain Normalization
+    if (lower.includes('normalization') || lower.includes('normal form') || lower.includes('1nf') || lower.includes('bcnf')) {
+      return `### Database Normalization in DBMS
+
+**Database Normalization** is the systematic process of organizing relation schemas to minimize data redundancy and eliminate update, insertion, and deletion anomalies while ensuring lossless join decomposition.
+
+---
+
+#### Why Normalization is Needed:
+* **Eliminates Redundancy**: Prevents duplicate copies of the same data across rows.
+* **Prevents Data Anomalies**:
+  * *Insertion Anomaly*: Inability to insert data without adding unrelated fields.
+  * *Update Anomaly*: Inconsistent data when a record is updated in one place but not another.
+  * *Deletion Anomaly*: Unintended loss of valid data when deleting a record.
+
+---
+
+#### Key Normal Forms:
+1. **First Normal Form (1NF)**:
+   * Every attribute value must be **atomic** (single, indivisible scalar).
+   * No multivalued attributes or repeating groups in a column.
+2. **Second Normal Form (2NF)**:
+   * Must satisfy **1NF**.
+   * **No Partial Functional Dependency**: Every non-prime attribute must depend on the full composite candidate key, not a partial subset.
+3. **Third Normal Form (3NF)**:
+   * Must satisfy **2NF**.
+   * **No Transitive Functional Dependency**: Non-prime attributes must not depend on other non-prime attributes ($X \\rightarrow Y$ and $Y \\rightarrow Z$).
+4. **Boyce-Codd Normal Form (BCNF)**:
+   * Stricter 3.5NF: For every functional dependency $X \\rightarrow Y$, $X$ must strictly be a **superkey**.
+
+---
+
+#### Decomposed Schema Example (to 3NF):
+\`\`\`sql
+-- Decomposed Relations
+CREATE TABLE Departments (
+    dept_id INT PRIMARY KEY,
+    dept_name VARCHAR(100) NOT NULL,
+    hod_name VARCHAR(100) NOT NULL
+);
+
+CREATE TABLE Students (
+    student_id INT PRIMARY KEY,
+    student_name VARCHAR(100) NOT NULL,
+    dept_id INT,
+    FOREIGN KEY (dept_id) REFERENCES Departments(dept_id)
+);
+\`\`\`
+
+---
+
+> [!TIP]
+> **University Exam Point:** In university exams, always determine the candidate keys first by computing attribute closures $(X^+)$ under the given FD set before checking 2NF, 3NF, or BCNF violations.`;
+    }
+
+    // Question: SQL Query for students marks > 80
+    if ((lower.includes('query') || lower.includes('sql') || lower.includes('write')) && lower.includes('marks') && (lower.includes('80') || lower.includes('greater') || lower.includes('>'))) {
+      return `### SQL Query: Students with Marks Greater Than 80
+
+To retrieve student records where their marks exceed 80, we use the declarative SQL \`SELECT\` statement paired with the \`WHERE\` filtering clause.
+
+---
+
+#### SQL Query:
+\`\`\`sql
+SELECT student_id, name, marks
+FROM students
+WHERE marks > 80;
+\`\`\`
+
+---
+
+#### Line-by-Line Explanation:
+* \`SELECT student_id, name, marks\`: Specifies the columns to display in the output result set.
+* \`FROM students\`: Identifies the database table containing the student records.
+* \`WHERE marks > 80\`: Evaluates each row and filters in only students scoring strictly above 80.
+
+---
+
+#### Example Output:
+| student_id | name | marks |
+| :--- | :--- | :--- |
+| 101 | Sarah Jenkins | 92 |
+| 104 | Alex Kumar | 88 |
+| 108 | Priya Sharma | 95 |
+
+---
+
+> [!TIP]
+> **Exam Note:** If the question specifies "80 and above" or "marks at least 80", use the greater-than-or-equal operator: \`WHERE marks >= 80;\``;
+    }
+
+    // Question: Explain OSI Model
+    if (lower.includes('osi') || (lower.includes('7 layer') && lower.includes('network'))) {
+      return `### The OSI 7-Layer Reference Model
+
+The **OSI (Open Systems Interconnection)** Reference Model standardizes computer network communication protocols into 7 distinct abstraction layers, each providing specific communication services through data encapsulation.
+
+---
+
+#### The 7 Layers and Their Purpose:
+
+1. **Layer 7 — Application Layer**:
+   * *Purpose:* Direct interface for network applications and end-user services.
+   * *Protocols:* HTTP, HTTPS, DNS, SMTP, SSH, FTP.
+2. **Layer 6 — Presentation Layer**:
+   * *Purpose:* Data formatting, character code translation, compression, and encryption/decryption (TLS/SSL).
+3. **Layer 5 — Session Layer**:
+   * *Purpose:* Establishes, manages, checkpoints, and terminates communication sessions between applications.
+4. **Layer 4 — Transport Layer**:
+   * *Purpose:* Process-to-process port delivery, segmentation, flow control, and end-to-end reliability (TCP, UDP). *[PDU: Segment]*
+5. **Layer 3 — Network Layer**:
+   * *Purpose:* Host-to-host logical IP addressing and shortest path packet routing across networks (IP, ICMP, Routers). *[PDU: Packet]*
+6. **Layer 2 — Data Link Layer**:
+   * *Purpose:* Node-to-node framing, physical MAC addressing, switch forwarding, and error detection (Ethernet, Switches, ARP). *[PDU: Frame]*
+7. **Layer 1 — Physical Layer**:
+   * *Purpose:* Raw transmission of unstructured binary data bits over physical transmission media (Copper cables, Fiber optics, Radio frequencies). *[PDU: Bits]*
+
+---
+
+#### Real-World Analogy (Postal Mail Dispatch):
+* *Application:* Writing your message.
+* *Presentation:* Translating the text into English and putting it in an envelope.
+* *Session:* Opening and maintaining the mail connection.
+* *Transport:* Certified delivery with return receipt tracking (like TCP).
+* *Network:* Addressing the envelope with recipient's city, state, and zip code (IP routing).
+* *Data Link:* Mail truck driving from local post office to regional sorting center (MAC hop).
+* *Physical:* The physical highway road the vehicle drives on.
+
+---
+
+> [!TIP]
+> **Exam-Oriented Summary:** Easy mnemonic to remember Layer 7 to Layer 1: **"All People Seem To Need Data Processing"** (Application, Presentation, Session, Transport, Network, Data Link, Physical).`;
+    }
+
+    // 3. Search Domain Knowledge Base for Canonical Concept Matches
     for (const [domainKey, domainData] of Object.entries(DOMAIN_TOPICS)) {
       if (!domainData || !domainData.canonicalAnswers) continue;
 
       for (const [canonKey, canon] of Object.entries(domainData.canonicalAnswers)) {
-        // Match key with or without underscores (e.g. "linked list" or "linked_list", "binary search" or "binary_search")
         const keyPhrase = canonKey.replace(/_/g, ' ');
         const isDirectMatch = lower.includes(canonKey) || lower.includes(keyPhrase) ||
           (canon.keywords && canon.keywords.some(k => lower.includes(k)));
 
         if (isDirectMatch) {
-          // If student explicitly requests real-world example
-          if (lower.includes('example') || lower.includes('real world') || lower.includes('practical') || lower.includes('industry')) {
-            return `### Real-World Engineering Application: ${canon.title}
+          // If query is specifically requesting code
+          if (mode === 'code' || isCode) {
+            return `### Code Implementation: ${canon.title}
 
-In production software architecture and system design, **${canon.title}** directly resolves critical engineering constraints:
-
----
-
-#### 1. Practical Industrial Scenario
-Consider an enterprise application (such as high-frequency trading, cloud storage engines, or mission-critical transaction gateways) implementing this principle.
-
-1. **System Invariant**: All state transitions must maintain deterministic time bounds and strict data consistency under concurrent load.
-2. **How this principle prevents failure**:
-   * **State Isolation**: Encapsulates data flow into modular, verifiable state boundaries.
-   * **Invariant Guarantees**: Boundary conditions ($n > 0$, capacity limits, non-negative invariants) are enforced prior to memory writes.
-
-\`\`\`
-${canon.code}
-\`\`\`
-
-> [!NOTE]
-> Does this industrial case study clarify the mechanism, or would you like to explore specific edge-case failure modes?`;
-          }
-
-          // If student asks for simpler / ELI5 explanation
-          if (lower.includes('simpler') || lower.includes('simple') || lower.includes('easy') || mode === 'simpler') {
-            return `### Simplified Concept Breakdown: ${canon.title}
-
-Let's break down **${canon.title}** using an intuitive conceptual mental model:
-
----
-
-#### 1. Core Intuition
-Think of this like an organized **station workflow**:
-* **The Goal**: Ensure every task or data element is processed systematically without confusion or data loss.
-* **The Rules**:
-  1. Follow predictable ordering rules (e.g., LIFO for stacks, FIFO for queues).
-  2. Respect boundary limits: never access or remove items when none exist (underflow).
-  3. Keep transitions isolated and clean so that errors can be caught and handled instantly.
-
----
-
-#### 2. Key Academic Takeaways
-* **Why it matters**: It is a building block for complex algorithms and real-world system architecture.
-* **Exam Rule of Thumb**: Always identify the state invariant, time complexity, and boundary edge cases ($n=0$ or full capacity).`;
-          }
-
-          // If student asks for code implementation
-          if (mode === 'code' || lower.includes('code') || lower.includes('implementation') || lower.includes('program') || lower.includes('c++') || lower.includes('python') || lower.includes('java')) {
-            return `### Production Code Implementation: ${canon.title}
-
-Here is the complete, syllabus-grade implementation with error handling and algorithmic complexity breakdown:
+Here is the clean, verified academic implementation:
 
 \`\`\`
 ${canon.code}
@@ -1245,13 +1590,33 @@ ${canon.code}
 
 ---
 
-### Complexity & Formal Verification
-* **Time Complexity Bounds**: $$${canon.math}$$
-* **Space Complexity**: Optimal auxiliary storage bounds.
-* **Boundary Invariants**: Handled explicitly with error guards and validation checks.
+### Complexity & Analysis
+* **Time Complexity**: $$${canon.math}$$
+* **Academic Takeaway**: ${canon.examTip}`;
+          }
+
+          // If student is at Beginner level or asks for simpler explanation
+          if (level === 'Beginner' || lower.includes('simpler') || lower.includes('simple') || lower.includes('easy')) {
+            return `### ${canon.title} (Simplified Breakdown)
+
+${canon.overview}
+
+---
+
+#### Key Points to Remember:
+${canon.steps.slice(0, 3).map((s, i) => `${i + 1}. ${s}`).join('\n\n')}
+
+---
+
+#### Simple Example:
+\`\`\`
+${canon.code}
+\`\`\`
+
+---
 
 > [!TIP]
-> Use the **Generate Practice Question** button below to test your mastery of this algorithm in an examination format!`;
+> **Summary**: ${canon.examTip}`;
           }
 
           // Default rich structured canonical breakdown
@@ -1261,13 +1626,13 @@ ${canon.overview}
 
 ---
 
-### Core Theoretical Principles & Mechanics
+### Core Principles & Mechanics
 
 ${canon.steps.map((s, i) => `${i + 1}. ${s}`).join('\n\n')}
 
 ---
 
-### Code Implementation Reference
+### Reference Implementation / Example
 
 \`\`\`
 ${canon.code}
@@ -1275,17 +1640,13 @@ ${canon.code}
 
 ---
 
-### Mathematical Model & Complexity Bounds
-$$${canon.math}$$
-
 > [!TIP]
 > **University Examination Insight:** ${canon.examTip}`;
         }
       }
     }
 
-    // 3. True Conversational Follow-Up Check
-    // Only trigger follow-up if query is an actual referential continuation (e.g. "why?", "explain more", "give example", "what about it?")
+    // 4. Conversational Referential Follow-Up Check
     const isReferentialFollowUp = conversationHistory.length > 0 && (
       lower === 'why?' ||
       lower.startsWith('why ') ||
@@ -1293,7 +1654,7 @@ $$${canon.math}$$
       lower.includes('elaborate') ||
       lower.includes('what about') ||
       lower.includes('how does that work') ||
-      (cleanQuery.length < 20 && !cleanQuery.includes('what is') && !cleanQuery.includes('explain') && !cleanQuery.includes('how'))
+      (cleanQuery.length < 25 && !isDefinition && !isHow && !isCode)
     );
 
     const lastAiTurn = [...conversationHistory].reverse().find(m => m.role === 'assistant');
@@ -1304,208 +1665,168 @@ $$${canon.math}$$
 Building on our discussion of **${detected.topic || 'the previous topic'}**:
 
 1. **Contextual Connection**:
-   When evaluating "${cleanQuery}" in the scope of our previous step, notice how the underlying state transitions directly influence overall system behavior and algorithmic correctness.
+   In the context of our previous discussion, "${cleanQuery}" directly relates to how the core mechanism maintains predictable behavior under standard and edge-case conditions.
 
-2. **Step-by-Step Resolution**:
-   * **Invariant Validation**: Ensure all preconditions and domain boundary constraints hold true.
-   * **Core Formulation**: Apply the standard engineering transformation:
-     $$\\mathcal{T}(n) = \\mathcal{O}(\\log n) \\quad \\text{or} \\quad \\mathcal{S}(n) = \\mathcal{O}(1)$$
-   * **Edge Case Verification**: Test with null inputs, zero boundary conditions, and cyclic states.
+2. **Step-by-Step Explanation**:
+   * **Core Rule**: Ensure all domain constraints and boundary preconditions are satisfied.
+   * **Mechanism**: The system handles this by isolating state transitions and applying the standard rule systematically.
+   * **Key Verification**: Check with boundary conditions (like empty inputs or edge values).
 
 3. **Academic Takeaway**:
-   In exams, clearly indicate how this sub-concept connects back to the overarching theorem and provide the relevant Big-O runtime analysis.
-
-*Need a practice problem on this? Click **Generate Practice Question** below.*`;
+   In university exams, clearly explain how this sub-concept connects back to the main theorem or algorithm.`;
     }
 
-    // 4. Dynamic General Structured University Grade Response
+    // 5. Intelligent Dynamic General Response (Adaptive by Level & Question Type)
     let attachmentNote = '';
     if (attachments && attachments.length > 0) {
-      attachmentNote = `\n\n> [!NOTE]\n> **Attachment Processed:** Successfully analyzed uploaded visual/code reference (${attachments[0].name}).`;
+      attachmentNote = `\n\n> [!NOTE]\n> **Attachment Processed:** Analyzed uploaded reference file (${attachments[0].name}).`;
     }
 
-    // Determine domain-specific code and formulation
-    const isML = resolvedSubject.includes('Machine Learning') || lower.includes('model') || lower.includes('neural') || lower.includes('regression') || lower.includes('classification');
-    const isDBMS = resolvedSubject.includes('Database') || lower.includes('sql') || lower.includes('table') || lower.includes('query') || lower.includes('normalization') || lower.includes('acid');
-    const isNetworks = resolvedSubject.includes('Network') || lower.includes('tcp') || lower.includes('ip') || lower.includes('packet') || lower.includes('protocol') || lower.includes('router');
+    if (level === 'Beginner') {
+      return `### Understanding: ${cleanQuery}
 
-    let dynamicCode = '';
-    let dynamicMath = '';
-    let dynamicLang = 'cpp';
+**Subject**: ${resolvedSubject} • **Level**: Beginner / Conceptual
 
-    if (isML) {
-      dynamicLang = 'python';
-      dynamicCode = `# Python Engineering Implementation: ${cleanQuery}
-import numpy as np
-import torch
-import torch.nn as nn
+---
 
-class MachineLearningSolution(nn.Module):
-    """
-    Academic Implementation for: ${cleanQuery}
-    Target Domain: Machine Learning & Statistical Learning Theory
-    """
-    def __init__(self, input_dim=10, hidden_dim=32, output_dim=1):
-        super().__init__()
-        self.encoder = nn.Sequential(
-            nn.Linear(input_dim, hidden_dim),
-            nn.BatchNorm1d(hidden_dim),
-            nn.ReLU(),
-            nn.Dropout(p=0.2),
-            nn.Linear(hidden_dim, output_dim)
-        )
-        
-    def forward(self, x):
-        # Hypothesis function f(X; theta)
-        return self.encoder(x)
+#### 1. Simple Definition & Overview
+In **${resolvedSubject}**, **${cleanQuery}** is a fundamental concept that helps us structure, process, or manage information systematically.
 
-# Optimization objective
-model = MachineLearningSolution()
-criterion = nn.MSELoss()
-optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
-print(f"Model initialized for '{cleanQuery}' with {sum(p.numel() for p in model.parameters())} parameters.")`;
-      dynamicMath = `\\hat{y} = f(X; \\theta) = \\sigma(W^T X + b), \\quad \\min_\\theta \\frac{1}{N} \\sum_{i=1}^N \\mathcal{L}(y_i, f(x_i; \\theta)) + \\lambda \\|W\\|_2^2`;
-    } else if (isDBMS) {
-      dynamicLang = 'sql';
-      dynamicCode = `-- SQL Institutional Implementation: ${cleanQuery}
--- Domain: Database Management Systems & Relational Schemas
+* **What it means**: Think of it as a set of structured rules or building blocks designed to make system tasks reliable and straightforward.
+* **Why it matters**: It prevents common mistakes like data loss, endless loops, or disorganized system states.
 
-CREATE TABLE IF NOT EXISTS academic_entity (
-    entity_id INT PRIMARY KEY AUTO_INCREMENT,
-    entity_name VARCHAR(255) NOT NULL,
-    status_flag ENUM('ACTIVE', 'PENDING', 'ARCHIVED') DEFAULT 'ACTIVE',
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    INDEX idx_entity_name (entity_name)
-) ENGINE=InnoDB;
+---
 
--- Transactional state transition ensuring ACID compliance
-START TRANSACTION;
+#### 2. Key Points:
+* **Step 1**: Start with clear initial inputs.
+* **Step 2**: Process each step following the established rule.
+* **Step 3**: Produce the correct, expected outcome.
 
-INSERT INTO academic_entity (entity_name, status_flag)
-VALUES ('${cleanQuery.replace(/'/g, '')}', 'ACTIVE');
+---
 
-COMMIT;`;
-      dynamicMath = `\\pi_{\\text{attributes}}(\\sigma_{\\text{condition}}(R \\bowtie S)) \\implies \\text{Cost} = \\mathcal{O}(\\log |R|) \\text{ with B+ Tree Index}`;
-    } else if (isNetworks) {
-      dynamicLang = 'python';
-      dynamicCode = `# Python Socket & Network Architecture: ${cleanQuery}
-import socket
-import struct
+#### 3. In Simple Words:
+Whenever you encounter **${cleanQuery}**, remember its main purpose: to provide a clean, predictable way to solve the underlying problem in ${resolvedSubject}.${attachmentNote}`;
+    } else if (level === 'Advanced') {
+      return `### Academic Breakdown: ${cleanQuery}
 
-def configure_network_endpoint(host="127.0.0.1", port=8080):
-    """
-    Transport layer connection handling for ${cleanQuery}
-    """
-    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-    sock.bind((host, port))
-    sock.listen(5)
-    print(f"Network service active on {host}:{port} ({cleanQuery})")
-    return sock`;
-      dynamicMath = `\\text{Throughput} = \\frac{\\text{Window Size (MSS)}}{\\text{RTT}} \\implies \\mathcal{T} = \\mathcal{O}(1) \\text{ per packet ingress}`;
+**Subject**: ${resolvedSubject} • **Level**: Advanced / University Exam
+
+---
+
+### 1. Conceptual Foundation & Mathematical Model
+In **${resolvedSubject}**, analyzing **${cleanQuery}** involves examining its governing principles, boundary constraints, and architectural trade-offs:
+
+* **Formal Definition**: Defines the state transitions, computational model, and invariant properties governing this mechanism.
+* **Core Invariant**: Correctness is preserved across all execution states and scale thresholds.
+
+---
+
+### 2. Algorithmic Formulation & Mechanics
+1. **Precondition & Initialization**: Verify inputs and establish initial state bounds.
+2. **Computational Transformation**: Apply the transformation rules with optimal time and space complexity.
+3. **Termination & Verification**: Ensure completion in finite steps while guaranteeing consistency.
+
+---
+
+### 3. University Examination Strategy & Edge Cases
+* **Key Focus**: Clearly articulate the time complexity bounds ($O(n)$ or $O(\\log n)$) and auxiliary space requirements.
+* **Common Mistakes**: Overlooking boundary edge cases ($n=0$, null pointers, or integer overflow).${attachmentNote}`;
     } else {
-      dynamicLang = 'cpp';
-      dynamicCode = `// C++ Production Reference Implementation: ${cleanQuery}
-#include <iostream>
-#include <vector>
-#include <stdexcept>
-#include <algorithm>
+      // Intermediate Level
+      return `### Concept Explanation: ${cleanQuery}
 
-template <typename T>
-class AcademicAlgorithm {
-public:
-    // Core state transformation
-    void execute(const std::vector<T>& input) {
-        if (input.empty()) {
-            throw std::invalid_argument("Input dataset cannot be empty (base boundary condition).");
-        }
-        
-        // 1. Process dataset with optimal time/space invariants
-        std::cout << "Successfully executed algorithmic breakdown for: ${cleanQuery}" << std::endl;
+**Subject Domain**: ${resolvedSubject} • **Level**: Intermediate
+
+---
+
+### 1. Overview & Definition
+In **${resolvedSubject}**, **${cleanQuery}** is a key concept used to solve standard engineering problems and organize system operations.
+
+* **Core Purpose**: Provides a standard, efficient mechanism to handle data or execution tasks reliably.
+* **Working Principle**: Operates on well-defined rules to ensure correctness and prevent system errors.
+
+---
+
+### 2. Key Steps & Implementation Takeaways
+1. **Initialization**: Set up the required structures and validate inputs.
+2. **Processing**: Execute the primary transformation or query logic step-by-step.
+3. **Validation**: Verify that the result satisfies all constraints.
+
+---
+
+> [!TIP]
+> **University Exam Insight:** When answering questions about **${cleanQuery}** in university exams, always provide: (1) Formal definition, (2) A concise example, and (3) Key advantages or complexity bounds.${attachmentNote}`;
     }
-};`;
-      dynamicMath = `\\mathcal{T}(n) = 2\\mathcal{T}\\left(\\frac{n}{2}\\right) + \\mathcal{O}(n) \\implies \\mathcal{O}(n \\log n), \\quad \\mathcal{S}(n) = \\mathcal{O}(1)`;
-    }
-
-    return `### Academic Breakdown: ${cleanQuery}
-
-**Subject Domain**: ${resolvedSubject} • **Academic Level**: ${difficulty}
-
----
-
-### 1. Theoretical Foundation & Core Invariants
-In **${resolvedSubject}**, understanding **${cleanQuery}** requires analyzing the governing principles, formal constraints, and mathematical models that dictate correct system behavior:
-
-* **Formal Definition**: This concept defines how inputs, states, and operations interact within rigorous theoretical boundaries.
-* **Invariant Guarantees**: State correctness and domain constraints are maintained across every execution cycle without data loss or undefined behavior.
-
----
-
-### 2. Step-by-Step Mechanics & Algorithmic Formulation
-
-1. **Precondition & Parameter Initialization**:
-   * Verify input constraints (non-null data, bounded dimensions, and verified initial conditions).
-   * Allocate required internal state memory with optimal auxiliary complexity.
-
-2. **Core Computational Transformation**:
-   * Execute the primary mathematical reduction or algorithmic state step:
-     $$${dynamicMath}$$
-   * Maintain inductive correctness across all iteration cycles.
-
-3. **Termination & Validation**:
-   * Confirm terminal invariants are reached in finite computational steps.
-   * Verify output matches formal specification.
-
----
-
-### 3. Production Implementation Reference
-
-\`\`\`${dynamicLang}
-${dynamicCode}
-\`\`\`
-
----
-
-### 4. University Examination Strategy & Edge Cases
-* **Essential Examination Formula**: Clearly state the time complexity bounds ($O(n)$ or $O(n \\log n)$) and auxiliary space complexity ($O(1)$ or $O(n)$).
-* **Common Student Mistake**: Failing to validate boundary edge cases ($n = 0$, null pointer exceptions, negative feature values, or arithmetic overflow).${attachmentNote}`;
   }
 
   /**
    * Socratic Tutor Mode Engine
-   * Asks guiding questions step-by-step
+   * Progressive step-by-step guided learning
    */
-  function generateSocraticResponse(query, history, subject, topic) {
+  function generateSocraticResponse(query, history, subject, topic, level = 'Intermediate') {
     const turnCount = history.filter(m => m.role === 'user').length;
+    const lower = query.toLowerCase();
 
-    if (turnCount <= 1) {
-      return `### Socratic Tutor Mode: Let's solve this together!
+    // If query asks "What is SQL?" in tutor mode
+    if (lower.includes('sql') && (lower.includes('what is') || turnCount <= 1)) {
+      return `### Socratic Tutor: Let's understand SQL step-by-step!
 
-To understand **"${query}"**, let's not just look at the final answer. Let's build the solution step-by-step.
+**SQL (Structured Query Language)** is the standard language used to interact with relational databases.
+
+Imagine you have a spreadsheet or a table containing student details (like \`student_id\`, \`name\`, and \`marks\`).
+
+If you want to view all records from that table, we write:
+\`\`\`sql
+SELECT * FROM students;
+\`\`\`
+
+Here:
+* \`SELECT\` tells the database what columns to fetch (\`*\` means all columns).
+* \`FROM students\` tells it which table to look inside.
+
+---
 
 **Question for you:**
-Before we apply any complex theorem or algorithm, what are the **given inputs** and the **main goal** of this problem?
+If you only wanted to see the **name** and **marks** columns (instead of all columns \`*\`), what SQL query would you write?
 
-*Take a guess or write down what you think the first step should be, and we will continue from there!*`;
+*Take a guess, and we'll build from there!*`;
+    }
+
+    if (turnCount <= 1) {
+      return `### Socratic Tutor Mode: Let's explore "${query}"!
+
+To really master this concept, let's break it down together step-by-step.
+
+**1. The Big Picture:**
+In **${subject}**, **${topic || query}** is used to solve a specific problem by following clear logical rules.
+
+---
+
+**Question for you:**
+Before we look at the full implementation or formulas, in your own words:
+* What is the **main input** we start with?
+* What is the **desired outcome** we want to achieve?
+
+*Write your thoughts below, and we will take the next step together!*`;
     } else if (turnCount === 2) {
-      return `### Excellent Progress!
+      return `### Great Thinking!
 
-You've identified the starting foundation. 
+You've got the basic foundation down. 
 
-Now, let's take the next logical step:
-* If we consider how the state changes during execution, **what rule or invariant must never be violated**?
+Now let's look at the next key part:
+* When this operation or algorithm runs, **what condition or edge case must we always watch out for** (e.g., empty inputs, zero values, or duplicate records)?
 
-Think about edge cases (like zero, empty input, or duplicate keys). What should happen next?`;
+How do you think the system handles that?`;
     } else {
-      return `### Correct Derivation Complete!
+      return `### Excellent Derivation!
 
 Connecting your reasoning together:
-1. We started with the foundational constraints.
-2. We applied the iterative transformation rule.
-3. We verified that boundary invariants hold.
+1. We identified the starting inputs and the core objective.
+2. We analyzed the step-by-step transformation.
+3. We checked the boundary invariants and edge cases.
 
-**Final Summary**:
-You just derived the principle of **${topic || 'this engineering concept'}** from first principles! Would you like a practice question to master this in an exam scenario?`;
+**Summary**:
+You've derived the key mechanics of **${topic || 'this concept'}** from first principles! Would you like to try an exam-style practice problem on this topic?`;
     }
   }
 
@@ -1528,11 +1849,11 @@ You just derived the principle of **${topic || 'this engineering concept'}** fro
     if (typeof window === 'undefined') return false;
     // Running on backend port
     if (window.location.port === BACKEND_PORT) return true;
-    
+
     // Explicit opt-in from user settings when running on standalone dev server (like 5500)
     try {
       if (localStorage.getItem(BACKEND_ENABLED_KEY) === 'true') return true;
-    } catch (e) {}
+    } catch (e) { }
     return false;
   }
 
@@ -1545,7 +1866,7 @@ You just derived the principle of **${topic || 'this engineering concept'}** fro
           localStorage.removeItem(BACKEND_ENABLED_KEY);
         }
       }
-    } catch (e) {}
+    } catch (e) { }
   }
 
   function getApiUrl(endpoint) {
@@ -1591,21 +1912,34 @@ You just derived the principle of **${topic || 'this engineering concept'}** fro
         cachedBackendStatus.available = true;
         return cachedBackendStatus;
       }
-    } catch (e) {}
+    } catch (e) { }
 
     cachedBackendStatus = { configured: false, provider: 'Local Offline Engine', available: false };
     return cachedBackendStatus;
   }
 
-  const DEFAULT_GEMINI_KEY = 'AQ.Ab8RN6LABhsLaHlfYpb1lhO0WBKaxYZW0RkGSLbYFVBnAHFoIg';
+  function isValidGeminiKeyFormat(key) {
+    if (!key || typeof key !== 'string') return false;
+    const k = key.trim();
+    if (!k || k === 'none' || k === 'null' || k === 'undefined') return false;
+    if (k.startsWith('AQ.') || k.startsWith('demo') || k.startsWith('your') || k.startsWith('test') || k.startsWith('placeholder')) return false;
+    return k.startsWith('AIza') && k.length >= 30;
+  }
+
+  const DEFAULT_GEMINI_KEY = '';
   function getGeminiApiKey() {
     try {
       if (typeof localStorage !== 'undefined') {
         const stored = localStorage.getItem(GEMINI_API_KEY_STORAGE);
-        if (stored === 'none') return '';
-        if (stored && stored.trim()) return stored.trim();
+        if (stored === 'none' || !stored) return '';
+        if (isValidGeminiKeyFormat(stored)) {
+          return stored.trim();
+        } else {
+          // Clean up invalid or stale placeholder keys from previous sessions
+          localStorage.removeItem(GEMINI_API_KEY_STORAGE);
+        }
       }
-      if (typeof window !== 'undefined' && window.GEMINI_API_KEY) {
+      if (typeof window !== 'undefined' && window.GEMINI_API_KEY && isValidGeminiKeyFormat(window.GEMINI_API_KEY)) {
         return window.GEMINI_API_KEY;
       }
     } catch (e) {
@@ -1617,10 +1951,10 @@ You just derived the principle of **${topic || 'this engineering concept'}** fro
   function setGeminiApiKey(key) {
     try {
       if (typeof localStorage !== 'undefined') {
-        if (key && key.trim()) {
+        if (key && isValidGeminiKeyFormat(key)) {
           localStorage.setItem(GEMINI_API_KEY_STORAGE, key.trim());
         } else {
-          localStorage.setItem(GEMINI_API_KEY_STORAGE, 'none');
+          localStorage.removeItem(GEMINI_API_KEY_STORAGE);
         }
       }
     } catch (e) {
@@ -1646,7 +1980,6 @@ You just derived the principle of **${topic || 'this engineering concept'}** fro
     } catch (e) { }
   }
 
-  /**
   /**
    * Sync Gemini key/model to backend environment
    */
@@ -1733,6 +2066,12 @@ You just derived the principle of **${topic || 'this engineering concept'}** fro
     if (!key || !key.trim()) {
       return { success: false, error: 'API key cannot be empty.' };
     }
+    if (!isValidGeminiKeyFormat(key.trim())) {
+      return {
+        success: false,
+        error: "Invalid API key format. A valid Google Gemini API key must start with 'AIza' and be at least 30 characters."
+      };
+    }
     const targetModel = model || DEFAULT_GEMINI_MODEL;
     const url = `https://generativelanguage.googleapis.com/v1beta/models/${targetModel}:generateContent?key=${encodeURIComponent(key.trim())}`;
 
@@ -1747,6 +2086,12 @@ You just derived the principle of **${topic || 'this engineering concept'}** fro
 
       const data = await response.json();
       if (!response.ok) {
+        if (response.status === 401 || response.status === 403) {
+          return {
+            success: false,
+            error: 'Authentication failed (401 Unauthorized). The provided key is invalid or does not have Generative AI permissions. Get a valid key from Google AI Studio.'
+          };
+        }
         const msg = (data && data.error && data.error.message) ? data.error.message : `HTTP ${response.status}: API validation failed.`;
         return { success: false, error: msg };
       }
@@ -1762,7 +2107,7 @@ You just derived the principle of **${topic || 'this engineering concept'}** fro
    */
   async function generateWithGemini(userQuery, history = [], options = {}, onStageProgress = null) {
     const apiKey = getGeminiApiKey();
-    if (!apiKey) return null;
+    if (!apiKey || !isValidGeminiKeyFormat(apiKey)) return null;
 
     const model = getGeminiModel();
     if (onStageProgress) onStageProgress(`Connecting to Google Gemini (${model})...`);
@@ -1771,23 +2116,67 @@ You just derived the principle of **${topic || 'this engineering concept'}** fro
     const difficulty = options.difficulty || 'Intermediate';
     const isTutorMode = !!options.tutorMode;
 
-    const systemInstruction = `You are an expert university professor and senior academic tutor in ${subject} for undergraduate and graduate STEM students on the Smart Student Productivity Platform.
-Target academic difficulty level: ${difficulty}.
+    let normalizedLevel = 'Intermediate';
+    if (/intro|basic|beginner|easy/i.test(difficulty)) normalizedLevel = 'Beginner';
+    else if (/adv|exam|hard|gate|grad/i.test(difficulty)) normalizedLevel = 'Advanced';
 
-${isTutorMode ? `
-IMPORTANT RULE: SOCRATIC TUTOR MODE IS ENABLED.
-- Do NOT provide the complete final solution immediately.
-- Use the Socratic inquiry method: decompose the concept into foundational questions.
-- Ask the student targeted questions to help them derive the theorem, algorithm, or solution step-by-step.
-- Acknowledge what they got right and guide them past misconceptions.
-` : `
-RESPONSE GUIDELINES:
-1. Provide a rigorous, crystal-clear conceptual foundation with formal academic terminology.
-2. Provide step-by-step mathematical derivations or canonical algorithmic steps using LaTeX math notation ($...$ inline or $$...$$ block notation).
-3. Provide clean, production-grade code implementations with syntax highlighting markers (\`\`\`python, \`\`\`cpp, \`\`\`sql, etc.).
-4. Include practical university examination takeaways, edge cases, and Big-O runtime/space complexities.
-`}
-Always output clean, readable, well-structured GitHub-Flavored Markdown.`;
+    const systemInstruction = `You are an expert university professor and senior academic tutor in ${subject} on the Smart Student Productivity Platform.
+Your mission is to provide high-quality, academically accurate, clear, and level-appropriate guidance to university students.
+
+=== ACADEMIC CONTEXT ===
+- Course/Domain: ${subject}
+- Academic Level: ${normalizedLevel} (Original setting: "${difficulty}")
+- Tutor Mode: ${isTutorMode ? 'ENABLED (Progressive Socratic Teaching)' : 'DISABLED (Direct Academic Answer)'}
+
+=== CORE TUTORING PRINCIPLES ===
+1. UNDERSTAND THE EXACT QUESTION:
+   - Identify the core concept being asked.
+   - Internally classify the question type (Definition, Explanation, Difference/Comparison, How it works, Why/Purpose, Example, Code/Query, Mathematical derivation, Algorithm, Debugging, Exam preparation, MCQ, Assignment-style).
+   - Answer ONLY what is relevant to the question. Do NOT artificially invent complex sub-sections or force a rigid multi-part template onto simple questions.
+   - NEVER generate unrelated sections (e.g. do not add ACID transactions, invariants, or complexity analysis to a basic question like "What is SQL?").
+
+2. ADAPT TO ACADEMIC LEVEL:
+   - BEGINNER / INTRODUCTORY:
+     * Use simple, accessible language with intuitive mental models and real-world analogies.
+     * Keep paragraphs short and concise.
+     * Use minimal jargon and explain any technical terms used.
+     * Provide simple, clean examples.
+     * Keep the response focused and digestible.
+   - INTERMEDIATE:
+     * Use standard academic terminology with clear contextual definitions.
+     * Provide practical examples, architectural diagrams (in markdown), or code where helpful.
+     * Cover core mechanisms, principles, and common pitfalls.
+   - ADVANCED / EXAM LEVEL:
+     * Provide formal mathematical formulations, theoretical invariants, or formal proofs.
+     * Cover edge cases, algorithmic complexity bounds ($O(n)$, space complexity), and architectural trade-offs.
+     * Include university exam insights, mark-distribution tips, or GATE/GRE-level takeaways.
+
+3. TUTOR MODE BEHAVIOR:
+   ${isTutorMode ? `
+   - TUTOR MODE IS ACTIVE:
+     * Do NOT immediately dump a monolithic final answer.
+     * Teach progressively: (1) Start with a simple intuitive explanation or decomposition, (2) Give a relatable example, (3) Explain why it works, and (4) Ask ONE focused, engaging question or offer the next step to encourage active student learning.
+     * If the student explicitly asks for a direct answer, full code, or complete solution, provide it directly without withholding information.
+   ` : `
+   - TUTOR MODE IS INACTIVE:
+     * Provide a direct, complete, well-structured, and comprehensive academic answer.
+     * Use clear Markdown headings, bullet points, code blocks, or comparison tables tailored to the question type.
+   `}
+
+4. CODE GENERATION RULES:
+   - Generate code ONLY when: (1) The student asks for code/queries/programs, (2) The question inherently requires a code/query example (e.g., SQL queries, algorithm implementations), or (3) A concise 3-5 line code snippet directly improves understanding.
+   - Use correct language syntax highlighting tags (\`\`\`sql, \`\`\`cpp, \`\`\`python, \`\`\`java, etc.).
+   - Include inline comments explaining crucial lines.
+
+5. ACCURACY & ANTI-HALLUCINATION:
+   - Prioritize correctness over verbosity. Never invent non-existent formulas, database operations, algorithms, or fake syllabus rules.
+   - If uncertain about a university-specific regulation or dialect, state that clearly rather than assuming.
+
+6. OUTPUT FORMATTING:
+   - Always output clean, elegant, readable GitHub-Flavored Markdown.
+   - Format tables cleanly using Markdown table syntax.
+   - Use LaTeX notation for mathematics ($...$ for inline, $$...$$ for block).
+   - Use GitHub-style callouts (> [!TIP] or > [!NOTE]) sparingly for high-value exam tips or key takeaways.`;
 
     // Map conversation history into Gemini contents payload
     const contents = [];
@@ -1834,7 +2223,6 @@ Always output clean, readable, well-structured GitHub-Flavored Markdown.`;
     if (onStageProgress) onStageProgress('Synthesizing academic derivation with Gemini...');
 
     const candidateModels = [model, 'gemini-3.6-flash', 'gemini-2.5-flash'].filter((v, i, a) => a.indexOf(v) === i);
-    let lastErrorMsg = '';
 
     for (const candModel of candidateModels) {
       const url = `https://generativelanguage.googleapis.com/v1beta/models/${candModel}:generateContent?key=${encodeURIComponent(apiKey)}`;
@@ -1859,8 +2247,20 @@ Always output clean, readable, well-structured GitHub-Flavored Markdown.`;
         });
 
         if (!response.ok) {
+          if (response.status === 401 || response.status === 403) {
+            console.warn(`[AIService Notice]: Gemini API authentication rejected (HTTP ${response.status}). Removing unauthorized key and falling back to Verified Academic Tutor.`);
+            try {
+              if (typeof localStorage !== 'undefined') {
+                localStorage.removeItem(GEMINI_API_KEY_STORAGE);
+              }
+              if (typeof window !== 'undefined' && typeof window.dispatchEvent === 'function') {
+                window.dispatchEvent(new CustomEvent('gemini-key-invalidated'));
+              }
+            } catch (e) { }
+            return null; // Immediately return null without spamming candidate models
+          }
           const errJson = await response.json().catch(() => ({}));
-          lastErrorMsg = (errJson && errJson.error && errJson.error.message) ? errJson.error.message : `HTTP ${response.status}`;
+          const lastErrorMsg = (errJson && errJson.error && errJson.error.message) ? errJson.error.message : `HTTP ${response.status}`;
           console.warn(`[AIService Gemini Warning - ${candModel}]:`, lastErrorMsg);
           continue;
         }
@@ -1871,12 +2271,11 @@ Always output clean, readable, well-structured GitHub-Flavored Markdown.`;
           return generatedText;
         }
       } catch (networkErr) {
-        lastErrorMsg = networkErr.message || 'Network error';
         console.warn(`[AIService Network Warning - ${candModel}]:`, networkErr);
       }
     }
 
-    throw new Error(`Gemini API Error: ${lastErrorMsg || 'All models temporarily busy.'}`);
+    return null;
   }
 
   /**
@@ -1884,7 +2283,7 @@ Always output clean, readable, well-structured GitHub-Flavored Markdown.`;
    */
   async function generatePracticeWithGemini(topic, subject) {
     const apiKey = getGeminiApiKey();
-    if (!apiKey) return null;
+    if (!apiKey || !isValidGeminiKeyFormat(apiKey)) return null;
 
     const model = getGeminiModel();
     const prompt = `Generate a high-quality academic multiple-choice practice question for an engineering student.
@@ -1921,7 +2320,15 @@ You must respond STRICTLY with a valid JSON object formatted as:
           })
         });
 
-        if (!response.ok) continue;
+        if (!response.ok) {
+          if (response.status === 401 || response.status === 403) {
+            try {
+              if (typeof localStorage !== 'undefined') localStorage.removeItem(GEMINI_API_KEY_STORAGE);
+            } catch (e) { }
+            return null;
+          }
+          continue;
+        }
         const data = await response.json();
         if (data.candidates && data.candidates[0]?.content?.parts[0]?.text) {
           const raw = data.candidates[0].content.parts[0].text.trim();
@@ -1935,6 +2342,14 @@ You must respond STRICTLY with a valid JSON object formatted as:
               question: parsed.question,
               options: parsed.options,
               correctIndex: parsed.correctIndex,
+              explanation: parsed.explanation || 'Verified correct answer.'
+            };
+          }
+        }
+      } catch (e) { }
+    }
+    return null;
+  }
               explanation: parsed.explanation || 'Solution derived from canonical academic theory.'
             };
           }

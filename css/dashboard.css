@@ -141,32 +141,39 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: #64748B;
-  padding: 0 0.625rem;
-  margin: 0;
-  height: 0;
-  line-height: 18px;
+  color: #94A3B8;
+  padding: 0.45rem 0.75rem 0.2rem;
+  margin: 0.4rem 0 0.1rem;
   white-space: nowrap;
   opacity: 0;
-  transform: translateX(-10px);
-  pointer-events: none;
+  max-height: 0;
   overflow: hidden;
-  display: none;
-  transition: opacity 0.25s cubic-bezier(0.16, 1, 0.3, 1), transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  transform: translateX(-8px);
+  pointer-events: none;
+  transition: opacity 0.25s cubic-bezier(0.16, 1, 0.3, 1), transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), max-height 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  display: block;
 }
 
-.app-sidebar:hover .nav-section-label {
+.nav-section-label:first-child {
+  margin-top: 0.15rem;
+}
+
+.app-sidebar:hover .nav-section-label,
+.app-sidebar.drawer-open .nav-section-label {
   display: block;
   opacity: 1;
-  height: 18px;
-  margin: 0.4rem 0 0.15rem;
+  max-height: 36px;
+  overflow: visible;
+  padding: 0.45rem 0.75rem 0.2rem;
+  margin: 0.4rem 0 0.1rem;
   transform: translateX(0);
   pointer-events: auto;
-  transition: opacity 0.28s cubic-bezier(0.16, 1, 0.3, 1) 0.05s, transform 0.28s cubic-bezier(0.16, 1, 0.3, 1) 0.05s;
+  transition: opacity 0.28s cubic-bezier(0.16, 1, 0.3, 1) 0.05s, transform 0.28s cubic-bezier(0.16, 1, 0.3, 1) 0.05s, max-height 0.28s ease;
 }
 
-.app-sidebar:hover .nav-section-label:not(:first-child) {
-  margin-top: 0.75rem;
+.app-sidebar:hover .nav-section-label:not(:first-child),
+.app-sidebar.drawer-open .nav-section-label:not(:first-child) {
+  margin-top: 0.65rem;
 }
 
 /* Nav Links with Silky Smooth Micro-interactions */
@@ -251,12 +258,12 @@
 }
 
 .nav-link.active .nav-link-icon {
-  color: #0F172A;
+  color: inherit;
 }
 
 .nav-link.active .nav-link-text,
 .nav-link.active>span:not(.nav-link-icon):not(.nav-badge) {
-  color: #0F172A;
+  color: inherit;
 }
 
 .nav-link.active:hover {
@@ -271,12 +278,12 @@
 
 .nav-link.active:hover .nav-link-icon {
   transform: scale(1.08);
-  color: #0F172A;
+  color: inherit;
 }
 
 .nav-link.active:hover .nav-link-text,
 .nav-link.active:hover>span:not(.nav-link-icon):not(.nav-badge) {
-  color: #0F172A;
+  color: inherit;
 }
 
 /* Badges */
@@ -404,6 +411,154 @@
   color: #94A3B8;
   font-size: 0.71875rem;
   font-weight: 500;
+}
+
+/* ── Admin Portal Sidebar Theme ── */
+.admin-portal-sidebar .sidebar-brand-icon,
+.admin-portal .sidebar-brand-icon,
+body.admin-portal .sidebar-brand-icon {
+  background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%) !important;
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4) !important;
+}
+
+.admin-portal-sidebar .sidebar-brand:hover .sidebar-brand-icon,
+.admin-portal .sidebar-brand:hover .sidebar-brand-icon,
+body.admin-portal .sidebar-brand:hover .sidebar-brand-icon {
+  box-shadow: 0 6px 18px rgba(245, 158, 11, 0.55) !important;
+}
+
+.admin-portal-sidebar .nav-link.active,
+.admin-portal .nav-link.active,
+body.admin-portal .nav-link.active {
+  background: rgba(245, 158, 11, 0.16) !important;
+  color: #FBBF24 !important;
+  border: 1px solid rgba(245, 158, 11, 0.28) !important;
+}
+
+.admin-portal-sidebar .nav-link.active .nav-link-icon,
+.admin-portal .nav-link.active .nav-link-icon,
+body.admin-portal .nav-link.active .nav-link-icon {
+  color: #F59E0B !important;
+}
+
+.admin-portal-sidebar .nav-link.active .nav-link-text,
+.admin-portal-sidebar .nav-link.active > span:not(.nav-link-icon):not(.nav-badge),
+.admin-portal .nav-link.active .nav-link-text,
+.admin-portal .nav-link.active > span:not(.nav-link-icon):not(.nav-badge),
+body.admin-portal .nav-link.active .nav-link-text,
+body.admin-portal .nav-link.active > span:not(.nav-link-icon):not(.nav-badge) {
+  color: #FBBF24 !important;
+  font-weight: 700 !important;
+}
+
+.admin-portal-sidebar .nav-link:hover,
+.admin-portal .nav-link:hover,
+body.admin-portal .nav-link:hover {
+  background: rgba(245, 158, 11, 0.1) !important;
+  color: #FFFFFF !important;
+}
+
+.admin-portal-sidebar .nav-link:hover .nav-link-text,
+.admin-portal-sidebar .nav-link:hover > span:not(.nav-link-icon):not(.nav-badge),
+.admin-portal .nav-link:hover .nav-link-text,
+.admin-portal .nav-link:hover > span:not(.nav-link-icon):not(.nav-badge),
+body.admin-portal .nav-link:hover .nav-link-text,
+body.admin-portal .nav-link:hover > span:not(.nav-link-icon):not(.nav-badge) {
+  color: #FFFFFF !important;
+}
+
+.admin-portal-sidebar .sidebar-user-card .user-avatar,
+.admin-portal .sidebar-user-card .user-avatar,
+body.admin-portal .sidebar-user-card .user-avatar {
+  background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%) !important;
+  box-shadow: 0 4px 10px rgba(245, 158, 11, 0.35) !important;
+}
+
+/* ==========================================================================
+   Admin Portal Sidebar — Always Open & Expanded by Default on Desktop
+   ========================================================================== */
+@media (min-width: 769px) {
+  .admin-portal .app-sidebar,
+  body.admin-portal .app-sidebar,
+  .admin-portal-sidebar,
+  .app-sidebar.admin-sidebar,
+  .app-sidebar[aria-label="Admin Navigation"] {
+    width: 260px !important;
+    box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.08) !important;
+  }
+
+  .admin-portal .sidebar-brand-text,
+  body.admin-portal .sidebar-brand-text,
+  .admin-portal-sidebar .sidebar-brand-text,
+  .app-sidebar.admin-sidebar .sidebar-brand-text,
+  .app-sidebar[aria-label="Admin Navigation"] .sidebar-brand-text,
+  .admin-portal .nav-section-label,
+  body.admin-portal .nav-section-label,
+  .admin-portal-sidebar .nav-section-label,
+  .app-sidebar.admin-sidebar .nav-section-label,
+  .app-sidebar[aria-label="Admin Navigation"] .nav-section-label,
+  .admin-portal .nav-link-text,
+  body.admin-portal .nav-link-text,
+  .admin-portal-sidebar .nav-link-text,
+  .app-sidebar.admin-sidebar .nav-link-text,
+  .app-sidebar[aria-label="Admin Navigation"] .nav-link-text,
+  .admin-portal .nav-link > span:not(.nav-link-icon):not(.nav-badge),
+  body.admin-portal .nav-link > span:not(.nav-link-icon):not(.nav-badge),
+  .admin-portal-sidebar .nav-link > span:not(.nav-link-icon):not(.nav-badge),
+  .app-sidebar.admin-sidebar .nav-link > span:not(.nav-link-icon):not(.nav-badge),
+  .app-sidebar[aria-label="Admin Navigation"] .nav-link > span:not(.nav-link-icon):not(.nav-badge),
+  .admin-portal .nav-badge,
+  body.admin-portal .nav-badge,
+  .admin-portal-sidebar .nav-badge,
+  .app-sidebar.admin-sidebar .nav-badge,
+  .app-sidebar[aria-label="Admin Navigation"] .nav-badge,
+  .admin-portal .sidebar-user-info,
+  body.admin-portal .sidebar-user-info,
+  .admin-portal-sidebar .sidebar-user-info,
+  .app-sidebar.admin-sidebar .sidebar-user-info,
+  .app-sidebar[aria-label="Admin Navigation"] .sidebar-user-info,
+  .admin-portal .sidebar-user-card .user-info-text,
+  body.admin-portal .sidebar-user-card .user-info-text,
+  .admin-portal-sidebar .sidebar-user-card .user-info-text,
+  .app-sidebar.admin-sidebar .sidebar-user-card .user-info-text,
+  .app-sidebar[aria-label="Admin Navigation"] .sidebar-user-card .user-info-text {
+    display: block !important;
+    opacity: 1 !important;
+    transform: translateX(0) !important;
+    pointer-events: auto !important;
+    visibility: visible !important;
+  }
+
+  .admin-portal .nav-section-label,
+  body.admin-portal .nav-section-label,
+  .admin-portal-sidebar .nav-section-label,
+  .app-sidebar.admin-sidebar .nav-section-label,
+  .app-sidebar[aria-label="Admin Navigation"] .nav-section-label {
+    max-height: 36px !important;
+    height: auto !important;
+    overflow: visible !important;
+    margin: 0.5rem 0 0.15rem !important;
+    padding: 0.45rem 0.75rem 0.2rem !important;
+    color: #94A3B8 !important;
+    white-space: nowrap !important;
+  }
+
+  .admin-portal .nav-section-label:not(:first-child),
+  body.admin-portal .nav-section-label:not(:first-child),
+  .admin-portal-sidebar .nav-section-label:not(:first-child),
+  .app-sidebar.admin-sidebar .nav-section-label:not(:first-child),
+  .app-sidebar[aria-label="Admin Navigation"] .nav-section-label:not(:first-child) {
+    margin-top: 0.75rem !important;
+  }
+
+  /* Fixed margin-left on desktop to prevent any layout shifting */
+  .admin-portal .app-main,
+  body.admin-portal .app-main,
+  .admin-portal-sidebar ~ .app-main,
+  .app-container:has(.admin-sidebar) .app-main,
+  .app-container:has(.app-sidebar[aria-label="Admin Navigation"]) .app-main {
+    margin-left: 284px !important;
+  }
 }
 
 /* --------------------------------------------------------------------------
@@ -639,7 +794,7 @@ input[type="search"].topbar-search-input {
   border: 1px solid rgba(226, 232, 240, 0.95);
   border-radius: 12px;
   box-shadow: 0 20px 40px -8px rgba(15, 23, 42, 0.12), 0 0 1px rgba(0, 0, 0, 0.05);
-  z-index: 150;
+  z-index: 999;
   display: none;
   animation: dropdownFadeIn 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   overflow: hidden;
@@ -657,8 +812,9 @@ input[type="search"].topbar-search-input {
   }
 }
 
-.menu-dropdown.show {
-  display: block;
+.menu-dropdown.show,
+.menu-dropdown.open {
+  display: block !important;
 }
 
 .notification-dropdown {

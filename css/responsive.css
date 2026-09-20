@@ -80,7 +80,9 @@
   }
 
   .app-sidebar.drawer-open .nav-section-label {
-    height: 18px !important;
+    max-height: 36px !important;
+    height: auto !important;
+    overflow: visible !important;
     margin: 0.45rem 0 0.15rem !important;
   }
 
@@ -103,7 +105,12 @@
   }
 
   .app-main,
-  .app-sidebar:hover ~ .app-main {
+  .app-sidebar:hover ~ .app-main,
+  .admin-portal .app-main,
+  body.admin-portal .app-main,
+  .admin-portal-sidebar ~ .app-main,
+  .app-container:has(.admin-sidebar) .app-main,
+  .app-container:has(.app-sidebar[aria-label="Admin Navigation"]) .app-main {
     margin-left: 0 !important;
   }
 

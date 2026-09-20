@@ -1,109 +1,515 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>System Configuration — Smart Admin</title>
-  <meta name="description" content="Platform-level system configuration and Firebase settings for Super Admin.">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>System Settings — Smart Admin</title>
+  <meta name="description" content="Platform-level configuration, academic policies, AI parameters, and security toggles for Super Admin.">
   <link rel="icon" type="image/svg+xml" href="../favicon.svg">
   <link rel="stylesheet" href="../css/main.css">
   <link rel="stylesheet" href="../css/dashboard.css">
   <link rel="stylesheet" href="../css/responsive.css">
   <script src="../js/admin-auth-guard.js"></script>
   <style>
-    :root { --admin-accent:#F59E0B; --admin-accent-dark:#D97706; --admin-accent-bg:#FFFBEB; }
-    .sidebar-brand-icon { background:linear-gradient(135deg,#F59E0B,#D97706)!important; box-shadow:0 4px 12px rgba(245,158,11,.4)!important; }
-    .nav-link.active { background:rgba(245,158,11,.14)!important; color:#F59E0B!important; }
-    .nav-link.active .nav-link-icon { color:#F59E0B!important; }
-    .nav-link:hover { background:rgba(245,158,11,.08)!important; }
-    .page-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:1.5rem; }
-    .page-title { font-size:1.5rem; font-weight:800; color:var(--text-primary); letter-spacing:-.02em; }
-    .page-sub { font-size:.84375rem; color:var(--text-tertiary); margin-top:.2rem; }
-    .btn-primary-admin { display:inline-flex; align-items:center; gap:.4rem; background:linear-gradient(135deg,#F59E0B,#D97706); color:#fff; font-size:.84375rem; font-weight:700; padding:.6rem 1.1rem; border-radius:10px; border:none; cursor:pointer; transition:all .18s; box-shadow:0 4px 12px rgba(245,158,11,.3); font-family:inherit; }
+    :root {
+      --admin-accent: #F59E0B;
+      --admin-accent-dark: #D97706;
+      --admin-accent-bg: #FFFBEB;
+    }
 
-    /* Config sections layout */
-    .config-grid { display:grid; grid-template-columns:1fr 1fr; gap:1.25rem; }
-    .config-card { background:#fff; border:1px solid var(--border-default); border-radius:16px; overflow:hidden; }
-    .config-card-header { padding:1rem 1.25rem; border-bottom:1px solid var(--border-light); display:flex; align-items:center; gap:.6rem; }
-    .config-card-icon { width:36px; height:36px; border-radius:9px; display:flex; align-items:center; justify-content:center; }
-    .config-card-title { font-size:.9375rem; font-weight:700; color:var(--text-primary); }
-    .config-card-body { padding:1.25rem; display:flex; flex-direction:column; gap:.875rem; }
+    .sidebar-brand-icon {
+      background: linear-gradient(135deg, #F59E0B, #D97706) !important;
+      box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4) !important;
+    }
+    .nav-link.active {
+      background: rgba(245, 158, 11, 0.16) !important;
+      color: #FBBF24 !important;
+      border: 1px solid rgba(245, 158, 11, 0.28) !important;
+    }
+    .nav-link.active .nav-link-icon { color: #F59E0B !important; }
+    .nav-link.active .nav-link-text,
+    .nav-link.active > span:not(.nav-link-icon):not(.nav-badge) {
+      color: #FBBF24 !important;
+      font-weight: 700 !important;
+    }
+    .nav-link:hover {
+      background: rgba(245, 158, 11, 0.1) !important;
+      color: #FFFFFF !important;
+    }
+    .nav-link:hover .nav-link-text,
+    .nav-link:hover > span:not(.nav-link-icon):not(.nav-badge) { color: #FFFFFF !important; }
 
-    /* Config row */
-    .config-row { display:flex; align-items:center; justify-content:space-between; padding:.5rem 0; border-bottom:1px solid var(--border-light); }
-    .config-row:last-child { border-bottom:none; }
-    .config-row-label { font-size:.84375rem; font-weight:600; color:var(--text-primary); }
-    .config-row-sub { font-size:.75rem; color:var(--text-tertiary); }
-    .config-value { font-size:.84375rem; font-family:monospace; color:var(--text-secondary); }
+    .page-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .page-title {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: var(--text-primary);
+      letter-spacing: -0.02em;
+    }
+    .page-sub {
+      font-size: 0.84375rem;
+      color: var(--text-tertiary);
+      margin-top: 0.2rem;
+    }
 
-    /* Toggle switch */
-    .toggle-wrap { display:flex; align-items:center; gap:.5rem; }
-    .toggle { position:relative; width:40px; height:22px; }
-    .toggle input { opacity:0; width:0; height:0; }
-    .toggle-slider { position:absolute; cursor:pointer; inset:0; background:#E2E8F0; border-radius:22px; transition:.3s; }
-    .toggle-slider:before { position:absolute; content:""; height:16px; width:16px; left:3px; bottom:3px; background:white; border-radius:50%; transition:.3s; box-shadow:0 1px 3px rgba(0,0,0,.2); }
-    input:checked + .toggle-slider { background:var(--admin-accent); }
-    input:checked + .toggle-slider:before { transform:translateX(18px); }
-    .toggle-label { font-size:.75rem; font-weight:600; color:var(--text-tertiary); }
+    .btn-admin {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.84375rem;
+      font-weight: 700;
+      padding: 0.6rem 1.15rem;
+      border-radius: 10px;
+      border: none;
+      cursor: pointer;
+      transition: all 0.18s;
+      font-family: inherit;
+    }
+    .btn-admin-primary {
+      background: linear-gradient(135deg, #F59E0B, #D97706);
+      color: #fff;
+      box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+    }
+    .btn-admin-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 16px rgba(245, 158, 11, 0.4);
+    }
+    .btn-admin-danger {
+      background: linear-gradient(135deg, #EF4444, #DC2626);
+      color: #fff;
+      box-shadow: 0 4px 12px rgba(220, 38, 38, 0.25);
+    }
+    .btn-admin-danger:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 16px rgba(220, 38, 38, 0.35);
+    }
 
-    /* Form inputs */
-    .form-input { border:1px solid var(--border-default); border-radius:8px; padding:.5rem .75rem; font-size:.84375rem; font-family:inherit; color:var(--text-primary); background:#fff; width:100%; }
-    .form-input:focus { outline:none; border-color:var(--admin-accent); }
+    /* Tabs Navigation */
+    .config-tabs {
+      display: flex;
+      gap: 0.5rem;
+      border-bottom: 1px solid var(--border-default);
+      margin-bottom: 1.5rem;
+      overflow-x: auto;
+      padding-bottom: 4px;
+    }
+    .config-tab-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      padding: 0.65rem 1.1rem;
+      border-radius: 9px;
+      border: 1px solid transparent;
+      background: transparent;
+      color: var(--text-secondary);
+      font-size: 0.84375rem;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.15s;
+    }
+    .config-tab-btn:hover {
+      background: #F8FAFC;
+      color: var(--text-primary);
+    }
+    .config-tab-btn.active {
+      background: var(--admin-accent-bg);
+      color: var(--admin-accent-dark);
+      border-color: #FCD34D;
+      font-weight: 700;
+    }
 
-    /* Service status row */
-    .service-status { display:flex; align-items:center; gap:.5rem; font-size:.84375rem; font-weight:600; }
-    .svc-dot { width:8px; height:8px; border-radius:50%; }
-    .svc-dot.ok { background:#16A34A; } .svc-dot.warn { background:#D97706; } .svc-dot.down { background:#DC2626; }
-    .svc-ok { color:#16A34A; } .svc-warn { color:#D97706; } .svc-down { color:#DC2626; }
+    /* Tab Panes */
+    .tab-pane {
+      display: none;
+    }
+    .tab-pane.active {
+      display: block;
+    }
 
-    /* Danger zone */
-    .danger-zone { background:#FFF5F5; border:1px solid #FCA5A5; border-radius:16px; padding:1.5rem; margin-top:1.25rem; }
-    .danger-title { font-size:.9375rem; font-weight:700; color:#991B1B; margin-bottom:.75rem; display:flex; align-items:center; gap:.5rem; }
-    .danger-action { display:flex; align-items:center; justify-content:space-between; padding:.75rem 0; border-bottom:1px solid #FECACA; }
-    .danger-action:last-child { border-bottom:none; }
-    .danger-action-label { font-size:.84375rem; font-weight:600; color:var(--text-primary); }
-    .danger-action-sub { font-size:.75rem; color:var(--text-tertiary); }
-    .btn-danger { display:inline-flex; padding:.4rem .875rem; border-radius:8px; border:1px solid #FCA5A5; background:#FFF5F5; color:#DC2626; font-size:.8125rem; font-weight:700; cursor:pointer; font-family:inherit; transition:all .18s; }
-    .btn-danger:hover { background:#DC2626; color:#fff; border-color:#DC2626; }
+    /* Config Cards & Grid */
+    .config-card {
+      background: #FFFFFF;
+      border: 1px solid var(--border-default);
+      border-radius: 16px;
+      overflow: hidden;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+    }
+    .config-card-header {
+      padding: 1.1rem 1.5rem;
+      border-bottom: 1px solid var(--border-light);
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .config-card-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 9px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .config-card-title {
+      font-size: 0.95rem;
+      font-weight: 800;
+      color: var(--text-primary);
+    }
+    .config-card-sub {
+      font-size: 0.75rem;
+      color: var(--text-tertiary);
+    }
+    .config-card-body {
+      padding: 1.5rem;
+    }
 
-    @media(max-width:900px){ .config-grid { grid-template-columns:1fr; } }
+    /* Form Layouts */
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.25rem;
+    }
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+    .form-group.full {
+      grid-column: 1 / -1;
+    }
+    .form-label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-secondary);
+    }
+    .form-input, .form-select, .form-textarea {
+      border: 1px solid var(--border-default);
+      border-radius: 9px;
+      padding: 0.65rem 0.85rem;
+      font-size: 0.84375rem;
+      font-family: inherit;
+      color: var(--text-primary);
+      background: #FFFFFF;
+      transition: border-color 0.15s;
+      width: 100%;
+    }
+    .form-input:focus, .form-select:focus, .form-textarea:focus {
+      outline: none;
+      border-color: var(--admin-accent);
+      box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.12);
+    }
+    .form-help {
+      font-size: 0.71875rem;
+      color: var(--text-tertiary);
+    }
+
+    /* Toggle Row */
+    .toggle-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem 0;
+      border-bottom: 1px solid var(--border-light);
+    }
+    .toggle-row:last-child {
+      border-bottom: none;
+    }
+    .toggle-label {
+      font-size: 0.875rem;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+    .toggle-sub {
+      font-size: 0.75rem;
+      color: var(--text-tertiary);
+      margin-top: 0.15rem;
+    }
+
+    /* Switch Component */
+    .toggle-switch {
+      position: relative;
+      display: inline-block;
+      width: 44px;
+      height: 24px;
+      flex-shrink: 0;
+    }
+    .toggle-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    .toggle-slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: #CBD5E1;
+      transition: .25s;
+      border-radius: 24px;
+    }
+    .toggle-slider:before {
+      position: absolute;
+      content: "";
+      height: 18px;
+      width: 18px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: .25s;
+      border-radius: 50%;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+    }
+    input:checked + .toggle-slider {
+      background-color: #10B981;
+    }
+    input:checked + .toggle-slider:before {
+      transform: translateX(20px);
+    }
+
+    /* Danger Card */
+    .danger-zone-card {
+      background: #FFF5F5;
+      border: 1px solid #FECACA;
+      border-radius: 16px;
+      padding: 1.5rem;
+      margin-top: 1.5rem;
+    }
+    .danger-title {
+      font-size: 1rem;
+      font-weight: 800;
+      color: #991B1B;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+    .danger-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.875rem 0;
+      border-bottom: 1px solid #FEE2E2;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+    .danger-item:last-child {
+      border-bottom: none;
+    }
+    .danger-item-title {
+      font-size: 0.84375rem;
+      font-weight: 700;
+      color: #991B1B;
+    }
+    .danger-item-desc {
+      font-size: 0.75rem;
+      color: #7F1D1D;
+      margin-top: 0.15rem;
+    }
+
+    @media (max-width: 900px) {
+      .form-grid { grid-template-columns: 1fr; }
+    }
   </style>
 </head>
-<body>
+<body class="admin-portal">
   <div id="toast-container"></div>
   <div class="sidebar-backdrop"></div>
+
   <div class="app-container">
-    <aside class="app-sidebar">
-      <div class="sidebar-header"><a href="dashboard.html" class="sidebar-brand"><div class="sidebar-brand-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div><div class="sidebar-brand-text"><h2>Smart Admin</h2><span>Admin Portal</span></div></a></div>
+    <!-- SIDEBAR NAVIGATION -->
+    <aside class="app-sidebar admin-sidebar" aria-label="Admin Navigation">
+      <div class="sidebar-header">
+        <a href="dashboard.html" class="sidebar-brand">
+          <div class="sidebar-brand-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            </svg>
+          </div>
+          <div class="sidebar-brand-text">
+            <h2>Smart Admin</h2>
+            <span>Super Admin Portal</span>
+          </div>
+        </a>
+      </div>
+
       <nav class="sidebar-nav-container">
-        <div class="nav-section-label">Platform Overview</div>
-        <a href="dashboard.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg></span><span>Overview</span></a>
-        <a href="profile.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span><span>My Profile</span></a>
-        <div class="nav-section-label">User & Access</div>
-        <a href="users.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span><span>User Management</span></a>
-        <a href="roles-permissions.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span><span>Roles & Permissions</span></a>
-        <div class="nav-section-label">Academic Admin</div>
-        <a href="academic-structure.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg></span><span>Academic Structure</span></a>
-        <a href="courses.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></span><span>Courses</span></a>
-        <div class="nav-section-label">Platform Ops</div>
-        <a href="reports.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></span><span>Reports</span></a>
-        <a href="audit-logs.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></span><span>Audit Logs</span><span class="nav-badge" style="background:#DC2626">5</span></a>
-        <a href="notifications.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></span><span>Notifications</span></a>
-        <a href="system-config.html" class="nav-link active"><span class="nav-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span><span>System Config</span></a>
+        <div class="nav-section-label">Main Dashboard</div>
+        <a href="dashboard.html" class="nav-link">
+          <span class="nav-link-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+              <rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
+            </svg>
+          </span>
+          <span>Dashboard</span>
+        </a>
+
+        <div class="nav-section-label">User Management</div>
+        <a href="users.html" class="nav-link">
+          <span class="nav-link-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+              <circle cx="9" cy="7" r="4"/>
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+            </svg>
+          </span>
+          <span>All Users</span>
+        </a>
+
+        <div class="nav-section-label">Academic Management</div>
+        <a href="academic-structure.html" class="nav-link">
+          <span class="nav-link-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
+              <path d="M6 12v5c3 3 9 3 12 0v-5"/>
+            </svg>
+          </span>
+          <span>Departments & Periods</span>
+        </a>
+
+        <a href="courses.html" class="nav-link">
+          <span class="nav-link-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+              <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+            </svg>
+          </span>
+          <span>Courses & Subjects</span>
+        </a>
+
+        <div class="nav-section-label">Access Control</div>
+        <a href="roles-permissions.html" class="nav-link">
+          <span class="nav-link-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+            </svg>
+          </span>
+          <span>Roles & Permissions</span>
+        </a>
+
+        <div class="nav-section-label">Communication</div>
+        <a href="announcements.html" class="nav-link">
+          <span class="nav-link-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+              <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+            </svg>
+          </span>
+          <span>Announcements</span>
+        </a>
+
+        <div class="nav-section-label">Reports & Analytics</div>
+        <a href="reports.html" class="nav-link">
+          <span class="nav-link-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="18" y1="20" x2="18" y2="10"/>
+              <line x1="12" y1="20" x2="12" y2="4"/>
+              <line x1="6" y1="20" x2="6" y2="14"/>
+            </svg>
+          </span>
+          <span>Reports & Analytics</span>
+        </a>
+
+        <div class="nav-section-label">Platform System</div>
+        <a href="system-health.html" class="nav-link">
+          <span class="nav-link-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+            </svg>
+          </span>
+          <span>System Health & Backup</span>
+        </a>
+
+        <a href="audit-logs.html" class="nav-link">
+          <span class="nav-link-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+              <polyline points="14 2 14 8 20 8"/>
+              <line x1="16" y1="13" x2="8" y2="13"/>
+              <line x1="16" y1="17" x2="8" y2="17"/>
+            </svg>
+          </span>
+          <span>Audit Logs</span>
+        </a>
+
+        <a href="security.html" class="nav-link">
+          <span class="nav-link-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            </svg>
+          </span>
+          <span>Security Center</span>
+        </a>
+
+        <a href="system-config.html" class="nav-link active">
+          <span class="nav-link-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="3"/>
+              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+            </svg>
+          </span>
+          <span>System Settings</span>
+        </a>
+
+        <div class="nav-section-label">Account</div>
+        <a href="profile.html" class="nav-link">
+          <span class="nav-link-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+              <circle cx="12" cy="7" r="4"/>
+            </svg>
+          </span>
+          <span>Super Admin Profile</span>
+        </a>
       </nav>
-      <div class="sidebar-footer"><a href="profile.html" class="sidebar-user-card"><div class="user-avatar"><span class="user-avatar-initials">SA</span></div><div class="user-info-text"><div class="user-name" id="sidebar-user-name">Super Administrator</div><span class="user-role-tag">Platform Admin</span></div></a></div>
+
+      <div class="sidebar-footer">
+        <a href="profile.html" class="sidebar-user-card">
+          <div class="user-avatar" style="background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%); box-shadow: 0 4px 10px rgba(245, 158, 11, 0.35);">
+            <span class="user-avatar-initials" id="sidebar-initials">SA</span>
+          </div>
+          <div class="user-info-text">
+            <div class="user-name" id="sidebar-user-name">Super Administrator</div>
+            <span class="user-role-tag" id="sidebar-user-role">Super Admin</span>
+          </div>
+        </a>
+      </div>
     </aside>
 
+    <!-- MAIN CONTENT -->
     <div class="app-main">
       <header class="app-topbar">
         <div class="topbar-left">
-          <button type="button" class="mobile-nav-toggle" id="mobile-nav-toggle"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
-          <div class="topbar-page-title"><h1>System Configuration</h1></div>
+          <button type="button" class="mobile-nav-toggle" id="mobile-nav-toggle" aria-label="Toggle navigation menu">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/>
+            </svg>
+          </button>
+          <div class="topbar-page-title">
+            <h1>System Settings</h1>
+          </div>
         </div>
+
         <div class="topbar-right">
           <div class="dropdown-container">
             <button type="button" class="user-menu-btn" data-dropdown-toggle="user-dropdown-menu">
-              <div class="user-avatar-sm" style="background:linear-gradient(135deg,#F59E0B,#D97706)"><span class="user-avatar-initials">SA</span></div>
-              <div class="user-menu-info"><div class="user-menu-name">Super Administrator</div><div class="user-menu-sub">Platform Admin</div></div>
+              <div class="user-avatar-sm" style="background:linear-gradient(135deg,#F59E0B,#D97706)">
+                <span class="user-avatar-initials">SA</span>
+              </div>
+              <div class="user-menu-info">
+                <div class="user-menu-name">Super Administrator</div>
+                <div class="user-menu-sub">Root Administrator</div>
+              </div>
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
             </button>
             <div id="user-dropdown-menu" class="menu-dropdown profile-dropdown-menu">
@@ -116,83 +522,363 @@
 
       <main class="app-content">
         <div class="page-header">
-          <div><div class="page-title">System Configuration</div><div class="page-sub">Manage platform-level configuration, Firebase services and system toggles (AD-04, AD-05)</div></div>
-          <button class="btn-primary-admin" onclick="UI.showToast('success','Saved','System configuration saved successfully.')">
+          <div>
+            <div class="page-title">System Settings & Platform Policy</div>
+            <div class="page-sub">Configure university parameters, AI services, academic rules, and global security policies.</div>
+          </div>
+          <button class="btn-admin btn-admin-primary" onclick="saveAllSettings()">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-            Save Changes
+            Save All Configurations
           </button>
         </div>
 
-        <div class="config-grid">
-          <!-- General Settings -->
-          <div class="config-card">
-            <div class="config-card-header">
-              <div class="config-card-icon" style="background:#DBEAFE;color:#2563EB"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></div>
-              <div class="config-card-title">General Platform Settings</div>
-            </div>
-            <div class="config-card-body">
-              <div class="config-row"><div><div class="config-row-label">Platform Name</div></div><input type="text" class="form-input" value="Smart Student Platform" style="width:200px"></div>
-              <div class="config-row"><div><div class="config-row-label">Academic Year</div></div><input type="text" class="form-input" value="2025–2026" style="width:120px"></div>
-              <div class="config-row"><div><div class="config-row-label">Current Semester</div></div><input type="text" class="form-input" value="Semester 4" style="width:120px"></div>
-              <div class="config-row"><div><div class="config-row-label">Maintenance Mode</div><div class="config-row-sub">Puts platform in read-only mode for all users</div></div><div class="toggle-wrap"><label class="toggle"><input type="checkbox" id="maintenance-toggle"><span class="toggle-slider"></span></label><span class="toggle-label" id="maintenance-label">Off</span></div></div>
-              <div class="config-row"><div><div class="config-row-label">New User Registrations</div></div><div class="toggle-wrap"><label class="toggle"><input type="checkbox" checked id="registration-toggle"><span class="toggle-slider"></span></label><span class="toggle-label" id="registration-label">On</span></div></div>
-              <div class="config-row"><div><div class="config-row-label">Email Notifications</div></div><div class="toggle-wrap"><label class="toggle"><input type="checkbox" checked id="email-toggle"><span class="toggle-slider"></span></label><span class="toggle-label" id="email-label">On</span></div></div>
-            </div>
-          </div>
+        <!-- Navigation Tabs -->
+        <div class="config-tabs">
+          <button class="config-tab-btn active" onclick="switchTab('general')">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+            General Settings
+          </button>
+          <button class="config-tab-btn" onclick="switchTab('academic')">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+            Academic Policies
+          </button>
+          <button class="config-tab-btn" onclick="switchTab('ai')">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+            AI & Intelligence
+          </button>
+          <button class="config-tab-btn" onclick="switchTab('security')">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            Auth & Security
+          </button>
+          <button class="config-tab-btn" onclick="switchTab('notifications')">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+            Notifications
+          </button>
+          <button class="config-tab-btn" onclick="switchTab('maintenance')">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            Danger Zone
+          </button>
+        </div>
 
-          <!-- Firebase Config -->
+        <!-- TAB 1: GENERAL SETTINGS -->
+        <div class="tab-pane active" id="pane-general">
           <div class="config-card">
             <div class="config-card-header">
-              <div class="config-card-icon" style="background:#FEF3C7;color:#D97706"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
-              <div class="config-card-title">Firebase Configuration (AD-05)</div>
+              <div class="config-card-icon" style="background:#DBEAFE; color:#2563EB;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+              </div>
+              <div>
+                <div class="config-card-title">General Institution Configuration</div>
+                <div class="config-card-sub">Core branding, contact parameters, and registration toggles.</div>
+              </div>
             </div>
             <div class="config-card-body">
-              <div class="config-row"><div class="config-row-label">Project ID</div><span class="config-value">smart-student-prod</span></div>
-              <div class="config-row"><div class="config-row-label">Auth Service</div><div class="service-status"><div class="svc-dot ok"></div><span class="svc-ok">Connected</span></div></div>
-              <div class="config-row"><div class="config-row-label">Firestore</div><div class="service-status"><div class="svc-dot ok"></div><span class="svc-ok">Connected</span></div></div>
-              <div class="config-row"><div class="config-row-label">Realtime Database</div><div class="service-status"><div class="svc-dot ok"></div><span class="svc-ok">Connected</span></div></div>
-              <div class="config-row"><div class="config-row-label">Storage</div><div class="service-status"><div class="svc-dot warn"></div><span class="svc-warn">62% Used</span></div></div>
-              <div class="config-row"><div><div class="config-row-label">SDK Version</div></div><span class="config-value">v10.7.1 (compat)</span></div>
-            </div>
-          </div>
+              <div class="form-grid">
+                <div class="form-group">
+                  <label class="form-label">Platform Name</label>
+                  <input type="text" class="form-input" id="cfg-platformName" value="Smart Student Productivity Platform">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Institution Code</label>
+                  <input type="text" class="form-input" id="cfg-instCode" value="SUIT-EDU">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Support / Registrar Email</label>
+                  <input type="email" class="form-input" id="cfg-contactEmail" value="admin@university.edu">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Default Timezone</label>
+                  <select class="form-select" id="cfg-timezone">
+                    <option value="Asia/Kolkata" selected>Asia/Kolkata (IST +5:30)</option>
+                    <option value="UTC">UTC (+0:00)</option>
+                    <option value="America/New_York">America/New_York (EST)</option>
+                  </select>
+                </div>
+              </div>
 
-          <!-- Security Settings -->
-          <div class="config-card">
-            <div class="config-card-header">
-              <div class="config-card-icon" style="background:#DCFCE7;color:#16A34A"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
-              <div class="config-card-title">Security & Access Settings</div>
-            </div>
-            <div class="config-card-body">
-              <div class="config-row"><div><div class="config-row-label">Session Timeout</div><div class="config-row-sub">Auto-logout after inactivity</div></div><input type="text" class="form-input" value="8 hours" style="width:110px"></div>
-              <div class="config-row"><div><div class="config-row-label">Max Login Attempts</div></div><input type="number" class="form-input" value="5" style="width:80px"></div>
-              <div class="config-row"><div><div class="config-row-label">Two-Factor Auth</div></div><div class="toggle-wrap"><label class="toggle"><input type="checkbox" id="tfa-toggle"><span class="toggle-slider"></span></label><span class="toggle-label" id="tfa-label">Off</span></div></div>
-              <div class="config-row"><div><div class="config-row-label">Force Password Reset</div><div class="config-row-sub">On next login for flagged accounts</div></div><div class="toggle-wrap"><label class="toggle"><input type="checkbox" id="force-reset-toggle"><span class="toggle-slider"></span></label><span class="toggle-label" id="force-reset-label">Off</span></div></div>
-              <div class="config-row"><div class="config-row-label">Audit Log Retention</div><div class="config-value">365 days</div></div>
-            </div>
-          </div>
+              <div style="margin-top:1.5rem; border-top:1px solid var(--border-light); padding-top:1rem;">
+                <div class="toggle-row">
+                  <div>
+                    <div class="toggle-label">Allow New Student & Faculty Self-Registration</div>
+                    <div class="toggle-sub">If enabled, new users can sign up from the public login page.</div>
+                  </div>
+                  <label class="toggle-switch">
+                    <input type="checkbox" id="cfg-allowReg" checked>
+                    <span class="toggle-slider"></span>
+                  </label>
+                </div>
 
-          <!-- Academic Config -->
-          <div class="config-card">
-            <div class="config-card-header">
-              <div class="config-card-icon" style="background:#EDE9FE;color:#7C3AED"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg></div>
-              <div class="config-card-title">Academic Configuration</div>
-            </div>
-            <div class="config-card-body">
-              <div class="config-row"><div><div class="config-row-label">Minimum Attendance</div><div class="config-row-sub">Required for exam eligibility</div></div><input type="text" class="form-input" value="75%" style="width:80px"></div>
-              <div class="config-row"><div class="config-row-label">Grading Scale</div><div class="config-value">10-point CGPA</div></div>
-              <div class="config-row"><div><div class="config-row-label">AI Doubt Solver</div></div><div class="toggle-wrap"><label class="toggle"><input type="checkbox" checked id="ai-toggle"><span class="toggle-slider"></span></label><span class="toggle-label" id="ai-label">On</span></div></div>
-              <div class="config-row"><div><div class="config-row-label">Study Groups</div></div><div class="toggle-wrap"><label class="toggle"><input type="checkbox" checked id="sg-toggle"><span class="toggle-slider"></span></label><span class="toggle-label" id="sg-label">On</span></div></div>
-              <div class="config-row"><div class="config-row-label">Max Sections per Dept.</div><div class="config-value">4 (A, B, C, D)</div></div>
+                <div class="toggle-row">
+                  <div>
+                    <div class="toggle-label">Maintenance Mode (Global Read-Only)</div>
+                    <div class="toggle-sub">Locks all mutation endpoints for regular students and faculty during maintenance windows.</div>
+                  </div>
+                  <label class="toggle-switch">
+                    <input type="checkbox" id="cfg-maintMode">
+                    <span class="toggle-slider"></span>
+                  </label>
+                </div>
+              </div>
             </div>
           </div>
         </div>
 
-        <!-- Danger Zone -->
-        <div class="danger-zone">
-          <div class="danger-title"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#991B1B" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>Danger Zone</div>
-          <div class="danger-action"><div><div class="danger-action-label">Clear All Sessions</div><div class="danger-action-sub">Force logout all currently logged-in users</div></div><button class="btn-danger" onclick="UI.showToast('warning','Confirm Action','This will log out all 1,719 active users.')">Clear Sessions</button></div>
-          <div class="danger-action"><div><div class="danger-action-label">Reset Platform Cache</div><div class="danger-action-sub">Clears all cached data. May cause temporary slowdown.</div></div><button class="btn-danger" onclick="UI.showToast('info','Cache Reset','Platform cache is being cleared...')">Reset Cache</button></div>
-          <div class="danger-action"><div><div class="danger-action-label">Export Platform Data</div><div class="danger-action-sub">Full platform data export (GDPR compliance)</div></div><button class="btn-danger" onclick="UI.showToast('success','Export Started','Platform data export started. You will be notified.')">Export Data</button></div>
+        <!-- TAB 2: ACADEMIC POLICIES -->
+        <div class="tab-pane" id="pane-academic">
+          <div class="config-card">
+            <div class="config-card-header">
+              <div class="config-card-icon" style="background:#EDE9FE; color:#7C3AED;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+              </div>
+              <div>
+                <div class="config-card-title">Academic Standards & Examination Criteria</div>
+                <div class="config-card-sub">Institution-wide rules governing minimum attendance, grading scales, and section caps.</div>
+              </div>
+            </div>
+            <div class="config-card-body">
+              <div class="form-grid">
+                <div class="form-group">
+                  <label class="form-label">Minimum Attendance Required (%)</label>
+                  <input type="number" class="form-input" id="cfg-minAttendance" value="75" min="50" max="100">
+                  <span class="form-help">Students below this threshold are flagged in attendance telemetry and exam debarment lists.</span>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">Institutional Grading Scale</label>
+                  <select class="form-select" id="cfg-gradingScale">
+                    <option value="10-point CGPA" selected>10-point CGPA (Standard)</option>
+                    <option value="4.0 GPA Scale">4.0 GPA Scale (US Standard)</option>
+                    <option value="Percentage (0-100%)">Percentage (0-100%)</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">Passing Grade / GPA Cutoff</label>
+                  <input type="text" class="form-input" id="cfg-passingGrade" value="4.0 CGPA / 40%">
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">Max Allowed Sections per Department</label>
+                  <input type="number" class="form-input" id="cfg-maxSections" value="4" min="1" max="10">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB 3: AI CONFIGURATION -->
+        <div class="tab-pane" id="pane-ai">
+          <div class="config-card">
+            <div class="config-card-header">
+              <div class="config-card-icon" style="background:#FEF3C7; color:#D97706;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+              </div>
+              <div>
+                <div class="config-card-title">AI Engine & Gemini Backend Parameters</div>
+                <div class="config-card-sub">Configure server-side AI Doubt Solver quotas, rate limits, and model routing.</div>
+              </div>
+            </div>
+            <div class="config-card-body">
+              <div class="form-grid">
+                <div class="form-group">
+                  <label class="form-label">AI Engine Provider</label>
+                  <input type="text" class="form-input" value="Google Gemini Cloud Services" disabled style="background:#F8FAFC;">
+                  <span class="form-help">Securely bridged via backend server (GEMINI_API_KEY).</span>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">Active Gemini Model</label>
+                  <select class="form-select" id="cfg-aiModel">
+                    <option value="gemini-2.5-flash" selected>gemini-2.5-flash (Recommended, Fast & Cost-Effective)</option>
+                    <option value="gemini-1.5-pro">gemini-1.5-pro (High Complexity / Reasoning)</option>
+                    <option value="gemini-1.5-flash">gemini-1.5-flash (Legacy)</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">Daily AI Doubts Quota per Student</label>
+                  <input type="number" class="form-input" id="cfg-aiQuota" value="50" min="5" max="500">
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">API Rate Limit (Requests / Minute)</label>
+                  <input type="number" class="form-input" id="cfg-aiRate" value="30" min="5" max="120">
+                </div>
+              </div>
+
+              <div style="margin-top:1.5rem; border-top:1px solid var(--border-light); padding-top:1rem;">
+                <div class="toggle-row">
+                  <div>
+                    <div class="toggle-label">Enable AI Study Planner & Automated Timetable Recommendations</div>
+                    <div class="toggle-sub">Permits students to generate AI study schedules tailored to syllabus progress.</div>
+                  </div>
+                  <label class="toggle-switch">
+                    <input type="checkbox" id="cfg-aiPlanner" checked>
+                    <span class="toggle-slider"></span>
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB 4: AUTH & SECURITY -->
+        <div class="tab-pane" id="pane-security">
+          <div class="config-card">
+            <div class="config-card-header">
+              <div class="config-card-icon" style="background:#DCFCE7; color:#16A34A;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+              </div>
+              <div>
+                <div class="config-card-title">Authentication & Access Control Policy</div>
+                <div class="config-card-sub">Session life-cycle rules, password rotation, and brute-force defenses.</div>
+              </div>
+            </div>
+            <div class="config-card-body">
+              <div class="form-grid">
+                <div class="form-group">
+                  <label class="form-label">Inactivity Session Timeout (Hours)</label>
+                  <input type="number" class="form-input" id="cfg-sessionTimeout" value="8" min="1" max="72">
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">Max Failed Login Attempts Before Lock</label>
+                  <input type="number" class="form-input" id="cfg-maxAttempts" value="5" min="3" max="10">
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">Password Expiry (Days, 0 = Never)</label>
+                  <input type="number" class="form-input" id="cfg-pwdExpiry" value="90" min="0" max="365">
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">Audit Log Retention Policy</label>
+                  <select class="form-select" id="cfg-logRetention">
+                    <option value="365" selected>365 Days (1 Year Compliance)</option>
+                    <option value="730">730 Days (2 Years)</option>
+                    <option value="0">Indefinite (Append-Only)</option>
+                  </select>
+                </div>
+              </div>
+
+              <div style="margin-top:1.5rem; border-top:1px solid var(--border-light); padding-top:1rem;">
+                <div class="toggle-row">
+                  <div>
+                    <div class="toggle-label">Enforce Two-Factor Authentication (2FA) for Admins & HODs</div>
+                    <div class="toggle-sub">Mandatory verification on non-recognized IP addresses.</div>
+                  </div>
+                  <label class="toggle-switch">
+                    <input type="checkbox" id="cfg-enforce2fa" checked>
+                    <span class="toggle-slider"></span>
+                  </label>
+                </div>
+
+                <div class="toggle-row">
+                  <div>
+                    <div class="toggle-label">Force Password Change on Next Login (Flagged Accounts)</div>
+                    <div class="toggle-sub">Users with temporary or reset credentials must choose a new password.</div>
+                  </div>
+                  <label class="toggle-switch">
+                    <input type="checkbox" id="cfg-forceResetNext" checked>
+                    <span class="toggle-slider"></span>
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB 5: NOTIFICATIONS -->
+        <div class="tab-pane" id="pane-notifications">
+          <div class="config-card">
+            <div class="config-card-header">
+              <div class="config-card-icon" style="background:#FFE4E6; color:#E11D48;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+              </div>
+              <div>
+                <div class="config-card-title">Notification & Broadcast Dispatch Channels</div>
+                <div class="config-card-sub">Email server, SMS gateway, and daily digest configurations.</div>
+              </div>
+            </div>
+            <div class="config-card-body">
+              <div class="toggle-row">
+                <div>
+                  <div class="toggle-label">Email Notification Service</div>
+                  <div class="toggle-sub">Dispatches password resets, timetable updates, and academic notifications.</div>
+                </div>
+                <label class="toggle-switch">
+                  <input type="checkbox" id="cfg-emailNotifs" checked>
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+
+              <div class="toggle-row">
+                <div>
+                  <div class="toggle-label">SMS Alert Gateway (Urgent Announcements)</div>
+                  <div class="toggle-sub">SMS alerts for campus emergencies and urgent exam cancellations.</div>
+                </div>
+                <label class="toggle-switch">
+                  <input type="checkbox" id="cfg-smsGateway">
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+
+              <div class="toggle-row">
+                <div>
+                  <div class="toggle-label">Daily Student & Faculty Digest Email</div>
+                  <div class="toggle-sub">Morning email summary of lectures, pending assignments, and doubts solved.</div>
+                </div>
+                <label class="toggle-switch">
+                  <input type="checkbox" id="cfg-dailyDigest" checked>
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB 6: DANGER ZONE -->
+        <div class="tab-pane" id="pane-maintenance">
+          <div class="danger-zone-card">
+            <div class="danger-title">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#991B1B" stroke-width="2.5"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+              Platform Emergency Controls & Data Snapshot
+            </div>
+            <p style="font-size:0.8125rem; color:#7F1D1D; margin-bottom:1.25rem;">
+              Actions performed in this zone directly affect platform storage, active user sessions, and database persistence. Exercise caution.
+            </p>
+
+            <div class="danger-item">
+              <div>
+                <div class="danger-item-title">Export Full Platform Database (JSON Snapshot)</div>
+                <div class="danger-item-desc">Creates a comprehensive atomic snapshot of users, courses, departments, and logs.</div>
+              </div>
+              <button class="btn-admin btn-admin-primary" onclick="exportFullDatabase()">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                Download Snapshot
+              </button>
+            </div>
+
+            <div class="danger-item">
+              <div>
+                <div class="danger-item-title">Clear & Flush In-Memory Platform Cache</div>
+                <div class="danger-item-desc">Forces all backend services to reload active collections from file storage.</div>
+              </div>
+              <button class="btn-admin btn-admin-danger" onclick="flushCache()">
+                Flush Cache
+              </button>
+            </div>
+
+            <div class="danger-item">
+              <div>
+                <div class="danger-item-title">Emergency Force Logout for All Users</div>
+                <div class="danger-item-desc">Terminates all active user sessions across the university except your Super Admin account.</div>
+              </div>
+              <button class="btn-admin btn-admin-danger" onclick="emergencyLogout()">
+                Terminate Sessions
+              </button>
+            </div>
+          </div>
         </div>
       </main>
     </div>
@@ -206,28 +892,200 @@
   <script src="../js/auth.js"></script>
   <script src="../js/admin-service.js"></script>
   <script src="../js/ui.js"></script>
+
   <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const user = AuthService.getCurrentUser();
-      if (user) document.getElementById('sidebar-user-name').textContent = user.name || 'Super Admin';
+    let currentSettings = {};
 
-      // Toggle labels
-      ['maintenance','registration','email','tfa','force-reset','ai','sg'].forEach(id => {
-        const el = document.getElementById(id + '-toggle');
-        const label = document.getElementById(id + '-label');
-        if (el && label) {
-          el.addEventListener('change', () => { label.textContent = el.checked ? 'On' : 'Off'; });
-        }
-      });
+    document.addEventListener('DOMContentLoaded', async () => {
+      initUserSession();
+      setupDropdowns();
+      await loadSystemSettings();
+    });
 
-      document.getElementById('logout-action-btn').addEventListener('click', async () => await AuthService.logout());
-      const toggle = document.getElementById('mobile-nav-toggle');
+    function initUserSession() {
+      const user = AuthService.getCurrentUser() || { name: 'Super Administrator', email: 'admin@university.edu', role: 'super_admin' };
+      const initials = (user.name || 'SA').split(' ').map(w => w[0]).join('').substring(0,2).toUpperCase();
+      const sidebarName = document.getElementById('sidebar-user-name');
+      const sidebarInitials = document.getElementById('sidebar-initials');
+      if (sidebarName) sidebarName.textContent = user.name || 'Super Administrator';
+      if (sidebarInitials) sidebarInitials.textContent = initials;
+
+      const logoutBtn = document.getElementById('logout-action-btn');
+      if (logoutBtn) logoutBtn.addEventListener('click', async () => await AuthService.logout());
+
+      const mobileToggle = document.getElementById('mobile-nav-toggle');
       const sidebar = document.querySelector('.app-sidebar');
       const backdrop = document.querySelector('.sidebar-backdrop');
-      if (toggle) { toggle.addEventListener('click', () => { sidebar.classList.toggle('mobile-open'); backdrop.classList.toggle('visible'); }); backdrop.addEventListener('click', () => { sidebar.classList.remove('mobile-open'); backdrop.classList.remove('visible'); }); }
-      document.querySelectorAll('[data-dropdown-toggle]').forEach(btn => { btn.addEventListener('click', e => { e.stopPropagation(); const d = document.getElementById(btn.getAttribute('data-dropdown-toggle')); if (d) { document.querySelectorAll('.menu-dropdown.open').forEach(x => { if(x!==d) x.classList.remove('open'); }); d.classList.toggle('open'); } }); });
-      document.addEventListener('click', () => document.querySelectorAll('.menu-dropdown.open').forEach(d => d.classList.remove('open')));
-    });
+      if (mobileToggle) {
+        mobileToggle.addEventListener('click', () => {
+          sidebar.classList.toggle('mobile-open');
+          backdrop.classList.toggle('visible');
+        });
+        backdrop.addEventListener('click', () => {
+          sidebar.classList.remove('mobile-open');
+          backdrop.classList.remove('visible');
+        });
+      }
+    }
+
+    function setupDropdowns() {
+      document.querySelectorAll('[data-dropdown-toggle]').forEach(btn => {
+        btn.addEventListener('click', e => {
+          e.stopPropagation();
+          const d = document.getElementById(btn.getAttribute('data-dropdown-toggle'));
+          if (d) {
+            document.querySelectorAll('.menu-dropdown.open, .menu-dropdown.show').forEach(x => {
+              if (x !== d) { x.classList.remove('open'); x.classList.remove('show'); }
+            });
+            d.classList.toggle('open');
+            d.classList.toggle('show');
+          }
+        });
+      });
+      document.addEventListener('click', () => {
+        document.querySelectorAll('.menu-dropdown.open, .menu-dropdown.show').forEach(d => {
+          d.classList.remove('open'); d.classList.remove('show');
+        });
+      });
+    }
+
+    function switchTab(tabId) {
+      document.querySelectorAll('.config-tab-btn').forEach(btn => btn.classList.remove('active'));
+      document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+
+      const targetPane = document.getElementById(`pane-${tabId}`);
+      if (targetPane) targetPane.classList.add('active');
+
+      const activeBtn = Array.from(document.querySelectorAll('.config-tab-btn')).find(b => b.getAttribute('onclick')?.includes(tabId));
+      if (activeBtn) activeBtn.classList.add('active');
+    }
+
+    async function loadSystemSettings() {
+      try {
+        const settings = await AdminService.getSystemSettings();
+        currentSettings = settings || {};
+
+        // General
+        const g = currentSettings.general || {};
+        if (g.platformName) document.getElementById('cfg-platformName').value = g.platformName;
+        if (g.institutionCode) document.getElementById('cfg-instCode').value = g.institutionCode;
+        if (g.contactEmail) document.getElementById('cfg-contactEmail').value = g.contactEmail;
+        if (g.allowRegistration !== undefined) document.getElementById('cfg-allowReg').checked = g.allowRegistration;
+        if (g.maintenanceMode !== undefined) document.getElementById('cfg-maintMode').checked = g.maintenanceMode;
+
+        // Academic
+        const a = currentSettings.academic || {};
+        if (a.minAttendance !== undefined) document.getElementById('cfg-minAttendance').value = a.minAttendance;
+        if (a.gradingScale) document.getElementById('cfg-gradingScale').value = a.gradingScale;
+        if (a.passingGrade) document.getElementById('cfg-passingGrade').value = a.passingGrade;
+        if (a.maxSectionsPerDept !== undefined) document.getElementById('cfg-maxSections').value = a.maxSectionsPerDept;
+
+        // AI
+        const ai = currentSettings.ai || {};
+        if (ai.model) document.getElementById('cfg-aiModel').value = ai.model;
+        if (ai.maxDailyRequestsPerStudent !== undefined) document.getElementById('cfg-aiQuota').value = ai.maxDailyRequestsPerStudent;
+        if (ai.rateLimitPerMin !== undefined) document.getElementById('cfg-aiRate').value = ai.rateLimitPerMin;
+        if (ai.enableAiStudyPlanner !== undefined) document.getElementById('cfg-aiPlanner').checked = ai.enableAiStudyPlanner;
+
+        // Security
+        const s = currentSettings.security || {};
+        if (s.sessionTimeoutHours !== undefined) document.getElementById('cfg-sessionTimeout').value = s.sessionTimeoutHours;
+        if (s.maxLoginAttempts !== undefined) document.getElementById('cfg-maxAttempts').value = s.maxLoginAttempts;
+        if (s.passwordExpiryDays !== undefined) document.getElementById('cfg-pwdExpiry').value = s.passwordExpiryDays;
+        if (s.requireTwoFactor !== undefined) document.getElementById('cfg-enforce2fa').checked = s.requireTwoFactor;
+        if (s.forcePasswordResetNextLogin !== undefined) document.getElementById('cfg-forceResetNext').checked = s.forcePasswordResetNextLogin;
+
+        // Notifications
+        const n = currentSettings.notifications || {};
+        if (n.emailServiceStatus !== undefined) document.getElementById('cfg-emailNotifs').checked = (n.emailServiceStatus === 'enabled');
+        if (n.smsGatewayEnabled !== undefined) document.getElementById('cfg-smsGateway').checked = n.smsGatewayEnabled;
+        if (n.dailyDigestEnabled !== undefined) document.getElementById('cfg-dailyDigest').checked = n.dailyDigestEnabled;
+      } catch (err) {
+        console.error('Failed to load system settings:', err);
+      }
+    }
+
+    async function saveAllSettings() {
+      const payload = {
+        general: {
+          platformName: document.getElementById('cfg-platformName').value.trim(),
+          institutionCode: document.getElementById('cfg-instCode').value.trim(),
+          contactEmail: document.getElementById('cfg-contactEmail').value.trim(),
+          allowRegistration: document.getElementById('cfg-allowReg').checked,
+          maintenanceMode: document.getElementById('cfg-maintMode').checked
+        },
+        academic: {
+          minAttendance: Number(document.getElementById('cfg-minAttendance').value) || 75,
+          gradingScale: document.getElementById('cfg-gradingScale').value,
+          passingGrade: document.getElementById('cfg-passingGrade').value.trim(),
+          maxSectionsPerDept: Number(document.getElementById('cfg-maxSections').value) || 4
+        },
+        ai: {
+          provider: 'Google Gemini Backend',
+          model: document.getElementById('cfg-aiModel').value,
+          maxDailyRequestsPerStudent: Number(document.getElementById('cfg-aiQuota').value) || 50,
+          rateLimitPerMin: Number(document.getElementById('cfg-aiRate').value) || 30,
+          enableAiStudyPlanner: document.getElementById('cfg-aiPlanner').checked
+        },
+        security: {
+          sessionTimeoutHours: Number(document.getElementById('cfg-sessionTimeout').value) || 8,
+          maxLoginAttempts: Number(document.getElementById('cfg-maxAttempts').value) || 5,
+          passwordExpiryDays: Number(document.getElementById('cfg-pwdExpiry').value) || 90,
+          requireTwoFactor: document.getElementById('cfg-enforce2fa').checked,
+          forcePasswordResetNextLogin: document.getElementById('cfg-forceResetNext').checked
+        },
+        notifications: {
+          emailServiceStatus: document.getElementById('cfg-emailNotifs').checked ? 'enabled' : 'disabled',
+          smsGatewayEnabled: document.getElementById('cfg-smsGateway').checked,
+          dailyDigestEnabled: document.getElementById('cfg-dailyDigest').checked
+        }
+      };
+
+      try {
+        await AdminService.updateSystemSettings('', payload);
+        UI.showToast('success', 'Settings Saved', 'Platform configuration saved and synchronized.');
+      } catch (err) {
+        UI.showToast('error', 'Save Failed', err.message || 'Could not save system settings.');
+      }
+    }
+
+    async function exportFullDatabase() {
+      try {
+        const snap = await AdminService.createBackup();
+        UI.showToast('success', 'Backup Generated', `Created snapshot: ${snap.name}`);
+        const blob = new Blob([JSON.stringify(snap, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = snap.name || 'suit_platform_backup.json';
+        a.click();
+      } catch (err) {
+        UI.showToast('error', 'Export Failed', err.message || 'Could not export platform database.');
+      }
+    }
+
+    async function flushCache() {
+      try {
+        await AdminService.pingHealth();
+        UI.showToast('success', 'Cache Flushed', 'In-memory telemetry and routes reloaded.');
+      } catch (err) {
+        UI.showToast('error', 'Flush Failed', err.message || 'Could not flush cache.');
+      }
+    }
+
+    async function emergencyLogout() {
+      if (!confirm('CAUTION: Are you sure you want to log out all other active users across the platform?')) return;
+      try {
+        const sec = await AdminService.getSecurityDashboard();
+        const sessions = sec.activeSessions || [];
+        for (const s of sessions) {
+          if (!s.isCurrent) await AdminService.revokeSession(s.id);
+        }
+        UI.showToast('success', 'Terminated', 'All non-admin active sessions terminated.');
+      } catch (err) {
+        UI.showToast('error', 'Action Failed', err.message);
+      }
+    }
   </script>
 </body>
 </html>
