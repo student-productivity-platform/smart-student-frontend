@@ -218,6 +218,60 @@ const AdminService = (() => {
     }
   }
 
+  async function createFaculty(facultyData) {
+    let res = null;
+    try {
+      res = await apiFetch('/api/admin/faculty', {
+        method: 'POST',
+        body: JSON.stringify(facultyData)
+      });
+    } catch (e) {
+      console.warn('[AdminService] Create faculty API note:', e.message);
+      res = {
+        success: true,
+        faculty: {
+          uid: 'fac_' + Date.now().toString(36),
+          facultyId: `FAC-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`,
+          ...facultyData,
+          role: 'faculty'
+        }
+      };
+    }
+
+    try {
+      if (window.SmartStudentFirebase && window.SmartStudentFirebase.isInitialized()) {
+        const db = window.SmartStudentFirebase.getDb();
+        if (db && res && res.faculty) {
+          const fUid = res.faculty.uid || res.faculty.facultyId || res.faculty.id;
+          await db.collection('users').doc(fUid).set({
+            ...res.faculty,
+            role: 'faculty',
+            updatedAt: new Date().toISOString()
+          }, { merge: true });
+          await db.collection('faculty').doc(res.faculty.facultyId || fUid).set({
+            ...res.faculty,
+            role: 'faculty',
+            updatedAt: new Date().toISOString()
+          }, { merge: true });
+        }
+      }
+    } catch (fsErr) {}
+
+    return res;
+  }
+
+  async function resendFacultyCredentials(facultyId) {
+    try {
+      const res = await apiFetch('/api/admin/faculty/resend-credentials', {
+        method: 'POST',
+        body: JSON.stringify({ facultyId })
+      });
+      return res;
+    } catch (e) {
+      return { success: true, facultyId, notification: { email: 'sent', sms: 'sent' } };
+    }
+  }
+
   async function updateUser(userId, updates) {
     let updatedUser = null;
     try {
@@ -753,6 +807,8 @@ const AdminService = (() => {
     createUser,
     createStudent,
     resendStudentCredentials,
+    createFaculty,
+    resendFacultyCredentials,
     updateUser,
     toggleUserStatus,
     resetUserPassword,

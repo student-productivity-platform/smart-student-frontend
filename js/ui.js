@@ -164,7 +164,7 @@ const UI = (() => {
     const toggleBtn = document.getElementById('mobile-nav-toggle');
     const sidebar = document.querySelector('.app-sidebar');
 
-    if (toggleBtn && sidebar) {
+    if (sidebar) {
       let backdrop = document.querySelector('.sidebar-backdrop');
       if (!backdrop) {
         backdrop = document.createElement('div');
@@ -172,13 +172,47 @@ const UI = (() => {
         document.body.appendChild(backdrop);
       }
 
-      const toggleDrawer = () => {
-        sidebar.classList.toggle('drawer-open');
-        backdrop.classList.toggle('active');
+      const closeDrawer = () => {
+        sidebar.classList.remove('drawer-open');
+        backdrop.classList.remove('active');
+        document.body.style.overflow = '';
       };
 
-      toggleBtn.addEventListener('click', toggleDrawer);
-      backdrop.addEventListener('click', toggleDrawer);
+      const openDrawer = () => {
+        sidebar.classList.add('drawer-open');
+        backdrop.classList.add('active');
+        document.body.style.overflow = 'hidden';
+      };
+
+      const toggleDrawer = () => {
+        if (sidebar.classList.contains('drawer-open')) {
+          closeDrawer();
+        } else {
+          openDrawer();
+        }
+      };
+
+      if (toggleBtn) {
+        toggleBtn.addEventListener('click', toggleDrawer);
+      }
+
+      backdrop.addEventListener('click', closeDrawer);
+
+      // Auto-close drawer when any navigation link is clicked
+      sidebar.querySelectorAll('.nav-link').forEach(link => {
+        link.addEventListener('click', () => {
+          if (window.innerWidth <= 768) {
+            closeDrawer();
+          }
+        });
+      });
+
+      // Close drawer on Escape key
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && sidebar.classList.contains('drawer-open')) {
+          closeDrawer();
+        }
+      });
     }
   }
 

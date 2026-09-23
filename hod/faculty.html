@@ -178,10 +178,22 @@
         </div>
 
         <div class="topbar-right">
-          <a href="faculty-allocation.html" class="btn-hod-primary">
+          <button type="button" class="btn-hod-primary" id="open-add-faculty-btn"
+            style="background: linear-gradient(135deg, #2563EB, #1D4ED8); color: #fff; border: none; padding: 0.5rem 0.95rem; border-radius: 8px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 0.35rem; font-size: 0.8125rem;"
+            title="Add new faculty member to department">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
               <line x1="12" y1="5" x2="12" y2="19" />
               <line x1="5" y1="12" x2="19" y2="12" />
+            </svg>
+            <span>Add Faculty</span>
+          </button>
+
+          <a href="faculty-allocation.html" class="btn-hod-secondary"
+            style="display: flex; align-items: center; gap: 0.35rem; padding: 0.5rem 0.85rem; font-size: 0.8125rem; text-decoration: none;">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+              <circle cx="9" cy="7" r="4" />
+              <polyline points="16 11 18 13 22 9" />
             </svg>
             <span>Allocate Faculty</span>
           </a>
@@ -342,10 +354,17 @@
             </select>
           </div>
 
-          <button type="button" class="btn-hod-secondary" id="reset-fac-filters"
-            style="padding: 0.45rem 0.85rem; font-size: 0.75rem;">
-            Reset Filters
-          </button>
+          <div style="display: flex; align-items: center; gap: 0.5rem;">
+            <button type="button" class="btn-hod-primary" id="open-add-faculty-btn-2"
+              style="padding: 0.45rem 0.85rem; font-size: 0.75rem; background: linear-gradient(135deg, #2563EB, #1D4ED8); color: #fff; border: none; border-radius: 8px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 0.35rem;">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              <span>Add Faculty</span>
+            </button>
+            <button type="button" class="btn-hod-secondary" id="reset-fac-filters"
+              style="padding: 0.45rem 0.85rem; font-size: 0.75rem;">
+              Reset Filters
+            </button>
+          </div>
         </div>
 
         <!-- Faculty Workload Table -->
@@ -387,6 +406,131 @@
         <a href="faculty-allocation.html" class="btn-hod-primary" style="text-decoration: none;">
           Adjust Allocation
         </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Faculty Modal -->
+  <div id="add-faculty-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="add-fac-title" aria-hidden="true">
+    <div class="modal-card" style="max-width: 540px; background: #fff; border-radius: 16px; overflow: hidden; box-shadow: 0 20px 40px rgba(0,0,0,0.18);">
+      <div class="modal-header" style="background: linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%); color: #fff; padding: 1.15rem 1.5rem; display: flex; justify-content: space-between; align-items: center;">
+        <div>
+          <h3 id="add-fac-title" class="modal-title" style="color: #fff; font-size: 1.05rem; font-weight: 800; margin: 0;">Add Department Faculty Member</h3>
+          <div style="font-size: 0.775rem; opacity: 0.9; margin-top: 2px;">Provision credentials & dispatch login invitation</div>
+        </div>
+        <button type="button" class="modal-close-btn" id="close-add-fac-modal" style="color: #fff; background: none; border: none; font-size: 1.4rem; cursor: pointer;">&times;</button>
+      </div>
+      <form id="add-faculty-form">
+        <div class="modal-body" style="padding: 1.25rem 1.5rem; display: flex; flex-direction: column; gap: 0.85rem;">
+          <div>
+            <label class="form-label-caps" style="font-size: 0.71875rem; font-weight: 700; color: #475569; display: block; margin-bottom: 0.35rem;">FULL NAME <span style="color: #DC2626;">*</span></label>
+            <input type="text" id="add-fac-name" class="pill-input" required placeholder="e.g. Dr. Ramesh Gupta" style="width: 100%; height: 38px; border: 1px solid #CBD5E1; border-radius: 8px; padding: 0 0.75rem; font-size: 0.84375rem; box-sizing: border-box;">
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+            <div>
+              <label class="form-label-caps" style="font-size: 0.71875rem; font-weight: 700; color: #475569; display: block; margin-bottom: 0.35rem;">PERSONAL EMAIL <span style="color: #DC2626;">*</span></label>
+              <input type="email" id="add-fac-email" class="pill-input" required placeholder="personal@gmail.com" style="width: 100%; height: 38px; border: 1px solid #CBD5E1; border-radius: 8px; padding: 0 0.75rem; font-size: 0.84375rem; box-sizing: border-box;">
+            </div>
+            <div>
+              <label class="form-label-caps" style="font-size: 0.71875rem; font-weight: 700; color: #475569; display: block; margin-bottom: 0.35rem;">MOBILE PHONE <span style="color: #DC2626;">*</span></label>
+              <input type="tel" id="add-fac-phone" class="pill-input" required placeholder="+91 98765 43210" style="width: 100%; height: 38px; border: 1px solid #CBD5E1; border-radius: 8px; padding: 0 0.75rem; font-size: 0.84375rem; box-sizing: border-box;">
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+            <div>
+              <label class="form-label-caps" style="font-size: 0.71875rem; font-weight: 700; color: #475569; display: block; margin-bottom: 0.35rem;">DESIGNATION <span style="color: #DC2626;">*</span></label>
+              <select id="add-fac-designation" style="width: 100%; height: 38px; border: 1px solid #CBD5E1; border-radius: 8px; padding: 0 0.75rem; font-size: 0.84375rem; box-sizing: border-box; background: #fff;">
+                <option value="Professor">Professor</option>
+                <option value="Associate Professor" selected>Associate Professor</option>
+                <option value="Assistant Professor">Assistant Professor</option>
+                <option value="Lecturer">Lecturer</option>
+                <option value="Visiting Faculty">Visiting Faculty</option>
+              </select>
+            </div>
+            <div>
+              <label class="form-label-caps" style="font-size: 0.71875rem; font-weight: 700; color: #475569; display: block; margin-bottom: 0.35rem;">DEPARTMENT</label>
+              <input type="text" id="add-fac-department" value="Department of Computer Engineering" readonly style="width: 100%; height: 38px; border: 1px solid #E2E8F0; border-radius: 8px; padding: 0 0.75rem; font-size: 0.84375rem; box-sizing: border-box; background: #F8FAFC; color: #64748B;">
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+            <div>
+              <label class="form-label-caps" style="font-size: 0.71875rem; font-weight: 700; color: #475569; display: block; margin-bottom: 0.35rem;">SPECIALIZATION / AREA</label>
+              <input type="text" id="add-fac-specialization" placeholder="e.g. Distributed Systems & Cloud" style="width: 100%; height: 38px; border: 1px solid #CBD5E1; border-radius: 8px; padding: 0 0.75rem; font-size: 0.84375rem; box-sizing: border-box;">
+            </div>
+            <div>
+              <label class="form-label-caps" style="font-size: 0.71875rem; font-weight: 700; color: #475569; display: block; margin-bottom: 0.35rem;">OFFICE ROOM / CABIN</label>
+              <input type="text" id="add-fac-room" placeholder="e.g. Academic Block 3, Cabin 304" style="width: 100%; height: 38px; border: 1px solid #CBD5E1; border-radius: 8px; padding: 0 0.75rem; font-size: 0.84375rem; box-sizing: border-box;">
+            </div>
+          </div>
+
+          <div style="background: #EFF6FF; border: 1px solid #BFDBFE; border-radius: 8px; padding: 0.75rem; font-size: 0.75rem; color: #1E40AF; line-height: 1.45;">
+            🔒 <strong>Automatic Credentials & Email Dispatch:</strong> The Faculty ID, institutional email, and secure temporary password will be generated automatically and dispatched immediately to the personal email address along with login access code <strong>FACULTY-2026</strong>.
+          </div>
+        </div>
+        <div class="modal-footer" style="padding: 1rem 1.5rem; background: #F8FAFC; border-top: 1px solid #E2E8F0; display: flex; justify-content: flex-end; gap: 0.6rem;">
+          <button type="button" class="btn-hod-secondary" id="cancel-add-fac-btn">Cancel</button>
+          <button type="submit" class="btn-hod-primary" id="submit-add-fac-btn" style="background: #2563EB; color: #fff; border: none; padding: 0.55rem 1.3rem; border-radius: 8px; font-weight: 700; cursor: pointer;">Provision Faculty</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Faculty Creation Success Confirmation Modal -->
+  <div id="faculty-success-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="fac-succ-title" aria-hidden="true">
+    <div class="modal-card" style="max-width: 480px; background: #fff; border-radius: 16px; overflow: hidden; box-shadow: 0 20px 40px rgba(0,0,0,0.18);">
+      <div class="modal-header" style="background: linear-gradient(135deg, #2563EB, #1D4ED8); color: #fff; padding: 1.25rem 1.5rem; display: flex; justify-content: space-between; align-items: center;">
+        <div style="display:flex; align-items:center; gap:0.6rem;">
+          <div style="width:34px; height:34px; border-radius:50%; background:rgba(255,255,255,0.22); display:flex; align-items:center; justify-content:center;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <div>
+            <h3 id="fac-succ-title" style="margin:0; font-size:1.05rem; font-weight:800; color:#fff;">Faculty Created Successfully</h3>
+            <div style="font-size:0.775rem; opacity:0.92;">Credentials dispatched to personal email</div>
+          </div>
+        </div>
+        <button type="button" class="modal-close-btn" id="close-fac-succ-modal" style="color:#fff; background:none; border:none; font-size:1.4rem; cursor:pointer;">&times;</button>
+      </div>
+      <div class="modal-body" style="padding:1.25rem 1.5rem;">
+        <div style="background:#F8FAFC; border:1px solid #E2E8F0; border-radius:12px; padding:1rem; margin-bottom:1rem; font-size:0.84375rem; display:flex; flex-direction:column; gap:0.65rem;">
+          <div style="display:flex; justify-content:space-between;">
+            <span style="color:#64748B;">Faculty Name:</span>
+            <strong id="fac-succ-name" style="color:#0F172A;">-</strong>
+          </div>
+          <div style="display:flex; justify-content:space-between;">
+            <span style="color:#64748B;">Faculty ID:</span>
+            <strong id="fac-succ-id" style="color:#2563EB; font-family:monospace; font-size:0.925rem;">-</strong>
+          </div>
+          <div style="display:flex; justify-content:space-between;">
+            <span style="color:#64748B;">Institutional Email:</span>
+            <strong id="fac-succ-email" style="color:#0F172A; font-family:monospace;">-</strong>
+          </div>
+          <div style="display:flex; justify-content:space-between;">
+            <span style="color:#64748B;">Access Code:</span>
+            <strong id="fac-succ-code" style="color:#1D4ED8; font-family:monospace; background:#DBEAFE; padding:2px 8px; border-radius:4px;">FACULTY-2026</strong>
+          </div>
+        </div>
+
+        <div style="border:1px solid #E2E8F0; border-radius:12px; padding:0.9rem 1rem; background:#FFFFFF;">
+          <div style="font-size:0.75rem; font-weight:700; color:#64748B; text-transform:uppercase; letter-spacing:0.04em; margin-bottom:0.6rem;">Credential Delivery Status</div>
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.5rem; font-size:0.8125rem;">
+            <span>Email Notification:</span>
+            <span id="fac-succ-email-status" class="status-badge active" style="background:#DCFCE7; color:#166534; font-weight:700; padding:2px 8px; border-radius:12px;">Sent</span>
+          </div>
+          <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.8125rem;">
+            <span>SMS Notification:</span>
+            <span id="fac-succ-sms-status" class="status-badge active" style="background:#DCFCE7; color:#166534; font-weight:700; padding:2px 8px; border-radius:12px;">Sent</span>
+          </div>
+        </div>
+
+        <p style="font-size:0.775rem; color:#64748B; margin:1rem 0 0 0; line-height:1.45;">
+          The faculty member must set a permanent password upon first login to access their teaching timetable and grade submissions.
+        </p>
+      </div>
+      <div class="modal-footer" style="padding:1rem 1.5rem; background:#F8FAFC; border-top:1px solid #E2E8F0;">
+        <button type="button" class="btn-hod-primary" id="btn-done-fac-succ" style="width:100%; justify-content:center; background:#2563EB;">Done</button>
       </div>
     </div>
   </div>
@@ -473,10 +617,16 @@
               </td>
               <td><span class="status-badge ${badgeClass}">● ${f.workloadStatus}</span></td>
               <td style="text-align: right;">
-                <button type="button" class="btn-table-action view-fac-btn" data-id="${f.id}">
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-                  View Details
-                </button>
+                <div style="display: flex; align-items: center; justify-content: flex-end; gap: 0.35rem;">
+                  <button type="button" class="btn-table-action view-fac-btn" data-id="${f.id}">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                    View
+                  </button>
+                  <button type="button" class="btn-table-action resend-fac-btn" data-id="${f.facultyId || f.id}" data-name="${f.name}" style="color: #2563EB;" title="Resend login credentials and temporary password">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+                    Resend
+                  </button>
+                </div>
               </td>
             </tr>
           `;
@@ -494,11 +644,11 @@
         UI.showToast('info', 'Filters Cleared', 'Displaying all departmental faculty.');
       });
 
-      // View Modal Delegate
-      tableBody.addEventListener('click', (e) => {
-        const btn = e.target.closest('.view-fac-btn');
-        if (btn) {
-          const id = btn.getAttribute('data-id');
+      // View & Resend Delegate
+      tableBody.addEventListener('click', async (e) => {
+        const viewBtn = e.target.closest('.view-fac-btn');
+        if (viewBtn) {
+          const id = viewBtn.getAttribute('data-id');
           const faculty = HODService.getFacultyById(id);
           if (faculty) {
             const coursesHtml = (faculty.assignedCourses || []).map(c => `
@@ -516,20 +666,20 @@
                   </div>
                   <div>
                     <div style="font-size: 1.0625rem; font-weight: 800; color: #0F172A;">${faculty.name}</div>
-                    <div style="font-size: 0.75rem; color: #64748B;">${faculty.designation} • ${faculty.officeRoom}</div>
+                    <div style="font-size: 0.75rem; color: #64748B;">${faculty.designation} • ${faculty.officeRoom || 'Faculty Cabin'}</div>
                   </div>
                 </div>
-                <span class="status-badge ${faculty.workloadStatus.toLowerCase()}">● ${faculty.workloadStatus}</span>
+                <span class="status-badge ${(faculty.workloadStatus || 'normal').toLowerCase()}">● ${faculty.workloadStatus || 'Normal'}</span>
               </div>
 
               <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 1rem;">
                 <div style="background: #F8FAFC; border: 1px solid #E2E8F0; padding: 0.75rem; border-radius: 8px;">
                   <div style="font-size: 0.7rem; color: #64748B; font-weight: 600;">SPECIALIZATION</div>
-                  <div style="font-size: 0.8125rem; font-weight: 700; color: #0F172A; margin-top: 2px;">${faculty.specialization}</div>
+                  <div style="font-size: 0.8125rem; font-weight: 700; color: #0F172A; margin-top: 2px;">${faculty.specialization || 'Computer Science'}</div>
                 </div>
                 <div style="background: #F8FAFC; border: 1px solid #E2E8F0; padding: 0.75rem; border-radius: 8px;">
                   <div style="font-size: 0.7rem; color: #64748B; font-weight: 600;">OFFICE & CONTACT</div>
-                  <div style="font-size: 0.8125rem; font-weight: 700; color: #0F172A; margin-top: 2px;">${faculty.phone}</div>
+                  <div style="font-size: 0.8125rem; font-weight: 700; color: #0F172A; margin-top: 2px;">${faculty.phone || faculty.mobile || '+91 98220 11234'}</div>
                 </div>
               </div>
 
@@ -543,17 +693,128 @@
               <div style="background: #F5F3FF; border: 1px solid #DDD6FE; border-radius: 8px; padding: 0.75rem 1rem;">
                 <div style="display: flex; justify-content: space-between; font-size: 0.8125rem;">
                   <span style="font-weight: 700; color: #6D28D9;">Weekly Load Utilization:</span>
-                  <strong>${faculty.currentWeeklyHours} Hours / ${faculty.maxWeeklyHours} Hours Max</strong>
+                  <strong>${faculty.currentWeeklyHours || 0} Hours / ${faculty.maxWeeklyHours || 16} Hours Max</strong>
                 </div>
               </div>
             `;
             UI.openModal('faculty-detail-modal');
+          }
+          return;
+        }
+
+        const resendBtn = e.target.closest('.resend-fac-btn');
+        if (resendBtn) {
+          const fid = resendBtn.getAttribute('data-id');
+          const fname = resendBtn.getAttribute('data-name');
+          const confirmAction = confirm(`Generate a fresh temporary password and resend login credentials to ${fname}?`);
+          if (!confirmAction) return;
+
+          try {
+            resendBtn.disabled = true;
+            const res = await HODService.resendFacultyCredentials(fid);
+            UI.showToast('success', 'Credentials Resent', `New temporary login credentials sent to ${fname}`);
+          } catch (err) {
+            UI.showToast('error', 'Resend Failed', err.message);
+          } finally {
+            resendBtn.disabled = false;
           }
         }
       });
 
       document.getElementById('close-fac-modal').addEventListener('click', () => UI.closeModal('faculty-detail-modal'));
       document.getElementById('close-fac-btn').addEventListener('click', () => UI.closeModal('faculty-detail-modal'));
+
+      // ── Add Faculty Modal Handlers ──
+      const addFacModal = document.getElementById('add-faculty-modal');
+      const addFacForm = document.getElementById('add-faculty-form');
+      const facSuccModal = document.getElementById('faculty-success-modal');
+
+      function openAddFacultyModal() {
+        addFacForm.reset();
+        addFacModal.classList.add('active');
+        addFacModal.setAttribute('aria-hidden', 'false');
+      }
+
+      function closeAddFacultyModal() {
+        addFacModal.classList.remove('active');
+        addFacModal.setAttribute('aria-hidden', 'true');
+      }
+
+      const openBtn1 = document.getElementById('open-add-faculty-btn');
+      if (openBtn1) openBtn1.addEventListener('click', openAddFacultyModal);
+
+      const openBtn2 = document.getElementById('open-add-faculty-btn-2');
+      if (openBtn2) openBtn2.addEventListener('click', openAddFacultyModal);
+
+      document.getElementById('close-add-fac-modal').addEventListener('click', closeAddFacultyModal);
+      document.getElementById('cancel-add-fac-btn').addEventListener('click', closeAddFacultyModal);
+
+      addFacForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const name = document.getElementById('add-fac-name').value.trim();
+        const personalEmail = document.getElementById('add-fac-email').value.trim();
+        const mobile = document.getElementById('add-fac-phone').value.trim();
+        const designation = document.getElementById('add-fac-designation').value;
+        const specialization = document.getElementById('add-fac-specialization').value.trim();
+        const officeRoom = document.getElementById('add-fac-room').value.trim();
+
+        const submitBtn = document.getElementById('submit-add-fac-btn');
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Provisioning...';
+
+        try {
+          const res = await HODService.createFaculty({
+            name,
+            personalEmail,
+            mobile,
+            designation,
+            specialization,
+            officeRoom,
+            department: 'Department of Computer Engineering',
+            domainId: 'Department of Computer Engineering'
+          });
+
+          closeAddFacultyModal();
+          showFacultySuccessModal(res);
+          loadFaculty();
+          const kpiTotal = document.getElementById('kpi-fac-total');
+          if (kpiTotal) kpiTotal.textContent = (parseInt(kpiTotal.textContent, 10) || 18) + 1;
+        } catch (err) {
+          UI.showToast('error', 'Creation Failed', err.message);
+        } finally {
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Provision Faculty';
+        }
+      });
+
+      function showFacultySuccessModal(res) {
+        const faculty = res.faculty || {};
+        const notif = res.notification || {};
+        document.getElementById('fac-succ-name').textContent = faculty.name || 'Faculty Member';
+        document.getElementById('fac-succ-id').textContent = faculty.facultyId || faculty.id || 'Generated';
+        document.getElementById('fac-succ-email').textContent = faculty.email || '-';
+
+        const emailStatusEl = document.getElementById('fac-succ-email-status');
+        const isEmailSent = notif.email === 'sent' || notif.email === 'delivered';
+        emailStatusEl.textContent = isEmailSent ? 'Sent' : (notif.email === 'unconfigured' ? 'Unconfigured' : 'Failed');
+        emailStatusEl.className = `status-badge ${isEmailSent ? 'active' : 'inactive'}`;
+
+        const smsStatusEl = document.getElementById('fac-succ-sms-status');
+        const isSmsSent = notif.sms === 'sent' || notif.sms === 'delivered';
+        smsStatusEl.textContent = isSmsSent ? 'Sent' : (notif.sms === 'unconfigured' ? 'Unconfigured' : 'Failed');
+        smsStatusEl.className = `status-badge ${isSmsSent ? 'active' : 'inactive'}`;
+
+        facSuccModal.classList.add('active');
+        facSuccModal.setAttribute('aria-hidden', 'false');
+      }
+
+      function closeFacultySuccessModal() {
+        facSuccModal.classList.remove('active');
+        facSuccModal.setAttribute('aria-hidden', 'true');
+      }
+
+      document.getElementById('close-fac-succ-modal').addEventListener('click', closeFacultySuccessModal);
+      document.getElementById('btn-done-fac-succ').addEventListener('click', closeFacultySuccessModal);
 
       loadFaculty();
     });

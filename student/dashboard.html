@@ -912,6 +912,7 @@
   <script src="../js/task-service.js"></script>
   <script src="../js/notification-service.js"></script>
   <script src="../js/ai-service.js"></script>
+  <script src="../js/study-group-service.js"></script>
   <script src="../js/ui.js"></script>
 
   <!-- Dashboard Page Initializer & Component Logic -->
@@ -1454,10 +1455,21 @@
     };
 
     // --- Study Community Renderer (Enforces 5-Student Max Rule) ---
-    function renderStudyGroups() {
+    async function renderStudyGroups() {
       const container = document.getElementById('study-groups-container');
       if (!container) return;
-      const groups = window.mockStudyGroups || [];
+
+      let groups = [];
+      if (typeof StudyGroupService !== 'undefined') {
+        try {
+          const res = await StudyGroupService.getStudyGroups();
+          groups = res.groups || [];
+        } catch (e) {
+          groups = window.mockStudyGroups || [];
+        }
+      } else {
+        groups = window.mockStudyGroups || [];
+      }
 
       if (groups.length === 0) {
         container.innerHTML = '<div class="empty-state" style="padding: 1rem; text-align: center; color: #64748B; font-size: 0.8125rem;">No study groups available.</div>';
@@ -1465,17 +1477,18 @@
       }
 
       container.innerHTML = groups.map(g => {
-        const isFull = g.currentMembers >= 5;
+        const memCount = g.memberCount !== undefined ? g.memberCount : (g.currentMembers || (g.members ? g.members.length : 1));
+        const isFull = memCount >= 5 || g.status === 'full';
 
         return `
           <div class="study-group-item">
             <div class="group-info">
               <h5>${escapeHtml(g.name)}</h5>
-              <div class="group-subject">${escapeHtml(g.subject)} • ${escapeHtml(g.topic)}</div>
+              <div class="group-subject">${escapeHtml(g.subjectCode || '')} • ${escapeHtml(g.subjectName || g.subject || '')}</div>
             </div>
             <div class="group-capacity">
               <span class="capacity-badge ${isFull ? 'full' : ''}">
-                ${g.currentMembers} / 5 Members
+                ${memCount} / 5 Members
               </span>
               ${isFull
                 ? `<button type="button" class="btn btn-secondary btn-sm" disabled style="opacity:0.6; cursor:not-allowed; font-size: 0.75rem; padding: 0.25rem 0.6rem;">Full</button>`
@@ -1487,7 +1500,19 @@
       }).join('');
     }
 
-    window.joinStudyGroup = function (groupId, groupName) {
+    window.joinStudyGroup = async function (groupId, groupName) {
+      if (typeof StudyGroupService !== 'undefined') {
+        try {
+          const res = await StudyGroupService.joinStudyGroup(groupId);
+          UI.showToast('success', 'Joined Study Group', res.message || `You have joined "${groupName}".`);
+          renderStudyGroups();
+          return;
+        } catch (err) {
+          UI.showToast('error', 'Group Full', err.message || 'Limit of 5 students reached.');
+          return;
+        }
+      }
+
       const groups = window.mockStudyGroups || [];
       const g = groups.find(item => item.id === groupId);
       if (g) {
@@ -1684,9 +1709,17 @@
           confirmSubBtn.textContent = 'Uploading file...';
 
           try {
+            let uploadedFile = null;
+            if (typeof AssignmentService.uploadFile === 'function') {
+              uploadedFile = await AssignmentService.uploadFile(file);
+            }
+
             await AssignmentService.submitAssignment(asgSelect.value, {
               name: file.name,
-              size: (file.size / (1024 * 1024)).toFixed(1) + ' MB'
+              size: (file.size / (1024 * 1024)).toFixed(1) + ' MB',
+              url: uploadedFile ? uploadedFile.url : null,
+              fileUrl: uploadedFile ? uploadedFile.url : null,
+              cloudinaryPublicId: uploadedFile ? uploadedFile.publicId : null
             });
 
             UI.closeModal('submit-assignment-modal');

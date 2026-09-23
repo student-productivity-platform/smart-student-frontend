@@ -356,6 +356,11 @@
 
   <script>
     document.addEventListener('DOMContentLoaded', () => {
+      // Update sidebar/topbar with logged-in faculty profile
+      if (typeof FacultyService !== 'undefined' && FacultyService.renderFacultyProfile) {
+        FacultyService.renderFacultyProfile();
+      }
+
       let rosterCurrentPage = 1;
       const rosterPageSize = 6;
       let historyCurrentPage = 1;

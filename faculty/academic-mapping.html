@@ -394,6 +394,11 @@
 
   <script>
     document.addEventListener('DOMContentLoaded', () => {
+      // Update sidebar/topbar with logged-in faculty profile
+      if (typeof FacultyService !== 'undefined' && FacultyService.renderFacultyProfile) {
+        FacultyService.renderFacultyProfile();
+      }
+
       const subjects = FacultyService.getSubjects();
       const subjectsTbody = document.getElementById('assigned-subjects-tbody');
       const filterSection = document.getElementById('filter-section');

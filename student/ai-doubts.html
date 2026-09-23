@@ -368,13 +368,7 @@
                     </svg>
                   </button>
                   <div class="doubt-header-title-block">
-                    <h2>
-                      AI Academic Doubt Solver
-                      <button type="button" class="gemini-status-live-badge" id="btn-header-gemini-status" title="Click to configure AI Model / Google Gemini API Key">
-                        <span class="live-pulse-dot" id="gemini-status-dot"></span>
-                        <span id="gemini-status-text">Gemini 2.5 Flash</span>
-                      </button>
-                    </h2>
+                    <h2>AI Academic Doubt Solver</h2>
                     <div class="doubt-header-subtitle">Ask questions, understand concepts, and learn step by step.</div>
                   </div>
                 </div>
@@ -429,7 +423,7 @@
                         <circle cx="12" cy="19" r="1" />
                       </svg>
                     </button>
-                    <div id="session-menu-dropdown" class="menu-dropdown" style="right: 0; min-width: 190px;">
+                    <div id="session-menu-dropdown" class="menu-dropdown" style="right: 0; min-width: 215px;">
                       <button type="button" class="menu-item" id="btn-open-gemini-modal">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                           stroke-width="2">
@@ -842,14 +836,19 @@
           <label for="escalate-faculty-select" class="form-label">Subject Faculty Member <span
               class="required">*</span></label>
           <select id="escalate-faculty-select" class="form-input">
-            <option value="Dr. Arvind Menon (CS404 Operating Systems)">Dr. Arvind Menon — Operating Systems (CS404)
-            </option>
+            <option value="Ramesh Gupta (Department of Computer Engineering)">Ramesh Gupta — Associate Professor (Department of Computer Engineering)</option>
+            <option value="Prof. Meenakshi Sundaram (Department of Computer Engineering)">Prof. Meenakshi Sundaram — Associate Professor (Department of Computer Engineering)</option>
+            <option value="Dr. Ananya Roy (Department of Computer Engineering)">Dr. Ananya Roy — Associate Professor (Department of Computer Engineering)</option>
+            <option value="Prof. Sunita Mehta (Department of Computer Engineering)">Prof. Sunita Mehta — Associate Professor (Department of Computer Engineering)</option>
+            <option value="Dr. Priya Nair (Department of Computer Engineering)">Dr. Priya Nair — Professor (Department of Computer Engineering)</option>
+            <option value="Dr. Sneha Joshi (Department of Computer Engineering)">Dr. Sneha Joshi — Associate Professor (Department of Computer Engineering)</option>
+            <option value="Prof. Rajesh K (Department of Computer Engineering)">Prof. Rajesh K — Assistant Professor (Department of Computer Engineering)</option>
+            <option value="Prof. Amit Verma (Department of Computer Engineering)">Prof. Amit Verma — Assistant Professor (Department of Computer Engineering)</option>
+            <option value="Dr. Arvind Menon (CS404 Operating Systems)">Dr. Arvind Menon — Operating Systems (CS404)</option>
             <option value="Prof. Priya Sharma (CS402 DBMS)">Prof. Priya Sharma — DBMS (CS402)</option>
-            <option value="Dr. Rajesh Kumar (CS403 Machine Learning)">Dr. Rajesh Kumar — Machine Learning (CS403)
-            </option>
+            <option value="Dr. Rajesh Kumar (CS403 Machine Learning)">Dr. Rajesh Kumar — Machine Learning (CS403)</option>
             <option value="Prof. Ananya Sen (CS401 DSA)">Prof. Ananya Sen — Data Structures & Algo (CS401)</option>
-            <option value="Dr. Vikram Malhotra (CS405 Networks)">Dr. Vikram Malhotra — Computer Networks (CS405)
-            </option>
+            <option value="Dr. Vikram Malhotra (CS405 Networks)">Dr. Vikram Malhotra — Computer Networks (CS405)</option>
           </select>
         </div>
 
@@ -1096,10 +1095,6 @@
                 <div class="ai-response-card">
                   <div class="ai-response-card-header">
                     <div class="ai-badge-cluster">
-                      <span class="ai-engine-pill">
-                        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
-                        ${(m.provider && m.provider.includes('Gemini')) ? 'Google Gemini AI' : 'Academic AI Engine'}
-                      </span>
                       <span class="subject-tag ${getSubjectTagClass(m.subject)}">${m.subject || 'Engineering'}</span>
                       <span class="ai-difficulty-pill">${m.difficulty || 'Intermediate'}</span>
                     </div>
@@ -1703,18 +1698,121 @@
         }
       });
 
+      // Dynamic Faculty Population for Doubt Escalation
+      async function populateEscalateFacultyDropdown(preferredSubject = '') {
+        const selectEl = document.getElementById('escalate-faculty-select');
+        if (!selectEl) return;
+
+        let facultyList = [];
+
+        // 1. Fetch from live Backend API (/api/faculty?limit=100)
+        try {
+          const url = AIService.getApiUrl('/api/faculty?limit=100');
+          const res = await fetch(url);
+          if (res.ok) {
+            const data = await res.json();
+            if (data && data.success && Array.isArray(data.users) && data.users.length > 0) {
+              facultyList = data.users;
+            }
+          }
+        } catch (e) {
+          console.warn('[Escalate Faculty] API fetch failed, trying Firestore/local fallback:', e);
+        }
+
+        // 2. Query Firestore if available to include any faculty directly created in Firestore
+        try {
+          if (window.SmartStudentFirebase && window.SmartStudentFirebase.isInitialized()) {
+            const db = window.SmartStudentFirebase.getDb();
+            if (db) {
+              const snap = await db.collection('faculty').get();
+              snap.forEach(doc => {
+                const item = doc.data();
+                if (item && item.name) {
+                  const exists = facultyList.some(f =>
+                    (f.id && f.id === doc.id) ||
+                    (f.facultyId && f.facultyId === (item.facultyId || doc.id)) ||
+                    (f.name && f.name.trim().toLowerCase() === item.name.trim().toLowerCase())
+                  );
+                  if (!exists) {
+                    facultyList.push({
+                      id: doc.id,
+                      name: item.name,
+                      designation: item.designation || 'Associate Professor',
+                      department: item.department || 'Department of Computer Engineering',
+                      email: item.email || '',
+                      subjects: item.subjects || []
+                    });
+                  }
+                }
+              });
+            }
+          }
+        } catch (fErr) {
+          console.warn('[Escalate Faculty] Firestore check note:', fErr);
+        }
+
+        // 3. Fallback mock list if still empty
+        if (!facultyList || facultyList.length === 0) {
+          facultyList = [
+            { name: 'Ramesh Gupta', designation: 'Associate Professor', department: 'Department of Computer Engineering' },
+            { name: 'Prof. Meenakshi Sundaram', designation: 'Associate Professor', department: 'Department of Computer Engineering' },
+            { name: 'Dr. Ananya Roy', designation: 'Associate Professor', department: 'Department of Computer Engineering' },
+            { name: 'Prof. Sunita Mehta', designation: 'Associate Professor', department: 'Department of Computer Engineering' },
+            { name: 'Dr. Priya Nair', designation: 'Professor', department: 'Department of Computer Engineering' },
+            { name: 'Dr. Sneha Joshi', designation: 'Associate Professor', department: 'Department of Computer Engineering' },
+            { name: 'Prof. Rajesh K', designation: 'Assistant Professor', department: 'Department of Computer Engineering' },
+            { name: 'Prof. Amit Verma', designation: 'Assistant Professor', department: 'Department of Computer Engineering' },
+            { name: 'Dr. Arvind Menon', designation: 'Associate Professor', department: 'Operating Systems (CS404)' },
+            { name: 'Prof. Priya Sharma', designation: 'Assistant Professor', department: 'DBMS (CS402)' },
+            { name: 'Dr. Vikram Malhotra', designation: 'Professor', department: 'Computer Networks (CS405)' }
+          ];
+        }
+
+        // Clean & Deduplicate by name
+        const uniqueFaculty = [];
+        const seenNames = new Set();
+        facultyList.forEach(fac => {
+          const cleanName = (fac.name || '').trim();
+          if (cleanName && !seenNames.has(cleanName.toLowerCase())) {
+            seenNames.add(cleanName.toLowerCase());
+            uniqueFaculty.push(fac);
+          }
+        });
+
+        // Re-render select options
+        selectEl.innerHTML = '';
+        uniqueFaculty.forEach((fac, idx) => {
+          const opt = document.createElement('option');
+          const deptOrSpecialization = fac.specialization || (fac.subjects && fac.subjects.length > 0 ? fac.subjects.join(', ') : '') || fac.department || fac.designation || 'Faculty';
+          opt.value = `${fac.name} (${deptOrSpecialization})`;
+          opt.textContent = `${fac.name} — ${fac.designation || 'Faculty'} (${deptOrSpecialization})`;
+
+          if (preferredSubject && deptOrSpecialization.toLowerCase().includes(preferredSubject.toLowerCase())) {
+            opt.selected = true;
+          } else if (idx === 0 && !selectEl.value) {
+            opt.selected = true;
+          }
+          selectEl.appendChild(opt);
+        });
+      }
+
       // Escalate to Faculty Handlers
       const btnEscalateConv = document.getElementById('btn-escalate-conv');
       const btnConfirmEscalate = document.getElementById('btn-confirm-escalate');
       if (btnEscalateConv) {
-        btnEscalateConv.addEventListener('click', () => {
+        btnEscalateConv.addEventListener('click', async () => {
           if (currentSessionId) {
+            const conv = await AIService.getConversation(currentSessionId);
+            await populateEscalateFacultyDropdown(conv ? conv.subject : '');
             UI.openModal('modal-escalate-faculty');
           } else {
             UI.showToast('warning', 'No Active Session', 'Ask a question first before escalating.');
           }
         });
       }
+
+      // Preload faculty dropdown on initialization
+      populateEscalateFacultyDropdown();
 
       if (btnConfirmEscalate) {
         btnConfirmEscalate.addEventListener('click', async () => {
@@ -1729,12 +1827,18 @@
           try {
             btnConfirmEscalate.disabled = true;
             btnConfirmEscalate.textContent = 'Forwarding...';
+            const userSession = (typeof AuthService !== 'undefined' && AuthService.getCurrentUser) ? (AuthService.getCurrentUser() || {}) : {};
             await AIService.escalateDoubtToFaculty({
               doubtId: currentSessionId,
               question: questionText,
               subject: subject,
+              subjectCode: (subject && subject.toLowerCase().includes('network')) ? 'CS405' : ((subject && subject.toLowerCase().includes('dbms')) ? 'CS402' : 'CS404'),
               assignedFaculty: faculty,
               notes: note,
+              studentName: userSession.name || 'Riddhi Zunjarrao',
+              studentRollNo: userSession.rollNo || '21CS4082',
+              studentEmail: userSession.email || 'riddhi.z@university.edu',
+              studentUid: userSession.uid || 'usr_stu_1001',
               history: conv ? conv.messages : []
             });
             UI.closeModal('modal-escalate-faculty');

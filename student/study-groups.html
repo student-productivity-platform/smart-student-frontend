@@ -7,7 +7,7 @@
   <title>Peer Study Community — Smart Student</title>
   <meta name="description"
     content="Collaborative peer study rooms with a strict 5-student cap for focused engineering revision and exam prep.">
-    <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+  <link rel="icon" type="image/svg+xml" href="../favicon.svg">
   <link rel="alternate icon" href="../favicon.ico">
   <link rel="stylesheet" href="../css/main.css">
   <link rel="stylesheet" href="../css/dashboard.css">
@@ -111,7 +111,7 @@
       </nav>
       <div class="sidebar-footer">
         <a href="profile.html" class="sidebar-user-card">
-          <div class="user-avatar"><span class="user-avatar-initials">RZ</span></div>
+          <div class="user-avatar"><span class="user-avatar-initials" id="sidebar-initials">RZ</span></div>
           <div class="user-info-text">
             <div class="user-name" id="sidebar-user-name">Riddhi Zunjarrao</div>
             <span class="user-role-tag" id="sidebar-user-role">Sem 4 • Sec A</span>
@@ -147,10 +147,10 @@
         <div class="topbar-right">
           <div class="dropdown-container">
             <button type="button" class="user-menu-btn" data-dropdown-toggle="user-dropdown-menu" aria-label="User Menu">
-              <div class="user-avatar-sm"><span class="user-avatar-initials">RZ</span></div>
+              <div class="user-avatar-sm"><span class="user-avatar-initials" id="topbar-initials">RZ</span></div>
               <div class="user-menu-info">
                 <div class="user-menu-name" id="topbar-user-name">Riddhi Zunjarrao</div>
-                <div class="user-menu-sub">B.Tech CSE</div>
+                <div class="user-menu-sub" id="topbar-user-sub">B.Tech Computer Science & Engineering</div>
               </div>
             </button>
             <div id="user-dropdown-menu" class="menu-dropdown profile-dropdown-menu">
@@ -171,7 +171,7 @@
                 <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
                 <circle cx="9" cy="7" r="4" />
               </svg>
-              <span>Peer Collaboration • Study Cohorts</span>
+              <span>PEER COLLABORATION • STUDY COHORTS</span>
             </div>
             <div class="page-title-row">
               <h1>Small-Group Peer Learning Cohorts</h1>
@@ -191,7 +191,7 @@
           </div>
         </div>
 
-        <!-- Academic Policy Callout Banner -->
+        <!-- Academic Policy Callout Banner (Exact Replica from Screenshot) -->
         <div class="notice-box-yellow mb-3">
           <div class="notice-box-icon">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -208,7 +208,7 @@
           </div>
         </div>
 
-        <!-- KPI Metrics Grid -->
+        <!-- Dynamic KPI Metrics Grid (Calculated from Firestore) -->
         <div class="kpi-metrics-grid" style="grid-template-columns: repeat(4, 1fr); margin-bottom: 1.5rem;">
           <div class="kpi-metric-card">
             <div class="kpi-metric-label">
@@ -216,9 +216,9 @@
                 <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
                 <circle cx="9" cy="7" r="4" />
               </svg>
-              <span>Active Cohorts</span>
+              <span>ACTIVE COHORTS</span>
             </div>
-            <div class="kpi-metric-value" id="kpi-total-groups">5</div>
+            <div class="kpi-metric-value" id="kpi-total-groups">...</div>
             <div class="kpi-metric-sub">Semester 4 Topics</div>
           </div>
           <div class="kpi-metric-card">
@@ -228,9 +228,9 @@
                 <circle cx="8.5" cy="7" r="4"></circle>
                 <polyline points="17 11 19 13 23 9"></polyline>
               </svg>
-              <span>Enrolled Peers</span>
+              <span>ENROLLED PEERS</span>
             </div>
-            <div class="kpi-metric-value text-primary" id="kpi-total-members">18</div>
+            <div class="kpi-metric-value text-primary" id="kpi-total-members">...</div>
             <div class="kpi-metric-sub">Collaborating Online</div>
           </div>
           <div class="kpi-metric-card">
@@ -239,9 +239,9 @@
                 <circle cx="12" cy="12" r="10" />
                 <polyline points="12 6 12 12 14 14" />
               </svg>
-              <span>Available Seats</span>
+              <span>AVAILABLE SEATS</span>
             </div>
-            <div class="kpi-metric-value text-success" id="kpi-open-seats">7</div>
+            <div class="kpi-metric-value text-success" id="kpi-open-seats">...</div>
             <div class="kpi-metric-sub">Open for Enrollment</div>
           </div>
           <div class="kpi-metric-card">
@@ -250,16 +250,16 @@
                 <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
                 <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
               </svg>
-              <span>Full Rooms (5/5)</span>
+              <span>FULL ROOMS (5/5)</span>
             </div>
-            <div class="kpi-metric-value text-danger" id="kpi-full-rooms">1</div>
+            <div class="kpi-metric-value text-danger" id="kpi-full-rooms">...</div>
             <div class="kpi-metric-sub">Capacity Reached</div>
           </div>
         </div>
 
         <!-- Filter & Search Toolbar -->
         <div class="filter-toolbar">
-          <div class="segment-tab-group" role="tablist">
+          <div class="segment-tab-group" id="subject-tabs-container" role="tablist">
             <button class="segment-tab active" data-subject="all" role="tab">All Subjects</button>
             <button class="segment-tab" data-subject="CS403" role="tab">Machine Learning</button>
             <button class="segment-tab" data-subject="CS402" role="tab">DBMS</button>
@@ -275,7 +275,11 @@
 
         <!-- Study Cohorts Cards Grid -->
         <div class="study-groups-grid" id="study-groups-cards-container">
-          <!-- Rendered dynamically by JavaScript -->
+          <!-- Rendered dynamically by JavaScript via Firebase / Backend Service -->
+          <div class="skeleton-loader-card" style="padding: 2rem; text-align: center; grid-column: 1 / -1; color: var(--text-tertiary);">
+            <div class="spinner-icon" style="margin: 0 auto 0.5rem auto; width: 28px; height: 28px; border: 3px solid var(--border-default); border-top-color: var(--blue-600); border-radius: 50%; animation: spin 0.8s linear infinite;"></div>
+            <span>Loading peer study cohorts from Firebase...</span>
+          </div>
         </div>
 
       </main>
@@ -284,25 +288,26 @@
 
   <!-- Create Study Group Modal -->
   <div class="modal-overlay" id="modal-create-group">
-    <div class="modal-dialog" style="max-width: 520px;">
+    <div class="modal-dialog" style="max-width: 540px;">
       <div class="modal-header">
         <h3 class="modal-title">Create New Study Cohort</h3>
         <button type="button" class="toast-close" onclick="UI.closeModal('modal-create-group')">&times;</button>
       </div>
       <div class="modal-body">
-        <form id="create-group-form">
+        <form id="create-group-form" onsubmit="event.preventDefault(); handleCreateGroupSubmit();">
           <div class="form-group">
             <label for="new-group-name" class="form-label">Cohort Name <span class="required">*</span></label>
             <input type="text" id="new-group-name" class="form-input" placeholder="e.g. Machine Learning PYQ Derivation Squad" required>
+            <small class="form-hint" style="color: var(--text-tertiary); font-size: 0.75rem;">Give your cohort a clear, academic study goal.</small>
           </div>
 
           <div class="form-group">
             <label for="new-group-subject" class="form-label">Course / Subject <span class="required">*</span></label>
             <select id="new-group-subject" class="form-input" required>
-              <option value="CS401|Data Structures & Algorithms">CS401 — Data Structures & Algorithms</option>
-              <option value="CS402|Database Management Systems">CS402 — Database Management Systems</option>
               <option value="CS403|Machine Learning">CS403 — Machine Learning</option>
+              <option value="CS402|Database Management Systems">CS402 — Database Management Systems</option>
               <option value="CS404|Operating Systems">CS404 — Operating Systems</option>
+              <option value="CS401|Data Structures & Algorithms">CS401 — Data Structures & Algorithms</option>
               <option value="CS405|Computer Networks">CS405 — Computer Networks</option>
               <option value="CS406|Software Engineering">CS406 — Software Engineering</option>
             </select>
@@ -314,78 +319,116 @@
           </div>
 
           <div class="form-group">
+            <label for="new-group-desc" class="form-label">Detailed Agenda / Description (Optional)</label>
+            <textarea id="new-group-desc" class="form-input" rows="2" placeholder="e.g. 1. Gradient descent proof\n2. Cross-entropy loss discussion"></textarea>
+          </div>
+
+          <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <div class="form-group">
+              <label class="form-label">Academic Program</label>
+              <input type="text" id="new-group-program" class="form-input" value="B.Tech CSE" disabled style="background-color: var(--bg-surface-subtle); color: var(--text-secondary); cursor: not-allowed;">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Semester & Section</label>
+              <input type="text" id="new-group-sem-sec" class="form-input" value="Semester 4 • Sec A" disabled style="background-color: var(--bg-surface-subtle); color: var(--text-secondary); cursor: not-allowed;">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.35rem;">
+              <label for="new-group-meet" class="form-label" style="margin-bottom: 0;">Google Meet Video Room</label>
+              <button type="button" class="btn btn-secondary btn-sm" onclick="generateNewMeetForCreateModal()" style="padding: 0.15rem 0.5rem; font-size: 0.7rem;">Generate Code</button>
+            </div>
+            <input type="text" id="new-group-meet" class="form-input" placeholder="https://meet.google.com/xxx-yyyy-zzz" style="font-family: monospace; font-size: 0.8125rem;">
+            <span style="font-size: 0.6875rem; color: var(--text-tertiary); margin-top: 0.25rem; display: block;">Instant video & screen share room for peer discussion</span>
+          </div>
+
+          <div class="form-group">
             <label class="form-label">Max Member Limit</label>
             <input type="text" class="form-input" value="5 Students (Locked by Academic Policy)" disabled style="background-color: var(--bg-surface-subtle); color: var(--text-secondary); cursor: not-allowed;">
           </div>
+
+          <div id="create-group-error" style="color: var(--error-dark); font-size: 0.8125rem; display: none; margin-top: 0.5rem;"></div>
         </form>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" onclick="UI.closeModal('modal-create-group')">Cancel</button>
-        <button type="button" class="btn btn-primary" id="btn-save-new-group">Create & Open Room</button>
+        <button type="button" class="btn btn-primary" id="btn-save-new-group" onclick="handleCreateGroupSubmit()">Create & Open Room</button>
       </div>
     </div>
   </div>
 
-  <!-- Cohort Workspace Modal -->
-  <div class="modal-overlay" id="modal-cohort-workspace">
-    <div class="modal-dialog" style="max-width: 600px;">
+  <!-- Safe Member Profile Modal -->
+  <div class="modal-overlay" id="modal-member-profile">
+    <div class="modal-dialog" style="max-width: 440px;">
       <div class="modal-header">
-        <div>
-          <span class="badge badge-info" id="ws-subject-code" style="font-size: 0.6875rem; margin-bottom: 0.25rem;">CS403</span>
-          <h3 class="modal-title" id="ws-group-title" style="margin: 0; font-size: 1.15rem;">Study Cohort Workspace</h3>
-        </div>
-        <button type="button" class="toast-close" onclick="UI.closeModal('modal-cohort-workspace')">&times;</button>
+        <h3 class="modal-title">Student Member Profile</h3>
+        <button type="button" class="toast-close" onclick="UI.closeModal('modal-member-profile')">&times;</button>
       </div>
-      <div class="modal-body" style="display: flex; flex-direction: column; gap: 1.25rem;">
-        <div style="padding: 1rem; background-color: var(--bg-surface-subtle); border-radius: var(--radius-md); border: 1px solid var(--border-light);">
-          <div style="font-size: 0.75rem; font-weight: 700; color: var(--text-tertiary); text-transform: uppercase; margin-bottom: 0.25rem;">Study Agenda</div>
-          <pre id="ws-agenda" style="font-family: inherit; font-size: 0.84375rem; color: var(--text-primary); margin: 0; white-space: pre-wrap;"></pre>
+      <div class="modal-body" style="text-align: center; padding: 1.5rem 1rem;">
+        <div class="user-avatar" style="width: 64px; height: 64px; font-size: 1.4rem; margin: 0 auto 1rem auto; background: var(--blue-600); color: #fff; display: flex; align-items: center; justify-content: center; border-radius: 50%;">
+          <span id="mp-avatar-initials">AS</span>
         </div>
+        <h4 id="mp-name" style="margin: 0 0 0.25rem 0; font-size: 1.15rem; color: var(--navy-900);">Student Name</h4>
+        <span class="badge badge-info" id="mp-role-tag" style="margin-bottom: 1.25rem;">Member</span>
 
-        <div>
-          <div style="font-size: 0.75rem; font-weight: 700; color: var(--text-tertiary); text-transform: uppercase; margin-bottom: 0.35rem;">Shared Whiteboard Notes</div>
-          <textarea id="ws-shared-notes" class="form-input" rows="4" placeholder="Type collaborative study notes, formulas, and references here...">Key formula: Cost Function J(θ) = 1/(2m) Σ (h_θ(x^(i)) - y^(i))^2
-Convergence criterion: α = 0.01 learning rate</textarea>
+        <div style="background-color: var(--bg-surface-subtle); border: 1px solid var(--border-light); border-radius: var(--radius-md); padding: 1rem; text-align: left; display: flex; flex-direction: column; gap: 0.65rem; font-size: 0.85rem;">
+          <div style="display: flex; justify-content: space-between;">
+            <span style="color: var(--text-tertiary);">Student ID:</span>
+            <strong id="mp-student-id" style="color: var(--text-primary);">CS4-012</strong>
+          </div>
+          <div style="display: flex; justify-content: space-between;">
+            <span style="color: var(--text-tertiary);">Program:</span>
+            <strong id="mp-program" style="color: var(--text-primary);">B.Tech Computer Science</strong>
+          </div>
+          <div style="display: flex; justify-content: space-between;">
+            <span style="color: var(--text-tertiary);">Semester / Section:</span>
+            <strong id="mp-sem-sec" style="color: var(--text-primary);">Semester 4 • Sec A</strong>
+          </div>
+          <div style="display: flex; justify-content: space-between;">
+            <span style="color: var(--text-tertiary);">Joined Cohort:</span>
+            <strong id="mp-joined-at" style="color: var(--text-primary);">Sep 20, 2026</strong>
+          </div>
         </div>
       </div>
-      <div class="modal-footer" style="justify-content: space-between;">
-        <button type="button" class="btn btn-secondary" onclick="UI.closeModal('modal-cohort-workspace')">Close</button>
-        <div style="display: flex; gap: 0.5rem;">
-          <button type="button" class="btn btn-outline" onclick="UI.showToast('success', 'Notes Saved', 'Peer study notes updated for group members.')">Save Notes</button>
-          <a href="https://meet.google.com/study-cohort-live" target="_blank" class="btn btn-primary">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 0.35rem;">
-              <polygon points="23 7 16 12 23 17 23 7"/>
-              <rect x="1" y="5" width="15" height="14" rx="2" ry="2"/>
-            </svg>
-            Launch Live Google Meet
-          </a>
-        </div>
+      <div class="modal-footer" style="justify-content: flex-end;">
+        <button type="button" class="btn btn-secondary" onclick="UI.closeModal('modal-member-profile')">Close</button>
       </div>
     </div>
   </div>
+
+  <style>
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
 
   <!-- Scripts -->
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
-  <script src="../data/mock-student.js"></script>
-  <script src="../data/mock-study-groups.js"></script>
   <script src="../js/firebase-config.js"></script>
   <script src="../js/auth.js"></script>
+  <script src="../js/student-service.js"></script>
+  <script src="../js/study-group-service.js"></script>
   <script src="../js/ui.js"></script>
 
   <script>
     let currentSubjectFilter = 'all';
     let searchQuery = '';
     let cohorts = [];
+    let currentStudent = null;
+    let unsubscribeGroupsListener = null;
 
-    document.addEventListener('DOMContentLoaded', () => {
-      UI.syncStudentIdentity();
-      cohorts = [...(window.mockStudyGroups || [])];
-      renderCohorts();
+    document.addEventListener('DOMContentLoaded', async () => {
+      // 1. Load active student profile from Firebase / Session
+      await loadStudentProfile();
 
-      // Filter tabs
+      // 2. Setup Realtime Listener & Initial Load
+      setupLiveGroupsListener();
+
+      // 3. Subject filter tabs click handler
       document.querySelectorAll('.segment-tab').forEach(tab => {
         tab.addEventListener('click', () => {
           document.querySelectorAll('.segment-tab').forEach(t => t.classList.remove('active'));
@@ -395,142 +438,243 @@ Convergence criterion: α = 0.01 learning rate</textarea>
         });
       });
 
-      // Search input
-      document.getElementById('group-search-input').addEventListener('input', (e) => {
-        searchQuery = e.target.value.toLowerCase().trim();
-        renderCohorts();
-      });
-      document.getElementById('global-search-input').addEventListener('input', (e) => {
-        searchQuery = e.target.value.toLowerCase().trim();
-        document.getElementById('group-search-input').value = e.target.value;
-        renderCohorts();
-      });
+      // 4. Global topbar & local toolbar search
+      const localSearch = document.getElementById('group-search-input');
+      const globalSearch = document.getElementById('global-search-input');
 
-      // Open Create Modal
-      document.getElementById('btn-create-group').addEventListener('click', () => {
-        UI.openModal('modal-create-group');
-      });
+      if (localSearch) {
+        localSearch.addEventListener('input', (e) => {
+          searchQuery = e.target.value.toLowerCase().trim();
+          if (globalSearch) globalSearch.value = e.target.value;
+          renderCohorts();
+        });
+      }
 
-      // Save New Group
-      document.getElementById('btn-save-new-group').addEventListener('click', () => {
-        const name = document.getElementById('new-group-name').value.trim();
-        const subRaw = document.getElementById('new-group-subject').value;
-        const topic = document.getElementById('new-group-topic').value.trim();
+      if (globalSearch) {
+        globalSearch.addEventListener('input', (e) => {
+          searchQuery = e.target.value.toLowerCase().trim();
+          if (localSearch) localSearch.value = e.target.value;
+          renderCohorts();
+        });
+      }
 
-        if (!name || !topic) {
-          UI.showToast('error', 'Incomplete Form', 'Please enter a cohort name and topic focus.');
-          return;
-        }
-
-        const [code, subject] = subRaw.split('|');
-        const newGroup = {
-          id: 'grp_' + Date.now(),
-          name: name,
-          subject: subject,
-          subjectCode: code,
-          currentMembers: 1,
-          maxMembers: 5,
-          isFull: false,
-          topic: topic,
-          creator: 'Riddhi Z. (You)',
-          meetLink: 'https://meet.google.com/study-cohort-new',
-          members: ['RZ'],
-          agenda: '1. Group kickoff & topic distribution\n2. Weekly study schedule setup'
-        };
-
-        cohorts.unshift(newGroup);
-        UI.closeModal('modal-create-group');
-        UI.showToast('success', 'Cohort Created', `Study group "${name}" created (1/5 members).`);
-        document.getElementById('create-group-form').reset();
-        renderCohorts();
-      });
+      // 5. Open Create Modal
+      const createBtn = document.getElementById('btn-create-group');
+      if (createBtn) {
+        createBtn.addEventListener('click', () => {
+          const errBox = document.getElementById('create-group-error');
+          if (errBox) errBox.style.display = 'none';
+          generateNewMeetForCreateModal();
+          UI.openModal('modal-create-group');
+        });
+      }
     });
 
-    function updateKPIS() {
-      const total = cohorts.length;
-      let totalMembers = 0;
-      let fullCount = 0;
+    function generateNewMeetForCreateModal() {
+      const chars = 'abcdefghijklmnopqrstuvwxyz';
+      const genPart = (len) => Array.from({ length: len }, () => chars[Math.floor(Math.random() * chars.length)]).join('');
+      const input = document.getElementById('new-group-meet');
+      if (input) input.value = `https://meet.google.com/${genPart(3)}-${genPart(4)}-${genPart(3)}`;
+    }
 
-      cohorts.forEach(c => {
-        totalMembers += c.currentMembers;
-        if (c.currentMembers >= 5) fullCount++;
-      });
+    /**
+     * Retrieve Student Profile from Firebase users/{uid}
+     */
+    async function loadStudentProfile() {
+      try {
+        currentStudent = await StudentService.getProfile();
+        if (!currentStudent && typeof AuthService !== 'undefined') {
+          currentStudent = AuthService.getCurrentUser();
+        }
+        if (currentStudent) {
+          const name = currentStudent.name || 'Riddhi Zunjarrao';
+          const program = currentStudent.program || 'B.Tech Computer Science & Engineering';
+          const sem = currentStudent.semester || 4;
+          const sec = currentStudent.section || 'A';
 
-      const maxPossible = total * 5;
-      const openSeats = Math.max(0, maxPossible - totalMembers);
+          const topbarName = document.getElementById('topbar-user-name');
+          const topbarSub = document.getElementById('topbar-user-sub');
+          const sidebarName = document.getElementById('sidebar-user-name');
+          const sidebarRole = document.getElementById('sidebar-user-role');
+          const modalProg = document.getElementById('new-group-program');
+          const modalSemSec = document.getElementById('new-group-sem-sec');
 
-      document.getElementById('kpi-total-groups').textContent = total;
-      document.getElementById('kpi-total-members').textContent = totalMembers;
-      document.getElementById('kpi-open-seats').textContent = openSeats;
-      document.getElementById('kpi-full-rooms').textContent = fullCount;
+          if (topbarName) topbarName.textContent = name;
+          if (topbarSub) topbarSub.textContent = program;
+          if (sidebarName) sidebarName.textContent = name;
+          if (sidebarRole) sidebarRole.textContent = `Sem ${sem} • Sec ${sec}`;
+          if (modalProg) modalProg.value = program;
+          if (modalSemSec) modalSemSec.value = `Semester ${sem} • Sec ${sec}`;
+
+          // Initials
+          const initials = name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase() || 'RZ';
+          document.querySelectorAll('#topbar-initials, #sidebar-initials').forEach(el => el.textContent = initials);
+        }
+      } catch (err) {
+        console.warn('Error fetching student profile from Firebase:', err);
+      }
+    }
+
+    /**
+     * Connect live Firestore listener for instant real-time cohort updates
+     */
+    function setupLiveGroupsListener() {
+      try {
+        unsubscribeGroupsListener = StudyGroupService.subscribeToGroups(({ groups, stats }) => {
+          cohorts = groups || [];
+          if (stats) updateKPIS(stats);
+          renderCohorts();
+        });
+      } catch (e) {
+        loadCohortsDirectly();
+      }
+    }
+
+    async function loadCohortsDirectly() {
+      try {
+        const result = await StudyGroupService.getStudyGroups({ subject: currentSubjectFilter, search: searchQuery });
+        cohorts = result.groups || [];
+        if (result.stats) updateKPIS(result.stats);
+        renderCohorts();
+      } catch (err) {
+        console.error('Failed to load study cohorts:', err);
+        const container = document.getElementById('study-groups-cards-container');
+        if (container) {
+          container.innerHTML = `
+            <div class="academic-empty-state" style="grid-column: 1 / -1; padding: 2.5rem; text-align: center;">
+              <div class="academic-empty-title" style="color: var(--error-dark); font-weight: 700; margin-bottom: 0.5rem;">Failed to connect to Firebase backend</div>
+              <p class="academic-empty-desc" style="color: var(--text-secondary); margin-bottom: 1rem;">${escapeHtml(err.message || 'Network connectivity issue.')}</p>
+              <button class="btn btn-secondary btn-sm" onclick="loadCohortsDirectly()">Retry Connection</button>
+            </div>
+          `;
+        }
+      }
+    }
+
+    function updateKPIS(stats) {
+      if (!stats) return;
+      const elTotal = document.getElementById('kpi-total-groups');
+      const elMembers = document.getElementById('kpi-total-members');
+      const elSeats = document.getElementById('kpi-open-seats');
+      const elFull = document.getElementById('kpi-full-rooms');
+
+      if (elTotal) elTotal.textContent = stats.totalGroups;
+      if (elMembers) elMembers.textContent = stats.activeMembers;
+      if (elSeats) elSeats.textContent = stats.availableSeats;
+      if (elFull) elFull.textContent = stats.fullRooms;
     }
 
     function renderCohorts() {
-      updateKPIS();
-
       let filtered = [...cohorts];
+
+      // Filter by subject
       if (currentSubjectFilter !== 'all') {
-        filtered = filtered.filter(c => c.subjectCode === currentSubjectFilter);
+        const s = currentSubjectFilter.toLowerCase();
+        filtered = filtered.filter(c =>
+          (c.subjectCode || '').toLowerCase() === s ||
+          (c.subjectId || '').toLowerCase() === s ||
+          (c.subjectName || '').toLowerCase().includes(s) ||
+          (c.subject || '').toLowerCase().includes(s)
+        );
       }
+
+      // Filter by search query
       if (searchQuery) {
-        filtered = filtered.filter(c => 
+        filtered = filtered.filter(c =>
           (c.name || '').toLowerCase().includes(searchQuery) ||
           (c.topic || '').toLowerCase().includes(searchQuery) ||
-          (c.subject || '').toLowerCase().includes(searchQuery) ||
-          (c.creator || '').toLowerCase().includes(searchQuery)
+          (c.description || '').toLowerCase().includes(searchQuery) ||
+          (c.subject || c.subjectName || '').toLowerCase().includes(searchQuery) ||
+          (c.subjectCode || '').toLowerCase().includes(searchQuery) ||
+          (c.roomLeaderName || c.creator || '').toLowerCase().includes(searchQuery)
         );
       }
 
       const container = document.getElementById('study-groups-cards-container');
+      if (!container) return;
+
       if (filtered.length === 0) {
         container.innerHTML = `
-          <div class="academic-empty-state" style="grid-column: 1 / -1;">
-            <div class="academic-empty-icon">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <div class="academic-empty-state" style="grid-column: 1 / -1; padding: 3rem 1.5rem; text-align: center; background: var(--surface); border: 1px dashed var(--border-default); border-radius: var(--radius-lg);">
+            <div class="academic-empty-icon" style="margin-bottom: 0.75rem;">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--text-tertiary)" stroke-width="2">
                 <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>
               </svg>
             </div>
-            <div class="academic-empty-title">No Study Cohorts Match Filters</div>
-            <p class="academic-empty-desc">Create your own peer study cohort using the "+ Create Study Group" button above.</p>
+            <div class="academic-empty-title" style="font-weight: 700; color: var(--navy-900); font-size: 1.05rem; margin-bottom: 0.35rem;">No Study Cohorts Found</div>
+            <p class="academic-empty-desc" style="color: var(--text-secondary); max-width: 440px; margin: 0 auto 1.25rem auto; font-size: 0.85rem;">
+              ${searchQuery ? 'No study groups match your search query.' : 'There are currently no active study groups for this subject.'}
+            </p>
+            <button type="button" class="btn btn-primary btn-sm" onclick="UI.openModal('modal-create-group')">
+              + Create Study Group
+            </button>
           </div>
         `;
         return;
       }
 
+      const currentUid = currentStudent ? (currentStudent.uid || currentStudent.id) : 'usr_stu_8842';
+      const currentStuId = currentStudent ? (currentStudent.studentId || currentStudent.rollNo) : 'STU-2024-8842';
+
       container.innerHTML = filtered.map(g => {
-        const isFull = g.currentMembers >= 5;
-        const capacityPct = Math.round((g.currentMembers / 5) * 100);
-        const memberAvatars = (g.members || ['AS', 'RZ']).map(m => `
-          <div class="user-avatar-initials" style="width: 24px; height: 24px; font-size: 0.65rem; border: 2px solid #FFFFFF; margin-left: -6px;" title="Student Member: ${m}">
-            ${m}
-          </div>
-        `).join('');
+        const memCount = g.memberCount !== undefined ? g.memberCount : (g.currentMembers || (g.members ? g.members.length : 1));
+        const isFull = memCount >= 5 || g.status === 'full';
+        const capacityPct = Math.min(100, Math.round((memCount / 5) * 100));
+
+        // Check if active student is already a member
+        const membersList = Array.isArray(g.members) ? g.members : [];
+        const isMember = membersList.some(m => 
+          (currentUid && (m.uid === currentUid || m.studentId === currentUid)) ||
+          (currentStuId && (m.studentId === currentStuId || m.uid === currentStuId))
+        );
+
+        // Render member avatar initials
+        const memberAvatarsHtml = membersList.map((m, idx) => {
+          const mName = m.name || 'Student';
+          const initials = mName.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase() || 'ST';
+          const isLead = m.role === 'leader';
+          const safeData = encodeURIComponent(JSON.stringify(m));
+
+          return `
+            <div class="user-avatar-initials" 
+                 style="width: 26px; height: 26px; font-size: 0.65rem; border: 2px solid #FFFFFF; margin-left: ${idx === 0 ? '0' : '-6px'}; cursor: pointer; background: ${isLead ? 'var(--blue-600)' : 'var(--navy-800)'}; color: #FFFFFF;" 
+                 title="${escapeHtml(mName)} (${isLead ? 'Room Lead' : 'Member'}) — Click to view profile"
+                 onclick="openMemberProfileModal('${safeData}', '${escapeHtml(g.name)}')">
+              ${initials}
+            </div>
+          `;
+        }).join('');
+
+        const subCode = g.subjectCode || 'CS401';
+        const subName = g.subjectName || g.subject || 'Engineering Subject';
+        const roomLead = g.roomLeaderName || g.creator || 'Aditya S.';
+        const roomLeadId = g.roomLeaderStudentId ? `(${g.roomLeaderStudentId})` : '';
 
         return `
           <div class="study-group-card-academic" id="cohort-card-${g.id}">
             <div>
               <div class="study-group-header-row">
-                <span class="badge badge-info" style="font-size: 0.6875rem;">${g.subjectCode} • ${g.subject}</span>
+                <span class="badge badge-info" style="font-size: 0.6875rem;">${escapeHtml(subCode)} • ${escapeHtml(subName)}</span>
                 <span class="capacity-indicator-pill ${isFull ? 'full' : 'available'}">
-                  ${g.currentMembers} / 5 Students ${isFull ? '(FULL)' : ''}
+                  ${memCount} / 5 Students ${isFull ? '(FULL)' : ''}
                 </span>
               </div>
 
               <h3 class="study-group-title" style="margin-top: 0.75rem;">${escapeHtml(g.name)}</h3>
-              <p class="study-group-topic">${escapeHtml(g.topic)}</p>
+              <p class="study-group-topic">${escapeHtml(g.topic || g.description)}</p>
 
               <div style="font-size: 0.75rem; color: var(--text-tertiary); margin-bottom: 0.75rem;">
-                Room Lead: <strong>${escapeHtml(g.creator)}</strong>
+                Room Lead: <strong>${escapeHtml(roomLead)} ${escapeHtml(roomLeadId)}</strong>
               </div>
 
               <!-- Capacity Progress Bar -->
               <div style="margin-bottom: 1rem;">
                 <div style="display: flex; justify-content: space-between; font-size: 0.6875rem; font-weight: 700; color: var(--text-tertiary); margin-bottom: 0.25rem;">
                   <span>SEAT CAPACITY</span>
-                  <span>${g.currentMembers}/5 Filled</span>
+                  <span>${memCount}/5 Filled</span>
                 </div>
                 <div style="height: 6px; background-color: var(--border-default); border-radius: 3px; overflow: hidden;">
-                  <div style="height: 100%; width: ${capacityPct}%; background-color: ${isFull ? 'var(--error-main)' : 'var(--blue-600)'}; transition: width 0.3s ease;"></div>
+                  <div style="height: 100%; width: ${capacityPct}%; background-color: ${isFull ? 'var(--status-danger)' : 'var(--blue-600)'}; transition: width 0.3s ease;"></div>
                 </div>
               </div>
 
@@ -538,62 +682,163 @@ Convergence criterion: α = 0.01 learning rate</textarea>
               <div class="study-group-members-row">
                 <div style="font-size: 0.75rem; color: var(--text-secondary); font-weight: 600;">Active Members:</div>
                 <div style="display: flex; align-items: center; padding-left: 6px;">
-                  ${memberAvatars}
+                  ${memberAvatarsHtml || '<span style="font-size: 0.7rem; color: var(--text-tertiary);">No peers yet</span>'}
                 </div>
               </div>
             </div>
 
             <!-- Actions Row -->
             <div style="display: flex; gap: 0.5rem; margin-top: 1rem;">
-              ${isFull ? `
-                <button type="button" class="btn btn-secondary btn-sm" disabled style="flex: 1; opacity: 0.65; cursor: not-allowed; border: 1px solid var(--error-light); color: var(--error-dark);">
+              ${isMember ? `
+                <button type="button" class="btn btn-secondary btn-sm" disabled style="flex: 1; background-color: var(--status-success-bg, #E8F5E9); color: var(--status-success-text, #2E7D32); border: 1px solid #C8E6C9; cursor: default;">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-right: 0.25rem;"><polyline points="20 6 9 17 4 12"/></svg>
+                  Joined
+                </button>
+              ` : (isFull ? `
+                <button type="button" class="btn btn-secondary btn-sm" disabled style="flex: 1; opacity: 0.65; cursor: not-allowed; border: 1px solid var(--status-danger); color: var(--status-danger);">
                   Room Full (5/5)
                 </button>
               ` : `
-                <button type="button" class="btn btn-primary btn-sm" onclick="joinGroup('${g.id}')" style="flex: 1;">
+                <button type="button" class="btn btn-primary btn-sm" id="btn-join-${g.id}" onclick="handleJoinCohort('${g.id}')" style="flex: 1;">
                   Join Cohort
                 </button>
-              `}
-              <button type="button" class="btn btn-outline btn-sm" onclick="openWorkspaceModal('${g.id}')" style="flex: 1;">
+              `)}
+              <a href="study-workspace.html?groupId=${encodeURIComponent(g.id)}" class="btn btn-outline btn-sm" style="flex: 1; text-align: center; text-decoration: none;">
                 Workspace
-              </button>
+              </a>
             </div>
           </div>
         `;
       }).join('');
     }
 
-    window.joinGroup = function (id) {
-      const g = cohorts.find(item => item.id === id);
-      if (!g) return;
+    /**
+     * Secure Join Action with Server-Side Transaction & Capacity Verification
+     */
+    async function handleJoinCohort(groupId) {
+      const joinBtn = document.getElementById(`btn-join-${groupId}`);
+      if (joinBtn) {
+        joinBtn.disabled = true;
+        joinBtn.textContent = 'Joining...';
+      }
 
-      if (g.currentMembers >= 5) {
-        UI.showToast('error', 'Group Full', 'Strict maximum of 5 students per study group is enforced.');
+      try {
+        const result = await StudyGroupService.joinStudyGroup(groupId);
+        UI.showToast('success', 'Cohort Joined', result.message || 'You have successfully joined the study cohort.');
+
+        // Update local cohort list immediately
+        const group = cohorts.find(c => c.id === groupId);
+        if (group && currentStudent) {
+          const studentUid = currentStudent.uid || currentStudent.id;
+          const studentId = currentStudent.studentId || currentStudent.rollNo || studentUid;
+
+          if (!group.members) group.members = [];
+          group.members.push({
+            studentId: studentId,
+            uid: studentUid,
+            name: currentStudent.name || 'Student',
+            role: 'member',
+            joinedAt: new Date().toISOString()
+          });
+          group.memberCount = group.members.length;
+          group.currentMembers = group.members.length;
+          if (group.memberCount >= 5) group.status = 'full';
+        }
+
+        renderCohorts();
+      } catch (err) {
+        UI.showToast('error', 'Join Failed', err.message || 'Could not join cohort.');
+        if (joinBtn) {
+          joinBtn.disabled = false;
+          joinBtn.textContent = 'Join Cohort';
+        }
+      }
+    }
+
+    /**
+     * Create Study Group Submit Handler
+     */
+    async function handleCreateGroupSubmit() {
+      const nameInput = document.getElementById('new-group-name');
+      const subSelect = document.getElementById('new-group-subject');
+      const topicInput = document.getElementById('new-group-topic');
+      const descInput = document.getElementById('new-group-desc');
+      const errBox = document.getElementById('create-group-error');
+      const saveBtn = document.getElementById('btn-save-new-group');
+
+      const name = nameInput.value.trim();
+      const subRaw = subSelect.value;
+      const topic = topicInput.value.trim();
+      const description = descInput ? descInput.value.trim() : topic;
+
+      if (!name || !topic) {
+        if (errBox) {
+          errBox.textContent = 'Please enter both a cohort name and topic focus.';
+          errBox.style.display = 'block';
+        }
         return;
       }
 
-      g.currentMembers += 1;
-      if (!g.members.includes('RZ')) {
-        g.members.push('RZ');
+      const [code, subject] = subRaw.split('|');
+      const meetInput = document.getElementById('new-group-meet');
+      const meetLink = meetInput ? meetInput.value.trim() : '';
+
+      saveBtn.disabled = true;
+      saveBtn.textContent = 'Creating Cohort...';
+      if (errBox) errBox.style.display = 'none';
+
+      try {
+        const newGroup = await StudyGroupService.createStudyGroup({
+          name: name,
+          subject: subject,
+          subjectCode: code,
+          subjectName: subject,
+          topic: topic,
+          description: description,
+          meetLink: meetLink || undefined
+        });
+
+        UI.closeModal('modal-create-group');
+        UI.showToast('success', 'Cohort Created', `Study group "${name}" created (1/5 members). You are the Room Lead.`);
+        document.getElementById('create-group-form').reset();
+
+        // Add to local list and re-render
+        cohorts.unshift(newGroup);
+        renderCohorts();
+      } catch (err) {
+        if (errBox) {
+          errBox.textContent = err.message || 'Failed to create cohort.';
+          errBox.style.display = 'block';
+        }
+        UI.showToast('error', 'Creation Error', err.message || 'Failed to create cohort.');
+      } finally {
+        saveBtn.disabled = false;
+        saveBtn.textContent = 'Create & Open Room';
       }
-      if (g.currentMembers >= 5) {
-        g.isFull = true;
+    }
+
+    /**
+     * Open Safe Member Profile Modal
+     */
+    function openMemberProfileModal(encodedData, groupName) {
+      try {
+        const member = JSON.parse(decodeURIComponent(encodedData));
+        const initials = (member.name || 'ST').split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+
+        document.getElementById('mp-avatar-initials').textContent = initials;
+        document.getElementById('mp-name').textContent = member.name || 'Student Member';
+        document.getElementById('mp-student-id').textContent = member.studentId || member.uid || 'STU-2024';
+        document.getElementById('mp-role-tag').textContent = member.role === 'leader' ? 'Room Lead' : 'Active Member';
+        document.getElementById('mp-role-tag').className = `badge ${member.role === 'leader' ? 'badge-primary' : 'badge-info'}`;
+
+        const joinedStr = member.joinedAt ? new Date(member.joinedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'Recent';
+        document.getElementById('mp-joined-at').textContent = joinedStr;
+
+        UI.openModal('modal-member-profile');
+      } catch (e) {
+        console.error('Error opening member modal:', e);
       }
-
-      renderCohorts();
-      UI.showToast('success', 'Joined Study Cohort', `You have been added to "${g.name}".`);
-    };
-
-    window.openWorkspaceModal = function (id) {
-      const g = cohorts.find(item => item.id === id);
-      if (!g) return;
-
-      document.getElementById('ws-subject-code').textContent = `${g.subjectCode} • ${g.subject}`;
-      document.getElementById('ws-group-title').textContent = g.name;
-      document.getElementById('ws-agenda').textContent = g.agenda || '1. General peer doubt discussion\n2. Homework check';
-
-      UI.openModal('modal-cohort-workspace');
-    };
+    }
 
     function escapeHtml(str) {
       if (!str) return '';

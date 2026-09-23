@@ -28,6 +28,16 @@ let rtdbInstance = null;
 let functionsInstance = null;
 
 function initFirebaseApp() {
+  // Automatically switch 127.0.0.1 to localhost for Firebase Auth compatibility
+  // (Firebase Identity Toolkit whitelists 'localhost' by default; '127.0.0.1' is rejected by Firebase CORS)
+  if (typeof window !== 'undefined' && window.location.hostname === '127.0.0.1' && !window.location.search.includes('noRedirect=true')) {
+    try {
+      const targetUrl = window.location.href.replace('//127.0.0.1:', '//localhost:');
+      window.location.replace(targetUrl);
+      return;
+    } catch (e) {}
+  }
+
   try {
     if (typeof firebase === 'undefined' || !firebase.initializeApp) {
       // Firebase SDK not loaded — skip silently, app uses offline mode

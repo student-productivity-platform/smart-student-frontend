@@ -608,6 +608,24 @@ const mockFaculty = {
   // Student Doubts & Queries Queue (F29)
   doubts: [
     {
+      id: "conv_seed_002",
+      doubtId: "conv_seed_002",
+      studentId: "usr_stu_1001",
+      studentName: "Riddhi Zunjarrao",
+      studentEmail: "riddhi.z@university.edu",
+      rollNo: "21CS4082",
+      studentRollNo: "21CS4082",
+      subjectCode: "CS405",
+      subjectName: "Computer Networks",
+      question: "What is the difference between TCP and UDP transport protocols and how does the 3-way handshake work?",
+      note: "I am not getting this concept",
+      notes: "I am not getting this concept",
+      assignedFaculty: "Ramesh Gupta (Department of Computer Engineering)",
+      status: "unanswered",
+      createdAt: "Today at 07:19 PM",
+      answer: ""
+    },
+    {
       id: "dbt_fac_001",
       studentId: "stu_010",
       studentName: "Riddhi Zunjarrao",

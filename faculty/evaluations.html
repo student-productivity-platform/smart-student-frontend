@@ -333,7 +333,7 @@
             </div>
             <div style="text-align: right;">
               <div style="font-size: 0.75rem; color: #94A3B8;">Submitted File:</div>
-              <a href="https://res.cloudinary.com/demo/image/upload/sample.pdf" target="_blank" id="modal-file-link" class="badge badge-primary" style="text-decoration: none; font-size: 0.72rem; display: inline-flex; align-items: center; gap: 0.25rem;">
+              <a href="/uploads/submissions/sample_submission.pdf" target="_blank" id="modal-file-link" class="badge badge-primary" style="text-decoration: none; font-size: 0.72rem; display: inline-flex; align-items: center; gap: 0.25rem;">
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
                 <span>Download File</span>
               </a>
@@ -402,7 +402,19 @@
   <script src="../js/ui.js"></script>
 
   <script>
-    document.addEventListener('DOMContentLoaded', () => {
+    document.addEventListener('DOMContentLoaded', async () => {
+      // Update sidebar/topbar with logged-in faculty profile
+      if (typeof FacultyService !== 'undefined' && FacultyService.renderFacultyProfile) {
+        FacultyService.renderFacultyProfile();
+      }
+
+      // Sync submissions from backend / Firestore
+      if (typeof FacultyService !== 'undefined' && FacultyService.syncSubmissionsWithBackend) {
+        try {
+          await FacultyService.syncSubmissionsWithBackend();
+        } catch (_) {}
+      }
+
       const asgSelect = document.getElementById('eval-assignment-select');
       const statusSelect = document.getElementById('eval-status-select');
       const tbody = document.getElementById('evaluations-tbody');
@@ -413,9 +425,26 @@
 
       // Check URL search parameters
       const params = new URLSearchParams(window.location.search);
-      if (params.get('assignmentId')) {
-        asgSelect.value = params.get('assignmentId');
+
+      // Populate assignment selector dynamically
+      function populateAssignmentSelect() {
+        if (!asgSelect) return;
+        const assignments = FacultyService.getAssignments('all');
+        const currentParam = params.get('assignmentId');
+
+        let html = '<option value="all">All Assignments</option>';
+        assignments.forEach(a => {
+          html += `<option value="${a.id}">${a.subjectCode}: ${a.title}</option>`;
+        });
+        asgSelect.innerHTML = html;
+
+        if (currentParam && assignments.some(a => a.id === currentParam)) {
+          asgSelect.value = currentParam;
+        } else {
+          asgSelect.value = 'all';
+        }
       }
+      populateAssignmentSelect();
 
       let evalCurrentPage = 1;
       const evalPageSizeSelect = document.getElementById('eval-page-size');
@@ -449,6 +478,10 @@
             ? `<strong style="color: #16A34A; font-size: 0.9375rem;">${sub.marks}</strong> / ${sub.maxMarks}`
             : `<span style="color: #94A3B8;">— / ${sub.maxMarks}</span>`;
 
+          const safeUrl = (sub.fileUrl && !sub.fileUrl.includes('res.cloudinary.com/demo/image/upload/sample'))
+            ? sub.fileUrl
+            : '/uploads/submissions/sample_submission.pdf';
+
           return `
             <tr>
               <td>
@@ -464,7 +497,7 @@
               <td><span class="badge badge-primary" style="font-weight: 700;">${sub.subjectCode}</span></td>
               <td style="font-size: 0.84375rem; color: #475569;">${sub.submittedAt}</td>
               <td>
-                <a href="https://res.cloudinary.com/demo/image/upload/sample.pdf" target="_blank" class="badge badge-subtle" style="text-decoration: none; font-size: 0.775rem; padding: 0.3rem 0.65rem; display: inline-flex; align-items: center; gap: 0.3rem;" title="Download student file">
+                <a href="${safeUrl}" target="_blank" class="badge badge-subtle" style="text-decoration: none; font-size: 0.775rem; padding: 0.3rem 0.65rem; display: inline-flex; align-items: center; gap: 0.3rem;" title="Download student file">
                   <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
                   <span>${sub.fileName || 'submission.pdf'}</span>
                 </a>
@@ -473,7 +506,7 @@
               <td>${statusBadge}</td>
               <td style="text-align: right;">
                 <button type="button" class="btn-table-action ${isGraded ? 'btn-table-action-outline' : 'btn-table-action-assignments'}" onclick="openGradeModal('${sub.id}')" style="display: inline-flex; align-items: center; gap: 0.35rem;">
-                  ${isGraded ? '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg><span>Edit Grade</span>' : '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><span>Grade Now</span>'}
+                  ${isGraded ? '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg><span>Edit Grade</span>' : '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><span>Grade Now</span>'}
                 </button>
               </td>
             </tr>
@@ -497,11 +530,20 @@
         const sub = list.find(s => s.id === submissionId);
         if (!sub) return;
 
+        const safeUrl = (sub.fileUrl && !sub.fileUrl.includes('res.cloudinary.com/demo/image/upload/sample'))
+          ? sub.fileUrl
+          : '/uploads/submissions/sample_submission.pdf';
+
         document.getElementById('grade-sub-id').value = sub.id;
         document.getElementById('modal-student-name').textContent = sub.studentName;
         document.getElementById('modal-student-meta').textContent = `Roll No: ${sub.rollNo} • Section ${sub.section} • ${sub.subjectCode}`;
         document.getElementById('modal-max-marks-label').textContent = `/ ${sub.maxMarks}`;
-        document.getElementById('modal-file-link').innerHTML = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><span>${sub.fileName || 'View Submission'}</span>`;
+        
+        const fileLinkEl = document.getElementById('modal-file-link');
+        if (fileLinkEl) {
+          fileLinkEl.href = safeUrl;
+          fileLinkEl.innerHTML = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><span>${sub.fileName || 'View Submission'}</span>`;
+        }
 
         marksInput.max = sub.maxMarks;
         marksInput.value = sub.marks !== null ? sub.marks : '';

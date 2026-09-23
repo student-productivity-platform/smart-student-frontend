@@ -6,23 +6,49 @@
  */
 
 const StudentService = (() => {
+  function hasFirebaseAuth() {
+    return !!(
+      window.SmartStudentFirebase &&
+      window.SmartStudentFirebase.isInitialized() &&
+      window.SmartStudentFirebase.getAuth &&
+      window.SmartStudentFirebase.getAuth() &&
+      window.SmartStudentFirebase.getAuth().currentUser
+    );
+  }
+
   /**
    * Get Student Profile from Firestore
    */
   async function getProfile() {
-    const activeSession = AuthService.getCurrentUser();
-    const userId = activeSession ? activeSession.uid : 'usr_stu_8842';
+    const activeSession = (typeof AuthService !== 'undefined') ? AuthService.getCurrentUser() : null;
+    const userId = activeSession ? (activeSession.uid || activeSession.id) : 'usr_stu_8842';
 
-    if (window.SmartStudentFirebase && window.SmartStudentFirebase.isInitialized()) {
+    if (hasFirebaseAuth()) {
       try {
         const db = window.SmartStudentFirebase.getDb();
-        const doc = await db.collection('users').doc(userId).get();
-        if (doc.exists) {
-          return { id: doc.id, ...doc.data() };
+        if (db) {
+          const doc = await db.collection('users').doc(userId).get();
+          if (doc.exists) {
+            return { id: doc.id, ...doc.data() };
+          }
         }
       } catch (err) {
-        console.warn("Firestore profile read failed:", err);
+        if (!err.message || !err.message.includes('permission')) {
+          console.warn("Firestore profile read note:", err.message);
+        }
       }
+    }
+
+    if (activeSession) {
+      return {
+        ...activeSession,
+        name: activeSession.name || 'Riddhi Zunjarrao',
+        email: activeSession.email || 'student@university.edu',
+        program: activeSession.program || 'B.Tech Computer Science & Engineering',
+        department: activeSession.department || 'B.Tech',
+        semester: activeSession.semester || 4,
+        section: activeSession.section || 'A'
+      };
     }
 
     if (window.mockStudent) {
@@ -55,24 +81,23 @@ const StudentService = (() => {
     let upcomingExams = 2;
     let attPct = 87;
 
-    if (window.SmartStudentFirebase && window.SmartStudentFirebase.isInitialized()) {
+    if (hasFirebaseAuth()) {
       try {
         const db = window.SmartStudentFirebase.getDb();
-        
-        // Count active assignments
-        const asgSnap = await db.collection('assignments').where('status', '==', 'active').get();
-        if (!asgSnap.empty) {
-          pendingAsgs = asgSnap.docs.length;
-        }
+        if (db) {
+          // Count active assignments
+          const asgSnap = await db.collection('assignments').where('status', '==', 'active').get();
+          if (!asgSnap.empty) {
+            pendingAsgs = asgSnap.docs.length;
+          }
 
-        // Count upcoming exams
-        const examSnap = await db.collection('exams').where('status', '==', 'scheduled').get();
-        if (!examSnap.empty) {
-          upcomingExams = examSnap.docs.length;
+          // Count upcoming exams
+          const examSnap = await db.collection('exams').where('status', '==', 'scheduled').get();
+          if (!examSnap.empty) {
+            upcomingExams = examSnap.docs.length;
+          }
         }
-      } catch (e) {
-        console.warn("Firestore snapshot calculation note:", e);
-      }
+      } catch (e) {}
     }
 
     return {
@@ -91,16 +116,16 @@ const StudentService = (() => {
    * Get Today's Class Schedule from Firestore
    */
   async function getTodaySchedule() {
-    if (window.SmartStudentFirebase && window.SmartStudentFirebase.isInitialized()) {
+    if (hasFirebaseAuth()) {
       try {
         const db = window.SmartStudentFirebase.getDb();
-        const snapshot = await db.collection('timetable').get();
-        if (!snapshot.empty) {
-          return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        if (db) {
+          const snapshot = await db.collection('timetable').get();
+          if (!snapshot.empty) {
+            return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+          }
         }
-      } catch (err) {
-        console.warn("Firestore timetable fetch note:", err);
-      }
+      } catch (err) {}
     }
     return window.mockSchedule || [];
   }
@@ -121,13 +146,13 @@ const StudentService = (() => {
       avatar: updateData.avatar || ''
     };
 
-    if (window.SmartStudentFirebase && window.SmartStudentFirebase.isInitialized()) {
+    if (hasFirebaseAuth()) {
       try {
         const db = window.SmartStudentFirebase.getDb();
-        await db.collection('users').doc(userId).set(safeUpdates, { merge: true });
-      } catch (err) {
-        console.warn("Firestore profile update note:", err);
-      }
+        if (db) {
+          await db.collection('users').doc(userId).set(safeUpdates, { merge: true });
+        }
+      } catch (err) {}
     }
 
     if (window.mockStudent) {

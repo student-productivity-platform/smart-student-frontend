@@ -438,17 +438,17 @@
     </div>
   </div>
 
-  <!-- Student Creation Success Confirmation Modal -->
+  <!-- User Provisioning Success Confirmation Modal -->
   <div class="modal-overlay" id="student-success-modal">
     <div class="modal-card" style="max-width: 480px;">
-      <div class="modal-header" style="background: linear-gradient(135deg, #10B981, #059669); color: #fff; padding: 1.25rem 1.5rem;">
+      <div class="modal-header" id="succ-modal-header" style="background: linear-gradient(135deg, #10B981, #059669); color: #fff; padding: 1.25rem 1.5rem;">
         <div style="display:flex; align-items:center; gap:0.6rem;">
           <div style="width:34px; height:34px; border-radius:50%; background:rgba(255,255,255,0.22); display:flex; align-items:center; justify-content:center;">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
           </div>
           <div>
-            <div style="font-size:1.05rem; font-weight:800;">Student Created Successfully</div>
-            <div style="font-size:0.775rem; opacity:0.92;">Temporary credentials have been dispatched</div>
+            <div style="font-size:1.05rem; font-weight:800;" id="succ-modal-title">Student Created Successfully</div>
+            <div style="font-size:0.775rem; opacity:0.92;" id="succ-modal-subtitle">Temporary credentials have been dispatched</div>
           </div>
         </div>
         <button type="button" class="btn-icon-sm" onclick="closeSuccessModal()" style="color:#fff; background:rgba(255,255,255,0.18); border:none;">&times;</button>
@@ -456,15 +456,15 @@
       <div class="modal-body" style="padding:1.25rem 1.5rem;">
         <div style="background:#F8FAFC; border:1px solid #E2E8F0; border-radius:12px; padding:1rem; margin-bottom:1rem; font-size:0.84375rem; display:flex; flex-direction:column; gap:0.65rem;">
           <div style="display:flex; justify-content:space-between;">
-            <span style="color:#64748B;">Student Name:</span>
+            <span style="color:#64748B;" id="succ-name-label">Student Name:</span>
             <strong id="succ-stu-name" style="color:#0F172A;">-</strong>
           </div>
           <div style="display:flex; justify-content:space-between;">
-            <span style="color:#64748B;">Student ID:</span>
+            <span style="color:#64748B;" id="succ-id-label">Student ID:</span>
             <strong id="succ-stu-id" style="color:#7C3AED; font-family:monospace; font-size:0.925rem;">-</strong>
           </div>
           <div style="display:flex; justify-content:space-between;">
-            <span style="color:#64748B;">College Email:</span>
+            <span style="color:#64748B;" id="succ-email-label">Institutional Email:</span>
             <strong id="succ-stu-email" style="color:#0F172A; font-family:monospace;">-</strong>
           </div>
         </div>
@@ -481,8 +481,8 @@
           </div>
         </div>
 
-        <p style="font-size:0.775rem; color:#64748B; margin:1rem 0 0 0; line-height:1.45;">
-          The student must change their temporary password upon first login. Credentials are not exposed here for privacy and security.
+        <p style="font-size:0.775rem; color:#64748B; margin:1rem 0 0 0; line-height:1.45;" id="succ-change-pass-note">
+          The user must change their temporary password upon first login. Credentials are not exposed here for privacy and security.
         </p>
       </div>
       <div class="modal-footer" style="padding:1rem 1.5rem; background:#F8FAFC; border-top:1px solid #E2E8F0;">
@@ -635,8 +635,8 @@
                 <button class="btn-icon-sm" title="Reset Password" onclick="handleResetPassword('${u.uid || u.id}', '${u.name}')">
                   <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
                 </button>
-                ${u.role === 'student' ? `
-                <button class="btn-icon-sm" title="Resend Credentials" onclick="handleResendCredentials('${u.uid || u.id || u.studentId}', '${u.name}')" style="color:#7C3AED;">
+                ${(u.role === 'student' || u.role === 'faculty') ? `
+                <button class="btn-icon-sm" title="Resend Credentials" onclick="handleResendCredentials('${u.uid || u.id || u.studentId || u.facultyId}', '${u.name}', '${u.role}')" style="color:${u.role === 'faculty' ? '#2563EB' : '#7C3AED'};">
                   <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4 20-7z"/></svg>
                 </button>` : ''}
                 <button class="btn-icon-sm ${u.status === 'active' ? 'danger' : ''}" title="${u.status === 'active' ? 'Deactivate' : 'Activate'}" onclick="handleToggleStatus('${u.uid || u.id}', '${u.status === 'active' ? 'inactive' : 'active'}', '${u.name}')">
@@ -747,7 +747,20 @@
           });
 
           closeUserModal();
-          showStudentSuccessModal(res);
+          showProvisioningSuccessModal(res, 'student');
+        } else if (role === 'faculty') {
+          // Dedicated Add Faculty Workflow
+          const res = await AdminService.createFaculty({
+            name,
+            personalEmail: email,
+            mobile: phone,
+            department: department,
+            domainId: department,
+            designation: 'Assistant Professor'
+          });
+
+          closeUserModal();
+          showProvisioningSuccessModal(res, 'faculty');
         } else {
           // Create other roles
           await AdminService.createUser({ name, email, role, department, id, phone, status, semester, division });
@@ -760,23 +773,51 @@
       }
     }
 
-    function showStudentSuccessModal(res) {
-      const student = res.student || {};
+    function showProvisioningSuccessModal(res, role = 'student') {
+      const isFaculty = role === 'faculty';
+      const userObj = res.faculty || res.student || {};
       const notif = res.notification || {};
-      document.getElementById('succ-stu-name').textContent = student.name || 'Student';
-      document.getElementById('succ-stu-id').textContent = student.studentId || 'Generated';
-      document.getElementById('succ-stu-email').textContent = student.email || '-';
+
+      document.getElementById('succ-modal-header').style.background = isFaculty
+        ? 'linear-gradient(135deg, #2563EB, #1D4ED8)'
+        : 'linear-gradient(135deg, #10B981, #059669)';
+      document.getElementById('succ-modal-title').textContent = isFaculty
+        ? 'Faculty Created Successfully'
+        : 'Student Created Successfully';
+      document.getElementById('succ-modal-subtitle').textContent = isFaculty
+        ? 'Institutional credentials dispatched to faculty email'
+        : 'Temporary credentials have been dispatched';
+
+      document.getElementById('succ-name-label').textContent = isFaculty ? 'Faculty Name:' : 'Student Name:';
+      document.getElementById('succ-stu-name').textContent = userObj.name || (isFaculty ? 'Faculty Member' : 'Student');
+
+      document.getElementById('succ-id-label').textContent = isFaculty ? 'Faculty ID:' : 'Student ID:';
+      document.getElementById('succ-stu-id').textContent = userObj.facultyId || userObj.studentId || userObj.id || 'Generated';
+      document.getElementById('succ-stu-id').style.color = isFaculty ? '#2563EB' : '#7C3AED';
+
+      document.getElementById('succ-email-label').textContent = 'Institutional Email:';
+      document.getElementById('succ-stu-email').textContent = userObj.email || '-';
+
+      document.getElementById('succ-change-pass-note').textContent = isFaculty
+        ? 'The faculty member must change their temporary password upon first login. Credentials are not exposed here for privacy and security.'
+        : 'The student must change their temporary password upon first login. Credentials are not exposed here for privacy and security.';
 
       const emailStatusEl = document.getElementById('succ-email-status');
-      emailStatusEl.textContent = notif.email === 'sent' ? 'Sent' : (notif.email === 'unconfigured' ? 'Unconfigured' : 'Failed');
-      emailStatusEl.className = `status-badge ${notif.email === 'sent' ? 'active' : 'inactive'}`;
+      const isEmailSent = notif.email === 'sent' || notif.email === 'delivered';
+      emailStatusEl.textContent = isEmailSent ? 'Sent' : (notif.email === 'unconfigured' ? 'Unconfigured' : 'Failed');
+      emailStatusEl.className = `status-badge ${isEmailSent ? 'active' : 'inactive'}`;
 
       const smsStatusEl = document.getElementById('succ-sms-status');
-      smsStatusEl.textContent = notif.sms === 'sent' ? 'Sent' : (notif.sms === 'unconfigured' ? 'Unconfigured' : 'Failed');
-      smsStatusEl.className = `status-badge ${notif.sms === 'sent' ? 'active' : 'inactive'}`;
+      const isSmsSent = notif.sms === 'sent' || notif.sms === 'delivered';
+      smsStatusEl.textContent = isSmsSent ? 'Sent' : (notif.sms === 'unconfigured' ? 'Unconfigured' : 'Failed');
+      smsStatusEl.className = `status-badge ${isSmsSent ? 'active' : 'inactive'}`;
 
       const m = document.getElementById('student-success-modal');
       m.classList.add('open', 'active');
+    }
+
+    function showStudentSuccessModal(res) {
+      showProvisioningSuccessModal(res, 'student');
     }
 
     function closeSuccessModal() {
@@ -784,12 +825,18 @@
       m.classList.remove('open', 'active');
     }
 
-    async function handleResendCredentials(studentId, name) {
-      const confirmAction = confirm(`Generate fresh temporary password and resend credential notifications to ${name}?`);
+    async function handleResendCredentials(userId, name, role = 'student') {
+      const roleLabel = role === 'faculty' ? 'faculty member' : 'student';
+      const confirmAction = confirm(`Generate fresh temporary password and resend credential notifications to ${name} (${roleLabel})?`);
       if (!confirmAction) return;
 
       try {
-        const res = await AdminService.resendStudentCredentials(studentId);
+        let res;
+        if (role === 'faculty') {
+          res = await AdminService.resendFacultyCredentials(userId);
+        } else {
+          res = await AdminService.resendStudentCredentials(userId);
+        }
         UI.showToast('success', 'Credentials Resent', `New temporary credentials dispatched for ${name} (Email: ${res.notification ? res.notification.email : 'sent'})`);
       } catch (err) {
         UI.showToast('error', 'Resend Failed', err.message);

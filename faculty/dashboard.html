@@ -646,7 +646,17 @@
 
   <!-- Faculty Dashboard Controller -->
   <script>
-    document.addEventListener('DOMContentLoaded', () => {
+    document.addEventListener('DOMContentLoaded', async () => {
+      // Update sidebar/topbar with logged-in faculty profile
+      if (typeof FacultyService !== 'undefined' && FacultyService.renderFacultyProfile) {
+        FacultyService.renderFacultyProfile();
+      }
+
+      // Sync fresh doubts from backend & Firestore
+      if (FacultyService.syncDoubtsWithBackend) {
+        await FacultyService.syncDoubtsWithBackend();
+      }
+
       // 1. Load Stats
       const stats = FacultyService.getDashboardStats();
       const subjectsCountEl = document.getElementById('kpi-subjects-count');
@@ -740,7 +750,7 @@
               </div>
               <div class="ref-previous-info" style="flex: 1;">
                 <div class="ref-previous-item-title" style="font-size: 0.8125rem; line-height: 1.3;">${d.question}</div>
-                <div class="ref-previous-item-sub">${d.studentName} (${d.rollNo}) • ${d.subjectCode} • ${d.createdAt}</div>
+                <div class="ref-previous-item-sub">${d.studentName} (${d.studentRollNo || d.rollNo || 'CS24-042'}) • ${d.subjectCode || 'CS405'} • ${d.createdAt}</div>
               </div>
               <a href="communication.html?doubtId=${d.id}" class="ref-previous-link" style="white-space: nowrap;">Answer</a>
             </div>

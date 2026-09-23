@@ -817,6 +817,84 @@ input[type="search"].topbar-search-input {
   display: block !important;
 }
 
+/* Action Dropdowns & Session Menu Items */
+#session-menu-dropdown {
+  min-width: 215px;
+  padding: 0.375rem;
+  background: var(--surface, #FFFFFF);
+  border: 1px solid var(--border-default, rgba(226, 232, 240, 0.95));
+  box-shadow: 0 16px 36px -4px rgba(15, 23, 42, 0.14), 0 4px 12px -2px rgba(15, 23, 42, 0.05);
+}
+
+.menu-dropdown .menu-item,
+.menu-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  padding: 0.6rem 0.85rem;
+  font-family: inherit;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--text-secondary, #334155);
+  background: transparent;
+  border: none !important;
+  outline: none;
+  border-radius: 8px;
+  cursor: pointer;
+  text-align: left;
+  white-space: nowrap;
+  transition: background-color 0.15s ease, color 0.15s ease;
+  box-sizing: border-box;
+}
+
+.menu-dropdown .menu-item:hover,
+.menu-item:hover {
+  background-color: var(--bg-surface-subtle, #F1F5F9);
+  color: var(--text-primary, #0F172A);
+}
+
+.menu-dropdown .menu-item svg,
+.menu-item svg {
+  flex-shrink: 0;
+  color: var(--text-tertiary, #64748B);
+  transition: color 0.15s ease, transform 0.15s ease;
+}
+
+.menu-dropdown .menu-item:hover svg,
+.menu-item:hover svg {
+  color: var(--blue-600, #2563EB);
+}
+
+.menu-dropdown .menu-divider,
+.menu-divider {
+  height: 1px;
+  margin: 0.35rem 0.25rem;
+  background-color: var(--border-default, #E2E8F0);
+  border: none;
+}
+
+.menu-dropdown .menu-item.text-danger,
+.menu-item.text-danger {
+  color: var(--error, #DC2626);
+}
+
+.menu-dropdown .menu-item.text-danger svg,
+.menu-item.text-danger svg {
+  color: var(--error, #EF4444);
+}
+
+.menu-dropdown .menu-item.text-danger:hover,
+.menu-item.text-danger:hover {
+  background-color: var(--error-bg, #FEF2F2);
+  color: var(--error-dark, #B91C1C);
+}
+
+.menu-dropdown .menu-item.text-danger:hover svg,
+.menu-item.text-danger:hover svg {
+  color: var(--error-dark, #DC2626);
+}
+
 .notification-dropdown {
   width: 380px;
 }

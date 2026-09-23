@@ -498,6 +498,11 @@
 
   <script>
     document.addEventListener('DOMContentLoaded', () => {
+      // Update sidebar/topbar with logged-in faculty profile
+      if (typeof FacultyService !== 'undefined' && FacultyService.renderFacultyProfile) {
+        FacultyService.renderFacultyProfile();
+      }
+
       const profile = FacultyService.getProfile();
       const form = document.getElementById('edit-profile-form');
 

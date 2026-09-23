@@ -1,0 +1,1167 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cohort Workspace — Smart Student</title>
+  <meta name="description"
+    content="Real-time peer study group workspace with collaborative discussion, shared notes, and academic resources.">
+  <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+  <link rel="alternate icon" href="../favicon.ico">
+  <link rel="stylesheet" href="../css/main.css">
+  <link rel="stylesheet" href="../css/dashboard.css">
+  <link rel="stylesheet" href="../css/responsive.css">
+  <script src="../js/auth-guard.js"></script>
+  <style>
+    .workspace-header-card {
+      background: var(--surface);
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      box-shadow: var(--shadow-xs);
+    }
+    .workspace-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 1.5rem;
+    }
+    @media (max-width: 992px) {
+      .workspace-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+    .chat-panel {
+      background: var(--surface);
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-lg);
+      display: flex;
+      flex-direction: column;
+      height: 480px;
+    }
+    .chat-header {
+      padding: 1rem 1.25rem;
+      border-bottom: 1px solid var(--border-light);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .chat-messages-container {
+      flex: 1;
+      overflow-y: auto;
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+      background-color: var(--bg-surface-subtle);
+    }
+    .chat-input-bar {
+      padding: 0.85rem 1rem;
+      border-top: 1px solid var(--border-light);
+      display: flex;
+      gap: 0.5rem;
+      background: var(--surface);
+      border-bottom-left-radius: var(--radius-lg);
+      border-bottom-right-radius: var(--radius-lg);
+    }
+    .chat-bubble {
+      max-width: 80%;
+      padding: 0.65rem 0.95rem;
+      border-radius: var(--radius-md);
+      font-size: 0.875rem;
+      line-height: 1.45;
+    }
+    .chat-bubble.mine {
+      align-self: flex-end;
+      background-color: var(--blue-600);
+      color: #FFFFFF;
+      border-bottom-right-radius: 2px;
+    }
+    .chat-bubble.theirs {
+      align-self: flex-start;
+      background-color: var(--surface);
+      color: var(--text-primary);
+      border: 1px solid var(--border-light);
+      border-bottom-left-radius: 2px;
+    }
+    .chat-meta {
+      font-size: 0.6875rem;
+      margin-bottom: 0.2rem;
+      display: flex;
+      gap: 0.5rem;
+    }
+    .chat-bubble.mine .chat-meta {
+      color: rgba(255, 255, 255, 0.8);
+      justify-content: flex-end;
+    }
+    .chat-bubble.theirs .chat-meta {
+      color: var(--text-tertiary);
+    }
+    .presence-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-size: 0.725rem;
+      font-weight: 600;
+    }
+    .presence-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+    .presence-dot.online {
+      background-color: var(--status-success, #10B981);
+      box-shadow: 0 0 6px rgba(16, 185, 129, 0.6);
+    }
+    .presence-dot.offline {
+      background-color: var(--text-tertiary, #94A3B8);
+    }
+    .resource-item-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.75rem 1rem;
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-md);
+      background-color: var(--surface);
+      margin-bottom: 0.65rem;
+      transition: background-color 0.2s;
+    }
+    .resource-item-row:hover {
+      background-color: var(--bg-surface-subtle);
+    }
+  </style>
+</head>
+
+<body>
+  <div id="toast-container"></div>
+  <div class="sidebar-backdrop"></div>
+  <div class="app-container">
+    <!-- Navigation Sidebar -->
+    <aside class="app-sidebar" aria-label="Main Navigation">
+      <div class="sidebar-header">
+        <a href="dashboard.html" class="sidebar-brand">
+          <div class="sidebar-brand-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
+              <path d="M6 12v5c3 3 9 3 12 0v-5" />
+            </svg>
+          </div>
+          <div class="sidebar-brand-text">
+            <h2>Smart Student</h2>
+            <span>Student Portal</span>
+          </div>
+        </a>
+      </div>
+      <nav class="sidebar-nav-container">
+        <div class="nav-section-label">Academic Core</div>
+        <a href="dashboard.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18"
+              viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="3" width="7" height="7" />
+              <rect x="14" y="3" width="7" height="7" />
+              <rect x="14" y="14" width="7" height="7" />
+              <rect x="3" y="14" width="7" height="7" />
+            </svg></span><span>Overview</span></a>
+        <a href="courses.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18"
+              viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+              <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+            </svg></span><span>My Courses</span></a>
+        <a href="assignments.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18"
+              viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" />
+              <rect x="8" y="2" width="8" height="4" rx="1" ry="1" />
+            </svg></span><span>Assignments</span><span class="nav-badge">3</span></a>
+        <a href="exams.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18"
+              viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10" />
+              <polyline points="12 6 12 12 14 14" />
+            </svg></span><span>Exams</span></a>
+        <a href="attendance.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18"
+              viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+              <polyline points="22 4 12 14.01 9 11.01" />
+            </svg></span><span>Attendance</span></a>
+        <a href="results.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18"
+              viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="18" y1="20" x2="18" y2="10" />
+              <line x1="12" y1="20" x2="12" y2="4" />
+              <line x1="6" y1="20" x2="6" y2="14" />
+            </svg></span><span>Results</span></a>
+        <div class="nav-section-label">Productivity & Resources</div>
+        <a href="materials.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18"
+              viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+            </svg></span><span>Learning Materials</span></a>
+        <a href="tasks.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18"
+              viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="9 11 12 14 22 4" />
+              <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
+            </svg></span><span>Tasks</span></a>
+        <a href="calendar.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18"
+              viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+              <line x1="16" y1="2" x2="16" y2="6" />
+              <line x1="8" y1="2" x2="8" y2="6" />
+              <line x1="3" y1="10" x2="21" y2="10" />
+            </svg></span><span>Calendar</span></a>
+        <a href="ai-doubts.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18"
+              viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10" />
+              <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+              <line x1="12" y1="17" x2="12.01" y2="17" />
+            </svg></span><span>AI Doubts</span></a>
+        <a href="study-groups.html" class="nav-link active"><span class="nav-link-icon"><svg width="18" height="18"
+              viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+              <circle cx="9" cy="7" r="4" />
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+              <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+            </svg></span><span>Study Groups</span></a>
+        <div class="nav-divider"></div>
+        <a href="settings.html" class="nav-link"><span class="nav-link-icon"><svg width="18" height="18"
+              viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="3" />
+              <path
+                d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
+            </svg></span><span>Settings</span></a>
+      </nav>
+      <div class="sidebar-footer">
+        <a href="profile.html" class="sidebar-user-card">
+          <div class="user-avatar"><span class="user-avatar-initials" id="sidebar-initials">RZ</span></div>
+          <div class="user-info-text">
+            <div class="user-name" id="sidebar-user-name">Riddhi Zunjarrao</div>
+            <span class="user-role-tag" id="sidebar-user-role">Sem 4 • Sec A</span>
+          </div>
+        </a>
+      </div>
+    </aside>
+
+    <div class="app-main">
+      <header class="app-topbar">
+        <div class="topbar-left">
+          <button type="button" class="mobile-nav-toggle" id="mobile-nav-toggle" aria-label="Open Navigation">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="3" y1="12" x2="21" y2="12" />
+              <line x1="3" y1="6" x2="21" y2="6" />
+              <line x1="3" y1="18" x2="21" y2="18" />
+            </svg>
+          </button>
+          <div class="topbar-page-title" style="display: flex; align-items: center; gap: 0.75rem;">
+            <a href="study-groups.html" class="btn btn-outline btn-sm" style="padding: 0.35rem 0.65rem;">
+              &larr; Back to Cohorts
+            </a>
+            <h1 style="font-size: 1.15rem; margin: 0;">Study Group Workspace</h1>
+          </div>
+        </div>
+
+        <div class="topbar-right">
+          <div class="dropdown-container">
+            <button type="button" class="user-menu-btn" data-dropdown-toggle="user-dropdown-menu" aria-label="User Menu">
+              <div class="user-avatar-sm"><span class="user-avatar-initials" id="topbar-initials">RZ</span></div>
+              <div class="user-menu-info">
+                <div class="user-menu-name" id="topbar-user-name">Riddhi Zunjarrao</div>
+                <div class="user-menu-sub">B.Tech Computer Science & Engineering</div>
+              </div>
+            </button>
+            <div id="user-dropdown-menu" class="menu-dropdown profile-dropdown-menu">
+              <a href="profile.html">My Profile</a>
+              <a href="settings.html">Settings</a>
+              <a href="../login.html" class="logout-action">Sign Out</a>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <main class="app-content">
+        <!-- Room Banner Header -->
+        <div class="workspace-header-card" id="workspace-header">
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem;">
+            <div>
+              <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.35rem;">
+                <span class="badge badge-info" id="ws-subject-pill" style="font-size: 0.75rem;">Loading...</span>
+                <span class="capacity-indicator-pill available" id="ws-capacity-pill">-- / 5 Students</span>
+                <span class="badge badge-success" id="ws-role-badge" style="font-size: 0.75rem; display: none;">You are Room Lead</span>
+              </div>
+              <h2 id="ws-group-title" style="font-size: 1.35rem; color: var(--navy-900); margin: 0 0 0.45rem 0;">Loading study group...</h2>
+              <p id="ws-topic" style="color: var(--text-secondary); margin: 0; font-size: 0.875rem;">Connecting to Firebase...</p>
+              <div style="font-size: 0.75rem; color: var(--text-tertiary); margin-top: 0.5rem;">
+                Room Leader: <strong id="ws-leader-name" style="color: var(--text-primary);">...</strong>
+              </div>
+            </div>
+
+            <!-- Workspace Actions -->
+            <div style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
+              <button type="button" id="ws-meet-btn" class="btn btn-primary btn-sm" onclick="openGoogleMeetHub()">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 0.35rem;">
+                  <polygon points="23 7 16 12 23 17 23 7"/>
+                  <rect x="1" y="5" width="15" height="14" rx="2" ry="2"/>
+                </svg>
+                Launch Google Meet
+              </button>
+              <button type="button" class="btn btn-outline btn-sm" id="btn-leave-cohort" style="color: var(--status-danger); border-color: var(--status-danger);" onclick="confirmLeaveCohort()">
+                Leave Cohort
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Live Google Meet Call Bar -->
+        <div id="ws-live-meet-bar" class="live-meet-bar" style="display: none; margin-bottom: 1.25rem; background: linear-gradient(135deg, #1E1B4B 0%, #312E81 100%); color: #FFFFFF; border-radius: var(--radius-md); padding: 0.85rem 1.25rem; align-items: center; justify-content: space-between; gap: 1rem; box-shadow: 0 4px 14px rgba(79, 70, 229, 0.2);">
+          <div style="display: flex; align-items: center; gap: 0.75rem;">
+            <span class="live-pulse-dot" style="width: 10px; height: 10px; background-color: #10B981; border-radius: 50%; display: inline-block; box-shadow: 0 0 8px #10B981;"></span>
+            <div>
+              <div style="font-weight: 700; font-size: 0.875rem; letter-spacing: -0.01em;">Google Meet Study Call in Progress</div>
+              <div style="font-size: 0.75rem; opacity: 0.85; font-family: monospace;" id="live-meet-url-text">https://meet.google.com/...</div>
+            </div>
+          </div>
+          <div style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
+            <button type="button" class="btn btn-secondary btn-sm" onclick="copyMeetLink()" style="background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.25); color: #FFF; font-size: 0.75rem;">
+              Copy Link
+            </button>
+            <button type="button" class="btn btn-secondary btn-sm" onclick="shareMeetToChat()" style="background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.25); color: #FFF; font-size: 0.75rem;">
+              Share in Chat
+            </button>
+            <a href="#" target="_blank" id="live-meet-join-btn" class="btn btn-primary btn-sm" style="background-color: #10B981; border-color: #10B981; font-weight: 700; text-decoration: none;">
+              Join Call Now
+            </a>
+          </div>
+        </div>
+
+        <!-- Main Workspace Two-Column Layout -->
+        <div class="workspace-grid">
+          <!-- Left Column: Discussion Chat & Whiteboard Notes -->
+          <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+            <!-- Real-Time Chat Panel -->
+            <div class="chat-panel">
+              <div class="chat-header">
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--blue-600)" stroke-width="2">
+                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                  </svg>
+                  <h3 style="margin: 0; font-size: 0.95rem; font-weight: 700; color: var(--navy-900);">Cohort Peer Discussion</h3>
+                </div>
+                <span style="font-size: 0.75rem; color: var(--text-tertiary);">Real-time Live Sync</span>
+              </div>
+
+              <div class="chat-messages-container" id="chat-messages">
+                <div style="text-align: center; color: var(--text-tertiary); font-size: 0.8125rem; margin: auto;">
+                  Loading messages...
+                </div>
+              </div>
+
+              <form class="chat-input-bar" id="chat-form" onsubmit="event.preventDefault(); handleSendMessage();">
+                <input type="text" id="chat-input" class="form-input" placeholder="Type a message, question, or study thought..." autocomplete="off" style="flex: 1; height: 38px;">
+                <button type="submit" class="btn btn-primary btn-sm" id="btn-send-msg" style="padding: 0 1.25rem;">
+                  Send
+                </button>
+              </form>
+            </div>
+
+            <!-- Shared Whiteboard Notes -->
+            <div class="workspace-header-card" style="margin-bottom: 0;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+                <div style="font-size: 0.85rem; font-weight: 700; color: var(--navy-900); text-transform: uppercase;">
+                  Shared Whiteboard & Study Formulas
+                </div>
+                <button type="button" class="btn btn-outline btn-sm" onclick="handleSaveNotes()">
+                  Save Notes
+                </button>
+              </div>
+              <textarea id="ws-whiteboard-notes" class="form-input" rows="5" placeholder="Write key formulas, proof steps, and session summaries for your group peers..."></textarea>
+            </div>
+          </div>
+
+          <!-- Right Column: Active Members & Study Resources Hub -->
+          <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+            <!-- Active Members Card with Presence -->
+            <div class="workspace-header-card" style="margin-bottom: 0;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                <h3 style="margin: 0; font-size: 0.95rem; font-weight: 700; color: var(--navy-900);">Enrolled Peers (<span id="ws-member-count">0</span>/5)</h3>
+                <span class="presence-badge">
+                  <span class="presence-dot online"></span>
+                  <span id="ws-online-count">1 Online</span>
+                </span>
+              </div>
+
+              <div id="ws-members-list" style="display: flex; flex-direction: column; gap: 0.65rem;">
+                <!-- Populated dynamically -->
+              </div>
+            </div>
+
+            <!-- Study Resources Hub -->
+            <div class="workspace-header-card" style="margin-bottom: 0;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                <h3 style="margin: 0; font-size: 0.95rem; font-weight: 700; color: var(--navy-900);">Shared Resources</h3>
+                <button type="button" class="btn btn-outline btn-sm" onclick="UI.openModal('modal-add-resource')">
+                  + Add File / Link
+                </button>
+              </div>
+
+              <div id="ws-resources-list">
+                <!-- Populated dynamically -->
+                <div style="text-align: center; color: var(--text-tertiary); font-size: 0.8125rem; padding: 1.5rem 0;">
+                  No shared documents yet. Upload notes or PDF guides above.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- Add Resource Modal -->
+  <div class="modal-overlay" id="modal-add-resource">
+    <div class="modal-dialog" style="max-width: 480px;">
+      <div class="modal-header">
+        <h3 class="modal-title">Share Study Resource</h3>
+        <button type="button" class="toast-close" onclick="UI.closeModal('modal-add-resource')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="add-resource-form" onsubmit="event.preventDefault(); handleAddResourceSubmit();">
+          <div class="form-group">
+            <label class="form-label">Resource Title <span class="required">*</span></label>
+            <input type="text" id="res-title" class="form-input" placeholder="e.g. Unit 3 Backprop Derivation Notes" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Resource Type</label>
+            <select id="res-type" class="form-input">
+              <option value="notes">Study Notes / Cheatsheet</option>
+              <option value="pdf">PDF Document</option>
+              <option value="link">Online Reference / Link</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Resource URL / Link</label>
+            <input type="url" id="res-url" class="form-input" placeholder="https://example.com/material.pdf" value="https://drive.google.com/study-cohort-resources">
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" onclick="UI.closeModal('modal-add-resource')">Cancel</button>
+        <button type="button" class="btn btn-primary" onclick="handleAddResourceSubmit()">Share Resource</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Safe Member Profile Modal -->
+  <div class="modal-overlay" id="modal-member-profile">
+    <div class="modal-dialog" style="max-width: 440px;">
+      <div class="modal-header">
+        <h3 class="modal-title">Student Member Profile</h3>
+        <button type="button" class="toast-close" onclick="UI.closeModal('modal-member-profile')">&times;</button>
+      </div>
+      <div class="modal-body" style="text-align: center; padding: 1.5rem 1rem;">
+        <div class="user-avatar" style="width: 64px; height: 64px; font-size: 1.4rem; margin: 0 auto 1rem auto; background: var(--blue-600); color: #fff; display: flex; align-items: center; justify-content: center; border-radius: 50%;">
+          <span id="mp-avatar-initials">AS</span>
+        </div>
+        <h4 id="mp-name" style="margin: 0 0 0.25rem 0; font-size: 1.15rem; color: var(--navy-900);">Student Name</h4>
+        <span class="badge badge-info" id="mp-role-tag" style="margin-bottom: 1.25rem;">Member</span>
+
+        <div style="background-color: var(--bg-surface-subtle); border: 1px solid var(--border-light); border-radius: var(--radius-md); padding: 1rem; text-align: left; display: flex; flex-direction: column; gap: 0.65rem; font-size: 0.85rem;">
+          <div style="display: flex; justify-content: space-between;">
+            <span style="color: var(--text-tertiary);">Student ID:</span>
+            <strong id="mp-student-id" style="color: var(--text-primary);">CS4-012</strong>
+          </div>
+          <div style="display: flex; justify-content: space-between;">
+            <span style="color: var(--text-tertiary);">Program:</span>
+            <strong id="mp-program" style="color: var(--text-primary);">B.Tech Computer Science</strong>
+          </div>
+          <div style="display: flex; justify-content: space-between;">
+            <span style="color: var(--text-tertiary);">Semester / Section:</span>
+            <strong id="mp-sem-sec" style="color: var(--text-primary);">Semester 4 • Sec A</strong>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer" style="justify-content: flex-end;">
+        <button type="button" class="btn btn-secondary" onclick="UI.closeModal('modal-member-profile')">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Leave Cohort Confirmation Modal -->
+  <div class="modal-overlay" id="modal-confirm-leave">
+    <div class="modal-dialog" style="max-width: 440px;">
+      <div class="modal-header">
+        <h3 class="modal-title">Leave Study Cohort</h3>
+        <button type="button" class="toast-close" onclick="UI.closeModal('modal-confirm-leave')">&times;</button>
+      </div>
+      <div class="modal-body" style="padding: 1.25rem;">
+        <p style="color: var(--text-primary); margin: 0 0 0.75rem 0;">Are you sure you want to leave this study cohort?</p>
+        <p id="leave-leader-warning" style="display: none; color: var(--error-dark); font-size: 0.8125rem; background: var(--error-bg); padding: 0.75rem; border-radius: var(--radius-sm); margin: 0;">
+          <strong>Leadership Succession:</strong> Since you are the Room Lead, leadership will automatically transfer to the next senior member in the room.
+        </p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" onclick="UI.closeModal('modal-confirm-leave')">Cancel</button>
+        <button type="button" class="btn btn-primary" id="btn-confirm-leave" style="background-color: var(--status-danger); border-color: var(--status-danger);" onclick="executeLeaveCohort()">
+          Yes, Leave Cohort
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Google Meet Live Session Modal -->
+  <div class="modal-overlay" id="modal-google-meet">
+    <div class="modal-dialog" style="max-width: 540px;">
+      <div class="modal-header">
+        <div style="display: flex; align-items: center; gap: 0.6rem;">
+          <div style="width: 36px; height: 36px; border-radius: 8px; background: #EEF2FF; display: flex; align-items: center; justify-content: center; color: var(--blue-600);">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polygon points="23 7 16 12 23 17 23 7"/>
+              <rect x="1" y="5" width="15" height="14" rx="2" ry="2"/>
+            </svg>
+          </div>
+          <div>
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+              <h3 class="modal-title" style="margin: 0; font-size: 1.1rem; color: var(--navy-900);">Google Meet Study Session</h3>
+              <span class="badge badge-primary" style="font-size: 0.625rem; background: #ECFDF5; color: #059669; border: 1px solid #A7F3D0;">Live API v2</span>
+            </div>
+            <span style="font-size: 0.75rem; color: var(--text-tertiary);">Peer video, audio, whiteboard & screen sharing</span>
+          </div>
+        </div>
+        <button type="button" class="toast-close" onclick="UI.closeModal('modal-google-meet')">&times;</button>
+      </div>
+      <div class="modal-body" style="padding: 1.25rem;">
+        <!-- Live Instant Notice (when user starts instant meeting) -->
+        <div id="gm-instant-alert" style="display: none; background: #ECFDF5; border: 1.5px solid #10B981; border-radius: 8px; padding: 0.85rem; margin-bottom: 1rem; font-size: 0.8rem; color: #065F46;">
+          🎉 <strong>Live Google Meet opened in a new tab!</strong><br>
+          Once Google creates your room, copy the meeting link (e.g. <code>https://meet.google.com/xxx-yyyy-zzz</code>) and paste it below, then click <strong>Save & Share</strong> so all 5 members can join!
+        </div>
+
+        <!-- Primary Live Actions: Provision via API, Join, or Start Instant -->
+        <div style="display: flex; flex-direction: column; gap: 0.65rem; margin-bottom: 1.15rem;">
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+            <button type="button" id="gm-provision-btn" onclick="handleProvisionMeetSpace()" class="btn btn-primary" style="display: flex; align-items: center; justify-content: center; gap: 0.5rem; font-weight: 700; padding: 0.75rem 1rem;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polygon points="23 7 16 12 23 17 23 7"/>
+                <rect x="1" y="5" width="15" height="14" rx="2" ry="2"/>
+              </svg>
+              <span>Provision API Space</span>
+            </button>
+            <a href="#" target="_blank" id="gm-modal-join-btn" onclick="handleJoinMeetClick(event)" class="btn btn-secondary" style="display: flex; align-items: center; justify-content: center; gap: 0.5rem; font-weight: 700; text-decoration: none; padding: 0.75rem 1rem;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <polygon points="10 8 16 12 10 16 10 8"></polygon>
+              </svg>
+              <span>Join Active Call</span>
+            </a>
+          </div>
+          <button type="button" id="gm-start-instant-btn" onclick="handleStartInstantMeet()" class="btn btn-outline btn-sm" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 0.4rem; font-size: 0.75rem;">
+            <span>Or open browser instant call directly (<code>meet.google.com/new</code>) &rarr;</span>
+          </button>
+        </div>
+
+        <!-- Active Call Link Card -->
+        <div style="background: var(--bg-surface-subtle); border: 1px solid var(--border-default); border-radius: var(--radius-md); padding: 1rem; margin-bottom: 1rem;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.45rem;">
+            <span style="font-size: 0.6875rem; font-weight: 700; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.05em;">Current Cohort Meeting URL</span>
+            <span class="badge badge-success" id="gm-modal-badge" style="font-size: 0.6875rem;">Assigned Link</span>
+          </div>
+          <div style="display: flex; gap: 0.5rem; align-items: center;">
+            <input type="text" id="gm-modal-link-display" class="form-input" readonly style="font-family: monospace; font-size: 0.85rem; font-weight: 600; color: var(--navy-900); background: #FFF;" value="https://meet.google.com/new">
+            <button type="button" class="btn btn-secondary btn-sm" onclick="copyMeetLink()" title="Copy Link to Clipboard">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Update / Paste Link Section -->
+        <div style="border-top: 1px solid var(--border-light); padding-top: 0.85rem;">
+          <div style="font-size: 0.8125rem; font-weight: 700; color: var(--navy-900); margin-bottom: 0.4rem;">
+            Update / Paste Active Meeting Link
+          </div>
+          <div style="display: flex; gap: 0.5rem;">
+            <input type="text" id="gm-custom-link-input" class="form-input" placeholder="e.g. xxx-yyyy-zzz or https://meet.google.com/..." style="flex: 1; font-size: 0.8125rem; font-family: monospace;">
+            <button type="button" class="btn btn-primary btn-sm" onclick="handleSaveCustomMeetLink()" style="white-space: nowrap;">
+              Save & Share
+            </button>
+          </div>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.5rem;">
+            <span style="font-size: 0.71875rem; color: var(--text-tertiary);">
+              Codes auto-format to <code>meet.google.com</code> & broadcast to chat.
+            </span>
+            <button type="button" class="btn btn-ghost btn-sm" onclick="shareMeetToChat()" style="font-size: 0.71875rem; color: var(--blue-600); padding: 0.2rem 0.5rem;">
+              📢 Re-broadcast Current Link
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer" style="justify-content: flex-end;">
+        <button type="button" class="btn btn-secondary" onclick="UI.closeModal('modal-google-meet')">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+  <script src="../js/firebase-config.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/student-service.js"></script>
+  <script src="../js/study-group-service.js"></script>
+  <script src="../js/ui.js"></script>
+
+  <script>
+    let currentGroupId = null;
+    let currentGroup = null;
+    let currentStudent = null;
+    let unsubscribeChat = null;
+    let unsubscribePresence = null;
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      // 1. Resolve groupId from URL query
+      const urlParams = new URLSearchParams(window.location.search);
+      currentGroupId = urlParams.get('groupId') || 'grp_001';
+
+      // 2. Load active student identity
+      await loadStudentIdentity();
+
+      // 3. Load study group from Firebase / Backend
+      await loadWorkspaceGroup();
+
+      // 4. Setup Chat & Presence Listeners
+      setupRealtimeChat();
+      setupOnlinePresence();
+    });
+
+    async function loadStudentIdentity() {
+      try {
+        currentStudent = await StudentService.getProfile();
+        if (!currentStudent && typeof AuthService !== 'undefined') {
+          currentStudent = AuthService.getCurrentUser();
+        }
+        if (currentStudent) {
+          const name = currentStudent.name || 'Riddhi Zunjarrao';
+          const program = currentStudent.program || 'B.Tech CSE';
+          const sem = currentStudent.semester || 4;
+          const sec = currentStudent.section || 'A';
+
+          const topbarName = document.getElementById('topbar-user-name');
+          const sidebarName = document.getElementById('sidebar-user-name');
+          const sidebarRole = document.getElementById('sidebar-user-role');
+
+          if (topbarName) topbarName.textContent = name;
+          if (sidebarName) sidebarName.textContent = name;
+          if (sidebarRole) sidebarRole.textContent = `Sem ${sem} • Sec ${sec}`;
+
+          const initials = name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase() || 'RZ';
+          document.querySelectorAll('#topbar-initials, #sidebar-initials').forEach(el => el.textContent = initials);
+        }
+      } catch (e) {
+        console.warn('Identity load error:', e);
+      }
+    }
+
+    async function loadWorkspaceGroup() {
+      try {
+        const data = await StudyGroupService.getStudyGroupById(currentGroupId);
+        if (!data || !data.group) {
+          showWorkspaceError('Study group not found or has been closed.');
+          return;
+        }
+
+        currentGroup = data.group;
+        renderHeader();
+        renderMembers();
+        renderResources(data.resources || []);
+        renderWhiteboard();
+      } catch (err) {
+        console.error('Failed to load group:', err);
+        showWorkspaceError(err.message || 'Could not load group from Firebase.');
+      }
+    }
+
+    function renderHeader() {
+      const g = currentGroup;
+      if (!g) return;
+
+      document.title = `${g.name} — Workspace`;
+      const memCount = g.memberCount !== undefined ? g.memberCount : (g.currentMembers || (g.members ? g.members.length : 1));
+      const isFull = memCount >= 5;
+
+      document.getElementById('ws-subject-pill').textContent = `${g.subjectCode || 'CS401'} • ${g.subjectName || g.subject || 'Engineering'}`;
+      document.getElementById('ws-capacity-pill').textContent = `${memCount} / 5 Students ${isFull ? '(FULL)' : ''}`;
+      document.getElementById('ws-capacity-pill').className = `capacity-indicator-pill ${isFull ? 'full' : 'available'}`;
+      document.getElementById('ws-group-title').textContent = g.name;
+      document.getElementById('ws-topic').textContent = g.topic || g.description || '';
+      document.getElementById('ws-leader-name').textContent = `${g.roomLeaderName || 'Aditya S.'} ${g.roomLeaderStudentId ? `(${g.roomLeaderStudentId})` : ''}`;
+
+      const meetUrl = g.meetLink || 'https://meet.google.com/study-live-room';
+      const meetBtn = document.getElementById('ws-meet-btn');
+      if (meetBtn) {
+        meetBtn.setAttribute('data-meet-url', meetUrl);
+      }
+      const liveMeetText = document.getElementById('live-meet-url-text');
+      if (liveMeetText) {
+        liveMeetText.textContent = meetUrl;
+      }
+      const modalLinkInput = document.getElementById('gm-modal-link-display');
+      if (modalLinkInput) {
+        modalLinkInput.value = meetUrl;
+      }
+      const modalJoinBtn = document.getElementById('gm-modal-join-btn');
+      if (modalJoinBtn) {
+        modalJoinBtn.href = meetUrl;
+      }
+      const liveJoinBtn = document.getElementById('live-meet-join-btn');
+      if (liveJoinBtn) {
+        liveJoinBtn.href = meetUrl;
+      }
+      const customInput = document.getElementById('gm-custom-link-input');
+      if (customInput && !customInput.value) {
+        customInput.value = meetUrl;
+      }
+
+      // Check if current student is leader
+      const studentUid = currentStudent ? (currentStudent.uid || currentStudent.id) : '';
+      const isLeader = (g.roomLeaderId === studentUid);
+      const leaderBadge = document.getElementById('ws-role-badge');
+      if (leaderBadge) {
+        leaderBadge.style.display = isLeader ? 'inline-block' : 'none';
+      }
+    }
+
+    function renderMembers() {
+      const g = currentGroup;
+      if (!g) return;
+
+      const members = Array.isArray(g.members) ? g.members : [];
+      document.getElementById('ws-member-count').textContent = members.length;
+
+      const container = document.getElementById('ws-members-list');
+      if (!container) return;
+
+      container.innerHTML = members.map(m => {
+        const initials = (m.name || 'Student').split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase() || 'ST';
+        const isLead = m.role === 'leader';
+        const safeData = encodeURIComponent(JSON.stringify(m));
+
+        return `
+          <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.65rem 0.75rem; background: var(--surface); border: 1px solid var(--border-light); border-radius: var(--radius-md);">
+            <div style="display: flex; align-items: center; gap: 0.65rem; cursor: pointer;" onclick="openMemberModal('${safeData}')">
+              <div class="user-avatar-initials" style="width: 32px; height: 32px; font-size: 0.75rem; background: ${isLead ? 'var(--blue-600)' : 'var(--navy-800)'}; color: #FFFFFF;">
+                ${initials}
+              </div>
+              <div>
+                <div style="font-size: 0.85rem; font-weight: 700; color: var(--navy-900);">${escapeHtml(m.name || 'Student')}</div>
+                <div style="font-size: 0.7rem; color: var(--text-tertiary);">${escapeHtml(m.studentId || m.uid || '')}</div>
+              </div>
+            </div>
+            ${isLead ? `
+              <span class="badge badge-primary" style="font-size: 0.65rem; padding: 0.2rem 0.5rem;">Room Lead</span>
+            ` : `
+              <span class="badge badge-info" style="font-size: 0.65rem; padding: 0.2rem 0.5rem;">Member</span>
+            `}
+          </div>
+        `;
+      }).join('');
+    }
+
+    function renderResources(resources) {
+      const container = document.getElementById('ws-resources-list');
+      if (!container) return;
+
+      if (!resources || resources.length === 0) {
+        container.innerHTML = `
+          <div style="text-align: center; color: var(--text-tertiary); font-size: 0.8125rem; padding: 1.5rem 0;">
+            No shared documents yet. Upload notes or PDF guides above.
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = resources.map(r => `
+        <div class="resource-item-row">
+          <div style="display: flex; align-items: center; gap: 0.65rem;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--blue-600)" stroke-width="2">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+            </svg>
+            <div>
+              <div style="font-size: 0.85rem; font-weight: 600; color: var(--navy-900);">${escapeHtml(r.title)}</div>
+              <div style="font-size: 0.7rem; color: var(--text-tertiary);">${escapeHtml(r.uploadedByName || 'Peer')} • ${escapeHtml(r.fileSize || '1.2 MB')}</div>
+            </div>
+          </div>
+          <a href="${escapeHtml(r.url || '#')}" target="_blank" class="btn btn-outline btn-sm" style="padding: 0.25rem 0.6rem; font-size: 0.75rem;">
+            Open / View
+          </a>
+        </div>
+      `).join('');
+    }
+
+    function renderWhiteboard() {
+      const textarea = document.getElementById('ws-whiteboard-notes');
+      if (textarea && currentGroup) {
+        textarea.value = currentGroup.whiteboardNotes || `Key formula: Cost Function J(θ) = 1/(2m) Σ (h_θ(x^(i)) - y^(i))^2\nConvergence criterion: α = 0.01 learning rate`;
+      }
+    }
+
+    async function handleSaveNotes() {
+      const textarea = document.getElementById('ws-whiteboard-notes');
+      if (!textarea) return;
+      try {
+        await StudyGroupService.saveWhiteboardNotes(currentGroupId, textarea.value);
+        UI.showToast('success', 'Notes Saved', 'Whiteboard notes updated for all cohort members.');
+      } catch (err) {
+        UI.showToast('error', 'Save Failed', err.message);
+      }
+    }
+
+    function setupRealtimeChat() {
+      const chatContainer = document.getElementById('chat-messages');
+      unsubscribeChat = StudyGroupService.subscribeToChat(currentGroupId, (messages) => {
+        if (!chatContainer) return;
+
+        if (messages.length === 0) {
+          chatContainer.innerHTML = `
+            <div style="text-align: center; color: var(--text-tertiary); font-size: 0.8125rem; margin: auto;">
+              No messages yet. Start the study conversation with your peers!
+            </div>
+          `;
+          return;
+        }
+
+        const myUid = currentStudent ? (currentStudent.uid || currentStudent.id) : '';
+
+        chatContainer.innerHTML = messages.map(m => {
+          const isMine = (m.senderId === myUid || m.senderStudentId === (currentStudent ? currentStudent.studentId : ''));
+          const timeStr = m.createdAt ? new Date(m.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '';
+
+          return `
+            <div class="chat-bubble ${isMine ? 'mine' : 'theirs'}">
+              <div class="chat-meta">
+                <span>${escapeHtml(m.senderName || 'Peer')}</span>
+                <span>${timeStr}</span>
+              </div>
+              <div class="chat-text">${renderChatMessageContent(m.message)}</div>
+            </div>
+          `;
+        }).join('');
+
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+      });
+    }
+
+    async function handleSendMessage() {
+      const input = document.getElementById('chat-input');
+      const text = input.value.trim();
+      if (!text) return;
+
+      input.value = '';
+      try {
+        await StudyGroupService.sendMessage(currentGroupId, text);
+      } catch (e) {
+        console.error('Send error:', e);
+      }
+    }
+
+    function setupOnlinePresence() {
+      unsubscribePresence = StudyGroupService.setupPresence(currentGroupId, (presenceMap) => {
+        const count = Object.keys(presenceMap).length || 1;
+        const countEl = document.getElementById('ws-online-count');
+        if (countEl) countEl.textContent = `${count} Online`;
+      });
+    }
+
+    async function handleAddResourceSubmit() {
+      const title = document.getElementById('res-title').value.trim();
+      const type = document.getElementById('res-type').value;
+      const url = document.getElementById('res-url').value.trim();
+
+      if (!title) {
+        UI.showToast('warning', 'Title Required', 'Please enter a title for the resource.');
+        return;
+      }
+
+      try {
+        await StudyGroupService.addResource(currentGroupId, { title, type, url });
+        UI.closeModal('modal-add-resource');
+        UI.showToast('success', 'Resource Added', `"${title}" has been shared with your study group.`);
+        document.getElementById('add-resource-form').reset();
+
+        const resources = await StudyGroupService.getResources(currentGroupId);
+        renderResources(resources);
+      } catch (e) {
+        UI.showToast('error', 'Upload Error', e.message);
+      }
+    }
+
+    function confirmLeaveCohort() {
+      const studentUid = currentStudent ? (currentStudent.uid || currentStudent.id) : '';
+      const isLeader = (currentGroup && currentGroup.roomLeaderId === studentUid);
+      const warnBox = document.getElementById('leave-leader-warning');
+      if (warnBox) warnBox.style.display = isLeader ? 'block' : 'none';
+
+      UI.openModal('modal-confirm-leave');
+    }
+
+    async function executeLeaveCohort() {
+      const btn = document.getElementById('btn-confirm-leave');
+      btn.disabled = true;
+      btn.textContent = 'Leaving...';
+
+      try {
+        await StudyGroupService.leaveStudyGroup(currentGroupId);
+        UI.closeModal('modal-confirm-leave');
+        UI.showToast('info', 'Left Cohort', 'You have left the study cohort.');
+        setTimeout(() => {
+          window.location.href = 'study-groups.html';
+        }, 1000);
+      } catch (err) {
+        UI.showToast('error', 'Error Leaving', err.message || 'Could not leave cohort.');
+        btn.disabled = false;
+        btn.textContent = 'Yes, Leave Cohort';
+      }
+    }
+
+    function openMemberModal(safeData) {
+      try {
+        const m = JSON.parse(decodeURIComponent(safeData));
+        const initials = (m.name || 'ST').split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+
+        document.getElementById('mp-avatar-initials').textContent = initials;
+        document.getElementById('mp-name').textContent = m.name || 'Student Member';
+        document.getElementById('mp-student-id').textContent = m.studentId || m.uid || 'STU-2024';
+        document.getElementById('mp-role-tag').textContent = m.role === 'leader' ? 'Room Lead' : 'Active Member';
+        document.getElementById('mp-role-tag').className = `badge ${m.role === 'leader' ? 'badge-primary' : 'badge-info'}`;
+
+        UI.openModal('modal-member-profile');
+      } catch (e) {}
+    }
+
+    function showWorkspaceError(msg) {
+      const header = document.getElementById('workspace-header');
+      if (header) {
+        header.innerHTML = `
+          <div style="text-align: center; padding: 2rem;">
+            <div style="color: var(--error-dark); font-weight: 700; font-size: 1.15rem; margin-bottom: 0.5rem;">Cohort Unavailable</div>
+            <p style="color: var(--text-secondary); margin-bottom: 1rem;">${escapeHtml(msg)}</p>
+            <a href="study-groups.html" class="btn btn-primary btn-sm">&larr; Return to Study Groups</a>
+          </div>
+        `;
+      }
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    /**
+     * Google Meet Integration Helpers
+     */
+    function openGoogleMeetHub() {
+      if (currentGroup) {
+        const meetUrl = currentGroup.meetLink || 'https://meet.google.com/new';
+        const display = document.getElementById('gm-modal-link-display');
+        const joinBtn = document.getElementById('gm-modal-join-btn');
+        const customInput = document.getElementById('gm-custom-link-input');
+        if (display) display.value = meetUrl;
+        if (joinBtn) joinBtn.href = meetUrl;
+        if (customInput) customInput.value = (meetUrl.endsWith('/new') || meetUrl.includes('study-live-room')) ? '' : meetUrl;
+      }
+      const alertBox = document.getElementById('gm-instant-alert');
+      if (alertBox) alertBox.style.display = 'none';
+      UI.openModal('modal-google-meet');
+    }
+
+    function handleStartInstantMeet() {
+      // 1. Open Google Meet guaranteed live room creation endpoint
+      window.open('https://meet.google.com/new', '_blank');
+
+      // 2. Show alert instruction in modal
+      const alertBox = document.getElementById('gm-instant-alert');
+      if (alertBox) alertBox.style.display = 'block';
+
+      // 3. Focus custom link input so student can paste easily
+      const input = document.getElementById('gm-custom-link-input');
+      if (input) {
+        input.focus();
+      }
+
+      // 4. Show live meet bar
+      const banner = document.getElementById('ws-live-meet-bar');
+      if (banner) banner.style.display = 'flex';
+
+      UI.showToast('info', 'Live Google Meet Launched', 'Opened in a new tab. Paste the meeting code here so peers can join.');
+    }
+
+    async function handleProvisionMeetSpace() {
+      const btn = document.getElementById('gm-provision-btn');
+      const originalText = btn ? btn.innerHTML : '';
+      if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = '<span style="display:inline-block;animation:spin 0.8s linear infinite;">⏳</span> Provisioning...';
+      }
+
+      try {
+        const res = await StudyGroupService.createMeetSpace(currentGroupId, { accessType: 'OPEN', entryPointAccess: 'ALL' });
+        if (res && res.space) {
+          const space = res.space;
+          const newUrl = space.meetingUri;
+          if (currentGroup) {
+            currentGroup.meetLink = newUrl;
+            currentGroup.meetSpaceName = space.name;
+            currentGroup.meetCode = space.meetingCode;
+            currentGroup.meetProvider = space.provider;
+          }
+
+          document.getElementById('gm-modal-link-display').value = newUrl;
+          document.getElementById('gm-modal-join-btn').href = newUrl;
+          document.getElementById('gm-custom-link-input').value = newUrl;
+
+          const liveText = document.getElementById('live-meet-url-text');
+          if (liveText) liveText.textContent = newUrl;
+          const liveJoin = document.getElementById('live-meet-join-btn');
+          if (liveJoin) liveJoin.href = newUrl;
+
+          // Open the newly created space directly in Google Meet!
+          window.open(newUrl, '_blank');
+
+          // Auto-broadcast to chat
+          await shareMeetToChat();
+          copyMeetLink();
+
+          UI.showToast('success', 'Google Meet API Space Created', `Live space active! Opened in a new tab & shared to chat.`);
+        } else {
+          throw new Error('Could not provision Meet space.');
+        }
+      } catch (err) {
+        console.error('Provisioning error:', err);
+        UI.showToast('error', 'Provisioning Failed', err.message);
+      } finally {
+        if (btn) {
+          btn.disabled = false;
+          btn.innerHTML = originalText;
+        }
+      }
+    }
+
+    function handleJoinMeetClick(e) {
+      const meetUrl = (currentGroup && currentGroup.meetLink) ? currentGroup.meetLink : 'https://meet.google.com/new';
+      // If the link is an unprovisioned placeholder or new room endpoint, launch a live instant room
+      if (!meetUrl || meetUrl.includes('study-live-room') || meetUrl.endsWith('/new')) {
+        if (e && e.preventDefault) e.preventDefault();
+        handleStartInstantMeet();
+        return;
+      }
+
+      // Show active session bar on joining call
+      const banner = document.getElementById('ws-live-meet-bar');
+      if (banner) banner.style.display = 'flex';
+    }
+
+    function copyMeetLink() {
+      const meetUrl = (currentGroup && currentGroup.meetLink) ? currentGroup.meetLink : (document.getElementById('gm-modal-link-display') ? document.getElementById('gm-modal-link-display').value : 'https://meet.google.com/new');
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(meetUrl).then(() => {
+          UI.showToast('success', 'Link Copied', 'Google Meet URL copied to clipboard.');
+        }).catch(() => {
+          fallbackCopyText(meetUrl);
+        });
+      } else {
+        fallbackCopyText(meetUrl);
+      }
+    }
+
+    function fallbackCopyText(text) {
+      const temp = document.createElement('input');
+      temp.value = text;
+      document.body.appendChild(temp);
+      temp.select();
+      document.execCommand('copy');
+      document.body.removeChild(temp);
+      UI.showToast('success', 'Link Copied', 'Google Meet URL copied to clipboard.');
+    }
+
+    async function shareMeetToChat() {
+      const meetUrl = (currentGroup && currentGroup.meetLink) ? currentGroup.meetLink : 'https://meet.google.com/new';
+      try {
+        await StudyGroupService.sendMessage(currentGroupId, `📹 Google Meet study session is live! Join our video call here: ${meetUrl}`);
+        UI.showToast('success', 'Meeting Broadcasted', 'Google Meet invite shared to cohort peer discussion.');
+        const banner = document.getElementById('ws-live-meet-bar');
+        if (banner) banner.style.display = 'flex';
+      } catch (err) {
+        UI.showToast('error', 'Broadcast Failed', err.message);
+      }
+    }
+
+    async function handleSaveCustomMeetLink() {
+      const input = document.getElementById('gm-custom-link-input');
+      let link = (input.value || '').trim();
+      if (!link) {
+        UI.showToast('warning', 'Input Required', 'Please enter a valid Google Meet link or code.');
+        return;
+      }
+      
+      // Auto format standard 3-4-3 codes
+      if (/^[a-zA-Z]{3}-[a-zA-Z]{4}-[a-zA-Z]{3}$/.test(link)) {
+        link = `https://meet.google.com/${link.toLowerCase()}`;
+      } else if (!link.startsWith('http://') && !link.startsWith('https://')) {
+        link = 'https://' + link;
+      }
+
+      try {
+        const updated = await StudyGroupService.updateMeetLink(currentGroupId, link);
+        if (currentGroup) currentGroup.meetLink = updated;
+        document.getElementById('gm-modal-link-display').value = updated;
+        document.getElementById('gm-modal-join-btn').href = updated;
+        const liveText = document.getElementById('live-meet-url-text');
+        if (liveText) liveText.textContent = updated;
+        const liveJoin = document.getElementById('live-meet-join-btn');
+        if (liveJoin) liveJoin.href = updated;
+
+        // Auto broadcast to chat
+        await shareMeetToChat();
+        UI.showToast('success', 'Meeting Saved & Shared', 'Your live Google Meet link is now active and shared with the cohort.');
+      } catch (err) {
+        UI.showToast('error', 'Update Failed', err.message);
+      }
+    }
+
+    function renderChatMessageContent(text) {
+      if (!text) return '';
+      const meetMatch = text.match(/(https:\/\/meet\.google\.com\/[a-zA-Z0-9-]+)/);
+      if (meetMatch) {
+        const url = meetMatch[1];
+        const cleanText = text.replace(url, '').trim();
+        return `
+          <div>${escapeHtml(cleanText)}</div>
+          <div style="margin-top: 0.6rem; background: #FFFFFF; border: 1.5px solid #E0E7FF; border-radius: 8px; padding: 0.75rem 0.85rem; display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; box-shadow: 0 2px 8px rgba(79, 70, 229, 0.08);">
+            <div style="display: flex; align-items: center; gap: 0.6rem;">
+              <div style="width: 32px; height: 32px; border-radius: 6px; background: #EEF2FF; display: flex; align-items: center; justify-content: center; color: var(--blue-600); flex-shrink: 0;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polygon points="23 7 16 12 23 17 23 7"/>
+                  <rect x="1" y="5" width="15" height="14" rx="2" ry="2"/>
+                </svg>
+              </div>
+              <div>
+                <div style="font-size: 0.8125rem; font-weight: 700; color: var(--navy-900);">Google Meet Session</div>
+                <div style="font-size: 0.71875rem; color: var(--text-tertiary); font-family: monospace;">${escapeHtml(url)}</div>
+              </div>
+            </div>
+            <a href="${escapeHtml(url)}" target="_blank" onclick="handleJoinMeetClick()" class="btn btn-primary btn-sm" style="font-size: 0.75rem; padding: 0.35rem 0.75rem; text-decoration: none; display: flex; align-items: center; gap: 0.3rem;">
+              <span>Join</span>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+            </a>
+          </div>
+        `;
+      }
+      return escapeHtml(text);
+    }
+  </script>
+</body>
+
+</html>

@@ -395,7 +395,19 @@
   <script src="../js/ui.js"></script>
 
   <script>
-    document.addEventListener('DOMContentLoaded', () => {
+    document.addEventListener('DOMContentLoaded', async () => {
+      // Update sidebar/topbar with logged-in faculty profile
+      if (typeof FacultyService !== 'undefined' && FacultyService.renderFacultyProfile) {
+        FacultyService.renderFacultyProfile();
+      }
+
+      // Sync submissions from backend / Firestore
+      if (typeof FacultyService !== 'undefined' && FacultyService.syncSubmissionsWithBackend) {
+        try {
+          await FacultyService.syncSubmissionsWithBackend();
+        } catch (_) {}
+      }
+
       let asgCurrentPage = 1;
       const asgPageSize = 5;
       const subjectFilter = document.getElementById('asg-subject-filter');

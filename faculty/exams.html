@@ -363,6 +363,11 @@
 
   <script>
     document.addEventListener('DOMContentLoaded', () => {
+      // Update sidebar/topbar with logged-in faculty profile
+      if (typeof FacultyService !== 'undefined' && FacultyService.renderFacultyProfile) {
+        FacultyService.renderFacultyProfile();
+      }
+
       const examDropdown = document.getElementById('selected-exam-dropdown');
       const tbody = document.getElementById('exam-marks-tbody');
       const titleEl = document.getElementById('marks-matrix-title');

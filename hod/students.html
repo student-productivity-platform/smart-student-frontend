@@ -685,6 +685,10 @@
             <span style="color: #64748B;">College Email:</span>
             <strong id="hod-succ-email" style="color: #0F172A; font-family: monospace;">-</strong>
           </div>
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span style="color: #64748B;">Access Code:</span>
+            <strong id="hod-succ-access-code" style="color: #4F46E5; font-family: monospace; font-weight: 800; background: #EEF2FF; padding: 2px 7px; border-radius: 4px; font-size: 0.8125rem;">STUDENT-2026</strong>
+          </div>
         </div>
 
         <div style="border: 1px solid #E2E8F0; border-radius: 10px; padding: 0.85rem; background: #fff;">
@@ -1173,6 +1177,8 @@
         document.getElementById('hod-succ-name').textContent = student.name || 'Student';
         document.getElementById('hod-succ-id').textContent = student.studentId || 'Generated';
         document.getElementById('hod-succ-email').textContent = student.email || '-';
+        const accessCodeEl = document.getElementById('hod-succ-access-code');
+        if (accessCodeEl) accessCodeEl.textContent = res.accessCode || student.accessCode || 'STUDENT-2026';
 
         const emailEl = document.getElementById('hod-succ-email-status');
         emailEl.textContent = notif.email === 'sent' ? 'Sent' : (notif.email === 'unconfigured' ? 'Unconfigured' : 'Failed');
