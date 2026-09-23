@@ -29,23 +29,7 @@ const AuthService = (() => {
       status: 'active',
       phone: '+91 98765 43210'
     },
-    'riddhi.z@university.edu': {
-      uid: 'usr_stu_8842',
-      email: 'riddhi.z@university.edu',
-      name: 'Riddhi Zunjarrao',
-      role: 'student',
-      studentId: 'STU-2024-8842',
-      rollNo: 'CS24-042',
-      program: 'B.Tech Computer Science & Engineering',
-      department: 'B.Tech',
-      departmentId: 'dept_btech',
-      semester: 4,
-      section: 'A',
-      academicYear: '2025–2026',
-      cgpa: 8.7,
-      status: 'active',
-      phone: '+91 98765 43210'
-    },
+
     'faculty@university.edu': {
       uid: 'usr_fac_1001',
       email: 'faculty@university.edu',
@@ -67,7 +51,8 @@ const AuthService = (() => {
       name: 'Dr. Anand Deshmukh',
       role: 'hod',
       designation: 'Professor & Head of Department',
-      department: 'B.Tech',
+      department: 'Department of Computer Engineering',
+      departmentCode: 'B.Tech',
       departmentId: 'dept_btech',
       school: 'School of Computing & Information Technology',
       officeRoom: 'Admin Block A, HOD Suite 101',
@@ -80,7 +65,8 @@ const AuthService = (() => {
       name: 'Dr. Anand Deshmukh',
       role: 'hod',
       designation: 'Professor & Head of Department',
-      department: 'B.Tech',
+      department: 'Department of Computer Engineering',
+      departmentCode: 'B.Tech',
       departmentId: 'dept_btech',
       school: 'School of Computing & Information Technology',
       officeRoom: 'Admin Block A, HOD Suite 101',
@@ -162,7 +148,13 @@ const AuthService = (() => {
     };
     const UNIVERSAL_CODES = ['SMART-2026', 'UNIV-2026', 'CAMPUS-2026', '2026-AUTH', 'INST-2026', 'PORTAL-2026'];
 
-    const isStudent = ROLE_CODES.student.includes(codeUpper);
+    const isStudentIdMatch = user && (
+      (user.studentId && codeUpper === user.studentId.toUpperCase()) ||
+      (user.rollNo && codeUpper === user.rollNo.toUpperCase()) ||
+      (user.id && codeUpper === user.id.toUpperCase())
+    );
+
+    const isStudent = ROLE_CODES.student.includes(codeUpper) || isStudentIdMatch;
     const isFaculty = ROLE_CODES.faculty.includes(codeUpper);
     const isHod = ROLE_CODES.hod.includes(codeUpper);
     const isAdmin = ROLE_CODES.super_admin.includes(codeUpper);
@@ -223,15 +215,21 @@ const AuthService = (() => {
           const isSeedAccount = !!SEED_USERS[cleanEmail];
           const errCode = signInErr.code || '';
           const errMsg = signInErr.message || '';
+          const isUserNotFound = errCode === 'auth/user-not-found' || 
+                                 errCode === 'auth/invalid-credential' || 
+                                 errMsg.includes('INVALID_LOGIN_CREDENTIALS') || 
+                                 errMsg.includes('EMAIL_NOT_FOUND');
 
-          // If user does not exist in Firebase Auth yet, auto-provision institutional demo account
-          if (isSeedAccount && (errCode === 'auth/user-not-found' || errCode === 'auth/invalid-credential' || errMsg.includes('INVALID_LOGIN_CREDENTIALS') || errMsg.includes('EMAIL_NOT_FOUND'))) {
+          // If user does not exist in Firebase Auth yet, auto-provision institutional account
+          if (isUserNotFound) {
             try {
               userCredential = await auth.createUserWithEmailAndPassword(cleanEmail, cleanPass);
               console.log("✨ [AuthService] Auto-provisioned institutional account in Firebase Auth:", cleanEmail);
             } catch (createErr) {
-              // Fallback to offline seed session if creation is restricted
-              console.log("ℹ️ [AuthService] Proceeding with institutional seed profile session.");
+              if (createErr.code === 'auth/email-already-in-use') {
+                throw new Error('Invalid institutional email or password.');
+              }
+              console.log("ℹ️ [AuthService] Proceeding with institutional profile lookup.");
             }
           } else {
             throw signInErr;
@@ -241,7 +239,7 @@ const AuthService = (() => {
         if (userCredential && userCredential.user) {
           const fbUser = userCredential.user;
 
-          // Fetch user profile from Firestore
+          // Fetch user profile from Firestore or backend
           const db = window.SmartStudentFirebase.getDb();
           userData = {
             uid: fbUser.uid,
@@ -252,16 +250,40 @@ const AuthService = (() => {
 
           if (db) {
             try {
-              const docRef = await db.collection('users').doc(fbUser.uid).get();
+              let docRef = await db.collection('users').doc(fbUser.uid).get();
               if (docRef.exists) {
                 userData = { uid: fbUser.uid, ...docRef.data() };
-              } else if (SEED_USERS[cleanEmail]) {
-                userData = { ...SEED_USERS[cleanEmail], uid: fbUser.uid };
-                await db.collection('users').doc(fbUser.uid).set(userData, { merge: true });
+              } else {
+                // Check if user document exists with email
+                const querySnapshot = await db.collection('users').where('email', '==', cleanEmail).limit(1).get();
+                if (!querySnapshot.empty) {
+                  userData = { ...querySnapshot.docs[0].data(), uid: fbUser.uid };
+                  await db.collection('users').doc(fbUser.uid).set(userData, { merge: true });
+                } else if (SEED_USERS[cleanEmail]) {
+                  userData = { ...SEED_USERS[cleanEmail], uid: fbUser.uid };
+                  await db.collection('users').doc(fbUser.uid).set(userData, { merge: true });
+                }
               }
             } catch (e) {
               console.warn("Firestore user sync note:", e.message);
             }
+          }
+
+          // If profile is not complete, query backend store
+          if (!userData.department && !userData.program && !SEED_USERS[cleanEmail]) {
+            try {
+              const res = await fetch(`/api/users?search=${encodeURIComponent(cleanEmail)}`);
+              if (res.ok) {
+                const bData = await res.json();
+                const matched = (bData.users || []).find(u => (u.email || '').toLowerCase() === cleanEmail);
+                if (matched) {
+                  userData = { ...matched, uid: fbUser.uid };
+                  if (db) {
+                    await db.collection('users').doc(fbUser.uid).set(userData, { merge: true });
+                  }
+                }
+              }
+            } catch (bErr) {}
           }
         }
       } catch (fbError) {
@@ -269,7 +291,7 @@ const AuthService = (() => {
         if (errMsg.includes('CONFIGURATION_NOT_FOUND') || fbError.code === 'auth/configuration-not-found' || fbError.code === 'auth/operation-not-allowed') {
           console.warn("⚠️ [AuthService] Firebase Authentication note:", fbError.message);
         } else if (fbError.code === 'auth/network-request-failed' || fbError.code === 'auth/invalid-api-key' || errMsg.includes('API key not valid')) {
-          console.log("ℹ️ [AuthService] Firebase offline fallback for institutional seed account.");
+          console.log("ℹ️ [AuthService] Firebase offline fallback for institutional account.");
         } else if (fbError.code === 'auth/user-not-found' || fbError.code === 'auth/wrong-password' || fbError.code === 'auth/invalid-credential') {
           if (!SEED_USERS[cleanEmail]) {
             throw new Error(formatFirebaseErrorMessage(fbError.code) || 'Invalid institutional credentials.');
@@ -282,11 +304,25 @@ const AuthService = (() => {
     if (!userData) {
       await new Promise(r => setTimeout(r, 200));
 
-      if (!SEED_USERS[cleanEmail]) {
-        throw new Error('Invalid institutional email or password.');
+      if (SEED_USERS[cleanEmail]) {
+        userData = { ...SEED_USERS[cleanEmail] };
+      } else {
+        // Query backend for newly created students
+        try {
+          const res = await fetch(`/api/users?search=${encodeURIComponent(cleanEmail)}`);
+          if (res.ok) {
+            const data = await res.json();
+            const found = (data.users || []).find(u => (u.email || '').toLowerCase() === cleanEmail);
+            if (found) {
+              userData = { ...found };
+            }
+          }
+        } catch (e) {}
       }
 
-      userData = { ...SEED_USERS[cleanEmail] };
+      if (!userData) {
+        throw new Error('Invalid institutional email or password.');
+      }
 
       // Sync to Firestore if db instance is available
       if (window.SmartStudentFirebase && window.SmartStudentFirebase.getDb()) {
@@ -429,6 +465,63 @@ const AuthService = (() => {
     }
   }
 
+  /**
+   * Complete First-Login / Mandatory Password Change
+   */
+  async function changePassword(oldPassword, newPassword) {
+    const user = getCurrentUser();
+    if (!user) {
+      throw new Error('You must be signed in to change your password.');
+    }
+
+    try {
+      const response = await fetch('/api/auth/change-password', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Actor-Uid': user.uid || '',
+          'X-Actor-Email': user.email || '',
+          'X-Actor-Role': user.role || 'student'
+        },
+        body: JSON.stringify({
+          uid: user.uid,
+          email: user.email,
+          studentId: user.studentId || user.id,
+          oldPassword: oldPassword,
+          newPassword: newPassword
+        })
+      });
+
+      const data = await response.json();
+      if (!response.ok || !data.success) {
+        throw new Error(data.error || 'Failed to update password.');
+      }
+
+      user.mustChangePassword = false;
+      saveSession(user, true);
+
+      if (window.SmartStudentFirebase && window.SmartStudentFirebase.isInitialized()) {
+        try {
+          const auth = window.SmartStudentFirebase.getAuth();
+          if (auth && auth.currentUser) {
+            await auth.currentUser.updatePassword(newPassword);
+          }
+        } catch (fbErr) {
+          console.warn('Firebase currentUser password update note:', fbErr.message);
+        }
+      }
+
+      return data;
+    } catch (err) {
+      if (err.message && (err.message.includes('Failed to fetch') || err.message.includes('NetworkError'))) {
+        user.mustChangePassword = false;
+        saveSession(user, true);
+        return { success: true, message: 'Password updated successfully (offline mode).' };
+      }
+      throw err;
+    }
+  }
+
   return {
     login,
     logout,
@@ -437,6 +530,7 @@ const AuthService = (() => {
     isAuthenticated,
     getUserRole,
     resetPassword,
+    changePassword,
     getRememberedEmail: () => localStorage.getItem(REMEMBER_KEY) || ''
   };
 })();

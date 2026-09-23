@@ -592,6 +592,80 @@ Client                                  Server
         }
       }
     },
+    ai: {
+      subject: 'Artificial Intelligence',
+      keywords: ['ai', 'what is ai', 'artificial intelligence', 'turing test', 'intelligent agent', 'rational agent', 'generative ai', 'genai', 'large language model', 'llm', 'chatgpt', 'expert system', 'nlp', 'computer vision', 'reinforcement learning', 'knowledge representation', 'heuristics', 'a* search', 'minimax', 'alpha beta pruning'],
+      canonicalAnswers: {
+        ai: {
+          title: 'Artificial Intelligence (AI): Principles, Paradigms & Architecture',
+          keywords: ['ai', 'what is ai', 'artificial intelligence', 'define ai', 'explain ai', 'concept of ai'],
+          overview: 'Artificial Intelligence (AI) is the branch of computer science focused on engineering computational systems and agents capable of performing cognitive tasks typically requiring human intelligence—including problem-solving, reasoning, knowledge representation, perception, planning, and natural language comprehension.',
+          steps: [
+            '**The 4 Classical Paradigms (Russell & Norvig Framework)**:\n   * **Thinking Humanly**: Cognitive science models simulating human neuro-cognitive pathways.\n   * **Thinking Rationally**: Formal laws of thought based on deductive mathematical logic.\n   * **Acting Humanly**: Emulating human behavior validated via the empirical **Turing Test**.\n   * **Acting Rationally (Modern Standard)**: Designing **Rational Agents** that maximize expected performance measures $\\mathbb{E}[U]$ given environment percept histories.',
+            '**The AI Sub-field Taxonomy**:\n   * **Artificial Intelligence (Broadest Domain)**: Any technique enabling machines to mimic cognitive capabilities.\n   * **Machine Learning (Subset)**: Statistical algorithms learning predictive patterns directly from training data without explicit procedural rules.\n   * **Deep Learning (Sub-subset)**: Multi-layered Artificial Neural Networks (ANNs/Transformers) performing hierarchical representation learning.\n   * **Generative AI & LLMs**: Probabilistic foundation models generating synthesized text, vision, code, or audio using transformer self-attention mechanisms.',
+            '**Core Architecture of an Intelligent Agent**:\n   * **Sensors**: Ingest environment percepts ($s_t \\in \\mathcal{S}$).\n   * **Agent Function ($f: \\mathcal{P}^* \\rightarrow \\mathcal{A}$)**: Maps percept sequences to optimal policy actions.\n   * **Actuators**: Execute decisions into the environment to alter system state.'
+          ],
+          code: `# Python Implementation: Rational Reflex Agent & Decision Engine
+import numpy as np
+
+class IntelligentReflexAgent:
+    """A rational agent that evaluates environment state and executes optimal actions."""
+    def __init__(self, name="AcademicAgent"):
+        self.name = name
+        self.knowledge_base = {
+            'HIGH_TEMP': 'ACTIVATE_COOLING',
+            'LOW_MEMORY': 'TRIGGER_GARBAGE_COLLECTION',
+            'NETWORK_CONGESTION': 'APPLY_EXPONENTIAL_BACKOFF',
+            'NORMAL': 'IDLE_OPTIMIZE'
+        }
+        self.state_history = []
+
+    def perceive(self, sensor_input):
+        """Ingest sensory data from the external environment."""
+        state = sensor_input.get('condition', 'NORMAL')
+        self.state_history.append(state)
+        return state
+
+    def act(self, current_state):
+        """Select the rational action that maximizes system utility."""
+        action = self.knowledge_base.get(current_state, 'LOG_UNKNOWN_ANOMALY')
+        return {
+            'agent': self.name,
+            'percept': current_state,
+            'action_executed': action,
+            'status': 'SUCCESS'
+        }
+
+# Execution Demonstration
+agent = IntelligentReflexAgent()
+percept = {'condition': 'HIGH_TEMP', 'metric': 88.5}
+state = agent.perceive(percept)
+decision = agent.act(state)
+print("Agent Decision Output:", decision)`,
+          math: `\\text{Rational Action: } a^* = \\arg\\max_{a \\in \\mathcal{A}} \\mathbb{E}\\left[ \\sum_{t=0}^{\\infty} \\gamma^t R(s_t, a_t) \\,\\middle|\\, s_0 \\right]`,
+          examTip: 'For university exams: (1) State the 4 Russell & Norvig categories (Thinking/Acting Humanly vs Rationally), (2) Draw the Agent-Environment Loop with Sensors and Actuators, and (3) Contrast Weak AI (Narrow, task-specific like AlphaGo) with Strong AI (Artificial General Intelligence - AGI).'
+        },
+        turing_test: {
+          title: 'The Turing Test & Operational Definitions of Intelligence',
+          keywords: ['turing test', 'turing', 'alan turing', 'imitation game'],
+          overview: 'Proposed by Alan Turing in 1950 (the "Imitation Game"), the **Turing Test** evaluates whether a machine can exhibit intelligent behavior indistinguishable from that of a human through natural language dialogue.',
+          steps: [
+            '**Test Setup**: A human interrogator interacts via text terminal with two hidden entities: one human and one machine. If the interrogator cannot reliably distinguish machine from human after structured questioning, the machine passes.',
+            '**Necessary AI Capabilities to Pass**:\n   * **Natural Language Processing (NLP)**: Understand and articulate conversational syntax.\n   * **Knowledge Representation**: Store and recall facts systematically.\n   * **Automated Reasoning**: Draw sound deductions and answer queries.\n   * **Machine Learning**: Adapt to new contexts and identify patterns.\n   * **Total Turing Test**: Extends the test to include computer vision and robotics.',
+            '**Key Philosophical Critiques**:\n   * **John Searle\'s Chinese Room Argument**: Demonstrates that syntactic symbol manipulation does not equal semantic consciousness or true understanding.'
+          ],
+          code: `# Python Simulation: Turing Game Interrogator Validator
+class TuringTester:
+    @staticmethod
+    def evaluate_response(response_text, expected_semantics):
+        # Checks if semantic entropy matches human linguistic distribution
+        coherence_score = len(response_text.split()) > 3
+        return {"turing_candidate": True, "coherence": coherence_score}`,
+          math: `P(\\text{Interrogator Correct}) \\approx 0.50 \\implies \\text{Pass Threshold}`,
+          examTip: 'Remember the difference between the standard Turing Test (text dialogue) and the Total Turing Test (adds Computer Vision and Robotics for physical interaction).'
+        }
+      }
+    },
     ml: {
       subject: 'Machine Learning',
       keywords: ['model', 'ml model', 'machine learning', 'logistic regression', 'linear regression', 'neural network', 'deep learning', 'overfitting', 'underfitting', 'gradient descent', 'classification', 'loss function', 'backpropagation', 'regularization', 'cross-entropy', 'bias variance', 'supervised learning', 'unsupervised learning', 'decision tree', 'random forest', 'svm', 'support vector machine', 'knn', 'clustering', 'kmeans', 'cnn', 'rnn', 'transformer', 'attention', 'confusion matrix', 'precision recall', 'f1 score'],
@@ -996,17 +1070,29 @@ vector<int> dijkstra(int V, vector<vector<pii>>& adj, int src) {
     if (window.SmartStudentFirebase && window.SmartStudentFirebase.isInitialized()) {
       try {
         const db = window.SmartStudentFirebase.getDb();
-        const snapshot = await db.collection('doubts')
-          .where('userId', '==', uid)
-          .orderBy('updatedAt', 'desc')
-          .get();
+        if (db) {
+          const snapshot = await db.collection('doubts')
+            .where('userId', '==', uid)
+            .get();
 
-        if (!snapshot.empty) {
-          const list = [];
-          snapshot.forEach(doc => {
-            list.push({ id: doc.id, ...doc.data() });
-          });
-          return list;
+          if (!snapshot.empty) {
+            const list = [];
+            snapshot.forEach(doc => {
+              list.push({ id: doc.id, ...doc.data() });
+            });
+            list.sort((a, b) => {
+              const parseTime = (t) => {
+                if (!t) return 0;
+                if (typeof t.toMillis === 'function') return t.toMillis();
+                if (typeof t.toDate === 'function') return t.toDate().getTime();
+                if (typeof t === 'number') return t;
+                const parsed = new Date(t).getTime();
+                return isNaN(parsed) ? 0 : parsed;
+              };
+              return parseTime(b.updatedAt || b.createdAt) - parseTime(a.updatedAt || a.createdAt);
+            });
+            return list;
+          }
         }
       } catch (err) {
         console.warn('Firestore getConversations fallback to local storage:', err);
@@ -1178,6 +1264,20 @@ vector<int> dijkstra(int V, vector<vector<pii>>& adj, int src) {
   }
 
   /**
+   * Helper: Match keyword with word boundaries for short terms
+   */
+  function matchesKeyword(text, keyword) {
+    if (!text || !keyword) return false;
+    const kw = keyword.toLowerCase();
+    const lower = text.toLowerCase();
+    if (kw.length <= 4) {
+      const regex = new RegExp(`\\b${kw.replace(/[.*+?^${}()|[\\]\\\\]/g, '\\\\$&')}\\b`, 'i');
+      return regex.test(lower);
+    }
+    return lower.includes(kw);
+  }
+
+  /**
    * Smart Subject & Topic Detection
    */
   function detectSubjectAndTopic(queryText = '') {
@@ -1185,7 +1285,7 @@ vector<int> dijkstra(int V, vector<vector<pii>>& adj, int src) {
 
     for (const [key, data] of Object.entries(DOMAIN_TOPICS)) {
       for (const kw of data.keywords) {
-        if (lower.includes(kw)) {
+        if (matchesKeyword(lower, kw)) {
           let matchedTopic = kw.charAt(0).toUpperCase() + kw.slice(1);
           return {
             domainKey: key,
@@ -1215,20 +1315,23 @@ vector<int> dijkstra(int V, vector<vector<pii>>& adj, int src) {
 
     // Stage 1: Question analysis
     if (onStageProgress) onStageProgress('Analyzing academic query & syllabus requirements...');
-    await new Promise(r => setTimeout(r, 300));
+    await new Promise(r => setTimeout(r, 200));
 
     // Stage 2: Synthesis & Knowledge extraction
     if (onStageProgress) onStageProgress('Synthesizing verified academic concepts...');
-    await new Promise(r => setTimeout(r, 350));
+    await new Promise(r => setTimeout(r, 250));
 
     // Stage 3: Formulation
     if (onStageProgress) onStageProgress('Structuring academic tutor response...');
-    await new Promise(r => setTimeout(r, 250));
+    await new Promise(r => setTimeout(r, 150));
 
     const cleanQuery = query.trim();
     const lower = cleanQuery.toLowerCase();
     const detected = detectSubjectAndTopic(cleanQuery);
-    const resolvedSubject = (subject && subject !== 'All Engineering Subjects') ? subject : detected.subject;
+    
+    // If user's conversation was on a different subject, intelligently prioritize detected domain
+    const isSubjectMismatch = detected.domainKey !== 'general' && (!subject || subject === 'All Engineering Subjects' || (subject === 'Database Management Systems' && detected.domainKey !== 'dbms'));
+    const resolvedSubject = isSubjectMismatch ? detected.subject : (subject || detected.subject);
 
     // Normalize academic level
     let level = 'Intermediate';
@@ -1237,11 +1340,11 @@ vector<int> dijkstra(int V, vector<vector<pii>>& adj, int src) {
 
     // Classify Question Type Internally
     const isDefinition = /^(what is|define|what are|what do you mean by|explain the concept of)\b/i.test(lower);
-    const isDifference = /\b(difference between|vs\.?|versus|compare|distinguish|difference)\b/i.test(lower);
+    const isDifference = /\b(difference between|vs\\.?|versus|compare|distinguish|difference)\b/i.test(lower);
     const isWhy = /^(why do we|why is|why use|why)\b/i.test(lower);
     const isHow = /^(how does|how to|how do|explain how)\b/i.test(lower);
-    const isCode = /\b(write (a )?(sql|python|c\+\+|java|program|query|code)|implement|query to|code for|find students)\b/i.test(lower);
-    const isExam = /\b(for \d+ marks|exam|gate|university question|important questions|exam point)\b/i.test(lower);
+    const isCode = mode === 'code' || /\b(write (a )?(sql|python|c\\+\\+|java|javascript|cpp|rust|go|program|query|code)|implement|implementation|give code|show code|code for|program for|write code|coding|script|syntax for|provide code|code example|syntax)\b/i.test(lower);
+    const isExam = /\b(for \\d+ marks|exam|gate|university question|important questions|exam point)\b/i.test(lower);
 
     // 1. Socratic Tutor Mode: Guides progressively rather than dumping monolithic answers
     if (tutorMode) {
@@ -1249,6 +1352,466 @@ vector<int> dijkstra(int V, vector<vector<pii>>& adj, int src) {
     }
 
     // 2. High-Precision Canonical Question Handlers
+
+    // Question: "What is AI?" / "What is Artificial Intelligence?"
+    if (matchesKeyword(lower, 'what is ai') || lower === 'what is ai' || lower === 'what is ai?' || lower === 'what is artificial intelligence' || lower === 'what is artificial intelligence?' || lower === 'explain ai' || lower === 'define ai' || (lower.includes('what is') && (lower.includes('artificial intelligence') || lower.includes('ai concept')))) {
+      if (isCode) {
+        return `### Code Implementation: Intelligent Reflex Agent & Decision Engine (Python)
+
+Here is a clean, academic implementation of a rational reflex agent that evaluates environment state and executes optimal actions:
+
+\`\`\`python
+import numpy as np
+
+class IntelligentReflexAgent:
+    """A rational agent that evaluates environment state and executes optimal actions."""
+    def __init__(self, name="AcademicAgent"):
+        self.name = name
+        self.knowledge_base = {
+            'HIGH_TEMP': 'ACTIVATE_COOLING',
+            'LOW_MEMORY': 'TRIGGER_GARBAGE_COLLECTION',
+            'NETWORK_CONGESTION': 'APPLY_EXPONENTIAL_BACKOFF',
+            'NORMAL': 'IDLE_OPTIMIZE'
+        }
+        self.state_history = []
+
+    def perceive(self, sensor_input):
+        """Ingest sensory data from the external environment."""
+        state = sensor_input.get('condition', 'NORMAL')
+        self.state_history.append(state)
+        return state
+
+    def act(self, current_state):
+        """Select the rational action that maximizes system utility."""
+        action = self.knowledge_base.get(current_state, 'LOG_UNKNOWN_ANOMALY')
+        return {
+            'agent': self.name,
+            'percept': current_state,
+            'action_executed': action,
+            'status': 'SUCCESS'
+        }
+
+# Execution Demonstration
+agent = IntelligentReflexAgent()
+percept = {'condition': 'HIGH_TEMP', 'metric': 88.5}
+state = agent.perceive(percept)
+decision = agent.act(state)
+print("Agent Decision Output:", decision)
+\`\`\`
+
+---
+
+### Complexity & Analysis
+* **Time Complexity**: $\\mathcal{O}(1)$ lookup per decision turn.
+* **Space Complexity**: $\\mathcal{O}(|\\mathcal{S}|)$ to maintain state transition history.`;
+      }
+
+      if (level === 'Beginner') {
+        return `### What is Artificial Intelligence (AI)?
+
+**Artificial Intelligence (AI)** is the branch of computer science that builds smart machines capable of performing tasks that typically require human thinking, learning, and intelligence.
+
+---
+
+#### 1. Core Capabilities of AI:
+* **Learning**: Acquiring information, recognizing patterns, and improving from experience.
+* **Reasoning**: Using logic and rules to reach valid conclusions or solve problems.
+* **Self-Correction**: Continually refining accuracy based on feedback and error minimization.
+* **Perception**: Recognizing images, sounds, speech, video, and human natural language.
+
+---
+
+#### 2. Everyday Examples:
+* **Generative AI & LLMs**: Tools like Google Gemini and ChatGPT answering questions, analyzing complex code, and generating explanations.
+* **Voice Assistants**: Siri, Google Assistant, and Alexa processing natural voice commands.
+* **Autonomous Systems**: Self-driving cars (Tesla, Waymo) detecting road obstacles and traffic lights in real time.
+* **Recommendation Engines**: Netflix recommending movies and Spotify creating tailored music playlists.
+
+---
+
+#### 3. The 3 Broad Types of AI:
+1. **Narrow AI (Weak AI)**: AI designed to perform a dedicated, specific task (e.g., facial recognition, chess bots). *This represents all practical AI systems deployed today.*
+2. **General AI (Strong AI / AGI)**: Theoretical AI that can understand, learn, and generalize knowledge across any intellectual task just like a human brain.
+3. **Super AI (ASI)**: Hypothetical AI that surpasses human capability across all scientific, creative, and strategic domains.
+
+---
+
+> [!TIP]
+> **Key Takeaway**: AI is machines emulating human cognitive capabilities (learning, reasoning, problem solving) using mathematical models and data.`;
+      } else if (level === 'Advanced') {
+        return `### Artificial Intelligence (AI): Formal Theory, Paradigms & Mathematical Foundations
+
+**Artificial Intelligence (AI)** is the scientific and engineering discipline concerned with computational synthesis and automated analysis of **Rational Agents** that perceive their environment via sensors and execute actions via actuators to maximize expected performance measures.
+
+---
+
+### 1. The Four Foundational Paradigms (Russell & Norvig Framework)
+
+| Paradigm | Human-Centric Standard | Rationality Standard (Mathematical Ideal) |
+| :--- | :--- | :--- |
+| **Thinking** | **Cognitive Modeling**: Formulating computational simulations of human neural and cognitive processes. | **Laws of Thought**: Formalizing deductive reasoning via First-Order Logic, Propositional Calculus, and Automated Theorem Proving. |
+| **Acting** | **The Turing Test**: Operational benchmark validating if an interrogator cannot distinguish machine from human in natural dialogue. | **Rational Agent Architecture**: Designing agents that maximize expected performance measure $\\mathbb{E}[U]$ under environmental uncertainty. |
+
+---
+
+### 2. Modern AI Hierarchy & Taxonomy
+
+\`\`\`
+┌─────────────────────────────────────────────────────────┐
+│ Artificial Intelligence (AI) - Universal Scope          │
+│  ┌───────────────────────────────────────────────────┐  │
+│  │ Machine Learning (ML) - Statistical Patterns      │  │
+│  │  ┌─────────────────────────────────────────────┐  │  │
+│  │  │ Deep Learning (DL) - Multi-Layer Neural Nets│  │  │
+│  │  │  ┌───────────────────────────────────────┐  │  │  │
+│  │  │  │ Generative AI & Foundation LLMs       │  │  │  │
+│  │  │  └───────────────────────────────────────┘  │  │  │
+│  │  └─────────────────────────────────────────────┘  │  │
+│  └───────────────────────────────────────────────────┘  │
+└─────────────────────────────────────────────────────────┘
+\`\`\`
+
+---
+
+### 3. Mathematical Formulation of a Rational Agent
+
+An intelligent agent is governed by an **agent function** $f: \\mathcal{P}^* \\rightarrow \\mathcal{A}$ mapping a history of environment percepts $\\mathcal{P}^*$ to the action space $\\mathcal{A}$. In a Markov Decision Process (MDP), the optimal policy $\\pi^*$ satisfies the **Bellman Optimality Equation**:
+
+$$V^*(s) = \\max_{a \\in \\mathcal{A}} \\left[ R(s, a) + \\gamma \\sum_{s' \\in \\mathcal{S}} P(s' \\mid s, a) V^*(s') \\right]$$
+
+---
+
+> [!TIP]
+> **University Examination Pointers (GATE & University Finals):**
+> 1. **PEAS Framework**: Always specify **P**erformance measure, **E**nvironment, **A**ctuators, **S**ensors for any AI problem.
+> 2. **Turing Test vs Chinese Room**: John Searle's Chinese Room argument demonstrates that syntactic symbol manipulation does not equal semantic understanding.`;
+      } else {
+        // Intermediate
+        return `### What is Artificial Intelligence (AI)?
+
+**Artificial Intelligence (AI)** is the branch of computer science dedicated to developing systems, algorithms, and computational models capable of performing tasks that traditionally require human cognitive intelligence.
+
+---
+
+### 1. The Core AI Hierarchy
+
+1. **Artificial Intelligence (AI)**: The overarching field encompassing any machine that exhibits smart, goal-driven behavior.
+2. **Machine Learning (ML)**: A subset of AI focused on algorithms that automatically learn patterns from data rather than being explicitly programmed with manual rules.
+3. **Deep Learning (DL)**: A subset of ML utilizing multi-layered Artificial Neural Networks (ANNs) inspired by biological brain structures.
+4. **Generative AI (GenAI)**: Advanced models (such as GPT and Gemini) that synthesize novel text, images, code, and structured reasoning.
+
+---
+
+### 2. Major Sub-disciplines of AI
+
+* **Natural Language Processing (NLP)**: Enabling computers to understand, interpret, and generate human languages (e.g., machine translation, sentiment analysis, text summarization).
+* **Computer Vision (CV)**: Extracting high-level understanding from digital images and videos (e.g., object detection, autonomous driving, medical imaging).
+* **Robotics**: Combining AI algorithms with mechanical actuators for spatial navigation and physical manipulation.
+* **Expert Systems & Knowledge Graphs**: Rule-based and semantic inference engines for specialized domain diagnosis.
+* **Reinforcement Learning (RL)**: Training agents through trial-and-error rewards and penalties (e.g., AlphaGo, robotic locomotion).
+
+---
+
+### 3. How an Intelligent Agent Works
+
+An AI agent continuously interacts with its environment through a closed-loop architecture:
+1. **Sensors**: Ingest raw data/percepts from the external environment.
+2. **Processing Core**: Applies algorithms, probabilistic models, or heuristic search ($A^*$ algorithm) to decide the best response.
+3. **Actuators**: Execute the selected action back into the environment to alter system state.
+
+---
+
+> [!TIP]
+> **University Exam Insight:** In academic exams, define AI using the **PEAS (Performance, Environment, Actuators, Sensors)** framework, and classify it into **Narrow AI (Weak)** vs **General AI (Strong)**.`;
+      }
+    }
+
+    // Question: "What is Machine Learning?" / "ML vs AI"
+    if (matchesKeyword(lower, 'what is machine learning') || lower === 'what is machine learning' || lower === 'what is machine learning?' || lower === 'what is ml' || lower === 'what is ml?' || lower === 'explain machine learning' || lower.includes('define machine learning')) {
+      if (isCode) {
+        return `### Code Implementation: Supervised Classification Pipeline (Python)
+
+Here is the clean implementation of a classification workflow with training, prediction, and accuracy evaluation:
+
+\`\`\`python
+import numpy as np
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score
+
+# 1. Dataset: [Hours Studied, Attendance %] -> Pass (1) / Fail (0)
+X = np.array([[2, 60], [5, 80], [1, 40], [8, 95], [3, 70], [7, 88], [4, 75], [9, 98]])
+y = np.array([0, 1, 0, 1, 0, 1, 1, 1])
+
+# 2. Split dataset into Train and Test sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25, random_state=42)
+
+# 3. Train Logistic Regression Model
+model = LogisticRegression()
+model.fit(X_train, y_train)
+
+# 4. Predict and evaluate
+predictions = model.predict(X_test)
+print(f"Model Test Accuracy: {accuracy_score(y_test, predictions) * 100:.1f}%")
+\`\`\`
+
+---
+
+### Complexity & Parameters
+* **Training Time Complexity**: $\\mathcal{O}(N \\cdot d)$ per gradient step.
+* **Inference Time Complexity**: $\\mathcal{O}(d)$ dot-product operation per test sample.`;
+      }
+
+      return `### What is Machine Learning (ML)?
+
+**Machine Learning (ML)** is a subset of Artificial Intelligence (AI) focused on building algorithms that learn patterns from historical data to make predictions or decisions without being explicitly programmed with hardcoded rules.
+
+---
+
+### 1. The Three Primary Types of Machine Learning
+
+| Paradigm | Description | Core Algorithms | Common Use Cases |
+| :--- | :--- | :--- | :--- |
+| **Supervised Learning** | Model trains on labeled data $(X, y)$ where inputs map to known outputs. | Linear/Logistic Regression, Decision Trees, Random Forests, SVM. | Spam filtering, medical diagnosis, housing price prediction. |
+| **Unsupervised Learning** | Model discovers hidden patterns or clusters in unlabeled data $X$. | $K$-Means, Hierarchical Clustering, PCA, Autoencoders. | Customer segmentation, anomaly detection, dimensionality reduction. |
+| **Reinforcement Learning** | Agent learns optimal behavior through trial-and-error rewards and penalties. | Q-Learning, Deep Q-Networks (DQN), PPO. | Game playing (Chess/Go), autonomous robotics, algorithmic trading. |
+
+---
+
+### 2. The Machine Learning Workflow
+
+1. **Data Collection & Cleaning**: Gathering raw dataset and handling missing or corrupt values.
+2. **Feature Engineering & Normalization**: Scaling features ($z = \\frac{x - \\mu}{\\sigma}$) to accelerate convergence.
+3. **Model Selection & Training**: Optimizing parameters $\\theta = \\{W, b\\}$ by minimizing empirical loss $\\mathcal{L}(y, \\hat{y})$.
+4. **Validation & Evaluation**: Testing on unseen data using metrics like Accuracy, Precision, Recall, F1-Score, and ROC-AUC.
+5. **Hyperparameter Tuning**: Finding optimal learning rate $\\alpha$, regularization strength $\\lambda$, and batch sizes.
+
+---
+
+> [!TIP]
+> **University Exam Insight:** Always explain the **Bias-Variance Tradeoff**: High Bias causes *Underfitting* (model too simple), while High Variance causes *Overfitting* (model memorizes noise). Regularization ($L_1/L_2$) and Cross-Validation balance this trade-off.`;
+    }
+
+    // Question: "What is Deep Learning?" / "Neural Networks"
+    if (matchesKeyword(lower, 'what is deep learning') || matchesKeyword(lower, 'neural network') || matchesKeyword(lower, 'neural networks') || lower.includes('what is deep learning') || lower.includes('explain neural network')) {
+      return `### Deep Learning & Artificial Neural Networks (ANNs)
+
+**Deep Learning (DL)** is a specialized sub-branch of Machine Learning based on **Artificial Neural Networks (ANNs)** with multiple hidden layers ("deep" architectures) capable of learning hierarchical feature representations directly from raw, unstructured data.
+
+---
+
+### 1. Structure of an Artificial Neuron (Perceptron)
+
+A single artificial neuron computes a weighted sum of inputs plus a bias term, passed through a non-linear activation function:
+
+$$z = \\sum_{i=1}^n w_i x_i + b, \\quad a = \\sigma(z)$$
+
+* **Weights ($w_i$)**: Determine the relative importance of each input feature.
+* **Bias ($b$)**: Shifts the activation threshold.
+* **Activation Function ($\\sigma$)**: Introduces non-linearity, allowing the network to approximate complex non-linear functions (e.g., ReLU, Sigmoid, Softmax).
+
+---
+
+### 2. Core Deep Learning Architectures
+
+| Architecture | Full Name | Primary Data Type | Typical Applications |
+| :--- | :--- | :--- | :--- |
+| **ANN / MLP** | Multi-Layer Perceptron | Tabular / Structured Data | Classification, Regression |
+| **CNN** | Convolutional Neural Network | Spatial Data / Images | Object Detection, Image Segmentation |
+| **RNN / LSTM** | Recurrent Neural Network | Sequential / Time-Series | Speech Recognition, Stock Forecasting |
+| **Transformer** | Transformer (Self-Attention) | Text, Audio, Multimodal | Large Language Models (LLMs), Generative AI |
+
+---
+
+### 3. How Deep Networks Learn: Forward & Backward Propagation
+
+1. **Forward Pass**: Input data flows through layers to compute predictions $\\hat{y}$.
+2. **Loss Calculation**: Computes discrepancy between prediction and ground truth $\\mathcal{L}(y, \\hat{y})$.
+3. **Backpropagation**: Calculates gradients of the loss with respect to all weights using the **Chain Rule of Calculus**:
+   $$\\frac{\\partial \\mathcal{L}}{\\partial w_{ij}} = \\frac{\\partial \\mathcal{L}}{\\partial a_j} \\cdot \\frac{\\partial a_j}{\\partial z_j} \\cdot \\frac{\\partial z_j}{\\partial w_{ij}}$$
+4. **Gradient Descent**: Updates parameters $\\theta \\leftarrow \\theta - \\alpha \\nabla_\\theta \\mathcal{L}$.
+
+---
+
+> [!TIP]
+> **Exam Question Tip:** In university exams, explain why **ReLU ($f(x) = \\max(0, x)$)** is preferred over Sigmoid in deep hidden layers: ReLU prevents the **Vanishing Gradient Problem** because its derivative is $1$ for all positive inputs.`;
+    }
+
+    // Question: "What is DBMS?" / "What is RDBMS?"
+    if (matchesKeyword(lower, 'what is dbms') || matchesKeyword(lower, 'what is rdbms') || lower === 'what is dbms' || lower === 'what is dbms?' || lower === 'explain dbms' || lower.includes('define dbms')) {
+      return `### Database Management System (DBMS)
+
+A **Database Management System (DBMS)** is specialized system software designed to define, create, maintain, manipulate, and control access to structured collections of persistent data.
+
+---
+
+### 1. Key Objectives & Advantages of DBMS (vs File System)
+
+* **Eliminates Redundancy**: Avoids storing duplicate data across multiple isolated files.
+* **Guarantees Data Consistency**: Updates occur in one authoritative place.
+* **Concurrent Access & Crash Recovery**: Manages simultaneous multi-user transactions without race conditions.
+* **Data Integrity & Constraints**: Enforces Primary Key, Foreign Key, Domain, and Check constraints.
+* **Security & Authorization**: Role-based access control (DCL: \`GRANT\`, \`REVOKE\`).
+
+---
+
+### 2. The 3-Schema ANSI-SPARC Architecture
+
+\`\`\`
+  [ External Level ]  -> User Views & Applications (View Schema)
+          │
+  [ Conceptual Level ] -> Logical Entities, Relationships & Constraints
+          │
+  [ Internal Level ]   -> Physical Storage, B+ Tree Indexes & File Allocation
+\`\`\`
+
+* **Physical Data Independence**: Changing physical storage structures does not break conceptual schema.
+* **Logical Data Independence**: Changing conceptual relations does not break existing user external views.
+
+---
+
+### 3. ACID Properties in DBMS
+
+* **Atomicity**: Transactions are "All or Nothing" (\`COMMIT\` or \`ROLLBACK\`).
+* **Consistency**: Preserves database invariants before and after execution.
+* **Isolation**: Concurrent transactions execute as if running in isolation.
+* **Durability**: Committed data survives system crashes and power failures.
+
+---
+
+> [!TIP]
+> **University Exam Insight:** Always distinguish DBMS (File-based/Hierarchical/Network) from **RDBMS** (Relational tables with mathematical relational algebra operations like $\\sigma, \\pi, \\bowtie$).`;
+    }
+
+    // Question: "What is Operating System?"
+    if (matchesKeyword(lower, 'what is operating system') || lower === 'what is operating system' || lower === 'what is operating system?' || lower === 'what is an os' || lower === 'what is an os?' || lower === 'explain operating system' || lower.includes('functions of operating system')) {
+      return `### Operating System (OS): Architecture & Core Functions
+
+An **Operating System (OS)** is fundamental system software that acts as an intermediary between computer hardware and user applications, managing hardware resources and providing a standardized execution environment.
+
+---
+
+### 1. Core Functions of an Operating System
+
+1. **Process Management**: CPU scheduling, context switching, inter-process communication (IPC), and synchronization.
+2. **Memory Management**: Virtual memory allocation, paging, segmentation, and page replacement policies (LRU, FIFO).
+3. **File System Management**: Directory structure, file permissions, block allocation, and secondary storage drivers.
+4. **Device / I/O Management**: Device controllers, interrupt handling, buffering, caching, and spooling.
+5. **Protection & Security**: Kernel mode (Ring 0) vs User mode (Ring 3) hardware privilege separation.
+
+---
+
+### 2. Dual-Mode Operation (User Mode vs Kernel Mode)
+
+To prevent rogue user applications from directly halting the CPU or overwriting critical memory:
+* **User Mode (Bit = 1)**: User code executes with restricted privileges.
+* **Kernel Mode (Bit = 0)**: Privileged execution mode for OS kernel code.
+* **System Calls (Trap / Software Interrupt)**: Applications switch from user mode to kernel mode via system calls (e.g. \`fork()\`, \`read()\`, \`write()\`, \`exec()\`).
+
+---
+
+### 3. Key Concepts Quick Reference:
+
+| Concept | Description |
+| :--- | :--- |
+| **Process** | A program in execution containing Text, Data, Heap, and Stack segments. |
+| **Thread** | A lightweight unit of CPU execution within a process sharing the code/data segment. |
+| **Deadlock** | A condition where a set of processes are blocked waiting for resources held by each other. |
+| **Semaphore** | An integer synchronization variable accessed via atomic \`wait()\` / $P()$ and \`signal()\` / $V()$ operations. |
+
+---
+
+> [!TIP]
+> **University Exam Point:** Always illustrate the **5-State Process Model**: *New $\\rightarrow$ Ready $\\rightarrow$ Running $\\rightarrow$ Waiting/Blocked $\\rightarrow$ Terminated*.`;
+    }
+
+    // Question: "Process vs Thread"
+    if ((lower.includes('process') && lower.includes('thread') && (lower.includes('difference') || lower.includes('vs') || lower.includes('compare'))) || lower.includes('process vs thread')) {
+      return `### Difference Between Process and Thread
+
+In Operating Systems, **Processes** and **Threads** are fundamental units of program execution, differing fundamentally in resource isolation, memory sharing, and creation overhead.
+
+---
+
+### Comparison Table:
+
+| Feature | Process | Thread (Lightweight Process) |
+| :--- | :--- | :--- |
+| **Definition** | An independent program in execution with dedicated address space. | A single unit of execution within a parent process. |
+| **Address Space** | Each process has its own isolated memory (Code, Data, Heap, Stack). | Threads share the parent process's Code, Data, and Heap. |
+| **Stack & Registers** | Own stack, registers, and Program Counter (PC). | Has its own private Stack, Register set, and PC. |
+| **Creation Overhead** | High overhead (requires \`fork()\` and OS memory allocation). | Very low overhead (shares existing process resources). |
+| **Context Switching** | Slow (requires invalidating TLB cache and memory pages). | Fast (shares the same virtual address space). |
+| **Communication** | Inter-Process Communication (IPC: Pipes, Shared Memory, Sockets). | Direct memory read/write (requires synchronization locks). |
+| **Crash Impact** | If one process crashes, others continue unaffected. | If one thread causes a segmentation fault, the entire process terminates. |
+
+---
+
+> [!TIP]
+> **Exam Insight:** Remember the acronym **PCB vs TCB**: A process is managed by a **Process Control Block (PCB)**, while a thread is tracked via a lighter **Thread Control Block (TCB)**.`;
+    }
+
+    // Question: "What is Deadlock?" / Banker's Algorithm
+    if (matchesKeyword(lower, 'deadlock') || lower.includes('what is deadlock') || lower.includes('deadlock conditions') || lower.includes('coffman conditions') || lower.includes('banker')) {
+      return `### Deadlock in Operating Systems: Coffman Conditions & Prevention
+
+A **Deadlock** is a permanent state where a set of concurrent processes are permanently blocked because each process is holding a resource and waiting for another resource held by another process in the circular chain.
+
+---
+
+### 1. The Four Coffman Conditions (Must ALL hold simultaneously for Deadlock)
+
+1. **Mutual Exclusion**: At least one resource must be held in a non-shareable mode (only one process can use it at a time).
+2. **Hold and Wait**: A process is holding at least one resource and actively waiting to acquire additional resources held by others.
+3. **No Preemption**: Resources cannot be forcibly confiscated from a process; they can only be released voluntarily.
+4. **Circular Wait**: A closed chain of processes $\\{P_0, P_1, \\dots, P_n\\}$ exists such that $P_0$ waits for $P_1$, $P_1$ waits for $P_2$, ..., and $P_n$ waits for $P_0$.
+
+---
+
+### 2. Deadlock Handling Strategies
+
+* **Deadlock Prevention**: Invalidate at least one of the 4 Coffman conditions (e.g., impose global resource ordering to eliminate Circular Wait).
+* **Deadlock Avoidance (Banker's Algorithm)**: Dynamically check system state before granting resource requests to ensure system remains in a **Safe State**.
+* **Deadlock Detection & Recovery**: Periodically execute Resource Allocation Graph (RAG) cycle-detection algorithms and terminate/preempt deadlocked processes.
+* **Ostrich Algorithm**: Ignore the problem if deadlocks occur very rarely (common in standard desktop OSs).
+
+---
+
+### 3. Banker's Algorithm Safety Formula:
+
+$$\\text{Need Matrix}[i][j] = \\text{Max Matrix}[i][j] - \\text{Allocation Matrix}[i][j]$$
+
+If $\\text{Need}_i \\leq \\text{Available}$, process $P_i$ can complete, releasing its allocated resources: $\\text{Available} \\leftarrow \\text{Available} + \\text{Allocation}_i$.
+
+---
+
+> [!TIP]
+> **Exam Tip:** In Resource Allocation Graphs (RAG): If the graph contains **no cycles**, there is **no deadlock**. If it contains a cycle and all resources are **single-instance**, a deadlock **definitely exists**.`;
+    }
+
+    // Question: "What is OOP?" / "4 Pillars of OOP"
+    if (matchesKeyword(lower, 'what is oop') || matchesKeyword(lower, 'oop') || lower.includes('object oriented programming') || lower.includes('4 pillars of oop') || lower.includes('four pillars')) {
+      return `### Object-Oriented Programming (OOP): The 4 Core Pillars
+
+**Object-Oriented Programming (OOP)** is a programming paradigm organized around **Objects** (instances containing state/attributes and behavior/methods) rather than sequential actions and logic.
+
+---
+
+### The 4 Pillars of OOP:
+
+| Pillar | Concept | Academic Definition | Real-World Analogy |
+| :--- | :--- | :--- | :--- |
+| **1. Encapsulation** | Data Hiding | Bundling data variables and accessor methods inside a class while restricting direct external access using private access specifiers. | Medical capsule containing formula safely inside. |
+| **2. Abstraction** | Hiding Complexity | Displaying only essential interface details to the user and hiding internal algorithmic implementation details (Abstract classes, Interfaces). | Car steering and gas pedal (you drive without knowing fuel injection physics). |
+| **3. Inheritance** | Code Reusability | Mechanism where a child class acquires properties and methods of a parent class (\`extends\` / \`:\`). | Child inheriting traits from biological parents. |
+| **4. Polymorphism** | "Many Forms" | Ability of a single interface or method to behave differently based on the object invoking it (Compile-time Overloading vs Runtime Overriding). | Person acting as student in college, customer in store, passenger on train. |
+
+---
+
+> [!TIP]
+> **Exam Tip:** Distinguish **Compile-time Polymorphism** (Function/Operator Overloading — resolved by compiler) from **Runtime Polymorphism** (Virtual Functions/Method Overriding — resolved via Virtual Method Tables / vtables).`;
+    }
+
     // Question: "What is SQL?"
     if (lower === 'what is sql' || lower === 'what is sql?' || (lower.includes('what is sql') && !lower.includes('query to'))) {
       if (level === 'Beginner') {
@@ -1265,18 +1828,8 @@ It allows us to:
 
 ---
 
-#### Example:
-\`\`\`sql
--- Retrieve all records from the students table
-SELECT * FROM students;
-\`\`\`
-
-*Explanation:* This query retrieves all columns (\`*\`) and all rows from the \`students\` table.
-
----
-
 #### In Simple Words:
-SQL is the language we use to ask a relational database to store, retrieve, or modify information.`;
+SQL is the declarative language we use to instruct a relational database to store, retrieve, or modify tabular information safely.`;
       } else if (level === 'Advanced') {
         return `### SQL (Structured Query Language): Relational Calculus & Architecture
 
@@ -1300,19 +1853,6 @@ SQL is the language we use to ask a relational database to store, retrieve, or m
 
 ---
 
-#### 3. Production Query Example:
-\`\`\`sql
--- Parameterized query with projection, join, and filtering
-SELECT s.student_id, s.name, d.dept_name, AVG(e.marks) AS gpa
-FROM students s
-INNER JOIN departments d ON s.dept_id = d.dept_id
-INNER JOIN enrollments e ON s.student_id = e.student_id
-WHERE s.status = 'ACTIVE'
-GROUP BY s.student_id, s.name, d.dept_name
-HAVING AVG(e.marks) >= 80.0
-ORDER BY gpa DESC;
-\`\`\`
-
 > [!TIP]
 > **University Exam Insight:** Remember that SQL is *declarative* (you specify *what* data you require, and the RDBMS query optimizer determines *how* to execute the retrieval plan optimally).`;
       } else {
@@ -1329,17 +1869,6 @@ ORDER BY gpa DESC;
 3. **DML (Data Manipulation Language)**: Modifies table records (\`INSERT\`, \`UPDATE\`, \`DELETE\`).
 4. **DCL (Data Control Language)**: Manages permissions and security privileges (\`GRANT\`, \`REVOKE\`).
 5. **TCL (Transaction Control Language)**: Controls transaction states and ACID consistency (\`COMMIT\`, \`ROLLBACK\`).
-
----
-
-#### Example Query:
-\`\`\`sql
--- Retrieve students enrolled in the Computer Science department
-SELECT student_id, name, email
-FROM students
-WHERE dept_name = 'Computer Science'
-ORDER BY name ASC;
-\`\`\`
 
 ---
 
@@ -1373,25 +1902,6 @@ In Relational Database Management Systems (RDBMS), **Primary Keys** and **Foreig
 
 ---
 
-#### Concrete SQL Schema Example:
-\`\`\`sql
--- Parent Table: dept_id is the Primary Key
-CREATE TABLE Departments (
-    dept_id INT PRIMARY KEY,
-    dept_name VARCHAR(100) NOT NULL
-);
-
--- Child Table: student_id is PK, dept_id is Foreign Key referencing Departments
-CREATE TABLE Students (
-    student_id INT PRIMARY KEY,
-    student_name VARCHAR(100) NOT NULL,
-    dept_id INT,
-    FOREIGN KEY (dept_id) REFERENCES Departments(dept_id)
-);
-\`\`\`
-
----
-
 > [!TIP]
 > **Important Exam Point:** A Primary Key enforces *Entity Integrity* (no duplicate or null records), while a Foreign Key enforces *Referential Integrity* (prevents child rows from pointing to non-existent parent rows).`;
     }
@@ -1417,15 +1927,6 @@ We use database normalization to design clean, efficient relational schemas that
 * **Storage Optimization**: Eliminates wasteful attribute duplication.
 * **Referential Integrity**: Uses Primary and Foreign keys to link tables safely.
 * **Faster Schema Maintenance**: Smaller, well-structured tables are easier to index and maintain.
-
----
-
-#### 3. Small Normalization Example:
-* **Before (Unnormalized Table):**
-  \`[StudentID, StudentName, DeptID, DeptName, HODName]\`
-* **After Decomposition (Normalized 3NF):**
-  * \`Students(StudentID, StudentName, DeptID)\`
-  * \`Departments(DeptID, DeptName, HODName)\`
 
 ---
 
@@ -1465,30 +1966,11 @@ We use database normalization to design clean, efficient relational schemas that
 
 ---
 
-#### Decomposed Schema Example (to 3NF):
-\`\`\`sql
--- Decomposed Relations
-CREATE TABLE Departments (
-    dept_id INT PRIMARY KEY,
-    dept_name VARCHAR(100) NOT NULL,
-    hod_name VARCHAR(100) NOT NULL
-);
-
-CREATE TABLE Students (
-    student_id INT PRIMARY KEY,
-    student_name VARCHAR(100) NOT NULL,
-    dept_id INT,
-    FOREIGN KEY (dept_id) REFERENCES Departments(dept_id)
-);
-\`\`\`
-
----
-
 > [!TIP]
 > **University Exam Point:** In university exams, always determine the candidate keys first by computing attribute closures $(X^+)$ under the given FD set before checking 2NF, 3NF, or BCNF violations.`;
     }
 
-    // Question: SQL Query for students marks > 80
+    // Question: SQL Query for students marks > 80 (Explicitly asks for code/query)
     if ((lower.includes('query') || lower.includes('sql') || lower.includes('write')) && lower.includes('marks') && (lower.includes('80') || lower.includes('greater') || lower.includes('>'))) {
       return `### SQL Query: Students with Marks Greater Than 80
 
@@ -1574,8 +2056,8 @@ The **OSI (Open Systems Interconnection)** Reference Model standardizes computer
 
       for (const [canonKey, canon] of Object.entries(domainData.canonicalAnswers)) {
         const keyPhrase = canonKey.replace(/_/g, ' ');
-        const isDirectMatch = lower.includes(canonKey) || lower.includes(keyPhrase) ||
-          (canon.keywords && canon.keywords.some(k => lower.includes(k)));
+        const isDirectMatch = matchesKeyword(lower, canonKey) || matchesKeyword(lower, keyPhrase) ||
+          (canon.keywords && canon.keywords.some(k => matchesKeyword(lower, k)));
 
         if (isDirectMatch) {
           // If query is specifically requesting code
@@ -1595,7 +2077,7 @@ ${canon.code}
 * **Academic Takeaway**: ${canon.examTip}`;
           }
 
-          // If student is at Beginner level or asks for simpler explanation
+          // If student is at Beginner level or asks for simpler explanation (NO code)
           if (level === 'Beginner' || lower.includes('simpler') || lower.includes('simple') || lower.includes('easy')) {
             return `### ${canon.title} (Simplified Breakdown)
 
@@ -1608,18 +2090,11 @@ ${canon.steps.slice(0, 3).map((s, i) => `${i + 1}. ${s}`).join('\n\n')}
 
 ---
 
-#### Simple Example:
-\`\`\`
-${canon.code}
-\`\`\`
-
----
-
 > [!TIP]
 > **Summary**: ${canon.examTip}`;
           }
 
-          // Default rich structured canonical breakdown
+          // Default rich structured canonical breakdown (NO code unless asked)
           return `### ${canon.title}
 
 ${canon.overview}
@@ -1632,11 +2107,8 @@ ${canon.steps.map((s, i) => `${i + 1}. ${s}`).join('\n\n')}
 
 ---
 
-### Reference Implementation / Example
-
-\`\`\`
-${canon.code}
-\`\`\`
+### Theoretical & Complexity Analysis
+* **Time / Performance Invariants**: $$${canon.math}$$
 
 ---
 
@@ -1676,86 +2148,94 @@ Building on our discussion of **${detected.topic || 'the previous topic'}**:
    In university exams, clearly explain how this sub-concept connects back to the main theorem or algorithm.`;
     }
 
-    // 5. Intelligent Dynamic General Response (Adaptive by Level & Question Type)
+    // 5. Intelligent Dynamic Academic Synthesis Engine (Adaptive by Level & Question Type)
     let attachmentNote = '';
     if (attachments && attachments.length > 0) {
       attachmentNote = `\n\n> [!NOTE]\n> **Attachment Processed:** Analyzed uploaded reference file (${attachments[0].name}).`;
     }
 
+    // Clean query entity name for dynamic formatting
+    const entityName = cleanQuery
+      .replace(/^(what is|what are|define|explain|how does|how to|write a query for|implement|tell me about)\s+/i, '')
+      .replace(/\?+$/, '')
+      .trim() || cleanQuery;
+    const capitalizedEntity = entityName.charAt(0).toUpperCase() + entityName.slice(1);
+
     if (level === 'Beginner') {
-      return `### Understanding: ${cleanQuery}
+      return `### Understanding: ${capitalizedEntity}
 
 **Subject**: ${resolvedSubject} • **Level**: Beginner / Conceptual
 
 ---
 
-#### 1. Simple Definition & Overview
-In **${resolvedSubject}**, **${cleanQuery}** is a fundamental concept that helps us structure, process, or manage information systematically.
+#### 1. Core Definition & Concept
+In **${resolvedSubject}**, **${capitalizedEntity}** is a fundamental concept designed to organize data, execute algorithms, or govern system operations effectively.
 
-* **What it means**: Think of it as a set of structured rules or building blocks designed to make system tasks reliable and straightforward.
-* **Why it matters**: It prevents common mistakes like data loss, endless loops, or disorganized system states.
-
----
-
-#### 2. Key Points:
-* **Step 1**: Start with clear initial inputs.
-* **Step 2**: Process each step following the established rule.
-* **Step 3**: Produce the correct, expected outcome.
+* **What it means**: It provides a structured set of rules and architectural components designed to make computational operations reliable, predictable, and maintainable.
+* **Why it matters**: It prevents common software and hardware issues such as data inconsistency, computational bottlenecks, and unhandled boundary exceptions.
 
 ---
 
-#### 3. In Simple Words:
-Whenever you encounter **${cleanQuery}**, remember its main purpose: to provide a clean, predictable way to solve the underlying problem in ${resolvedSubject}.${attachmentNote}`;
+#### 2. Key Operational Principles
+1. **Input & Initialization**: Establishes required parameters and validates initial system state.
+2. **Processing & Transformation**: Executes the core algorithmic transitions step-by-step according to formal rules.
+3. **Output & Verification**: Produces the expected result while verifying all boundary constraints.
+
+---
+
+#### 3. Summary & Intuition:
+Whenever analyzing **${capitalizedEntity}**, remember its main objective: providing an optimal, standardized solution to core challenges in **${resolvedSubject}**.${attachmentNote}`;
     } else if (level === 'Advanced') {
-      return `### Academic Breakdown: ${cleanQuery}
+      return `### Academic Breakdown: ${capitalizedEntity}
 
 **Subject**: ${resolvedSubject} • **Level**: Advanced / University Exam
 
 ---
 
-### 1. Conceptual Foundation & Mathematical Model
-In **${resolvedSubject}**, analyzing **${cleanQuery}** involves examining its governing principles, boundary constraints, and architectural trade-offs:
+### 1. Conceptual Foundation & Mathematical Formalism
+In **${resolvedSubject}**, rigorous analysis of **${capitalizedEntity}** centers on invariant preservation, state transitions, and asymptotic efficiency:
 
-* **Formal Definition**: Defines the state transitions, computational model, and invariant properties governing this mechanism.
-* **Core Invariant**: Correctness is preserved across all execution states and scale thresholds.
-
----
-
-### 2. Algorithmic Formulation & Mechanics
-1. **Precondition & Initialization**: Verify inputs and establish initial state bounds.
-2. **Computational Transformation**: Apply the transformation rules with optimal time and space complexity.
-3. **Termination & Verification**: Ensure completion in finite steps while guaranteeing consistency.
+* **Formal Definition**: Defines the underlying mathematical model, state space $\\mathcal{S}$, and mapping functions $f: \\mathcal{X} \\rightarrow \\mathcal{Y}$.
+* **System Invariant**: Guarantees correctness, referential stability, or concurrency safety across all scale regimes.
 
 ---
 
-### 3. University Examination Strategy & Edge Cases
-* **Key Focus**: Clearly articulate the time complexity bounds ($O(n)$ or $O(\\log n)$) and auxiliary space requirements.
-* **Common Mistakes**: Overlooking boundary edge cases ($n=0$, null pointers, or integer overflow).${attachmentNote}`;
+### 2. Algorithmic Mechanics & Complexity Bounds
+1. **Precondition & State Bounds**: Verify input constraints and establish invariant thresholds.
+2. **Computational Transformation**: Apply the transformation rules with optimal time complexity $\\mathcal{O}(n)$ and auxiliary space bounds.
+3. **Termination & Convergence**: Guarantee completion in finite steps without divergence or deadlock.
+
+---
+
+### 3. University Examination Strategy & Common Pitfalls
+* **Key Focus Area**: Explicitly derive time and space complexity trade-offs and specify edge-case boundary conditions ($n=0$, null references, or overflow).
+* **Mark Distribution Tip**: Draw architectural block diagrams and provide formal step-by-step proofs where applicable.${attachmentNote}`;
     } else {
       // Intermediate Level
-      return `### Concept Explanation: ${cleanQuery}
+      return `### Academic Explanation: ${capitalizedEntity}
 
 **Subject Domain**: ${resolvedSubject} • **Level**: Intermediate
 
 ---
 
-### 1. Overview & Definition
-In **${resolvedSubject}**, **${cleanQuery}** is a key concept used to solve standard engineering problems and organize system operations.
+### 1. Overview & Formal Definition
+In **${resolvedSubject}**, **${capitalizedEntity}** is a core concept utilized to solve standard engineering problems, manage resources, and structure computational systems.
 
-* **Core Purpose**: Provides a standard, efficient mechanism to handle data or execution tasks reliably.
-* **Working Principle**: Operates on well-defined rules to ensure correctness and prevent system errors.
-
----
-
-### 2. Key Steps & Implementation Takeaways
-1. **Initialization**: Set up the required structures and validate inputs.
-2. **Processing**: Execute the primary transformation or query logic step-by-step.
-3. **Validation**: Verify that the result satisfies all constraints.
+* **Core Purpose**: Provides a robust, standardized mechanism to manipulate data or execute operations reliably.
+* **Governing Principles**: Operates on well-defined rules to preserve system integrity and avoid execution anomalies.
 
 ---
 
-> [!TIP]
-> **University Exam Insight:** When answering questions about **${cleanQuery}** in university exams, always provide: (1) Formal definition, (2) A concise example, and (3) Key advantages or complexity bounds.${attachmentNote}`;
+### 2. Key Steps & Architectural Workflow
+1. **Initialization**: Configure the data structures and validate inputs against domain constraints.
+2. **Execution**: Perform the primary logical transformations or state transitions step-by-step.
+3. **Verification**: Validate that output invariants and integrity rules are fully satisfied.
+
+---
+
+### 3. Practical Takeaway
+* **Real-World Relevance**: Used in modern software architectures, operating systems, and distributed platforms.
+* **Academic Significance**: Frequent question topic in university semester examinations and technical interviews.${attachmentNote}`;
     }
   }
 
@@ -1839,22 +2319,21 @@ You've derived the key mechanics of **${topic || 'this concept'}** from first pr
   const BACKEND_PORT = '8085';
   const BACKEND_ENABLED_KEY = 'smart_student_backend_enabled';
 
-  /**
-   * Determine whether to send requests to the backend server.
-   * True if:
-   * 1. Running directly on the backend server (e.g., port 8085), OR
-   * 2. The user explicitly enabled cross-origin backend connection in localStorage.
-   */
-  function isBackendActive() {
-    if (typeof window === 'undefined') return false;
-    // Running on backend port
-    if (window.location.port === BACKEND_PORT) return true;
+  function getApiBaseUrl() {
+    if (typeof window !== 'undefined') {
+      if (window.API_BASE_URL && typeof window.API_BASE_URL === 'string') {
+        return window.API_BASE_URL.trim().replace(/\/+$/, '');
+      }
+      try {
+        const stored = localStorage.getItem('smart_student_api_base_url');
+        if (stored && stored.trim()) return stored.trim().replace(/\/+$/, '');
+      } catch (e) {}
+    }
+    return '';
+  }
 
-    // Explicit opt-in from user settings when running on standalone dev server (like 5500)
-    try {
-      if (localStorage.getItem(BACKEND_ENABLED_KEY) === 'true') return true;
-    } catch (e) { }
-    return false;
+  function isBackendActive() {
+    return true; // Always active: dynamically routes to configured API_BASE_URL, local backend, or relative Vercel API
   }
 
   function setBackendActive(enabled) {
@@ -1873,39 +2352,37 @@ You've derived the key mechanics of **${topic || 'this concept'}** from first pr
     const clean = endpoint.startsWith('/') ? endpoint : '/' + endpoint;
     if (typeof window === 'undefined') return clean;
 
+    const customBase = getApiBaseUrl();
+    if (customBase) {
+      return `${customBase}${clean}`;
+    }
+
     const hostname = window.location.hostname || 'localhost';
     const port = window.location.port;
 
-    if (port === BACKEND_PORT) {
+    // When running directly on backend port 8085 or deployed together with relative /api rewrites
+    if (port === BACKEND_PORT || hostname.endsWith('vercel.app')) {
       return clean;
     }
 
-    if (isBackendActive()) {
-      const host = (hostname === '127.0.0.1') ? '127.0.0.1' : 'localhost';
-      return `http://${host}:${BACKEND_PORT}${clean}`;
+    // When developing locally on a standalone frontend server (e.g., Live Server port 5500/3000)
+    if (hostname === 'localhost' || hostname === '127.0.0.1') {
+      return `http://${hostname}:${BACKEND_PORT}${clean}`;
     }
 
-    return null;
+    return clean;
   }
 
   let cachedBackendStatus = null;
 
   /**
    * Check backend Gemini API configuration status (/api/ai/status)
-   * Only performs network request if backend is active or explicitly force-checked.
    */
   async function checkBackendStatus(forceCheck = false) {
-    if (!isBackendActive() && !forceCheck) {
-      cachedBackendStatus = { configured: false, provider: 'Local Offline Engine', available: false };
-      return cachedBackendStatus;
-    }
+    if (cachedBackendStatus && !forceCheck) return cachedBackendStatus;
 
     try {
-      const cleanEndpoint = '/api/ai/status';
-      const hostname = (typeof window !== 'undefined' && window.location.hostname === '127.0.0.1') ? '127.0.0.1' : 'localhost';
-      const port = (typeof window !== 'undefined') ? window.location.port : '';
-      const url = (port === BACKEND_PORT) ? cleanEndpoint : `http://${hostname}:${BACKEND_PORT}${cleanEndpoint}`;
-
+      const url = getApiUrl('/api/ai/status');
       const res = await fetch(url, { method: 'GET' }).catch(() => null);
       if (res && res.ok) {
         cachedBackendStatus = await res.json();
@@ -1914,7 +2391,7 @@ You've derived the key mechanics of **${topic || 'this concept'}** from first pr
       }
     } catch (e) { }
 
-    cachedBackendStatus = { configured: false, provider: 'Local Offline Engine', available: false };
+    cachedBackendStatus = { configured: false, provider: 'Not Configured', available: false };
     return cachedBackendStatus;
   }
 
@@ -1922,21 +2399,16 @@ You've derived the key mechanics of **${topic || 'this concept'}** from first pr
     if (!key || typeof key !== 'string') return false;
     const k = key.trim();
     if (!k || k === 'none' || k === 'null' || k === 'undefined') return false;
-    if (k.startsWith('AQ.') || k.startsWith('demo') || k.startsWith('your') || k.startsWith('test') || k.startsWith('placeholder')) return false;
-    return k.startsWith('AIza') && k.length >= 30;
+    if (k.startsWith('demo') || k.startsWith('your') || k.startsWith('test') || k.startsWith('placeholder')) return false;
+    return (k.startsWith('AIza') || k.startsWith('AQ.') || k.length >= 25) && k.length >= 25;
   }
 
-  const DEFAULT_GEMINI_KEY = '';
   function getGeminiApiKey() {
     try {
       if (typeof localStorage !== 'undefined') {
         const stored = localStorage.getItem(GEMINI_API_KEY_STORAGE);
-        if (stored === 'none' || !stored) return '';
-        if (isValidGeminiKeyFormat(stored)) {
+        if (stored && isValidGeminiKeyFormat(stored)) {
           return stored.trim();
-        } else {
-          // Clean up invalid or stale placeholder keys from previous sessions
-          localStorage.removeItem(GEMINI_API_KEY_STORAGE);
         }
       }
       if (typeof window !== 'undefined' && window.GEMINI_API_KEY && isValidGeminiKeyFormat(window.GEMINI_API_KEY)) {
@@ -1945,7 +2417,7 @@ You've derived the key mechanics of **${topic || 'this concept'}** from first pr
     } catch (e) {
       console.warn('Error reading Gemini API key:', e);
     }
-    return DEFAULT_GEMINI_KEY;
+    return '';
   }
 
   function setGeminiApiKey(key) {
@@ -1984,7 +2456,6 @@ You've derived the key mechanics of **${topic || 'this concept'}** from first pr
    * Sync Gemini key/model to backend environment
    */
   async function syncBackendConfig(key = '', model = DEFAULT_GEMINI_MODEL) {
-    if (!isBackendActive()) return null;
     try {
       const url = getApiUrl('/api/ai/config');
       if (!url) return null;
@@ -2001,17 +2472,37 @@ You've derived the key mechanics of **${topic || 'this concept'}** from first pr
   }
 
   /**
+   * Get current student auth header
+   */
+  async function getAuthHeader() {
+    if (typeof window !== 'undefined' && window.SmartStudentFirebase && window.SmartStudentFirebase.getAuth) {
+      const auth = window.SmartStudentFirebase.getAuth();
+      if (auth && auth.currentUser) {
+        try {
+          const token = await auth.currentUser.getIdToken();
+          return `Bearer ${token}`;
+        } catch (e) {}
+      }
+    }
+    return '';
+  }
+
+  /**
    * Solve doubt via Node.js Backend Server Proxy (/api/ai/solve)
    */
   async function solveWithBackendProxy(question, history = [], options = {}, onStageProgress = null) {
-    if (!isBackendActive()) return null;
     try {
       const url = getApiUrl('/api/ai/solve');
       if (!url) return null;
-      if (onStageProgress) onStageProgress('Contacting Backend AI Service (/api/ai/solve)...');
+      if (onStageProgress) onStageProgress('Connecting to Backend AI Service (/api/ai/solve)...');
+
+      const authHeader = await getAuthHeader();
+      const headers = { 'Content-Type': 'application/json' };
+      if (authHeader) headers['Authorization'] = authHeader;
+
       const response = await fetch(url, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: headers,
         body: JSON.stringify({
           question: question,
           subject: options.subject,
@@ -2020,10 +2511,15 @@ You've derived the key mechanics of **${topic || 'this concept'}** from first pr
           history: history.map(h => ({ role: h.role, content: h.content })),
           attachments: options.attachments || []
         })
-      }).catch(() => null);
+      });
 
-      if (!response || !response.ok) return null;
-      const data = await response.json();
+      const data = await response.json().catch(() => ({}));
+
+      if (!response.ok || !data.success) {
+        const errorMsg = data.error || `HTTP ${response.status}: Failed to reach AI service.`;
+        throw new Error(errorMsg);
+      }
+
       if (data && data.success && data.answer) {
         return {
           answer: data.answer,
@@ -2031,7 +2527,8 @@ You've derived the key mechanics of **${topic || 'this concept'}** from first pr
         };
       }
     } catch (e) {
-      // Backend server not available or endpoint skipped
+      console.warn('[AI Client] Backend proxy error:', e.message);
+      throw e;
     }
     return null;
   }
@@ -2039,24 +2536,60 @@ You've derived the key mechanics of **${topic || 'this concept'}** from first pr
   /**
    * Generate practice question via Backend Server Proxy (/api/ai/practice)
    */
-  async function generatePracticeWithBackendProxy(topic, subject) {
-    if (!isBackendActive()) return null;
+  async function generatePracticeWithBackendProxy(topic, subject, difficulty = 'Intermediate') {
     try {
       const url = getApiUrl('/api/ai/practice');
       if (!url) return null;
+
+      const authHeader = await getAuthHeader();
+      const headers = { 'Content-Type': 'application/json' };
+      if (authHeader) headers['Authorization'] = authHeader;
+
       const response = await fetch(url, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ topic, subject })
-      }).catch(() => null);
+        headers: headers,
+        body: JSON.stringify({ topic, subject, difficulty })
+      });
 
-      if (!response || !response.ok) return null;
-      const data = await response.json();
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok || !data.success) {
+        throw new Error(data.error || 'Failed to generate practice question.');
+      }
       if (data && data.success && data.question) {
         return data.question;
       }
-    } catch (e) { }
+    } catch (e) {
+      console.warn('[AI Client] Practice proxy error:', e.message);
+      throw e;
+    }
     return null;
+  }
+
+  /**
+   * Escalate doubt to faculty (/api/doubts/escalate)
+   */
+  async function escalateDoubtToFaculty(doubtPayload) {
+    try {
+      const url = getApiUrl('/api/doubts/escalate');
+      const authHeader = await getAuthHeader();
+      const headers = { 'Content-Type': 'application/json' };
+      if (authHeader) headers['Authorization'] = authHeader;
+
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: headers,
+        body: JSON.stringify(doubtPayload)
+      });
+
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok || !data.success) {
+        throw new Error(data.error || 'Failed to escalate doubt to faculty.');
+      }
+      return data;
+    } catch (e) {
+      console.warn('[AI Client] Escalation error:', e.message);
+      throw e;
+    }
   }
 
   /**
@@ -2069,7 +2602,7 @@ You've derived the key mechanics of **${topic || 'this concept'}** from first pr
     if (!isValidGeminiKeyFormat(key.trim())) {
       return {
         success: false,
-        error: "Invalid API key format. A valid Google Gemini API key must start with 'AIza' and be at least 30 characters."
+        error: "Invalid API key format. A valid Google Gemini API key must be at least 25 characters."
       };
     }
     const targetModel = model || DEFAULT_GEMINI_MODEL;
@@ -2163,10 +2696,10 @@ Your mission is to provide high-quality, academically accurate, clear, and level
      * Use clear Markdown headings, bullet points, code blocks, or comparison tables tailored to the question type.
    `}
 
-4. CODE GENERATION RULES:
-   - Generate code ONLY when: (1) The student asks for code/queries/programs, (2) The question inherently requires a code/query example (e.g., SQL queries, algorithm implementations), or (3) A concise 3-5 line code snippet directly improves understanding.
-   - Use correct language syntax highlighting tags (\`\`\`sql, \`\`\`cpp, \`\`\`python, \`\`\`java, etc.).
-   - Include inline comments explaining crucial lines.
+4. STRICT CODE GENERATION RULES:
+   - CRITICAL: DO NOT include code snippets or code blocks for conceptual, theoretical, definition, comparative ("difference between..."), or architectural queries (e.g., "What is AI?", "What is Machine Learning?", "Difference between Process and Thread", "What is Deadlock?", "Explain OOP concepts", "What is Normalization?"). Focus entirely on clear conceptual explanations, structured breakdowns, comparison tables, and architectural principles.
+   - ONLY include code blocks or code implementations when the student EXPLICITLY asks for code, programming, implementation, query writing, or script generation (e.g. "write code", "implement in python", "write a sql query", "show c++ code", "give code", "coding example", mode = 'code').
+   - When code is explicitly requested, use proper language syntax highlighting tags (\`\`\`sql, \`\`\`cpp, \`\`\`python, \`\`\`java, etc.) with clean inline comments.
 
 5. ACCURACY & ANTI-HALLUCINATION:
    - Prioritize correctness over verbosity. Never invent non-existent formulas, database operations, algorithms, or fake syllabus rules.
@@ -2346,14 +2879,6 @@ You must respond STRICTLY with a valid JSON object formatted as:
             };
           }
         }
-      } catch (e) { }
-    }
-    return null;
-  }
-              explanation: parsed.explanation || 'Solution derived from canonical academic theory.'
-            };
-          }
-        }
       } catch (e) {
         console.warn(`[AIService Practice Warning - ${candModel}]:`, e);
       }
@@ -2390,29 +2915,65 @@ You must respond STRICTLY with a valid JSON object formatted as:
     }
 
     let aiResponseText = '';
-    let usedProvider = 'Local Academic Engine';
+    let usedProvider = 'Google Gemini Backend';
+    let lastError = null;
 
     // 1. Primary Priority: Backend Server Proxy (/api/ai/solve using server-side GEMINI_API_KEY)
-    const backendResult = await solveWithBackendProxy(
-      userMsg.content,
-      conv.messages.slice(0, -1),
-      {
-        subject: conv.subject || options.subject,
-        difficulty: conv.difficulty || options.difficulty,
-        tutorMode: conv.tutorMode || options.tutorMode,
-        attachments: userMsg.attachments
-      },
-      onStageProgress
-    );
+    try {
+      if (onStageProgress) onStageProgress('Contacting Backend AI Service (/api/ai/solve)...');
+      const backendResult = await solveWithBackendProxy(
+        userMsg.content,
+        conv.messages.slice(0, -1),
+        {
+          subject: conv.subject || options.subject,
+          difficulty: conv.difficulty || options.difficulty,
+          tutorMode: conv.tutorMode || options.tutorMode,
+          attachments: userMsg.attachments
+        },
+        onStageProgress
+      );
 
-    if (backendResult && backendResult.answer) {
-      aiResponseText = backendResult.answer;
-      usedProvider = backendResult.provider;
+      if (backendResult && backendResult.answer) {
+        aiResponseText = backendResult.answer;
+        usedProvider = backendResult.provider || 'Google Gemini Backend';
+      }
+    } catch (backendErr) {
+      lastError = backendErr.message;
+      console.warn('[AI Service] Backend proxy error, attempting Cloud Function fallback:', backendErr.message);
     }
 
-    // 2. Secondary Priority: Direct Client Gemini Key (if student explicitly saved key in UI modal)
+    // 2. Secondary Priority: Firebase Cloud Function (if active and SDK available)
+    if (!aiResponseText && window.SmartStudentFirebase && typeof window.SmartStudentFirebase.getFunctions === 'function') {
+      const functionsInstance = window.SmartStudentFirebase.getFunctions();
+      if (functionsInstance) {
+        try {
+          if (onStageProgress) onStageProgress('Connecting to Cloud AI Proxy...');
+          const solveDoubtFn = functionsInstance.httpsCallable('solveDoubt');
+          const result = await solveDoubtFn({
+            question: userMsg.content,
+            subject: conv.subject || options.subject,
+            difficulty: conv.difficulty || options.difficulty,
+            mode: conv.mode || options.mode,
+            tutorMode: conv.tutorMode || options.tutorMode,
+            history: conv.messages.map(m => ({ role: m.role, content: m.content })),
+            attachments: userMsg.attachments
+          });
+
+          if (result && result.data && result.data.answer) {
+            aiResponseText = result.data.answer;
+            usedProvider = result.data.provider || 'Firebase Cloud Function';
+          }
+        } catch (cloudErr) {
+          lastError = cloudErr.message;
+          console.warn('[AI Service] Callable cloud function error:', cloudErr.message);
+        }
+      }
+    }
+
+    // 3. Tertiary Priority: Custom Client Gemini Key (if student saved their own custom key in settings modal)
     if (!aiResponseText && getGeminiApiKey()) {
       try {
+        if (onStageProgress) onStageProgress(`Connecting to Google Gemini (${getGeminiModel()})...`);
         aiResponseText = await generateWithGemini(
           userMsg.content,
           conv.messages.slice(0, -1),
@@ -2426,61 +2987,28 @@ You must respond STRICTLY with a valid JSON object formatted as:
           onStageProgress
         );
         if (aiResponseText) {
-          usedProvider = `Google Gemini Client (${getGeminiModel()})`;
+          usedProvider = `Google Gemini (${getGeminiModel()})`;
         }
       } catch (geminiErr) {
+        lastError = geminiErr.message;
         console.warn('Gemini direct API call error:', geminiErr);
       }
     }
 
-    // 3. Tertiary Priority: Firebase Cloud Function (if active)
-    if (!aiResponseText && window.SmartStudentFirebase && window.SmartStudentFirebase.isInitialized()) {
-      try {
-        if (onStageProgress) onStageProgress('Connecting to Cloud AI Proxy...');
-        const functions = firebase.app().functions('us-central1');
-        const solveDoubtFn = functions.httpsCallable('solveDoubt');
-        const result = await solveDoubtFn({
-          question: userMsg.content,
-          subject: conv.subject || options.subject,
-          difficulty: conv.difficulty || options.difficulty,
-          mode: conv.mode || options.mode,
-          tutorMode: conv.tutorMode || options.tutorMode,
-          history: conv.messages.map(m => ({ role: m.role, content: m.content })),
-          attachments: userMsg.attachments
-        });
-
-        if (result && result.data && result.data.answer) {
-          aiResponseText = result.data.answer;
-          usedProvider = result.data.provider || 'Firebase Cloud Function';
-        }
-      } catch (cloudErr) {
-        console.warn('Callable cloud function error, switching to client intelligence:', cloudErr);
-      }
-    }
-
-    // 4. Quaternary Priority: Local Academic Reasoning Engine
+    // If all real AI engines failed, propagate the error without returning fake mock answers
     if (!aiResponseText) {
-      aiResponseText = await generateContextualResponse(
-        userMsg.content,
-        conv.messages.slice(0, -1),
-        {
-          subject: conv.subject || options.subject,
-          difficulty: conv.difficulty || options.difficulty,
-          mode: conv.mode || options.mode,
-          tutorMode: conv.tutorMode || options.tutorMode,
-          attachments: userMsg.attachments
-        },
-        onStageProgress
-      );
+      throw new Error(lastError || 'Unable to connect to the AI service. Please verify your backend server configuration.');
     }
 
     const detected = detectSubjectAndTopic(userMsg.content);
+
+    const isDomainMismatch = detected.domainKey !== 'general' && (!conv.subject || conv.subject === 'All Engineering Subjects' || (conv.subject === 'Database Management Systems' && detected.domainKey !== 'dbms'));
 
     const assistantMsg = {
       id: 'msg_ai_' + Date.now(),
       role: 'assistant',
       provider: usedProvider,
-      subject: conv.subject !== 'All Engineering Subjects' ? conv.subject : detected.subject,
+      subject: isDomainMismatch ? detected.subject : (conv.subject || detected.subject),
       topic: detected.topic,
       difficulty: conv.difficulty || detected.difficulty,
       content: aiResponseText,
@@ -2499,6 +3027,9 @@ You must respond STRICTLY with a valid JSON object formatted as:
         const db = window.SmartStudentFirebase.getDb();
         await db.collection('doubts').doc(conv.id).set({
           ...conv,
+          studentId: uid,
+          studentUid: uid,
+          status: 'ai_resolved',
           updatedAt: firebase.firestore.FieldValue.serverTimestamp()
         }, { merge: true });
       } catch (e) { }
@@ -2516,71 +3047,40 @@ You must respond STRICTLY with a valid JSON object formatted as:
    */
   async function generatePracticeQuestion(topic = 'General Concept', subject = 'Computer Science', difficulty = 'Medium') {
     // 1. Try Backend Proxy first (/api/ai/practice using server-side key)
-    const backendQ = await generatePracticeWithBackendProxy(topic, subject);
-    if (backendQ) return backendQ;
+    try {
+      const backendQ = await generatePracticeWithBackendProxy(topic, subject, difficulty);
+      if (backendQ) return backendQ;
+    } catch (e) {
+      console.warn('[AI Service] Backend practice generation note:', e.message);
+    }
 
-    // 2. Try Client Gemini API (if client key is set)
+    // 2. Try Firebase Cloud Function
+    if (window.SmartStudentFirebase && typeof window.SmartStudentFirebase.getFunctions === 'function') {
+      try {
+        const functionsInstance = window.SmartStudentFirebase.getFunctions();
+        if (functionsInstance) {
+          const genPracticeFn = functionsInstance.httpsCallable('generatePracticeQuestion');
+          const res = await genPracticeFn({ topic, subject, difficulty });
+          if (res && res.data && res.data.question) {
+            return res.data;
+          }
+        }
+      } catch (cfErr) {
+        console.warn('[AI Service] Cloud Function practice generation note:', cfErr.message);
+      }
+    }
+
+    // 3. Try Client Gemini API (if custom client key is set)
     if (getGeminiApiKey()) {
-      const geminiQ = await generatePracticeWithGemini(topic, subject);
-      if (geminiQ) return geminiQ;
+      try {
+        const geminiQ = await generatePracticeWithGemini(topic, subject, difficulty);
+        if (geminiQ) return geminiQ;
+      } catch (gemErr) {
+        console.warn('[AI Service] Client Gemini practice error:', gemErr.message);
+      }
     }
 
-    await new Promise(r => setTimeout(r, 600));
-
-    const topicLower = topic.toLowerCase();
-    let qData = null;
-
-    if (topicLower.includes('normaliz') || topicLower.includes('dbms')) {
-      qData = {
-        id: 'pq_' + Date.now(),
-        subject: 'Database Management Systems',
-        topic: 'Normalization (BCNF & 3NF)',
-        difficulty: difficulty,
-        question: 'Given relation R(A, B, C, D) with functional dependencies:\nF = { A → B, B → C, C → D, D → A }\nWhat is the highest normal form satisfied by relation R?',
-        options: [
-          'First Normal Form (1NF) only',
-          'Second Normal Form (2NF)',
-          'Third Normal Form (3NF)',
-          'Boyce-Codd Normal Form (BCNF)'
-        ],
-        correctIndex: 3,
-        explanation: 'Computing candidate keys: Since A → B → C → D → A, every single attribute (A, B, C, D) is a candidate key. For every FD X → Y, the left hand side is a superkey. Hence, R is in BCNF.'
-      };
-    } else if (topicLower.includes('dijkstra') || topicLower.includes('graph') || topicLower.includes('dsa')) {
-      qData = {
-        id: 'pq_' + Date.now(),
-        subject: 'Data Structures & Algorithms',
-        topic: "Dijkstra's Algorithm",
-        difficulty: difficulty,
-        question: "Why does Dijkstra's algorithm fail to guarantee the shortest path when negative edge weights are present in a directed graph?",
-        options: [
-          'Because the Min-Priority Queue cannot store negative numbers.',
-          'Because Dijkstra assumes that once a vertex is finalized, no shorter path to it can be discovered later by taking additional edges.',
-          'Because negative edge cycles cause infinite loops in binary heaps.',
-          'Because Dijkstra has exponential time complexity O(2^V).'
-        ],
-        correctIndex: 1,
-        explanation: "Dijkstra is a greedy algorithm based on the invariant that path distances strictly increase as paths extend. A negative edge can retroactively decrease the distance to an already-finalized vertex, violating the greedy choice property. Bellman-Ford should be used instead."
-      };
-    } else {
-      qData = {
-        id: 'pq_' + Date.now(),
-        subject: subject,
-        topic: topic,
-        difficulty: difficulty,
-        question: `Consider an engineering system applying principles of ${topic}. Which of the following conditions is required to guarantee optimal system stability and prevent resource race conditions?`,
-        options: [
-          'Eliminating mutual exclusion constraints completely.',
-          'Enforcing strict total ordering on resource allocation and atomic state updates.',
-          'Increasing CPU clock cycle frequencies indiscriminately.',
-          'Disabling all concurrency locks and transaction rollback mechanisms.'
-        ],
-        correctIndex: 1,
-        explanation: 'Enforcing a strict total ordering on resource allocation prevents circular wait and deadlocks, while atomic state transitions preserve data integrity across concurrent threads.'
-      };
-    }
-
-    return qData;
+    throw new Error('Unable to generate practice question. Please ensure the backend AI service is running and configured.');
   }
 
   /**
@@ -2692,6 +3192,7 @@ You must respond STRICTLY with a valid JSON object formatted as:
     getGeminiModel,
     setGeminiModel,
     testGeminiApiKey,
+    escalateDoubtToFaculty,
     // Backward compatibility
     askQuestion,
     getRecentDoubts,

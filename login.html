@@ -67,10 +67,6 @@
               data-pass="Student@2026" data-code="STUDENT-2026">
               student@university.edu
             </button>
-            <button type="button" class="demo-btn" id="demo-student2-btn" data-email="riddhi.z@university.edu"
-              data-pass="Student@2026" data-code="STUDENT-2026">
-              riddhi.z@university.edu
-            </button>
             <button type="button" class="demo-btn" id="demo-faculty-btn" data-email="faculty@university.edu"
               data-pass="Faculty@2026" data-code="FACULTY-2026"
               style="background: rgba(139, 92, 246, 0.12); border-color: #8B5CF6; color: #7C3AED; font-weight: 600;">
@@ -205,6 +201,53 @@
         <button type="button" class="btn-modal-secondary" id="cancel-fp-btn">Cancel</button>
         <button type="button" class="btn-modal-primary" id="send-reset-btn">Send Reset Link</button>
       </div>
+    </div>
+  </div>
+
+  <!-- Mandatory First-Login Password Change Modal -->
+  <div id="force-password-modal" class="modal-overlay" role="dialog" aria-modal="true"
+    aria-labelledby="modal-title-fpc" aria-hidden="true">
+    <div class="modal-card" style="max-width: 480px;">
+      <div class="modal-header" style="background: linear-gradient(135deg, #7C3AED 0%, #4F46E5 100%); color: #fff; padding: 1.15rem 1.5rem;">
+        <div>
+          <h3 id="modal-title-fpc" class="modal-title" style="color: #fff; font-size: 1.05rem; font-weight: 800;">First-Time Login: Set Permanent Password</h3>
+          <div style="font-size: 0.775rem; opacity: 0.9; margin-top: 3px;">For security, you must update your temporary password before accessing the student portal.</div>
+        </div>
+      </div>
+      <form id="force-password-form">
+        <div class="modal-body" style="padding: 1.25rem 1.5rem;">
+          <div class="form-group-custom" style="margin-bottom: 0.85rem;">
+            <label for="fpc-current-password" class="form-label-caps">CURRENT TEMPORARY PASSWORD</label>
+            <div class="input-pill-wrapper">
+              <input type="password" id="fpc-current-password" class="pill-input" placeholder="Enter temporary password" required>
+            </div>
+          </div>
+
+          <div class="form-group-custom" style="margin-bottom: 0.85rem;">
+            <label for="fpc-new-password" class="form-label-caps">NEW PERMANENT PASSWORD</label>
+            <div class="input-pill-wrapper">
+              <input type="password" id="fpc-new-password" class="pill-input" placeholder="Minimum 8-10 characters" required>
+            </div>
+            <div id="pwd-strength-hints" style="margin-top: 0.45rem; font-size: 0.75rem; color: #64748B; display: flex; flex-direction: column; gap: 3px;">
+              <span id="hint-len">● Minimum 8 characters</span>
+              <span id="hint-upper">● One uppercase & one lowercase letter</span>
+              <span id="hint-num">● At least one number</span>
+              <span id="hint-special">● At least one special symbol (!@#$%^&*_-+=)</span>
+            </div>
+          </div>
+
+          <div class="form-group-custom" style="margin-bottom: 0;">
+            <label for="fpc-confirm-password" class="form-label-caps">CONFIRM NEW PASSWORD</label>
+            <div class="input-pill-wrapper">
+              <input type="password" id="fpc-confirm-password" class="pill-input" placeholder="Re-enter new password" required>
+            </div>
+            <span id="fpc-match-error" class="field-error-msg" style="color: #DC2626;">Passwords do not match.</span>
+          </div>
+        </div>
+        <div class="modal-footer" style="padding: 0.9rem 1.5rem; background: #F8FAFC; border-top: 1px solid #E2E8F0; display: flex; justify-content: flex-end; gap: 0.6rem;">
+          <button type="submit" class="btn-modal-primary" id="fpc-submit-btn" style="background: #7C3AED; color: #fff; border: none; padding: 0.6rem 1.4rem; border-radius: 9px; font-weight: 700; cursor: pointer;">Save Password & Continue</button>
+        </div>
+      </form>
     </div>
   </div>
 
@@ -363,6 +406,16 @@
         try {
           const user = await AuthService.login(email, password, accessCode, true);
 
+          // If student has mustChangePassword = true, open Force Password Change Modal
+          if (user.role === 'student' && user.mustChangePassword === true) {
+            submitBtn.disabled = false;
+            btnText.textContent = "Log In";
+            btnSpinner.classList.add('hidden');
+            
+            openForcePasswordModal(password);
+            return;
+          }
+
           UI.showToast('success', 'Log In Successful', `Welcome back, ${user.name}`);
 
           // Role-based portal redirection
@@ -441,6 +494,91 @@
         } finally {
           sendResetBtn.disabled = false;
           sendResetBtn.textContent = 'Send Reset Link';
+        }
+      });
+
+      // Check for forced password change query param
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.get('forcePasswordChange') === 'true') {
+        const currentUser = AuthService.getCurrentUser();
+        if (currentUser && currentUser.mustChangePassword) {
+          openForcePasswordModal();
+        }
+      }
+
+      // ── Force Password Change Modal Handlers ──
+      const fpcModal = document.getElementById('force-password-modal');
+      const fpcForm = document.getElementById('force-password-form');
+      const fpcCurrentPass = document.getElementById('fpc-current-password');
+      const fpcNewPass = document.getElementById('fpc-new-password');
+      const fpcConfirmPass = document.getElementById('fpc-confirm-password');
+      const fpcMatchError = document.getElementById('fpc-match-error');
+      const fpcSubmitBtn = document.getElementById('fpc-submit-btn');
+
+      function openForcePasswordModal(initialTempPass = '') {
+        if (initialTempPass) {
+          fpcCurrentPass.value = initialTempPass;
+        }
+        fpcModal.classList.add('active');
+        fpcModal.setAttribute('aria-hidden', 'false');
+        UI.showToast('warning', 'Action Required', 'Please create a new permanent password to continue.');
+      }
+
+      fpcNewPass.addEventListener('input', () => {
+        const val = fpcNewPass.value;
+        const lenValid = val.length >= 8;
+        const upperValid = /[A-Z]/.test(val) && /[a-z]/.test(val);
+        const numValid = /[0-9]/.test(val);
+        const specialValid = /[^A-Za-z0-9]/.test(val);
+
+        document.getElementById('hint-len').style.color = lenValid ? '#16A34A' : '#64748B';
+        document.getElementById('hint-upper').style.color = upperValid ? '#16A34A' : '#64748B';
+        document.getElementById('hint-num').style.color = numValid ? '#16A34A' : '#64748B';
+        document.getElementById('hint-special').style.color = specialValid ? '#16A34A' : '#64748B';
+      });
+
+      fpcForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const currentPass = fpcCurrentPass.value.trim();
+        const newPass = fpcNewPass.value.trim();
+        const confirmPass = fpcConfirmPass.value.trim();
+
+        if (newPass !== confirmPass) {
+          fpcMatchError.style.display = 'block';
+          fpcConfirmPass.classList.add('has-error');
+          return;
+        }
+        fpcMatchError.style.display = 'none';
+        fpcConfirmPass.classList.remove('has-error');
+
+        // Validate complexity
+        const isComplex = newPass.length >= 8 &&
+          /[A-Z]/.test(newPass) &&
+          /[a-z]/.test(newPass) &&
+          /[0-9]/.test(newPass) &&
+          /[^A-Za-z0-9]/.test(newPass);
+
+        if (!isComplex) {
+          UI.showToast('error', 'Weak Password', 'Password does not meet all security requirements.');
+          return;
+        }
+
+        fpcSubmitBtn.disabled = true;
+        fpcSubmitBtn.textContent = 'Saving...';
+
+        try {
+          await AuthService.changePassword(currentPass, newPass);
+          fpcModal.classList.remove('active');
+          fpcModal.setAttribute('aria-hidden', 'true');
+          UI.showToast('success', 'Password Updated', 'Your permanent password has been set. Redirecting to dashboard...');
+
+          setTimeout(() => {
+            window.location.href = 'student/dashboard.html';
+          }, 500);
+        } catch (err) {
+          UI.showToast('error', 'Update Failed', err.message);
+          fpcSubmitBtn.disabled = false;
+          fpcSubmitBtn.textContent = 'Save Password & Continue';
         }
       });
     });

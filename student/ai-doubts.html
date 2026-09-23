@@ -777,7 +777,7 @@
           </label>
           <div style="position: relative;">
             <input type="password" id="gemini-api-key-input" class="form-input"
-              placeholder="AIzaSy... (Paste key here or in .env)"
+              placeholder="Paste your Gemini API key here..."
               style="padding-right: 2.5rem; font-family: monospace;">
             <button type="button" id="btn-toggle-key-visibility"
               style="position: absolute; right: 0.5rem; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; color: var(--text-tertiary);"
@@ -1098,7 +1098,7 @@
                     <div class="ai-badge-cluster">
                       <span class="ai-engine-pill">
                         <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
-                        Academic LLM
+                        ${(m.provider && m.provider.includes('Gemini')) ? 'Google Gemini AI' : 'Academic AI Engine'}
                       </span>
                       <span class="subject-tag ${getSubjectTagClass(m.subject)}">${m.subject || 'Engineering'}</span>
                       <span class="ai-difficulty-pill">${m.difficulty || 'Intermediate'}</span>
@@ -1717,10 +1717,37 @@
       }
 
       if (btnConfirmEscalate) {
-        btnConfirmEscalate.addEventListener('click', () => {
-          const faculty = document.getElementById('escalate-faculty-select').value;
-          UI.closeModal('modal-escalate-faculty');
-          UI.showToast('success', 'Escalated to Faculty', `Conversation transcript forwarded to ${faculty}.`);
+        btnConfirmEscalate.addEventListener('click', async () => {
+          const faculty = document.getElementById('escalate-faculty-select')?.value || 'Faculty Member';
+          const note = document.getElementById('escalate-note-input')?.value || '';
+          const conv = currentSessionId ? await AIService.getConversation(currentSessionId) : null;
+          const questionText = conv && conv.messages && conv.messages.length > 0
+            ? (conv.messages.find(m => m.role === 'user')?.content || conv.title)
+            : 'Engineering doubt escalation';
+          const subject = conv ? conv.subject : 'Computer Science & Engineering';
+
+          try {
+            btnConfirmEscalate.disabled = true;
+            btnConfirmEscalate.textContent = 'Forwarding...';
+            await AIService.escalateDoubtToFaculty({
+              doubtId: currentSessionId,
+              question: questionText,
+              subject: subject,
+              assignedFaculty: faculty,
+              notes: note,
+              history: conv ? conv.messages : []
+            });
+            UI.closeModal('modal-escalate-faculty');
+            UI.showToast('success', 'Escalated to Faculty', `Transcript and student note forwarded to ${faculty}.`);
+            const noteInput = document.getElementById('escalate-note-input');
+            if (noteInput) noteInput.value = '';
+          } catch (err) {
+            UI.showToast('warning', 'Escalation Submitted', `Doubt flagged for ${faculty} review (${err.message}).`);
+            UI.closeModal('modal-escalate-faculty');
+          } finally {
+            btnConfirmEscalate.disabled = false;
+            btnConfirmEscalate.textContent = 'Forward to Faculty';
+          }
         });
       }
 

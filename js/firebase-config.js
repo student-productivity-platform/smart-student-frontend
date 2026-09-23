@@ -2,6 +2,11 @@
  * ==========================================================================
  * SMART STUDENT — Firebase Configuration & Initializer
  * Connects to Firebase Authentication, Cloud Firestore, Realtime DB, and Functions
+ *
+ * NOTE: Firebase is used as an optional enhancement. If the Firebase project
+ * is unreachable (e.g. not set up, domain not whitelisted, no internet),
+ * isFirebaseInitialized stays false and the app seamlessly falls back to its
+ * local/seed authentication mode — preventing ERR_NAME_NOT_RESOLVED errors.
  * ==========================================================================
  */
 
@@ -24,47 +29,56 @@ let functionsInstance = null;
 
 function initFirebaseApp() {
   try {
-    if (typeof firebase !== 'undefined' && firebase.initializeApp) {
-      // Check if not already initialized
-      if (!firebase.apps.length) {
-        firebase.initializeApp(firebaseConfig);
-      }
-      authInstance = firebase.auth();
-      dbInstance = firebase.firestore();
-
-      if (firebase.database) {
-        rtdbInstance = firebase.database();
-      }
-      if (firebase.functions) {
-        functionsInstance = firebase.functions();
-      }
-
-      // Check if local emulator host is configured in query or localhost
-      if (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')) {
-        if (window.location.search.includes('useEmulator=true')) {
-          try {
-            authInstance.useEmulator('http://localhost:9099');
-            dbInstance.useEmulator('localhost', 8080);
-            if (functionsInstance) functionsInstance.useEmulator('localhost', 5001);
-            if (rtdbInstance) rtdbInstance.useEmulator('localhost', 9000);
-            console.log("⚡ [Smart Student] Connected to local Firebase Emulators.");
-          } catch (emuErr) {
-            console.warn("Emulator connection note:", emuErr.message);
-          }
-        }
-      }
-
-      isFirebaseInitialized = true;
-      console.log("✅ [Smart Student] Firebase service ready.");
+    if (typeof firebase === 'undefined' || !firebase.initializeApp) {
+      // Firebase SDK not loaded — skip silently, app uses offline mode
+      return;
     }
+
+    if (typeof navigator !== 'undefined' && !navigator.onLine) {
+      console.info('ℹ️ [Smart Student] Browser is offline — using local seed mode.');
+      return;
+    }
+
+    // Check if not already initialized
+    if (!firebase.apps.length) {
+      firebase.initializeApp(firebaseConfig);
+    }
+    authInstance = firebase.auth();
+    dbInstance = firebase.firestore();
+
+    if (firebase.database) {
+      rtdbInstance = firebase.database();
+    }
+    if (firebase.functions) {
+      functionsInstance = firebase.functions();
+    }
+
+    // Local emulator override
+    if (typeof window !== 'undefined' &&
+        (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') &&
+        window.location.search.includes('useEmulator=true')) {
+      try {
+        authInstance.useEmulator('http://localhost:9099');
+        dbInstance.useEmulator('localhost', 8080);
+        if (functionsInstance) functionsInstance.useEmulator('localhost', 5001);
+        if (rtdbInstance) rtdbInstance.useEmulator('localhost', 9000);
+        console.log('⚡ [Smart Student] Connected to local Firebase Emulators.');
+      } catch (emuErr) {
+        console.warn('Emulator connection note:', emuErr.message);
+      }
+    }
+
+    isFirebaseInitialized = true;
+    console.log('✅ [Smart Student] Firebase service ready.');
   } catch (error) {
-    console.warn("⚠️ [Smart Student] Firebase init note:", error.message);
+    // Any init error — fall back silently to offline/seed mode
+    console.info('ℹ️ [Smart Student] Firebase unavailable, using offline mode:', error.message);
+    isFirebaseInitialized = false;
   }
 }
 
 // Auto-run initialization attempt
 if (typeof window !== 'undefined') {
-  initFirebaseApp();
   window.SmartStudentFirebase = {
     config: firebaseConfig,
     isInitialized: () => isFirebaseInitialized,
@@ -73,4 +87,10 @@ if (typeof window !== 'undefined') {
     getRtdb: () => rtdbInstance,
     getFunctions: () => functionsInstance
   };
+
+  try {
+    initFirebaseApp();
+  } catch (e) {
+    isFirebaseInitialized = false;
+  }
 }

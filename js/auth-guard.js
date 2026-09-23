@@ -54,6 +54,13 @@
   try {
     const user = JSON.parse(sessionRaw);
 
+    // Mandatory First-Login Password Change Enforcement
+    if (isStudentPortal && user && user.role === 'student' && user.mustChangePassword === true) {
+      console.warn("🔒 [AuthGuard] Temporary password detected. Redirecting to mandatory password change screen.");
+      window.location.href = '../login.html?forcePasswordChange=true';
+      return;
+    }
+
     if (isStudentPortal && user.role !== 'student') {
       // In evaluation mode, allow direct student portal access by establishing student tab session
       const studentSession = (user.role === 'super_admin' || user.role === 'administrator' || user.role === 'hod' || user.role === 'faculty')

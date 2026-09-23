@@ -417,29 +417,6 @@ const mockHOD = {
   // Department Student Records (F32)
   students: [
     {
-      id: "stu_001",
-      studentId: "STU-2024-8842",
-      rollNo: "CS24-042",
-      name: "Riddhi Zunjarrao",
-      email: "riddhi.z@university.edu",
-      program: "B.Tech CSE",
-      semester: 4,
-      section: "A",
-      attendance: 87.5,
-      cgpa: 8.7,
-      performanceScore: 88,
-      status: "Healthy",
-      phone: "+91 98765 43210",
-      mentor: "Prof. Sunita Mehta",
-      subjectGrades: [
-        { code: "CS401", name: "DAA", attendance: 90, marks: 88, grade: "A+" },
-        { code: "CS402", name: "DBMS", attendance: 86, marks: 92, grade: "O" },
-        { code: "CS403", name: "Computer Networks", attendance: 85, marks: 84, grade: "A" },
-        { code: "CS405", name: "Software Eng.", attendance: 89, marks: 86, grade: "A" }
-      ],
-      recentActivity: "Submitted DBMS Assignment 2 on time • Scored 19/20 in Mid-term quiz"
-    },
-    {
       id: "stu_002",
       studentId: "STU-2024-8801",
       rollNo: "CS24-001",
@@ -455,9 +432,9 @@ const mockHOD = {
       phone: "+91 98111 00001",
       mentor: "Dr. Rajesh Sharma",
       subjectGrades: [
-        { code: "CS401", name: "DAA", attendance: 94, marks: 92, grade: "O" },
-        { code: "CS402", name: "DBMS", attendance: 90, marks: 88, grade: "A+" },
-        { code: "CS403", name: "Computer Networks", attendance: 92, marks: 90, grade: "A+" }
+        { code: "CS401", name: "DAA", credits: 4, attendance: 94, marks: 92, grade: "O" },
+        { code: "CS402", name: "DBMS", credits: 4, attendance: 90, marks: 88, grade: "A+" },
+        { code: "CS403", name: "Computer Networks", credits: 4, attendance: 92, marks: 90, grade: "A+" }
       ],
       recentActivity: "Presented Research Paper at TechFest • 100% lab attendance"
     },
@@ -477,9 +454,9 @@ const mockHOD = {
       phone: "+91 98111 00004",
       mentor: "Prof. Sunita Mehta",
       subjectGrades: [
-        { code: "CS401", name: "DAA", attendance: 65, marks: 58, grade: "C" },
-        { code: "CS402", name: "DBMS", attendance: 70, marks: 64, grade: "B" },
-        { code: "CS403", name: "Computer Networks", attendance: 71, marks: 62, grade: "B" }
+        { code: "CS401", name: "DAA", credits: 4, attendance: 65, marks: 58, grade: "C" },
+        { code: "CS402", name: "DBMS", credits: 4, attendance: 70, marks: 64, grade: "B" },
+        { code: "CS403", name: "Computer Networks", credits: 4, attendance: 71, marks: 62, grade: "B" }
       ],
       recentActivity: "Missed 3 consecutive DAA lectures • Parent notification letter sent"
     },
@@ -499,9 +476,9 @@ const mockHOD = {
       phone: "+91 98111 00009",
       mentor: "Prof. Amit Kulkarni",
       subjectGrades: [
-        { code: "CS401", name: "DAA", attendance: 55, marks: 45, grade: "D" },
-        { code: "CS402", name: "DBMS", attendance: 60, marks: 51, grade: "C" },
-        { code: "CS403", name: "Computer Networks", attendance: 59, marks: 48, grade: "D" }
+        { code: "CS401", name: "DAA", credits: 4, attendance: 55, marks: 45, grade: "D" },
+        { code: "CS402", name: "DBMS", credits: 4, attendance: 60, marks: 51, grade: "C" },
+        { code: "CS403", name: "Computer Networks", credits: 4, attendance: 59, marks: 48, grade: "D" }
       ],
       recentActivity: "Attendance below 60% • HOD counseling scheduled for Friday 11 AM"
     },
@@ -521,9 +498,9 @@ const mockHOD = {
       phone: "+91 98111 00015",
       mentor: "Dr. Neha Patel",
       subjectGrades: [
-        { code: "CS401", name: "DAA", attendance: 98, marks: 98, grade: "O" },
-        { code: "CS402", name: "DBMS", attendance: 95, marks: 95, grade: "O" },
-        { code: "CS403", name: "Computer Networks", attendance: 95, marks: 94, grade: "O" }
+        { code: "CS401", name: "DAA", credits: 4, attendance: 98, marks: 98, grade: "O" },
+        { code: "CS402", name: "DBMS", credits: 4, attendance: 95, marks: 95, grade: "O" },
+        { code: "CS403", name: "Computer Networks", credits: 4, attendance: 95, marks: 94, grade: "O" }
       ],
       recentActivity: "Department Rank #1 • Mentoring peer study group"
     },
@@ -543,8 +520,8 @@ const mockHOD = {
       phone: "+91 98222 00001",
       mentor: "Prof. Priya Deshpande",
       subjectGrades: [
-        { code: "CS401", name: "DAA", attendance: 84, marks: 80, grade: "A" },
-        { code: "CS402", name: "DBMS", attendance: 86, marks: 83, grade: "A" }
+        { code: "CS401", name: "DAA", credits: 4, attendance: 84, marks: 80, grade: "A" },
+        { code: "CS402", name: "DBMS", credits: 4, attendance: 86, marks: 83, grade: "A" }
       ],
       recentActivity: "Completed Full-Stack Workshop certification"
     },
@@ -564,8 +541,8 @@ const mockHOD = {
       phone: "+91 98222 00005",
       mentor: "Prof. Vikram Singh",
       subjectGrades: [
-        { code: "CS401", name: "DAA", attendance: 62, marks: 65, grade: "B" },
-        { code: "CS402", name: "DBMS", attendance: 66, marks: 68, grade: "B" }
+        { code: "CS401", name: "DAA", credits: 4, attendance: 62, marks: 65, grade: "B" },
+        { code: "CS402", name: "DBMS", credits: 4, attendance: 66, marks: 68, grade: "B" }
       ],
       recentActivity: "Requested medical leave concession for 4 missing lab sessions"
     },
@@ -585,8 +562,8 @@ const mockHOD = {
       phone: "+91 98333 00002",
       mentor: "Dr. Neha Patel",
       subjectGrades: [
-        { code: "AI401", name: "AI Foundations", attendance: 92, marks: 90, grade: "A+" },
-        { code: "AI402", name: "Data Mining", attendance: 90, marks: 88, grade: "A+" }
+        { code: "AI401", name: "AI Foundations", credits: 4, attendance: 92, marks: 90, grade: "A+" },
+        { code: "AI402", name: "Data Mining", credits: 4, attendance: 90, marks: 88, grade: "A+" }
       ],
       recentActivity: "Submitted Kaggle Competition Project"
     },
@@ -597,7 +574,7 @@ const mockHOD = {
       name: "Karan Johar",
       email: "karan.j@university.edu",
       program: "M.Tech CSE",
-      semester: 2,
+      semester: 4,
       section: "A",
       attendance: 88.0,
       cgpa: 8.5,
@@ -606,7 +583,7 @@ const mockHOD = {
       phone: "+91 98444 00005",
       mentor: "Dr. Anand Deshmukh",
       subjectGrades: [
-        { code: "CS801", name: "Adv Distributed Systems", attendance: 90, marks: 87, grade: "A+" }
+        { code: "CS801", name: "Adv Distributed Systems", credits: 4, attendance: 90, marks: 87, grade: "A+" }
       ],
       recentActivity: "Submitted Thesis Proposal Milestone 1"
     },
@@ -626,10 +603,115 @@ const mockHOD = {
       phone: "+91 98111 00014",
       mentor: "Prof. Sunita Mehta",
       subjectGrades: [
-        { code: "CS401", name: "DAA", attendance: 74, marks: 70, grade: "B+" },
-        { code: "CS402", name: "DBMS", attendance: 70, marks: 68, grade: "B" }
+        { code: "CS401", name: "DAA", credits: 4, attendance: 74, marks: 70, grade: "B+" },
+        { code: "CS402", name: "DBMS", credits: 4, attendance: 70, marks: 68, grade: "B" }
       ],
       recentActivity: "Attendance near 75% boundary • Advised regular presence"
+    },
+    {
+      id: "stu_011",
+      studentId: "STU-2023-7721",
+      rollNo: "CS23-021",
+      name: "Ananya Iyer",
+      email: "ananya.i@university.edu",
+      program: "B.Tech CSE",
+      semester: 6,
+      section: "A",
+      attendance: 94.5,
+      cgpa: 9.1,
+      performanceScore: 93,
+      status: "Healthy",
+      phone: "+91 98555 11021",
+      mentor: "Prof. Sneha Joshi",
+      subjectGrades: [
+        { code: "CS601", name: "Machine Learning", credits: 4, attendance: 95, marks: 92, grade: "O" },
+        { code: "CS602", name: "Cloud Computing", credits: 4, attendance: 94, marks: 90, grade: "A+" }
+      ],
+      recentActivity: "Won 1st Prize in Smart India Hackathon internal round"
+    },
+    {
+      id: "stu_012",
+      studentId: "STU-2023-7734",
+      rollNo: "CS23-034",
+      name: "Rohan Varma",
+      email: "rohan.v@university.edu",
+      program: "B.Tech CSE",
+      semester: 6,
+      section: "B",
+      attendance: 54.0,
+      cgpa: 5.1,
+      performanceScore: 49,
+      status: "At Risk",
+      phone: "+91 98555 11034",
+      mentor: "Dr. Rajesh Sharma",
+      subjectGrades: [
+        { code: "CS601", name: "Machine Learning", credits: 4, attendance: 52, marks: 42, grade: "D" },
+        { code: "CS602", name: "Cloud Computing", credits: 4, attendance: 56, marks: 46, grade: "D" }
+      ],
+      recentActivity: "Chronic absence in 8:30 AM lectures • 2nd warning letter issued"
+    },
+    {
+      id: "stu_013",
+      studentId: "STU-2022-6612",
+      rollNo: "CS22-012",
+      name: "Meera Nair",
+      email: "meera.n@university.edu",
+      program: "B.Tech CSE",
+      semester: 8,
+      section: "A",
+      attendance: 90.0,
+      cgpa: 8.6,
+      performanceScore: 87,
+      status: "Healthy",
+      phone: "+91 98666 22012",
+      mentor: "Dr. Arvind Rao",
+      subjectGrades: [
+        { code: "CS801", name: "Distributed Systems", credits: 4, attendance: 90, marks: 86, grade: "A" },
+        { code: "CS802", name: "Capstone Project", credits: 6, attendance: 92, marks: 90, grade: "A+" }
+      ],
+      recentActivity: "Capstone project demo completed with Distinction"
+    },
+    {
+      id: "stu_014",
+      studentId: "STU-2024-8860",
+      rollNo: "AI24-015",
+      name: "Siddharth Menon",
+      email: "siddharth.m@university.edu",
+      program: "B.Tech AI&DS",
+      semester: 6,
+      section: "A",
+      attendance: 76.5,
+      cgpa: 7.4,
+      performanceScore: 75,
+      status: "Healthy",
+      phone: "+91 98777 33015",
+      mentor: "Dr. Neha Patel",
+      subjectGrades: [
+        { code: "AI601", name: "Deep Learning", credits: 4, attendance: 78, marks: 76, grade: "B+" },
+        { code: "AI602", name: "Natural Language Processing", credits: 4, attendance: 75, marks: 74, grade: "B+" }
+      ],
+      recentActivity: "Attending lab revision sessions regularly"
+    },
+    {
+      id: "stu_015",
+      studentId: "STU-2024-8888",
+      rollNo: "CS24-088",
+      name: "Pooja Hegde",
+      email: "pooja.h@university.edu",
+      program: "B.Tech CSE",
+      semester: 4,
+      section: "B",
+      attendance: 82.0,
+      cgpa: 7.9,
+      performanceScore: 80,
+      status: "Healthy",
+      phone: "+91 98888 44088",
+      mentor: "Prof. Priya Deshpande",
+      subjectGrades: [
+        { code: "CS401", name: "DAA", credits: 4, attendance: 80, marks: 78, grade: "B+" },
+        { code: "CS402", name: "DBMS", credits: 4, attendance: 84, marks: 82, grade: "A" }
+      ],
+      recentActivity: "Active participant in code sprint hackathon"
     }
   ],
 
