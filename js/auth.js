@@ -22,6 +22,7 @@ const AuthService = (() => {
       program: 'B.Tech Computer Science & Engineering',
       department: 'B.Tech',
       departmentId: 'dept_btech',
+      domainId: 'domain_eng',
       semester: 4,
       section: 'A',
       academicYear: '2025–2026',
@@ -39,7 +40,8 @@ const AuthService = (() => {
       designation: 'Associate Professor',
       department: 'B.Tech',
       departmentId: 'dept_btech',
-      school: 'School of Computing & Information Technology',
+      domainId: 'domain_eng',
+      school: 'School of Engineering & Technology',
       officeRoom: 'Academic Block 3, Cabin 304',
       officeHours: 'Mon, Wed, Fri: 03:00 PM – 05:00 PM',
       phone: '+91 98220 11234',
@@ -54,7 +56,8 @@ const AuthService = (() => {
       department: 'Department of Computer Engineering',
       departmentCode: 'B.Tech',
       departmentId: 'dept_btech',
-      school: 'School of Computing & Information Technology',
+      domainId: 'domain_eng',
+      school: 'School of Engineering & Technology',
       officeRoom: 'Admin Block A, HOD Suite 101',
       phone: '+91 98230 45678',
       status: 'active'
@@ -68,11 +71,143 @@ const AuthService = (() => {
       department: 'Department of Computer Engineering',
       departmentCode: 'B.Tech',
       departmentId: 'dept_btech',
-      school: 'School of Computing & Information Technology',
+      domainId: 'domain_eng',
+      school: 'School of Engineering & Technology',
       officeRoom: 'Admin Block A, HOD Suite 101',
       phone: '+91 98230 45678',
       status: 'active'
     },
+
+    // ── BBA DOMAIN PERSONAS ──
+    'bba.student@university.edu': {
+      uid: 'usr_stu_bba_1',
+      email: 'bba.student@university.edu',
+      name: 'Tanvi Bansal',
+      role: 'student',
+      studentId: 'STU-2024-7120',
+      rollNo: 'BBA24-018',
+      program: 'BBA Financial Management & Analytics',
+      department: 'BBA',
+      departmentId: 'dept_bba',
+      domainId: 'domain_mgmt',
+      semester: 4,
+      section: 'A',
+      academicYear: '2025–2026',
+      cgpa: 8.9,
+      status: 'active',
+      phone: '+91 98231 66778'
+    },
+    'bba.faculty@university.edu': {
+      uid: 'usr_fac_bba_1',
+      email: 'bba.faculty@university.edu',
+      name: 'Prof. Priya Nair',
+      role: 'faculty',
+      facultyId: 'FAC-2024-BBA1',
+      designation: 'Associate Professor',
+      department: 'BBA',
+      departmentId: 'dept_bba',
+      domainId: 'domain_mgmt',
+      school: 'School of Management & Business Studies',
+      officeRoom: 'Management Block, Cabin 201',
+      phone: '+91 98221 44556',
+      status: 'active'
+    },
+    'meera.sen@university.edu': {
+      uid: 'usr_hod_bba_1',
+      email: 'meera.sen@university.edu',
+      name: 'Dr. Meera Sen',
+      role: 'hod',
+      designation: 'Professor & Head of Department (BBA)',
+      department: 'Department of Business Administration',
+      departmentCode: 'BBA',
+      departmentId: 'dept_bba',
+      domainId: 'domain_mgmt',
+      school: 'School of Management & Business Studies',
+      officeRoom: 'Admin Block B, HOD Suite 201',
+      phone: '+91 98231 11223',
+      status: 'active'
+    },
+    'bba.hod@university.edu': {
+      uid: 'usr_hod_bba_1',
+      email: 'bba.hod@university.edu',
+      name: 'Dr. Meera Sen',
+      role: 'hod',
+      designation: 'Professor & Head of Department (BBA)',
+      department: 'Department of Business Administration',
+      departmentCode: 'BBA',
+      departmentId: 'dept_bba',
+      domainId: 'domain_mgmt',
+      school: 'School of Management & Business Studies',
+      officeRoom: 'Admin Block B, HOD Suite 201',
+      phone: '+91 98231 11223',
+      status: 'active'
+    },
+
+    // ── MBA DOMAIN PERSONAS ──
+    'mba.student@university.edu': {
+      uid: 'usr_stu_mba_1',
+      email: 'mba.student@university.edu',
+      name: 'Aditya Sengupta',
+      role: 'student',
+      studentId: 'STU-2024-6502',
+      rollNo: 'MBA24-007',
+      program: 'Master of Business Administration (Executive)',
+      department: 'MBA',
+      departmentId: 'dept_mba',
+      domainId: 'domain_mgmt',
+      semester: 4,
+      section: 'A',
+      academicYear: '2025–2026',
+      cgpa: 9.1,
+      status: 'active',
+      phone: '+91 98232 99001'
+    },
+    'mba.faculty@university.edu': {
+      uid: 'usr_fac_mba_1',
+      email: 'mba.faculty@university.edu',
+      name: 'Prof. Arunav Roy',
+      role: 'faculty',
+      facultyId: 'FAC-2024-MBA1',
+      designation: 'Professor of Finance',
+      department: 'MBA',
+      departmentId: 'dept_mba',
+      domainId: 'domain_mgmt',
+      school: 'School of Management & Business Studies',
+      officeRoom: 'Executive Tower, Cabin 402',
+      phone: '+91 98222 77889',
+      status: 'active'
+    },
+    'rajesh.patil@university.edu': {
+      uid: 'usr_hod_mba_1',
+      email: 'rajesh.patil@university.edu',
+      name: 'Dr. Rajesh Patil',
+      role: 'hod',
+      designation: 'Dean & Head of Management Studies',
+      department: 'School of Management & Business Studies',
+      departmentCode: 'MBA',
+      departmentId: 'dept_mba',
+      domainId: 'domain_mgmt',
+      school: 'School of Management & Business Studies',
+      officeRoom: 'Executive Boardroom Wing, Suite 501',
+      phone: '+91 98232 33445',
+      status: 'active'
+    },
+    'mba.hod@university.edu': {
+      uid: 'usr_hod_mba_1',
+      email: 'mba.hod@university.edu',
+      name: 'Dr. Rajesh Patil',
+      role: 'hod',
+      designation: 'Dean & Head of Management Studies',
+      department: 'School of Management & Business Studies',
+      departmentCode: 'MBA',
+      departmentId: 'dept_mba',
+      domainId: 'domain_mgmt',
+      school: 'School of Management & Business Studies',
+      officeRoom: 'Executive Boardroom Wing, Suite 501',
+      phone: '+91 98232 33445',
+      status: 'active'
+    },
+
     'admin@university.edu': {
       uid: 'usr_adm_3001',
       email: 'admin@university.edu',
@@ -361,6 +496,19 @@ const AuthService = (() => {
       localStorage.setItem(REMEMBER_KEY, userData.email);
     } else {
       localStorage.removeItem(REMEMBER_KEY);
+    }
+
+    // Automatically sync active academic domain
+    const deptStr = (userData.departmentId || userData.department || userData.program || userData.email || '').toLowerCase();
+    let targetDomain = 'dept_btech';
+    if (deptStr.includes('bba')) targetDomain = 'dept_bba';
+    else if (deptStr.includes('mba')) targetDomain = 'dept_mba';
+    else if (deptStr.includes('btech') || deptStr.includes('cs') || deptStr.includes('eng')) targetDomain = 'dept_btech';
+
+    if (typeof DomainService !== 'undefined' && DomainService.setActiveDomain) {
+      DomainService.setActiveDomain(targetDomain, false);
+    } else {
+      localStorage.setItem('smart_student_active_domain', targetDomain);
     }
   }
 

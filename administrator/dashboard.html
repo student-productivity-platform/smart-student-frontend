@@ -1210,7 +1210,7 @@
                 <div class="feed-text">
                   <strong>${l.user}</strong>: ${l.details || l.action}
                 </div>
-                <div class="feed-time">${timeStr} • ${l.category.toUpperCase()}</div>
+                <div class="feed-time">${timeStr} • ${(l.category || 'SYSTEM').toUpperCase()}</div>
               </div>
             </div>
           `;

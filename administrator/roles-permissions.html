@@ -6,56 +6,794 @@
   <title>Roles & Permissions — Smart Admin</title>
   <meta name="description" content="Role-based access control matrix and permission governance. Configure module-level access for Administrators, HODs, Faculty, and Students.">
   <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+  <link rel="alternate icon" href="../favicon.ico">
   <link rel="stylesheet" href="../css/main.css">
   <link rel="stylesheet" href="../css/dashboard.css">
   <link rel="stylesheet" href="../css/responsive.css">
   <script src="../js/admin-auth-guard.js"></script>
   <style>
-    :root { --admin-accent:#F59E0B; --admin-accent-dark:#D97706; --admin-accent-bg:#FFFBEB; }
-    .sidebar-brand-icon { background:linear-gradient(135deg,#F59E0B,#D97706)!important; box-shadow:0 4px 12px rgba(245,158,11,.4)!important; }
-    .nav-link.active { background:rgba(245,158,11,.16)!important; color:#FBBF24!important; border:1px solid rgba(245,158,11,.28)!important; }
-    .nav-link.active .nav-link-icon { color:#F59E0B!important; }
-    .nav-link.active .nav-link-text,
-    .nav-link.active > span:not(.nav-link-icon):not(.nav-badge) { color:#FBBF24!important; font-weight:700!important; }
-
-    .page-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:1.5rem; flex-wrap:wrap; gap:1rem; }
-    .page-title { font-size:1.5rem; font-weight:800; color:var(--text-primary); letter-spacing:-.02em; }
-    .page-sub { font-size:.84375rem; color:var(--text-tertiary); margin-top:.2rem; }
-
-    /* Role Cards */
-    .roles-grid { display:grid; grid-template-columns:repeat(5,1fr); gap:1rem; margin-bottom:1.5rem; }
-    .role-card { background:#fff; border:1px solid var(--border-default); border-radius:14px; padding:1.15rem; text-align:center; transition:all .2s; }
-    .role-card:hover { box-shadow:0 8px 24px rgba(15,23,42,.08); transform:translateY(-2px); }
-    .role-icon { width:46px; height:46px; border-radius:12px; display:flex; align-items:center; justify-content:center; margin:0 auto .75rem; }
-    .role-name { font-size:0.9375rem; font-weight:800; color:var(--text-primary); margin-bottom:.25rem; }
-    .role-desc { font-size:.71875rem; color:var(--text-tertiary); line-height:1.4; min-height:40px; }
-    .role-count { margin-top:.75rem; font-size:.78125rem; font-weight:700; color:var(--admin-accent-dark); background:var(--admin-accent-bg); padding:.2rem .55rem; border-radius:6px; display:inline-block; }
-
-    /* RBAC Matrix Card */
-    .rbac-card { background:#fff; border:1px solid var(--border-default); border-radius:16px; overflow:hidden; margin-bottom:1.5rem; box-shadow:var(--shadow-sm); }
-    .rbac-table { width:100%; border-collapse:collapse; font-size:.84375rem; }
-    .rbac-table th { background:#0F172A; color:#FFFFFF; padding:.75rem 1rem; text-align:center; font-size:.75rem; font-weight:700; text-transform:uppercase; letter-spacing:.06em; }
-    .rbac-table th:first-child { text-align:left; }
-    .rbac-table td { padding:.85rem 1rem; border-bottom:1px solid var(--border-light); vertical-align:middle; text-align:center; }
-    .rbac-table td:first-child { text-align:left; }
-    .rbac-table tr:last-child td { border-bottom:none; }
-    .rbac-table tr:hover td { background:#FAFBFC; }
-    .module-name { font-weight:700; color:var(--text-primary); font-size:0.875rem; }
-    .module-desc { font-size:0.71875rem; color:var(--text-tertiary); margin-top:0.15rem; }
-
-    .perm-toggle-group { display:inline-flex; gap:0.35rem; align-items:center; }
-    .perm-chip {
-      display:inline-flex; align-items:center; gap:0.2rem; font-size:0.6875rem; font-weight:700; padding:0.2rem 0.45rem; border-radius:6px; border:1px solid #CBD5E1; background:#F8FAFC; color:var(--text-secondary); cursor:pointer; user-select:none; transition:all 0.15s;
+    :root {
+      --admin-accent: #F59E0B;
+      --admin-accent-dark: #D97706;
+      --admin-accent-light: #FEF3C7;
+      --admin-accent-bg: #FFFBEB;
+      --role-sa-color: #F59E0B;
+      --role-sa-bg: #FFFBEB;
+      --role-sa-border: #FCD34D;
+      --role-hod-color: #EA580C;
+      --role-hod-bg: #FFF7ED;
+      --role-hod-border: #FDBA74;
+      --role-fac-color: #2563EB;
+      --role-fac-bg: #EFF6FF;
+      --role-fac-border: #93C5FD;
+      --role-stu-color: #7C3AED;
+      --role-stu-bg: #F5F3FF;
+      --role-stu-border: #C4B5FD;
     }
-    .perm-chip.active { background:#DCFCE7; border-color:#86EFAC; color:#166534; }
-    .perm-chip.locked { opacity:0.85; cursor:not-allowed; }
+
+    .sidebar-brand-icon {
+      background: linear-gradient(135deg, #F59E0B, #D97706) !important;
+      box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4) !important;
+    }
+    .nav-link.active {
+      background: rgba(245, 158, 11, 0.16) !important;
+      color: #FBBF24 !important;
+      border: 1px solid rgba(245, 158, 11, 0.28) !important;
+    }
+    .nav-link.active .nav-link-icon { color: #F59E0B !important; }
+    .nav-link.active .nav-link-text,
+    .nav-link.active > span:not(.nav-link-icon):not(.nav-badge) {
+      color: #FBBF24 !important;
+      font-weight: 700 !important;
+    }
+
+    /* Page Header */
+    .page-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .page-title {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: var(--text-primary);
+      letter-spacing: -0.02em;
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+    }
+    .page-title-badge {
+      font-size: 0.6875rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 0.2rem 0.55rem;
+      border-radius: 9999px;
+      background: var(--admin-accent-bg);
+      color: var(--admin-accent-dark);
+      border: 1px solid var(--admin-accent-light);
+    }
+    .page-sub {
+      font-size: 0.84375rem;
+      color: var(--text-tertiary);
+      margin-top: 0.25rem;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .btn-secondary-admin {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      background: #FFFFFF;
+      color: var(--text-secondary);
+      font-size: 0.8125rem;
+      font-weight: 600;
+      padding: 0.55rem 1rem;
+      border-radius: 10px;
+      border: 1px solid var(--border-default);
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.18s;
+      font-family: inherit;
+    }
+    .btn-secondary-admin:hover {
+      background: #F8FAFC;
+      border-color: var(--border-strong);
+      color: var(--text-primary);
+    }
 
     .btn-primary-admin {
-      display:inline-flex; align-items:center; gap:.45rem; background:linear-gradient(135deg,#F59E0B,#D97706); color:#fff; font-size:.8125rem; font-weight:700; padding:.55rem 1.15rem; border-radius:9px; border:none; cursor:pointer; text-decoration:none; transition:all .18s; box-shadow:0 4px 12px rgba(245,158,11,.3); font-family:inherit;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: linear-gradient(135deg, #F59E0B, #D97706);
+      color: #FFFFFF;
+      font-size: 0.8125rem;
+      font-weight: 700;
+      padding: 0.55rem 1.25rem;
+      border-radius: 10px;
+      border: none;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.18s;
+      box-shadow: 0 4px 14px rgba(245, 158, 11, 0.35);
+      font-family: inherit;
+      position: relative;
     }
-    .btn-primary-admin:hover { transform:translateY(-1px); box-shadow:0 6px 16px rgba(245,158,11,.4); }
+    .btn-primary-admin:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 18px rgba(245, 158, 11, 0.45);
+    }
+    .btn-primary-admin:active {
+      transform: translateY(0);
+    }
+    .btn-primary-admin.has-changes::after {
+      content: '';
+      position: absolute;
+      top: -3px;
+      right: -3px;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #EF4444;
+      border: 2px solid #FFFFFF;
+      animation: pulse-dot 1.5s infinite;
+    }
+    @keyframes pulse-dot {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.3); opacity: 0.8; }
+    }
 
-    @media(max-width:1150px){ .roles-grid { grid-template-columns:repeat(2,1fr); } }
+    /* Role Summary Cards (4-Column Balanced Grid) */
+    .roles-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.15rem;
+      margin-bottom: 1.5rem;
+    }
+    .role-card {
+      background: #FFFFFF;
+      border: 1px solid var(--border-default);
+      border-radius: 16px;
+      padding: 1.25rem;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
+    }
+    .role-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: transparent;
+      transition: background 0.2s;
+    }
+    .role-card:hover {
+      box-shadow: 0 10px 25px -4px rgba(15, 23, 42, 0.08), 0 4px 10px -2px rgba(15, 23, 42, 0.04);
+      transform: translateY(-2px);
+    }
+
+    .role-card.role-sa::before { background: linear-gradient(90deg, #F59E0B, #D97706); }
+    .role-card.role-hod::before { background: linear-gradient(90deg, #EA580C, #C2410C); }
+    .role-card.role-fac::before { background: linear-gradient(90deg, #2563EB, #1D4ED8); }
+    .role-card.role-stu::before { background: linear-gradient(90deg, #7C3AED, #6D28D9); }
+
+    .role-card-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 0.85rem;
+    }
+    .role-icon-box {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.2s;
+    }
+    .role-card:hover .role-icon-box {
+      transform: scale(1.05);
+    }
+    .role-badge-tag {
+      font-size: 0.6875rem;
+      font-weight: 700;
+      padding: 0.2rem 0.55rem;
+      border-radius: 6px;
+      letter-spacing: 0.03em;
+    }
+
+    .role-name {
+      font-size: 1rem;
+      font-weight: 800;
+      color: var(--text-primary);
+      margin-bottom: 0.35rem;
+      letter-spacing: -0.01em;
+    }
+    .role-desc {
+      font-size: 0.75rem;
+      color: var(--text-tertiary);
+      line-height: 1.45;
+      margin-bottom: 1rem;
+      flex-grow: 1;
+    }
+
+    .role-card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 0.75rem;
+      border-top: 1px dashed var(--border-light);
+      margin-top: auto;
+    }
+    .role-user-stat {
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-size: 0.78125rem;
+      font-weight: 700;
+      color: var(--text-secondary);
+    }
+    .role-user-stat svg { color: var(--text-tertiary); }
+    .role-perm-stat {
+      font-size: 0.6875rem;
+      font-weight: 700;
+      padding: 0.2rem 0.5rem;
+      border-radius: 6px;
+    }
+
+    /* RBAC Matrix Container */
+    .rbac-card {
+      background: #FFFFFF;
+      border: 1px solid var(--border-default);
+      border-radius: 18px;
+      overflow: hidden;
+      margin-bottom: 1.75rem;
+      box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.06), 0 2px 6px -1px rgba(15, 23, 42, 0.03);
+    }
+
+    /* Matrix Controls & Filters Bar */
+    .matrix-toolbar {
+      padding: 1.15rem 1.35rem;
+      background: #FFFFFF;
+      border-bottom: 1px solid var(--border-light);
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    .toolbar-row-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .matrix-title-wrap {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .matrix-icon-badge {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      background: var(--admin-accent-bg);
+      color: var(--admin-accent-dark);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--admin-accent-light);
+    }
+    .matrix-title {
+      font-size: 1.0625rem;
+      font-weight: 800;
+      color: var(--text-primary);
+      letter-spacing: -0.01em;
+    }
+    .matrix-subtitle {
+      font-size: 0.75rem;
+      color: var(--text-tertiary);
+      margin-top: 0.15rem;
+    }
+
+    .matrix-search-box {
+      position: relative;
+      min-width: 280px;
+    }
+    .matrix-search-box svg {
+      position: absolute;
+      left: 0.85rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-tertiary);
+      pointer-events: none;
+    }
+    .search-input-matrix {
+      width: 100%;
+      height: 38px;
+      border: 1px solid var(--border-default);
+      border-radius: 10px;
+      padding: 0 2.25rem 0 2.35rem;
+      font-size: 0.8125rem;
+      font-family: inherit;
+      background: #F8FAFC;
+      transition: all 0.18s;
+    }
+    .search-input-matrix:focus {
+      outline: none;
+      background: #FFFFFF;
+      border-color: var(--admin-accent);
+      box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.12);
+    }
+    .search-clear-btn {
+      position: absolute;
+      right: 0.65rem;
+      top: 50%;
+      transform: translateY(-50%);
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      display: none;
+      padding: 2px;
+      border-radius: 4px;
+    }
+    .search-clear-btn:hover { color: var(--text-primary); }
+
+    .toolbar-row-bottom {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 0.85rem;
+      padding-top: 0.85rem;
+      border-top: 1px solid var(--border-light);
+    }
+
+    /* Category Filter Tabs */
+    .category-pills {
+      display: flex;
+      gap: 0.4rem;
+      flex-wrap: wrap;
+    }
+    .cat-pill {
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 0.35rem 0.8rem;
+      border-radius: 8px;
+      border: 1px solid var(--border-default);
+      background: #FFFFFF;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.16s;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    .cat-pill:hover {
+      background: #F8FAFC;
+      border-color: var(--border-strong);
+      color: var(--text-primary);
+    }
+    .cat-pill.active {
+      background: var(--text-primary);
+      color: #FFFFFF;
+      border-color: var(--text-primary);
+    }
+    .cat-pill-count {
+      font-size: 0.6875rem;
+      opacity: 0.75;
+      padding: 0.1rem 0.35rem;
+      border-radius: 20px;
+      background: rgba(0, 0, 0, 0.08);
+    }
+    .cat-pill.active .cat-pill-count {
+      background: rgba(255, 255, 255, 0.22);
+    }
+
+    /* Legend Bar */
+    .perm-legend {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      background: #F8FAFC;
+      padding: 0.45rem 0.85rem;
+      border-radius: 10px;
+      border: 1px solid var(--border-default);
+    }
+    .legend-title {
+      font-weight: 800;
+      color: var(--text-primary);
+      text-transform: uppercase;
+      font-size: 0.6875rem;
+      letter-spacing: 0.04em;
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+    .legend-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      cursor: help;
+    }
+    .legend-badge {
+      width: 18px;
+      height: 18px;
+      border-radius: 5px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.625rem;
+      font-weight: 800;
+      background: #DCFCE7;
+      color: #15803D;
+      border: 1px solid #86EFAC;
+    }
+
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    .spin-loader {
+      animation: spin 0.8s linear infinite;
+    }
+
+    .rbac-table-container {
+      overflow-x: auto;
+      position: relative;
+    }
+    .rbac-table {
+      width: 100%;
+      min-width: 960px;
+      border-collapse: separate;
+      border-spacing: 0;
+      font-size: 0.84375rem;
+      text-align: left;
+    }
+    .rbac-table thead th {
+      background: linear-gradient(180deg, #1E293B 0%, #0F172A 100%);
+      color: #FFFFFF;
+      padding: 1rem 1.15rem;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+      vertical-align: middle;
+    }
+    .rbac-table thead th:first-child {
+      border-top-left-radius: 0;
+      width: 290px;
+      min-width: 260px;
+    }
+    .rbac-table thead th:last-child {
+      border-top-right-radius: 0;
+    }
+
+    .th-role-header {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.4rem;
+      text-align: center;
+    }
+    .th-role-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.25rem 0.65rem;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .th-role-badge.badge-sa { background: rgba(245, 158, 11, 0.2); color: #FBBF24; border: 1px solid rgba(245, 158, 11, 0.4); }
+    .th-role-badge.badge-hod { background: rgba(234, 88, 12, 0.2); color: #FB923C; border: 1px solid rgba(234, 88, 12, 0.4); }
+    .th-role-badge.badge-fac { background: rgba(37, 99, 235, 0.2); color: #93C5FD; border: 1px solid rgba(37, 99, 235, 0.4); }
+    .th-role-badge.badge-stu { background: rgba(124, 58, 237, 0.2); color: #C4B5FD; border: 1px solid rgba(124, 58, 237, 0.4); }
+
+    .role-bulk-controls {
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+      margin-top: 0.15rem;
+    }
+    .bulk-btn {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      color: rgba(255, 255, 255, 0.8);
+      border-radius: 4px;
+      padding: 0.15rem 0.4rem;
+      font-size: 0.625rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .bulk-btn:hover {
+      background: rgba(255, 255, 255, 0.22);
+      color: #FFFFFF;
+      border-color: rgba(255, 255, 255, 0.4);
+    }
+    .bulk-locked-badge {
+      font-size: 0.625rem;
+      color: #FCD34D;
+      background: rgba(245, 158, 11, 0.15);
+      padding: 0.15rem 0.5rem;
+      border-radius: 4px;
+      border: 1px solid rgba(245, 158, 11, 0.3);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
+
+    .rbac-table tbody tr {
+      transition: background-color 0.15s;
+    }
+    .rbac-table tbody tr:hover td {
+      background-color: #F8FAFC;
+    }
+    .rbac-table td {
+      padding: 0.95rem 1.15rem;
+      border-bottom: 1px solid var(--border-light);
+      vertical-align: middle;
+      text-align: center;
+    }
+    .rbac-table td:first-child {
+      text-align: left;
+    }
+    .rbac-table tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    /* Module Info Column */
+    .module-cell-content {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+    }
+    .module-icon-box {
+      width: 36px;
+      height: 36px;
+      min-width: 36px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #F1F5F9;
+      color: var(--text-secondary);
+      border: 1px solid var(--border-default);
+      margin-top: 2px;
+    }
+    .module-meta {
+      display: flex;
+      flex-direction: column;
+    }
+    .module-title-row {
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+      flex-wrap: wrap;
+    }
+    .module-name {
+      font-weight: 800;
+      color: var(--text-primary);
+      font-size: 0.875rem;
+      letter-spacing: -0.01em;
+    }
+    .module-category-tag {
+      font-size: 0.625rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      padding: 0.1rem 0.4rem;
+      border-radius: 4px;
+      letter-spacing: 0.04em;
+    }
+    .cat-tag-core { background: #EEF2FF; color: #4338CA; }
+    .cat-tag-academic { background: #ECFDF5; color: #065F46; }
+    .cat-tag-operations { background: #FEF3C7; color: #92400E; }
+    .cat-tag-security { background: #FEE2E2; color: #991B1B; }
+
+    .module-desc {
+      font-size: 0.71875rem;
+      color: var(--text-tertiary);
+      line-height: 1.4;
+      margin-top: 0.2rem;
+    }
+
+    /* Redesigned Permission Toggle Chips */
+    .perm-toggle-group {
+      display: inline-flex;
+      gap: 0.35rem;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: nowrap;
+    }
+    .perm-chip {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.25rem;
+      font-size: 0.6875rem;
+      font-weight: 800;
+      padding: 0.35rem 0.55rem;
+      border-radius: 8px;
+      border: 1px solid var(--border-default);
+      background: #F8FAFC;
+      color: var(--text-muted);
+      cursor: pointer;
+      user-select: none;
+      transition: all 0.16s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+    }
+    .perm-chip svg {
+      opacity: 0.7;
+      transition: transform 0.15s;
+    }
+    .perm-chip:hover:not(.locked) {
+      background: #EDF2F7;
+      border-color: var(--border-strong);
+      color: var(--text-secondary);
+      transform: translateY(-1px);
+    }
+    .perm-chip:active:not(.locked) {
+      transform: translateY(0);
+    }
+
+    /* Active State: Emerald Glass Glow */
+    .perm-chip.active {
+      background: #ECFDF5;
+      border-color: #86EFAC;
+      color: #065F46;
+      box-shadow: 0 1px 3px rgba(16, 185, 129, 0.15);
+    }
+    .perm-chip.active svg {
+      opacity: 1;
+      color: #059669;
+    }
+    .perm-chip.active:hover:not(.locked) {
+      background: #D1FAE5;
+      border-color: #6EE7B7;
+      color: #047857;
+      box-shadow: 0 2px 6px rgba(16, 185, 129, 0.22);
+    }
+
+    /* Super Admin Root Immutable State */
+    .perm-chip.sa-root-chip {
+      background: #FFFBEB;
+      border-color: #FCD34D;
+      color: #B45309;
+      cursor: not-allowed;
+      box-shadow: 0 1px 2px rgba(245, 158, 11, 0.1);
+    }
+    .perm-chip.sa-root-chip svg {
+      color: #D97706;
+      opacity: 1;
+    }
+    .perm-chip.locked {
+      cursor: not-allowed;
+    }
+
+    /* Empty Search State */
+    .empty-search-state {
+      padding: 3rem 1.5rem;
+      text-align: center;
+      color: var(--text-tertiary);
+    }
+    .empty-search-state svg {
+      margin-bottom: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    /* Sticky Unsaved Changes Floating Bar */
+    .floating-save-bar {
+      position: fixed;
+      bottom: 1.5rem;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: #0F172A;
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      box-shadow: 0 16px 36px -4px rgba(15, 23, 42, 0.4), 0 6px 14px -2px rgba(15, 23, 42, 0.2);
+      border-radius: 16px;
+      padding: 0.85rem 1.35rem;
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      z-index: 1000;
+      color: #FFFFFF;
+      transition: transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.2s;
+      opacity: 0;
+      pointer-events: none;
+      max-width: 90vw;
+    }
+    .floating-save-bar.visible {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .save-bar-info {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .save-bar-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #F59E0B;
+      box-shadow: 0 0 10px #F59E0B;
+      animation: pulse-dot 1.5s infinite;
+    }
+    .save-bar-text {
+      font-size: 0.84375rem;
+      font-weight: 600;
+    }
+    .save-bar-sub {
+      font-size: 0.71875rem;
+      color: #94A3B8;
+    }
+    .save-bar-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+    }
+    .btn-discard {
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: #E2E8F0;
+      padding: 0.45rem 0.9rem;
+      border-radius: 8px;
+      font-size: 0.78125rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.16s;
+    }
+    .btn-discard:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: #FFFFFF;
+    }
+
+    @media (max-width: 1200px) {
+      .roles-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+    @media (max-width: 768px) {
+      .roles-grid {
+        grid-template-columns: 1fr;
+      }
+      .toolbar-row-top, .toolbar-row-bottom {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .matrix-search-box {
+        min-width: 100%;
+      }
+      .floating-save-bar {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.75rem;
+        bottom: 1rem;
+        padding: 1rem;
+      }
+    }
   </style>
 </head>
 
@@ -149,67 +887,252 @@
       </header>
 
       <main class="app-content">
+        <!-- Top Page Header -->
         <div class="page-header">
           <div>
-            <div class="page-title">Roles & Access Control Governance</div>
-            <div class="page-sub">Configure role-based access permissions, privilege boundaries, and operational matrix</div>
-          </div>
-          <button class="btn-primary-admin" onclick="savePermissions()">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
-            <span>Save Permission Matrix</span>
-          </button>
-        </div>
-
-        <!-- Role Summary Cards -->
-        <div class="roles-grid">
-          <div class="role-card" style="border-color:#FCD34D; background:linear-gradient(135deg,#FFFBEB,#FEF3C7);">
-            <div class="role-icon" style="background:#F59E0B;color:#fff"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
-            <div class="role-name">Super Admin</div>
-            <div class="role-desc">Full platform root authority — immutable root privileges</div>
-            <div class="role-count">2 users</div>
-          </div>
-
-          <div class="role-card">
-            <div class="role-icon" style="background:#FFEDD5;color:#C2410C"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
-            <div class="role-name">HOD</div>
-            <div class="role-desc">Supervises department operations & allocations</div>
-            <div class="role-count">16 users</div>
-          </div>
-
-          <div class="role-card">
-            <div class="role-icon" style="background:#DBEAFE;color:#1D4ED8"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg></div>
-            <div class="role-name">Faculty</div>
-            <div class="role-desc">Course delivery, grading, and student doubt resolution</div>
-            <div class="role-count">142 users</div>
-          </div>
-
-          <div class="role-card">
-            <div class="role-icon" style="background:#EDE9FE;color:#7C3AED"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg></div>
-            <div class="role-name">Student</div>
-            <div class="role-desc">Learner access, materials, submissions, and tasks</div>
-            <div class="role-count">2,180 users</div>
-          </div>
-        </div>
-
-        <!-- Interactive Permission Matrix -->
-        <div class="rbac-card">
-          <div style="padding:1rem 1.25rem; border-bottom:1px solid var(--border-light); display:flex; align-items:center; justify-content:space-between;">
-            <div style="font-size:0.9375rem; font-weight:800; color:var(--text-primary); display:flex; align-items:center; gap:0.5rem;">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-              Role Permission Matrix (Interactive & Backend Enforced)
+            <div class="page-title">
+              Roles & Access Control Governance
+              <span class="page-title-badge">RBAC Enterprise</span>
             </div>
-            <span style="font-size:0.75rem; color:var(--text-tertiary);">Click permission badges to toggle</span>
+            <div class="page-sub">Configure role privilege boundaries, operational module rights, and institutional enforcement</div>
+          </div>
+          <div class="header-actions">
+            <button type="button" class="btn-secondary-admin" onclick="resetToBaseline()" title="Reset matrix to institutional baseline">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+              <span>Restore Baseline</span>
+            </button>
+            <button type="button" class="btn-primary-admin" id="top-save-btn" onclick="savePermissions()">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+              <span id="save-btn-text">Save Permission Matrix</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Role Summary Cards (Balanced 4-Column Grid) -->
+        <div class="roles-grid" id="roles-summary-grid">
+          <!-- Super Admin -->
+          <div class="role-card role-sa">
+            <div class="role-card-top">
+              <div class="role-icon-box" style="background: #FFFBEB; color: #D97706; border: 1px solid #FDE68A;">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                </svg>
+              </div>
+              <span class="role-badge-tag" style="background:#FEF3C7; color:#B45309; border:1px solid #FCD34D;">Root Authority</span>
+            </div>
+            <div class="role-name">Super Admin</div>
+            <div class="role-desc">Platform root governance with irrevocable full privileges across all functional modules.</div>
+            <div class="role-card-footer">
+              <div class="role-user-stat">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/></svg>
+                <span id="stat-sa-users">2 users</span>
+              </div>
+              <span class="role-perm-stat" style="background:#FFFBEB; color:#B45309; border:1px solid #FDE68A;">Full Access (40/40)</span>
+            </div>
           </div>
 
-          <div style="overflow-x: auto;">
+          <!-- Head of Department -->
+          <div class="role-card role-hod">
+            <div class="role-card-top">
+              <div class="role-icon-box" style="background: #FFF7ED; color: #EA580C; border: 1px solid #FED7AA;">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                  <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                  <polyline points="9 22 9 12 15 12 15 22"/>
+                </svg>
+              </div>
+              <span class="role-badge-tag" style="background:#FFEDD5; color:#C2410C; border:1px solid #FDBA74;">Department Lead</span>
+            </div>
+            <div class="role-name">Head of Dept (HOD)</div>
+            <div class="role-desc">Supervises academic department curriculum, faculty assignments, timetables, and evaluations.</div>
+            <div class="role-card-footer">
+              <div class="role-user-stat">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/></svg>
+                <span id="stat-hod-users">16 users</span>
+              </div>
+              <span class="role-perm-stat" id="stat-hod-perms" style="background:#FFF7ED; color:#C2410C; border:1px solid #FED7AA;">Calculating...</span>
+            </div>
+          </div>
+
+          <!-- Faculty -->
+          <div class="role-card role-fac">
+            <div class="role-card-top">
+              <div class="role-icon-box" style="background: #EFF6FF; color: #2563EB; border: 1px solid #BFDBFE;">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                  <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/>
+                  <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
+                </svg>
+              </div>
+              <span class="role-badge-tag" style="background:#DBEAFE; color:#1D4ED8; border:1px solid #93C5FD;">Faculty Staff</span>
+            </div>
+            <div class="role-name">Faculty</div>
+            <div class="role-desc">Course delivery, attendance tracking, assignments creation, grading, and student mentoring.</div>
+            <div class="role-card-footer">
+              <div class="role-user-stat">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/></svg>
+                <span id="stat-fac-users">142 users</span>
+              </div>
+              <span class="role-perm-stat" id="stat-fac-perms" style="background:#EFF6FF; color:#1D4ED8; border:1px solid #BFDBFE;">Calculating...</span>
+            </div>
+          </div>
+
+          <!-- Student -->
+          <div class="role-card role-stu">
+            <div class="role-card-top">
+              <div class="role-icon-box" style="background: #F5F3FF; color: #7C3AED; border: 1px solid #DDD6FE;">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                  <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
+                  <path d="M6 12v5c3 3 9 3 12 0v-5"/>
+                </svg>
+              </div>
+              <span class="role-badge-tag" style="background:#EDE9FE; color:#6D28D9; border:1px solid #C4B5FD;">Enrolled Learner</span>
+            </div>
+            <div class="role-name">Student</div>
+            <div class="role-desc">Access lecture materials, submit assignments, track grades, and engage in peer study rooms.</div>
+            <div class="role-card-footer">
+              <div class="role-user-stat">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/></svg>
+                <span id="stat-stu-users">2,180 users</span>
+              </div>
+              <span class="role-perm-stat" id="stat-stu-perms" style="background:#F5F3FF; color:#6D28D9; border:1px solid #DDD6FE;">Calculating...</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Interactive RBAC Matrix Card -->
+        <div class="rbac-card">
+          <!-- Toolbar & Controls -->
+          <div class="matrix-toolbar">
+            <div class="toolbar-row-top">
+              <div class="matrix-title-wrap">
+                <div class="matrix-icon-badge">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                  </svg>
+                </div>
+                <div>
+                  <div class="matrix-title">Role Permission Governance Matrix</div>
+                  <div class="matrix-subtitle">Real-time interactive permissions synchronized with institutional API middleware</div>
+                </div>
+              </div>
+
+              <!-- Module Search Input -->
+              <div class="matrix-search-box">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                <input type="text" id="module-search" class="search-input-matrix" placeholder="Search modules by name or description..." oninput="onSearchInput(this.value)">
+                <button type="button" id="clear-search-btn" class="search-clear-btn" onclick="clearSearch()" title="Clear search">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+              </div>
+            </div>
+
+            <div class="toolbar-row-bottom">
+              <!-- Category Filter Tabs -->
+              <div class="category-pills" id="category-filter-pills">
+                <button type="button" class="cat-pill active" onclick="setCategoryFilter('all', this)">
+                  <span>All Modules</span>
+                  <span class="cat-pill-count" id="count-all">8</span>
+                </button>
+                <button type="button" class="cat-pill" onclick="setCategoryFilter('core', this)">
+                  <span>Core & Users</span>
+                  <span class="cat-pill-count" id="count-core">1</span>
+                </button>
+                <button type="button" class="cat-pill" onclick="setCategoryFilter('academic', this)">
+                  <span>Academic Operations</span>
+                  <span class="cat-pill-count" id="count-academic">4</span>
+                </button>
+                <button type="button" class="cat-pill" onclick="setCategoryFilter('analytics', this)">
+                  <span>Telemetry & Reports</span>
+                  <span class="cat-pill-count" id="count-analytics">1</span>
+                </button>
+                <button type="button" class="cat-pill" onclick="setCategoryFilter('security', this)">
+                  <span>System & Security</span>
+                  <span class="cat-pill-count" id="count-security">2</span>
+                </button>
+              </div>
+
+              <!-- Permission Action Legend -->
+              <div class="perm-legend">
+                <span class="legend-title">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                  Action Keys:
+                </span>
+                <span class="legend-item" title="View: Inspect and read module data">
+                  <span class="legend-badge">V</span> View
+                </span>
+                <span class="legend-item" title="Create: Add and register new records">
+                  <span class="legend-badge">C</span> Create
+                </span>
+                <span class="legend-item" title="Edit: Modify and update existing entities">
+                  <span class="legend-badge">E</span> Edit
+                </span>
+                <span class="legend-item" title="Delete: Permanently remove records">
+                  <span class="legend-badge">D</span> Delete
+                </span>
+                <span class="legend-item" title="Manage: Full operational control & approvals">
+                  <span class="legend-badge" style="background:#FEF3C7; color:#B45309; border-color:#FCD34D;">★</span> Manage
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Table Container -->
+          <div class="rbac-table-container">
             <table class="rbac-table">
               <thead>
                 <tr>
-                  <th style="width: 250px;">Platform Module</th>
-                  <th>Super Admin (Root)</th>
-                  <th>HOD</th>
-                  <th>Faculty</th>
-                  <th>Student</th>
+                  <th>Platform Functional Module</th>
+                  <th>
+                    <div class="th-role-header">
+                      <span class="th-role-badge badge-sa">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                        Super Admin
+                      </span>
+                      <span class="bulk-locked-badge">
+                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                        Root Locked
+                      </span>
+                    </div>
+                  </th>
+                  <th>
+                    <div class="th-role-header">
+                      <span class="th-role-badge badge-hod">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+                        Head of Dept
+                      </span>
+                      <div class="role-bulk-controls">
+                        <button type="button" class="bulk-btn" onclick="applyRolePreset('hod', 'all')" title="Grant all permissions to HOD">Grant All</button>
+                        <button type="button" class="bulk-btn" onclick="applyRolePreset('hod', 'readonly')" title="Set HOD to Read-Only">View Only</button>
+                        <button type="button" class="bulk-btn" onclick="applyRolePreset('hod', 'clear')" title="Revoke all HOD permissions">Clear</button>
+                      </div>
+                    </div>
+                  </th>
+                  <th>
+                    <div class="th-role-header">
+                      <span class="th-role-badge badge-fac">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/></svg>
+                        Faculty
+                      </span>
+                      <div class="role-bulk-controls">
+                        <button type="button" class="bulk-btn" onclick="applyRolePreset('faculty', 'all')" title="Grant all permissions to Faculty">Grant All</button>
+                        <button type="button" class="bulk-btn" onclick="applyRolePreset('faculty', 'readonly')" title="Set Faculty to Read-Only">View Only</button>
+                        <button type="button" class="bulk-btn" onclick="applyRolePreset('faculty', 'clear')" title="Revoke all Faculty permissions">Clear</button>
+                      </div>
+                    </div>
+                  </th>
+                  <th>
+                    <div class="th-role-header">
+                      <span class="th-role-badge badge-stu">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/></svg>
+                        Student
+                      </span>
+                      <div class="role-bulk-controls">
+                        <button type="button" class="bulk-btn" onclick="applyRolePreset('student', 'all')" title="Grant all permissions to Students">Grant All</button>
+                        <button type="button" class="bulk-btn" onclick="applyRolePreset('student', 'readonly')" title="Set Students to Read-Only">View Only</button>
+                        <button type="button" class="bulk-btn" onclick="applyRolePreset('student', 'clear')" title="Revoke all Student permissions">Clear</button>
+                      </div>
+                    </div>
+                  </th>
                 </tr>
               </thead>
               <tbody id="matrix-tbody">
@@ -222,35 +1145,226 @@
     </div>
   </div>
 
+  <!-- Floating Sticky Unsaved Changes Bar -->
+  <div id="floating-save-bar" class="floating-save-bar">
+    <div class="save-bar-info">
+      <div class="save-bar-dot"></div>
+      <div>
+        <div class="save-bar-text" id="save-bar-title">Unsaved Matrix Changes</div>
+        <div class="save-bar-sub" id="save-bar-sub">You have modifications pending synchronization</div>
+      </div>
+    </div>
+    <div class="save-bar-actions">
+      <button type="button" class="btn-discard" onclick="discardChanges()">Discard Changes</button>
+      <button type="button" class="btn-primary-admin" onclick="savePermissions()">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+        <span>Save Changes</span>
+      </button>
+    </div>
+  </div>
+
   <script src="../js/ui.js"></script>
   <script src="../js/admin-service.js"></script>
 
   <script>
+    // State management
+    let originalMatrixData = {};
     let matrixData = {};
+    let activeCategory = 'all';
+    let searchQuery = '';
+    let hasUnsavedChanges = false;
+    let modifiedCount = 0;
 
+    // Functional module metadata with rich categories and SVG icon definitions
     const modules = [
-      { key: 'user_management', name: 'User Management', desc: 'Create, edit, reset passwords, and manage all users' },
-      { key: 'academic_structure', name: 'Academic Structure & Depts', desc: 'Departments, programs, academic periods, and semesters' },
-      { key: 'courses_subjects', name: 'Courses & Subjects', desc: 'Curriculum, subject allocations, and faculty assignments' },
-      { key: 'attendance_timetable', name: 'Attendance & Timetable', desc: 'Class schedules, room allocations, and attendance logs' },
-      { key: 'assignments_exams', name: 'Assignments & Evaluations', desc: 'Creation, submissions, grading, and publishing marks' },
-      { key: 'reports_analytics', name: 'Reports & Telemetry', desc: 'Academic trends, attendance audits, and institutional reports' },
-      { key: 'system_settings', name: 'System Settings & Config', desc: 'Institution profile, authentication policy, and AI provider' },
-      { key: 'audit_security', name: 'Audit Logs & Security', desc: 'Append-only activity logs, session revocations, and health' }
+      {
+        key: 'user_management',
+        name: 'User Management',
+        category: 'core',
+        categoryLabel: 'Core Identity',
+        desc: 'Create, edit, reset passwords, and manage platform user credentials',
+        icon: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>`
+      },
+      {
+        key: 'academic_structure',
+        name: 'Academic Structure & Depts',
+        category: 'academic',
+        categoryLabel: 'Academic',
+        desc: 'Departments, degree programs, academic terms, and semester structures',
+        icon: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>`
+      },
+      {
+        key: 'courses_subjects',
+        name: 'Courses & Curriculum',
+        category: 'academic',
+        categoryLabel: 'Academic',
+        desc: 'Course catalog, syllabus management, credits, and teacher allocations',
+        icon: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>`
+      },
+      {
+        key: 'attendance_timetable',
+        name: 'Attendance & Timetable',
+        category: 'academic',
+        categoryLabel: 'Operations',
+        desc: 'Schedules, lecture room allocations, biometric and digital attendance logs',
+        icon: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>`
+      },
+      {
+        key: 'assignments_exams',
+        name: 'Assignments & Evaluations',
+        category: 'academic',
+        categoryLabel: 'Assessments',
+        desc: 'Assignment delivery, online submissions, grading rubrics, and GPA calculation',
+        icon: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>`
+      },
+      {
+        key: 'reports_analytics',
+        name: 'Reports & Telemetry',
+        category: 'analytics',
+        categoryLabel: 'Analytics',
+        desc: 'Performance distributions, cohort retention, and institutional KPI digests',
+        icon: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>`
+      },
+      {
+        key: 'system_settings',
+        name: 'System Settings & Config',
+        category: 'security',
+        categoryLabel: 'Governance',
+        desc: 'Institution profile, single sign-on, mail relay, and AI engine providers',
+        icon: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>`
+      },
+      {
+        key: 'audit_security',
+        name: 'Audit Logs & Security',
+        category: 'security',
+        categoryLabel: 'Security',
+        desc: 'Tamper-proof event logs, active sessions termination, and threat alerts',
+        icon: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>`
+      }
     ];
 
     const rolesList = ['super_admin', 'hod', 'faculty', 'student'];
-    const actions = ['view', 'create', 'edit', 'delete', 'manage'];
+
+    const actions = [
+      { key: 'view', label: 'V', title: 'View / Read Data', icon: `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>` },
+      { key: 'create', label: 'C', title: 'Create / Register', icon: `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>` },
+      { key: 'edit', label: 'E', title: 'Edit / Modify', icon: `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>` },
+      { key: 'delete', label: 'D', title: 'Delete / Revoke', icon: `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>` },
+      { key: 'manage', label: '★', title: 'Manage / Full Control', icon: `<svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>` }
+    ];
+
+    // Standard institutional default baseline
+    const institutionalBaseline = {
+      user_management: {
+        super_admin: { view: true, create: true, edit: true, delete: true, manage: true },
+        hod: { view: true, create: true, edit: true, delete: false, manage: false },
+        faculty: { view: true, create: false, edit: false, delete: false, manage: false },
+        student: { view: false, create: false, edit: false, delete: false, manage: false }
+      },
+      academic_structure: {
+        super_admin: { view: true, create: true, edit: true, delete: true, manage: true },
+        hod: { view: true, create: true, edit: true, delete: false, manage: true },
+        faculty: { view: true, create: false, edit: false, delete: false, manage: false },
+        student: { view: true, create: false, edit: false, delete: false, manage: false }
+      },
+      courses_subjects: {
+        super_admin: { view: true, create: true, edit: true, delete: true, manage: true },
+        hod: { view: true, create: true, edit: true, delete: false, manage: true },
+        faculty: { view: true, create: true, edit: true, delete: false, manage: false },
+        student: { view: true, create: false, edit: false, delete: false, manage: false }
+      },
+      attendance_timetable: {
+        super_admin: { view: true, create: true, edit: true, delete: true, manage: true },
+        hod: { view: true, create: true, edit: true, delete: true, manage: true },
+        faculty: { view: true, create: true, edit: true, delete: false, manage: false },
+        student: { view: true, create: false, edit: false, delete: false, manage: false }
+      },
+      assignments_exams: {
+        super_admin: { view: true, create: true, edit: true, delete: true, manage: true },
+        hod: { view: true, create: true, edit: true, delete: true, manage: true },
+        faculty: { view: true, create: true, edit: true, delete: true, manage: true },
+        student: { view: true, create: false, edit: false, delete: false, manage: false }
+      },
+      reports_analytics: {
+        super_admin: { view: true, create: true, edit: true, delete: true, manage: true },
+        hod: { view: true, create: true, edit: false, delete: false, manage: false },
+        faculty: { view: true, create: false, edit: false, delete: false, manage: false },
+        student: { view: false, create: false, edit: false, delete: false, manage: false }
+      },
+      system_settings: {
+        super_admin: { view: true, create: true, edit: true, delete: true, manage: true },
+        hod: { view: false, create: false, edit: false, delete: false, manage: false },
+        faculty: { view: false, create: false, edit: false, delete: false, manage: false },
+        student: { view: false, create: false, edit: false, delete: false, manage: false }
+      },
+      audit_security: {
+        super_admin: { view: true, create: true, edit: true, delete: true, manage: true },
+        hod: { view: false, create: false, edit: false, delete: false, manage: false },
+        faculty: { view: false, create: false, edit: false, delete: false, manage: false },
+        student: { view: false, create: false, edit: false, delete: false, manage: false }
+      }
+    };
 
     document.addEventListener('DOMContentLoaded', async () => {
       UI.initTheme();
-      await fetchPermissions();
+      await Promise.all([fetchPermissions(), fetchRoleStats()]);
     });
+
+    async function fetchRoleStats() {
+      try {
+        const roles = await AdminService.getRoles();
+        if (Array.isArray(roles)) {
+          roles.forEach(r => {
+            if (r.id === 'super_admin' && document.getElementById('stat-sa-users')) {
+              document.getElementById('stat-sa-users').textContent = `${r.userCount || 2} users`;
+            }
+            if (r.id === 'hod' && document.getElementById('stat-hod-users')) {
+              document.getElementById('stat-hod-users').textContent = `${r.userCount || 16} users`;
+            }
+            if (r.id === 'faculty' && document.getElementById('stat-fac-users')) {
+              document.getElementById('stat-fac-users').textContent = `${r.userCount || 142} users`;
+            }
+            if (r.id === 'student' && document.getElementById('stat-stu-users')) {
+              document.getElementById('stat-stu-users').textContent = `${(r.userCount || 2180).toLocaleString()} users`;
+            }
+          });
+        }
+      } catch (e) {
+        console.warn('Role counts fallback to default', e);
+      }
+    }
 
     async function fetchPermissions() {
       try {
-        matrixData = await AdminService.getPermissionMatrix();
+        const fetched = await AdminService.getPermissionMatrix();
+        
+        // Merge with institutional baseline so all 8 modules are guaranteed to have proper state
+        const combined = JSON.parse(JSON.stringify(institutionalBaseline));
+        if (fetched && typeof fetched === 'object') {
+          Object.keys(fetched).forEach(mod => {
+            if (!combined[mod]) combined[mod] = {};
+            rolesList.forEach(r => {
+              if (fetched[mod] && fetched[mod][r]) {
+                combined[mod][r] = { ...(combined[mod][r] || {}), ...fetched[mod][r] };
+              }
+            });
+          });
+        }
+
+        // Always guarantee super_admin root access
+        modules.forEach(m => {
+          if (!combined[m.key]) combined[m.key] = {};
+          combined[m.key].super_admin = { view: true, create: true, edit: true, delete: true, manage: true };
+        });
+
+        originalMatrixData = JSON.parse(JSON.stringify(combined));
+        matrixData = JSON.parse(JSON.stringify(combined));
+        
+        hasUnsavedChanges = false;
+        updateDirtyState();
+        updateCategoryCounts();
         renderMatrix();
+        updateRoleStatsBadges();
       } catch (err) {
         UI.showToast('error', 'Error loading matrix', err.message);
       }
@@ -258,34 +1372,76 @@
 
     function renderMatrix() {
       const tbody = document.getElementById('matrix-tbody');
+      if (!tbody) return;
 
-      tbody.innerHTML = modules.map(mod => {
+      // Filter modules by category and search
+      const q = searchQuery.trim().toLowerCase();
+      const filteredModules = modules.filter(mod => {
+        const matchesCategory = activeCategory === 'all' || mod.category === activeCategory;
+        const matchesSearch = !q || mod.name.toLowerCase().includes(q) || mod.desc.toLowerCase().includes(q);
+        return matchesCategory && matchesSearch;
+      });
+
+      if (filteredModules.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="5">
+              <div class="empty-search-state">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                <div style="font-weight:700; color:var(--text-secondary); font-size:0.9375rem;">No modules matched your search</div>
+                <div style="font-size:0.75rem; margin-top:0.35rem;">Try refining your query or resetting the category filter.</div>
+              </div>
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      tbody.innerHTML = filteredModules.map(mod => {
         const modPerms = matrixData[mod.key] || {};
+
+        let catTagClass = 'cat-tag-core';
+        if (mod.category === 'academic') catTagClass = 'cat-tag-academic';
+        if (mod.category === 'analytics') catTagClass = 'cat-tag-operations';
+        if (mod.category === 'security') catTagClass = 'cat-tag-security';
 
         return `
           <tr>
             <td>
-              <div class="module-name">${mod.name}</div>
-              <div class="module-desc">${mod.desc}</div>
+              <div class="module-cell-content">
+                <div class="module-icon-box">${mod.icon}</div>
+                <div class="module-meta">
+                  <div class="module-title-row">
+                    <span class="module-name">${escapeHtml(mod.name)}</span>
+                    <span class="module-category-tag ${catTagClass}">${mod.categoryLabel}</span>
+                  </div>
+                  <div class="module-desc">${escapeHtml(mod.desc)}</div>
+                </div>
+              </div>
             </td>
-            ${rolesList.map(r => {
-              const rPerms = modPerms[r] || {};
-              const isSuperAdmin = r === 'super_admin';
+            ${rolesList.map(role => {
+              const rPerms = modPerms[role] || {};
+              const isSuperAdmin = role === 'super_admin';
 
               return `
                 <td>
                   <div class="perm-toggle-group">
                     ${actions.map(act => {
-                      const isActive = isSuperAdmin ? true : !!rPerms[act];
-                      const lockedClass = isSuperAdmin ? 'locked' : '';
-                      const actLabel = act.toUpperCase().substring(0, 1);
+                      const isActive = isSuperAdmin ? true : !!rPerms[act.key];
+                      const chipClass = isSuperAdmin ? 'sa-root-chip' : (isActive ? 'active' : '');
+                      const titleText = isSuperAdmin 
+                        ? `${act.title} (Root Immutable Access)`
+                        : `${act.title}: Click to ${isActive ? 'Revoke' : 'Grant'}`;
 
                       return `
-                        <span class="perm-chip ${isActive ? 'active' : ''} ${lockedClass}" 
-                              title="${act.toUpperCase()}"
-                              onclick="togglePerm('${mod.key}', '${r}', '${act}', ${isSuperAdmin})">
-                          ${act === 'manage' ? '★' : actLabel}
-                        </span>
+                        <button type="button" 
+                                class="perm-chip ${chipClass}" 
+                                title="${escapeHtml(titleText)}"
+                                onclick="togglePerm('${mod.key}', '${role}', '${act.key}', ${isSuperAdmin})"
+                                aria-label="${act.title} for ${role}">
+                          ${act.icon}
+                          <span>${act.label}</span>
+                        </button>
                       `;
                     }).join('')}
                   </div>
@@ -297,26 +1453,216 @@
       }).join('');
     }
 
-    function togglePerm(modKey, role, act, isSuperAdmin) {
+    function togglePerm(modKey, role, actKey, isSuperAdmin) {
       if (isSuperAdmin) {
-        UI.showToast('warning', 'Super Admin Invariant', 'Root Super Admin permissions are permanently locked to full access.');
+        UI.showToast('info', 'Root Access Protected', 'Super Admin privileges are permanently enforced by backend root authority.');
         return;
       }
 
       if (!matrixData[modKey]) matrixData[modKey] = {};
       if (!matrixData[modKey][role]) matrixData[modKey][role] = {};
 
-      matrixData[modKey][role][act] = !matrixData[modKey][role][act];
+      const currentVal = !!matrixData[modKey][role][actKey];
+      matrixData[modKey][role][actKey] = !currentVal;
+
+      checkDirtyState();
+      renderMatrix();
+      updateRoleStatsBadges();
+    }
+
+    function applyRolePreset(role, preset) {
+      if (role === 'super_admin') return;
+
+      modules.forEach(mod => {
+        if (!matrixData[mod.key]) matrixData[mod.key] = {};
+        if (!matrixData[mod.key][role]) matrixData[mod.key][role] = {};
+
+        if (preset === 'all') {
+          actions.forEach(a => matrixData[mod.key][role][a.key] = true);
+        } else if (preset === 'readonly') {
+          actions.forEach(a => matrixData[mod.key][role][a.key] = (a.key === 'view'));
+        } else if (preset === 'clear') {
+          actions.forEach(a => matrixData[mod.key][role][a.key] = false);
+        }
+      });
+
+      checkDirtyState();
+      renderMatrix();
+      updateRoleStatsBadges();
+
+      const labelMap = { all: 'Granted Full Access', readonly: 'Set to View-Only', clear: 'All Permissions Cleared' };
+      UI.showToast('info', `Preset Applied: ${role.toUpperCase()}`, labelMap[preset]);
+    }
+
+    function resetToBaseline() {
+      if (!confirm('Are you sure you want to restore the standard institutional baseline permissions for all non-root roles?')) {
+        return;
+      }
+
+      matrixData = JSON.parse(JSON.stringify(institutionalBaseline));
+      checkDirtyState();
+      renderMatrix();
+      updateRoleStatsBadges();
+      UI.showToast('success', 'Baseline Restored', 'Institutional baseline privileges applied. Click Save to persist to backend.');
+    }
+
+    function discardChanges() {
+      matrixData = JSON.parse(JSON.stringify(originalMatrixData));
+      hasUnsavedChanges = false;
+      updateDirtyState();
+      renderMatrix();
+      updateRoleStatsBadges();
+      UI.showToast('info', 'Changes Discarded', 'Reverted permission matrix to last synchronized state.');
+    }
+
+    function checkDirtyState() {
+      let diffCount = 0;
+      modules.forEach(m => {
+        rolesList.forEach(r => {
+          if (r === 'super_admin') return;
+          actions.forEach(a => {
+            const orig = !!(originalMatrixData[m.key] && originalMatrixData[m.key][r] && originalMatrixData[m.key][r][a.key]);
+            const curr = !!(matrixData[m.key] && matrixData[m.key][r] && matrixData[m.key][r][a.key]);
+            if (orig !== curr) diffCount++;
+          });
+        });
+      });
+
+      modifiedCount = diffCount;
+      hasUnsavedChanges = diffCount > 0;
+      updateDirtyState();
+    }
+
+    function updateDirtyState() {
+      const topBtn = document.getElementById('top-save-btn');
+      const btnText = document.getElementById('save-btn-text');
+      const floatingBar = document.getElementById('floating-save-bar');
+      const barTitle = document.getElementById('save-bar-title');
+      const barSub = document.getElementById('save-bar-sub');
+
+      if (hasUnsavedChanges) {
+        if (topBtn) topBtn.classList.add('has-changes');
+        if (btnText) btnText.textContent = `Save Changes (${modifiedCount})`;
+        if (floatingBar) floatingBar.classList.add('visible');
+        if (barTitle) barTitle.textContent = `Unsaved Permissions (${modifiedCount} modified)`;
+        if (barSub) barSub.textContent = `You have unsaved changes. Sync to active API endpoints before leaving.`;
+      } else {
+        if (topBtn) topBtn.classList.remove('has-changes');
+        if (btnText) btnText.textContent = 'Save Permission Matrix';
+        if (floatingBar) floatingBar.classList.remove('visible');
+      }
+    }
+
+    function updateRoleStatsBadges() {
+      const totalPossible = modules.length * actions.length; // 8 * 5 = 40
+
+      ['hod', 'faculty', 'student'].forEach(r => {
+        let activeCount = 0;
+        modules.forEach(m => {
+          const rPerms = (matrixData[m.key] && matrixData[m.key][r]) || {};
+          actions.forEach(a => {
+            if (rPerms[a.key]) activeCount++;
+          });
+        });
+
+        const elem = document.getElementById(`stat-${r === 'faculty' ? 'fac' : (r === 'student' ? 'stu' : 'hod')}-perms`);
+        if (elem) {
+          elem.textContent = `${activeCount}/${totalPossible} Allowed`;
+        }
+      });
+    }
+
+    function setCategoryFilter(cat, btn) {
+      activeCategory = cat;
+      const pills = document.querySelectorAll('.cat-pill');
+      pills.forEach(p => p.classList.remove('active'));
+      if (btn) {
+        btn.classList.add('active');
+      } else {
+        const matching = Array.from(pills).find(p => p.getAttribute('onclick')?.includes(`'${cat}'`));
+        if (matching) matching.classList.add('active');
+      }
+      renderMatrix();
+    }
+
+    function updateCategoryCounts() {
+      const counts = { all: modules.length, core: 0, academic: 0, analytics: 0, security: 0 };
+      modules.forEach(m => {
+        if (counts[m.category] !== undefined) counts[m.category]++;
+      });
+      Object.keys(counts).forEach(cat => {
+        const el = document.getElementById(`count-${cat}`);
+        if (el) el.textContent = counts[cat];
+      });
+    }
+
+    function onSearchInput(val) {
+      searchQuery = val;
+      const clearBtn = document.getElementById('clear-search-btn');
+      if (clearBtn) clearBtn.style.display = val ? 'block' : 'none';
+      renderMatrix();
+    }
+
+    function clearSearch() {
+      const input = document.getElementById('module-search');
+      if (input) input.value = '';
+      searchQuery = '';
+      const clearBtn = document.getElementById('clear-search-btn');
+      if (clearBtn) clearBtn.style.display = 'none';
       renderMatrix();
     }
 
     async function savePermissions() {
+      const saveBtn = document.getElementById('top-save-btn');
+      const originalText = saveBtn ? saveBtn.innerHTML : '';
+      
       try {
+        if (saveBtn) {
+          saveBtn.disabled = true;
+          saveBtn.innerHTML = `
+            <svg class="spin-loader" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10" stroke-opacity="0.25"/><path d="M12 2a10 10 0 0 1 10 10"/></svg>
+            <span>Synchronizing Matrix...</span>
+          `;
+        }
+
+        // Always guarantee super_admin root invariant before transmission
+        modules.forEach(m => {
+          if (!matrixData[m.key]) matrixData[m.key] = {};
+          matrixData[m.key].super_admin = { view: true, create: true, edit: true, delete: true, manage: true };
+        });
+
         await AdminService.updatePermissionMatrix(matrixData);
+
+        // Synchronize base copy
+        originalMatrixData = JSON.parse(JSON.stringify(matrixData));
+        hasUnsavedChanges = false;
+        modifiedCount = 0;
+        updateDirtyState();
+        renderMatrix();
+        updateRoleStatsBadges();
+
         UI.showToast('success', 'Permissions Synced', 'Platform RBAC permission matrix updated and active across all endpoints.');
       } catch (err) {
-        UI.showToast('error', 'Save Failed', err.message);
+        UI.showToast('error', 'Save Failed', err.message || 'Could not update permission matrix.');
+      } finally {
+        if (saveBtn) {
+          saveBtn.disabled = false;
+          saveBtn.innerHTML = `
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+            <span id="save-btn-text">Save Permission Matrix</span>
+          `;
+        }
       }
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
     }
   </script>
 </body>

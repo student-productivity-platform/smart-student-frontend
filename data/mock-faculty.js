@@ -5,7 +5,7 @@
  * ==========================================================================
  */
 
-const mockFaculty = {
+const mockFacultyBase = {
   profile: {
     id: "usr_fac_1001",
     name: "Prof. Sunita Mehta",
@@ -453,7 +453,7 @@ const mockFaculty = {
       date: "2026-09-14",
       startTime: "04:00 PM",
       duration: "60 mins",
-      meetUrl: "https://meet.google.com/qwe-rtyu-iop",
+      meetUrl: "https://meet.google.com/new",
       status: "upcoming",
       attendeeCount: 74,
       agenda: "Reviewing 3NF vs BCNF decompositions, indexing mechanisms, and answering student mid-term doubts."
@@ -467,7 +467,7 @@ const mockFaculty = {
       date: "2026-09-16",
       startTime: "05:00 PM",
       duration: "45 mins",
-      meetUrl: "https://meet.google.com/abc-defg-hij",
+      meetUrl: "https://meet.google.com/new",
       status: "upcoming",
       attendeeCount: 38,
       agenda: "Banker's Algorithm implementation and paging hardware architecture walkthrough."
@@ -481,7 +481,7 @@ const mockFaculty = {
       date: "2026-09-02",
       startTime: "04:30 PM",
       duration: "50 mins",
-      meetUrl: "https://meet.google.com/zxc-vbnm-lkj",
+      meetUrl: "https://meet.google.com/new",
       status: "completed",
       recordingUrl: "https://drive.google.com/file/d/sample-recording/view",
       attendeeCount: 35,
@@ -678,8 +678,385 @@ const mockFaculty = {
   ]
 };
 
+// ── MULTI-DOMAIN FACULTY CATALOG ──
+const allDomainFaculty = {
+  dept_btech: mockFacultyBase,
+
+  dept_bba: {
+    profile: {
+      id: "usr_fac_bba_1",
+      name: "Prof. Priya Nair",
+      email: "bba.faculty@university.edu",
+      role: "faculty",
+      facultyId: "FAC-2024-3001",
+      designation: "Associate Professor",
+      department: "Department of Business Administration",
+      school: "School of Management & Business Studies",
+      joiningYear: "2019",
+      qualification: "Ph.D. in Corporate Finance (IIM Ahmedabad), M.Com, CFA",
+      specialization: "Corporate Valuation, Working Capital Strategies & Financial Statement Analysis",
+      officeRoom: "Management Block B, Cabin 208",
+      phone: "+91 98220 44556",
+      officeHours: "Mon, Wed, Thu: 02:00 PM – 04:00 PM",
+      avatar: "../images/student-study.jpg",
+      status: "active"
+    },
+    assignedSubjects: [
+      {
+        id: "subj_bba204",
+        code: "BBA204",
+        name: "Corporate Financial Accounting",
+        semester: 4,
+        department: "Business Administration",
+        credits: 4,
+        totalHours: 45,
+        completedHours: 25,
+        sections: ["A", "B"],
+        totalStudents: 76,
+        schedule: "Mon (09:30 AM), Wed (09:30 AM), Fri (11:00 AM)",
+        classroom: "Management Hall 101",
+        avgAttendance: 88.0,
+        syllabusUrl: "https://res.cloudinary.com/demo/image/upload/sample.pdf",
+        description: "GAAP/IFRS standards, Balance sheet analysis, Cash flow statements, and Working capital models."
+      },
+      {
+        id: "subj_bba201",
+        code: "BBA201",
+        name: "Principles of Marketing Strategy",
+        semester: 4,
+        department: "Business Administration",
+        credits: 3,
+        totalHours: 40,
+        completedHours: 20,
+        sections: ["A"],
+        totalStudents: 38,
+        schedule: "Tue (11:30 AM), Thu (11:30 AM)",
+        classroom: "Room 205",
+        avgAttendance: 89.2,
+        syllabusUrl: "https://res.cloudinary.com/demo/image/upload/sample.pdf",
+        description: "Market segmentation, STP framework, consumer behavior, omnichannel advertising funnels, and brand equity."
+      },
+      {
+        id: "subj_bba206",
+        code: "BBA206",
+        name: "Business Analytics & Spreadsheet Modeling",
+        semester: 4,
+        department: "Business Administration",
+        credits: 3,
+        totalHours: 35,
+        completedHours: 18,
+        sections: ["A", "B"],
+        totalStudents: 76,
+        schedule: "Thu (03:00 PM - 04:30 PM)",
+        classroom: "Analytics Lab 2",
+        avgAttendance: 87.4,
+        syllabusUrl: "https://res.cloudinary.com/demo/image/upload/sample.pdf",
+        description: "Excel DCF valuation models, scenario managers, regression forecasting, and executive dashboards."
+      }
+    ],
+    studentRoster: [
+      { id: "stu_bba_001", rollNo: "BBA24-001", name: "Aarav Mehra", email: "aarav.m@university.edu", semester: 4, section: "A", attendance: 92, submissions: 4, avgScore: 18.0, phone: "+91 98231 00001", status: "Good Standing" },
+      { id: "stu_bba_002", rollNo: "BBA24-002", name: "Ananya Saxena", email: "ananya.s@university.edu", semester: 4, section: "A", attendance: 90, submissions: 4, avgScore: 17.5, phone: "+91 98231 00002", status: "Good Standing" },
+      { id: "stu_bba_003", rollNo: "BBA24-018", name: "Tanvi Bansal", email: "bba.student@university.edu", semester: 4, section: "A", attendance: 96, submissions: 4, avgScore: 19.5, phone: "+91 98231 66778", status: "Outstanding" },
+      { id: "stu_bba_004", rollNo: "BBA24-019", name: "Rohan Kapoor", email: "rohan.k@university.edu", semester: 4, section: "A", attendance: 84, submissions: 3, avgScore: 16.0, phone: "+91 98231 00004", status: "Good Standing" },
+      { id: "stu_bba_005", rollNo: "BBA24-020", name: "Simran Kaur", email: "simran.k@university.edu", semester: 4, section: "A", attendance: 88, submissions: 4, avgScore: 17.8, phone: "+91 98231 00005", status: "Good Standing" },
+      { id: "stu_bba_006", rollNo: "BBA24-021", name: "Yash Singhania", email: "yash.s@university.edu", semester: 4, section: "A", attendance: 72, submissions: 3, avgScore: 13.5, phone: "+91 98231 00006", status: "Low Attendance Warning" }
+    ],
+    assignments: [
+      {
+        id: "fac_asg_bba_001",
+        title: "Cash Flow Statement Derivations & Working Capital Analysis",
+        subjectCode: "BBA204",
+        subjectName: "Corporate Financial Accounting",
+        sections: ["A", "B"],
+        dueDate: "2026-09-29",
+        dueTime: "23:59",
+        maxMarks: 25,
+        submissionType: "Excel Model (.xlsx) + PDF",
+        status: "active",
+        publishedAt: "2026-09-15",
+        totalAssigned: 76,
+        totalSubmitted: 58,
+        totalGraded: 35,
+        pendingGrading: 23,
+        description: "Analyze the 3-statement financial statements of a manufacturing company and evaluate the operating cash cycle."
+      },
+      {
+        id: "fac_asg_bba_002",
+        title: "Omnichannel Brand Positioning & Strategy Pitch",
+        subjectCode: "BBA201",
+        subjectName: "Principles of Marketing Strategy",
+        sections: ["A"],
+        dueDate: "2026-10-02",
+        dueTime: "17:00",
+        maxMarks: 20,
+        submissionType: "Pitch Deck Presentation (.pptx)",
+        status: "active",
+        publishedAt: "2026-09-18",
+        totalAssigned: 38,
+        totalSubmitted: 28,
+        totalGraded: 10,
+        pendingGrading: 18,
+        description: "Develop a brand repositioning strategy targeting Gen-Z with detailed CAC, LTV and ROAS projections."
+      }
+    ],
+    submissions: [
+      {
+        id: "sub_bba_101",
+        assignmentId: "fac_asg_bba_001",
+        assignmentTitle: "Cash Flow Statement Derivations",
+        subjectCode: "BBA204",
+        studentId: "stu_bba_003",
+        studentName: "Tanvi Bansal",
+        rollNo: "BBA24-018",
+        section: "A",
+        submittedAt: "2026-09-20 14:15",
+        fileName: "Tanvi_Bansal_BBA204_CashFlow.xlsx",
+        fileSize: "1.9 MB",
+        status: "submitted",
+        marks: null,
+        maxMarks: 25,
+        feedback: ""
+      }
+    ],
+    attendanceHistory: [
+      { id: "att_bba_001", date: "2026-09-24", subjectCode: "BBA204", subjectName: "Corporate Financial Accounting", section: "A", totalStudents: 38, presentCount: 34, absentCount: 4, attendancePercentage: 89.5 },
+      { id: "att_bba_002", date: "2026-09-23", subjectCode: "BBA201", subjectName: "Principles of Marketing Strategy", section: "A", totalStudents: 38, presentCount: 35, absentCount: 3, attendancePercentage: 92.1 }
+    ],
+    exams: [
+      { id: "exm_fac_bba_1", subject: "Corporate Financial Accounting", subjectCode: "BBA204", title: "Mid-Term Examination", date: "2026-09-29", time: "09:30 AM – 11:30 AM", venue: "Management Hall 101", totalMarks: 50, passingMarks: 20 },
+      { id: "exm_fac_bba_2", subject: "Principles of Marketing Strategy", subjectCode: "BBA201", title: "Internal Assessment 1", date: "2026-10-03", time: "02:00 PM – 03:30 PM", venue: "Room 205", totalMarks: 30, passingMarks: 12 }
+    ],
+    meetings: [
+      { id: "meet_bba_001", title: "Corporate Valuation & WACC Office Hours", subjectCode: "BBA204", date: "2026-09-26", time: "02:30 PM", durationMinutes: 60, meetLink: "https://meet.google.com/bba-val-office", attendees: 18 }
+    ],
+    materials: [
+      { id: "mat_fac_bba_1", title: "Corporate Finance Unit 4: Capital Structure & WACC", subjectCode: "BBA204", subject: "Corporate Financial Accounting", category: "Notes", uploadedAt: "Sep 05, 2026", fileType: "pdf", fileSize: "4.1 MB" },
+      { id: "mat_fac_bba_2", title: "Marketing Strategy: Consumer Decision Funnel & Omni-channel Deck", subjectCode: "BBA201", subject: "Principles of Marketing Strategy", category: "Presentations", uploadedAt: "Sep 01, 2026", fileType: "ppt", fileSize: "6.2 MB" }
+    ],
+    announcements: [
+      { id: "ann_fac_bba_1", title: "Financial Modeling Lab Guest Lecture by Deloitte Advisory", date: "2026-09-22", author: "Prof. Priya Nair", content: "Industry speaker session on M&A valuation multiples this Friday at 3:00 PM in Management Hall 101." }
+    ],
+    doubts: [
+      { id: "dbt_fac_bba_001", studentId: "stu_bba_003", studentName: "Tanvi Bansal", rollNo: "BBA24-018", subjectCode: "BBA204", subjectName: "Corporate Financial Accounting", question: "When calculating WACC, why do we use market value of debt and equity rather than book value?", status: "unanswered", createdAt: "Today at 10:15 AM", answer: "" }
+    ]
+  },
+
+  dept_mba: {
+    profile: {
+      id: "usr_fac_mba_1",
+      name: "Prof. Arunav Roy",
+      email: "mba.faculty@university.edu",
+      role: "faculty",
+      facultyId: "FAC-2024-4001",
+      designation: "Professor of Practice",
+      department: "School of Management & Business Studies",
+      school: "School of Management & Business Studies",
+      joiningYear: "2017",
+      qualification: "MBA (Wharton), B.Tech (IIT Delhi), Ex-Managing Director Goldman Sachs",
+      specialization: "Mergers & Acquisitions, Investment Banking, LBO Modeling & Private Equity",
+      officeRoom: "Executive Block C, Cabin 110",
+      phone: "+91 98220 77665",
+      officeHours: "Tue, Thu: 03:00 PM – 05:30 PM",
+      avatar: "../images/student-study.jpg",
+      status: "active"
+    },
+    assignedSubjects: [
+      {
+        id: "subj_mba602",
+        code: "MBA602",
+        name: "Mergers, Acquisitions & Restructuring",
+        semester: 4,
+        department: "MBA",
+        credits: 4,
+        totalHours: 45,
+        completedHours: 28,
+        sections: ["A"],
+        totalStudents: 60,
+        schedule: "Tue (12:00 PM), Thu (12:00 PM)",
+        classroom: "Room 401 / Executive Case Room",
+        avgAttendance: 91.5,
+        syllabusUrl: "https://res.cloudinary.com/demo/image/upload/sample.pdf",
+        description: "Accretion/dilution modeling, LBO debt structuring, synergy realization, and antitrust regulatory review."
+      },
+      {
+        id: "subj_mba603",
+        code: "MBA603",
+        name: "Investment Banking & Private Equity",
+        semester: 4,
+        department: "MBA",
+        credits: 4,
+        totalHours: 45,
+        completedHours: 26,
+        sections: ["A"],
+        totalStudents: 60,
+        schedule: "Wed (02:30 PM), Fri (02:30 PM)",
+        classroom: "Executive Lab",
+        avgAttendance: 93.0,
+        syllabusUrl: "https://res.cloudinary.com/demo/image/upload/sample.pdf",
+        description: "IPO syndication, private equity fund economics, venture capital term sheet waterfalls, and distressed debt."
+      },
+      {
+        id: "subj_mba601",
+        code: "MBA601",
+        name: "Strategic Global Leadership",
+        semester: 4,
+        department: "MBA",
+        credits: 4,
+        totalHours: 40,
+        completedHours: 24,
+        sections: ["A"],
+        totalStudents: 60,
+        schedule: "Mon (10:00 AM), Wed (10:00 AM)",
+        classroom: "Executive Seminar Room A",
+        avgAttendance: 94.2,
+        syllabusUrl: "https://res.cloudinary.com/demo/image/upload/sample.pdf",
+        description: "Harvard Business School case studies, boardroom governance simulations, corporate turnarounds, and ESG."
+      }
+    ],
+    studentRoster: [
+      { id: "stu_mba_001", rollNo: "MBA24-001", name: "Anandita Ghosh", email: "anandita.g@university.edu", semester: 4, section: "A", attendance: 95, submissions: 4, avgScore: 28.5, phone: "+91 98232 00001", status: "Outstanding" },
+      { id: "stu_mba_002", rollNo: "MBA24-007", name: "Aditya Sengupta", email: "mba.student@university.edu", semester: 4, section: "A", attendance: 96, submissions: 4, avgScore: 29.2, phone: "+91 98232 99001", status: "Outstanding" },
+      { id: "stu_mba_003", rollNo: "MBA24-015", name: "Natasha Roy", email: "natasha.r@university.edu", semester: 4, section: "A", attendance: 92, submissions: 4, avgScore: 27.5, phone: "+91 98232 00003", status: "Good Standing" },
+      { id: "stu_mba_004", rollNo: "MBA24-023", name: "Siddharth Menon", email: "siddharth.m@university.edu", semester: 4, section: "A", attendance: 90, submissions: 3, avgScore: 26.0, phone: "+91 98232 00004", status: "Good Standing" },
+      { id: "stu_mba_005", rollNo: "MBA24-041", name: "Divya Khurana", email: "divya.k@university.edu", semester: 4, section: "A", attendance: 88, submissions: 4, avgScore: 27.0, phone: "+91 98232 00005", status: "Good Standing" }
+    ],
+    assignments: [
+      {
+        id: "fac_asg_mba_001",
+        title: "Cross-Border Acquisition Feasibility & DCF Valuation",
+        subjectCode: "MBA602",
+        subjectName: "Mergers, Acquisitions & Restructuring",
+        sections: ["A"],
+        dueDate: "2026-09-30",
+        dueTime: "23:59",
+        maxMarks: 30,
+        submissionType: "Executive Valuation Brief + Financial Model",
+        status: "active",
+        publishedAt: "2026-09-12",
+        totalAssigned: 60,
+        totalSubmitted: 48,
+        totalGraded: 32,
+        pendingGrading: 16,
+        description: "Perform comprehensive DCF and precedent transaction valuation for a $1.2B cross-border acquisition."
+      },
+      {
+        id: "fac_asg_mba_002",
+        title: "Portfolio Optimization & Black-Litterman Asset Allocation",
+        subjectCode: "MBA603",
+        subjectName: "Investment Banking & Private Equity",
+        sections: ["A"],
+        dueDate: "2026-10-09",
+        dueTime: "23:59",
+        maxMarks: 20,
+        submissionType: "Python Notebook / Excel Quant Model",
+        status: "active",
+        publishedAt: "2026-09-18",
+        totalAssigned: 60,
+        totalSubmitted: 36,
+        totalGraded: 12,
+        pendingGrading: 24,
+        description: "Apply Bayesian prior equilibrium returns combined with tactical investor views to build an efficient frontier multi-asset portfolio."
+      }
+    ],
+    submissions: [
+      {
+        id: "sub_mba_101",
+        assignmentId: "fac_asg_mba_001",
+        assignmentTitle: "Cross-Border Acquisition Feasibility",
+        subjectCode: "MBA602",
+        studentId: "stu_mba_002",
+        studentName: "Aditya Sengupta",
+        rollNo: "MBA24-007",
+        section: "A",
+        submittedAt: "2026-09-22 17:40",
+        fileName: "Aditya_Sengupta_MBA602_Valuation.pdf",
+        fileSize: "4.8 MB",
+        status: "submitted",
+        marks: null,
+        maxMarks: 30,
+        feedback: ""
+      }
+    ],
+    attendanceHistory: [
+      { id: "att_mba_001", date: "2026-09-24", subjectCode: "MBA602", subjectName: "Mergers & Acquisitions", section: "A", totalStudents: 60, presentCount: 56, absentCount: 4, attendancePercentage: 93.3 },
+      { id: "att_mba_002", date: "2026-09-23", subjectCode: "MBA603", subjectName: "Investment Banking & PE", section: "A", totalStudents: 60, presentCount: 57, absentCount: 3, attendancePercentage: 95.0 }
+    ],
+    exams: [
+      { id: "exm_fac_mba_1", subject: "Mergers, Acquisitions & Restructuring", subjectCode: "MBA602", title: "Comprehensive Case Assessment", date: "2026-09-30", time: "10:00 AM – 01:00 PM", venue: "Executive Boardroom C", totalMarks: 100, passingMarks: 50 },
+      { id: "exm_fac_mba_2", subject: "Strategic Global Leadership", subjectCode: "MBA601", title: "Mid-Term Case Defense", date: "2026-10-04", time: "02:00 PM – 04:00 PM", venue: "Seminar Room A", totalMarks: 50, passingMarks: 25 }
+    ],
+    meetings: [
+      { id: "meet_mba_001", title: "M&A Deal Room Negotiation Simulation", subjectCode: "MBA602", date: "2026-09-27", time: "03:00 PM", durationMinutes: 90, meetLink: "https://meet.google.com/mba-dealroom-live", attendees: 45 }
+    ],
+    materials: [
+      { id: "mat_fac_mba_1", title: "Corporate Valuation: Discounted Cash Flow & Multiples Guide", subjectCode: "MBA602", subject: "Mergers, Acquisitions & Restructuring", category: "Notes", uploadedAt: "Sep 03, 2026", fileType: "pdf", fileSize: "5.4 MB" },
+      { id: "mat_fac_mba_2", title: "Private Equity: Leveraged Buyout (LBO) Debt Structuring Framework", subjectCode: "MBA603", subject: "Investment Banking & Private Equity", category: "Reference Material", uploadedAt: "Aug 30, 2026", fileType: "pdf", fileSize: "3.9 MB" }
+    ],
+    announcements: [
+      { id: "ann_fac_mba_1", title: "Wharton Global Consulting Practicum Selection Process", date: "2026-09-21", author: "Prof. Arunav Roy", content: "Executive MBA candidates wishing to participate in the international consulting exchange must submit their cover memo by Friday." }
+    ],
+    doubts: [
+      { id: "dbt_fac_mba_001", studentId: "stu_mba_002", studentName: "Aditya Sengupta", rollNo: "MBA24-007", subjectCode: "MBA602", subjectName: "Mergers, Acquisitions & Restructuring", question: "How does the purchase price allocation (PPA) affect future amortization of identified intangible assets and deferred tax liabilities?", status: "unanswered", createdAt: "Today at 08:45 AM", answer: "" }
+    ]
+  }
+};
+
+function getActiveFacultyDomainKey() {
+  if (typeof DomainService !== 'undefined') {
+    return DomainService.getActiveDomain();
+  }
+  if (typeof localStorage !== 'undefined') {
+    const saved = localStorage.getItem('smart_student_active_domain');
+    if (saved && allDomainFaculty[saved]) return saved;
+    try {
+      const raw = sessionStorage.getItem('smart_student_session') || localStorage.getItem('smart_student_session');
+      if (raw) {
+        const u = JSON.parse(raw);
+        const d = (u.departmentId || u.department || u.program || u.email || '').toLowerCase();
+        if (d.includes('bba')) return 'dept_bba';
+        if (d.includes('mba')) return 'dept_mba';
+      }
+    } catch (_) {}
+  }
+  return 'dept_btech';
+}
+
+function getFacultyForDomain(domainId) {
+  const d = domainId || getActiveFacultyDomainKey();
+  return allDomainFaculty[d] || allDomainFaculty.dept_btech;
+}
+
+const mockFaculty = new Proxy({}, {
+  get(target, prop) {
+    const f = getFacultyForDomain();
+    if (prop === 'all') return allDomainFaculty;
+    if (prop === 'forDomain') return (id) => getFacultyForDomain(id);
+    return f[prop];
+  },
+  set(target, prop, value) {
+    const f = getFacultyForDomain();
+    f[prop] = value;
+    return true;
+  },
+  has(target, prop) {
+    const f = getFacultyForDomain();
+    return prop in f;
+  },
+  ownKeys() {
+    const f = getFacultyForDomain();
+    return Reflect.ownKeys(f);
+  },
+  getOwnPropertyDescriptor(target, prop) {
+    const f = getFacultyForDomain();
+    return Reflect.getOwnPropertyDescriptor(f, prop);
+  }
+});
+
 if (typeof module !== 'undefined' && module.exports) {
-  module.exports = { mockFaculty };
+  module.exports = { mockFaculty, allDomainFaculty, getFacultyForDomain };
 } else {
   window.mockFaculty = mockFaculty;
+  window.allDomainFaculty = allDomainFaculty;
+  window.getFacultyForDomain = getFacultyForDomain;
 }

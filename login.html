@@ -59,33 +59,64 @@
 
         <h1 class="form-greeting">Welcome Back!</h1>
 
-        <!-- Quick Demo Switcher -->
+        <!-- Quick Demo Switcher with Domain Tabs -->
         <div class="demo-auth-bar" aria-label="Demo Credentials">
-          <div class="demo-bar-label">Quick-Fill Demo Account:</div>
-          <div class="demo-chip-group">
-            <button type="button" class="demo-btn" id="demo-student-btn" data-email="student@university.edu"
-              data-pass="Student@2026" data-code="STUDENT-2026">
-              student@university.edu
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 0.5rem;">
+            <div class="demo-bar-label" style="font-weight:700; font-size:0.8rem; color:#475569;">Domain Demo Accounts:</div>
+            <span style="font-size:0.7rem; color:#6366F1; font-weight:600; background:rgba(99,102,241,0.08); padding:2px 8px; border-radius:12px;">1-Click Fill & Domain Switch</span>
+          </div>
+
+          <!-- Domain Tabs -->
+          <div class="domain-demo-tabs" style="display:flex; gap:5px; margin-bottom:0.6rem; border-bottom:1px solid #E2E8F0; padding-bottom:5px;">
+            <button type="button" class="domain-tab-btn active" data-target-domain="dept_btech" style="padding:4px 10px; border-radius:6px; font-size:0.75rem; font-weight:700; border:none; cursor:pointer; background:#4F46E5; color:#fff;">💻 B.Tech</button>
+            <button type="button" class="domain-tab-btn" data-target-domain="dept_bba" style="padding:4px 10px; border-radius:6px; font-size:0.75rem; font-weight:600; border:none; cursor:pointer; background:#F1F5F9; color:#475569;">📊 BBA</button>
+            <button type="button" class="domain-tab-btn" data-target-domain="dept_mba" style="padding:4px 10px; border-radius:6px; font-size:0.75rem; font-weight:600; border:none; cursor:pointer; background:#F1F5F9; color:#475569;">💼 MBA</button>
+            <button type="button" class="domain-tab-btn" data-target-domain="admin" style="padding:4px 10px; border-radius:6px; font-size:0.75rem; font-weight:600; border:none; cursor:pointer; background:#F1F5F9; color:#475569;">🛡️ Admin</button>
+          </div>
+
+          <!-- B.Tech Chips -->
+          <div class="demo-chip-group domain-group" id="domain-group-dept_btech" style="display:flex; flex-wrap:wrap; gap:6px;">
+            <button type="button" class="demo-btn" data-domain="dept_btech" data-email="student@university.edu" data-pass="Student@2026" data-code="STUDENT-2026" title="B.Tech Student (Riddhi)">
+              🎓 Student (Riddhi)
             </button>
-            <button type="button" class="demo-btn" id="demo-faculty-btn" data-email="faculty@university.edu"
-              data-pass="Faculty@2026" data-code="FACULTY-2026"
-              style="background: rgba(139, 92, 246, 0.12); border-color: #8B5CF6; color: #7C3AED; font-weight: 600;">
-              faculty@university.edu (Prof. Sunita)
+            <button type="button" class="demo-btn" data-domain="dept_btech" data-email="faculty@university.edu" data-pass="Faculty@2026" data-code="FACULTY-2026" style="background: rgba(139, 92, 246, 0.12); border-color: #8B5CF6; color: #7C3AED; font-weight: 600;" title="B.Tech Faculty (Prof. Sunita)">
+              👩‍🏫 Faculty (Prof. Sunita)
             </button>
-            <button type="button" class="demo-btn" id="demo-hod-btn" data-email="hod@gmail.com"
-              data-pass="hod1234" data-code="HOD-2026"
-              style="background: rgba(124, 58, 237, 0.14); border-color: #7C3AED; color: #6D28D9; font-weight: 700;">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="flex-shrink:0">
-                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
-                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
-              </svg>
-              hod@gmail.com (HOD)
+            <button type="button" class="demo-btn" data-domain="dept_btech" data-email="hod@gmail.com" data-pass="hod1234" data-code="HOD-2026" style="background: rgba(124, 58, 237, 0.14); border-color: #7C3AED; color: #6D28D9; font-weight: 700;" title="B.Tech HOD (Dr. Deshmukh)">
+              🏛️ HOD (Dr. Deshmukh)
             </button>
-            <button type="button" class="demo-btn demo-btn--admin" id="demo-admin-btn" data-email="admin@university.edu" data-pass="Admin@2026" data-code="ADMIN-2026">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="flex-shrink:0">
-                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-              </svg>
-              admin@university.edu
+          </div>
+
+          <!-- BBA Chips -->
+          <div class="demo-chip-group domain-group" id="domain-group-dept_bba" style="display:none; flex-wrap:wrap; gap:6px;">
+            <button type="button" class="demo-btn" data-domain="dept_bba" data-email="bba.student@university.edu" data-pass="Student@2026" data-code="STUDENT-2026" style="background: rgba(16, 185, 129, 0.12); border-color: #10B981; color: #047857; font-weight: 600;" title="BBA Student (Tanvi)">
+              🎓 Student (Tanvi - BBA)
+            </button>
+            <button type="button" class="demo-btn" data-domain="dept_bba" data-email="bba.faculty@university.edu" data-pass="Faculty@2026" data-code="FACULTY-2026" style="background: rgba(59, 130, 246, 0.12); border-color: #3B82F6; color: #1D4ED8; font-weight: 600;" title="BBA Faculty (Prof. Priya)">
+              👩‍🏫 Faculty (Prof. Priya Nair)
+            </button>
+            <button type="button" class="demo-btn" data-domain="dept_bba" data-email="meera.sen@university.edu" data-pass="Hod@2026" data-code="HOD-2026" style="background: rgba(13, 148, 136, 0.14); border-color: #0D9488; color: #0F766E; font-weight: 700;" title="BBA HOD (Dr. Meera Sen)">
+              🏛️ HOD (Dr. Meera Sen)
+            </button>
+          </div>
+
+          <!-- MBA Chips -->
+          <div class="demo-chip-group domain-group" id="domain-group-dept_mba" style="display:none; flex-wrap:wrap; gap:6px;">
+            <button type="button" class="demo-btn" data-domain="dept_mba" data-email="mba.student@university.edu" data-pass="Student@2026" data-code="STUDENT-2026" style="background: rgba(245, 158, 11, 0.12); border-color: #F59E0B; color: #B45309; font-weight: 600;" title="MBA Student (Aditya)">
+              🎓 Student (Aditya - MBA)
+            </button>
+            <button type="button" class="demo-btn" data-domain="dept_mba" data-email="mba.faculty@university.edu" data-pass="Faculty@2026" data-code="FACULTY-2026" style="background: rgba(168, 85, 247, 0.12); border-color: #A855F7; color: #7E22CE; font-weight: 600;" title="MBA Faculty (Prof. Arunav)">
+              👩‍🏫 Faculty (Prof. Arunav Roy)
+            </button>
+            <button type="button" class="demo-btn" data-domain="dept_mba" data-email="rajesh.patil@university.edu" data-pass="Hod@2026" data-code="HOD-2026" style="background: rgba(180, 83, 9, 0.14); border-color: #B45309; color: #78350F; font-weight: 700;" title="MBA Dean (Dr. Rajesh Patil)">
+              🏛️ Dean / HOD (Dr. Rajesh Patil)
+            </button>
+          </div>
+
+          <!-- Admin Chips -->
+          <div class="demo-chip-group domain-group" id="domain-group-admin" style="display:none; flex-wrap:wrap; gap:6px;">
+            <button type="button" class="demo-btn demo-btn--admin" data-domain="dept_btech" data-email="admin@university.edu" data-pass="Admin@2026" data-code="ADMIN-2026">
+              🛡️ Super Administrator (admin@university.edu)
             </button>
           </div>
         </div>
@@ -258,7 +289,10 @@
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
 
   <!-- Application Services -->
+  <script src="data/domain-data.js"></script>
+  <script src="js/domain-service.js"></script>
   <script src="data/mock-student.js"></script>
+  <script src="data/mock-faculty.js"></script>
   <script src="data/mock-hod.js"></script>
   <script src="js/firebase-config.js"></script>
   <script src="js/auth.js"></script>
@@ -288,6 +322,35 @@
       if (remembered) {
         emailInput.value = remembered;
       }
+
+      // Domain Tab Switcher
+      document.querySelectorAll('.domain-tab-btn').forEach(tab => {
+        tab.addEventListener('click', () => {
+          document.querySelectorAll('.domain-tab-btn').forEach(t => {
+            t.classList.remove('active');
+            t.style.background = '#F1F5F9';
+            t.style.color = '#475569';
+          });
+          tab.classList.add('active');
+          tab.style.background = '#4F46E5';
+          tab.style.color = '#fff';
+
+          const target = tab.getAttribute('data-target-domain');
+          document.querySelectorAll('.domain-group').forEach(grp => {
+            grp.style.display = 'none';
+          });
+          const targetGrp = document.getElementById(`domain-group-${target}`);
+          if (targetGrp) targetGrp.style.display = 'flex';
+
+          if (target && target !== 'admin') {
+            if (typeof DomainService !== 'undefined') {
+              DomainService.setActiveDomain(target, false);
+            } else {
+              localStorage.setItem('smart_student_active_domain', target);
+            }
+          }
+        });
+      });
 
       // Password visibility toggle with SVG icon update
       togglePasswordBtn.addEventListener('click', () => {
@@ -333,6 +396,16 @@
           emailInput.value = btn.getAttribute('data-email') || '';
           passwordInput.value = btn.getAttribute('data-pass') || '';
           codeInput.value = btn.getAttribute('data-code') || '';
+          
+          const dom = btn.getAttribute('data-domain');
+          if (dom) {
+            if (typeof DomainService !== 'undefined') {
+              DomainService.setActiveDomain(dom, false);
+            } else {
+              localStorage.setItem('smart_student_active_domain', dom);
+            }
+          }
+
           hideAlert();
           emailInput.classList.remove('has-error');
           passwordInput.classList.remove('has-error');

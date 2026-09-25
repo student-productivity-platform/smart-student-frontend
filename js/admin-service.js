@@ -103,7 +103,8 @@ const AdminService = (() => {
     }
 
     try {
-      const query = new URLSearchParams(filters).toString();
+      const queryParams = { limit: 'all', ...filters };
+      const query = new URLSearchParams(queryParams).toString();
       const res = await apiFetch(`/api/users${query ? '?' + query : ''}`);
       if (res && res.success) {
         return res.users || [];

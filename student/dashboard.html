@@ -888,6 +888,8 @@
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
 
   <!-- Mock Data Layer -->
+  <script src="../data/domain-data.js"></script>
+  <script src="../js/domain-service.js"></script>
   <script src="../data/mock-student.js"></script>
   <script src="../data/mock-schedule.js"></script>
   <script src="../data/mock-assignments.js"></script>
@@ -962,9 +964,63 @@
       // 8. Render Notifications
       renderNotifications();
 
+      // 9. Render Domain Scoped Analytics (Cylinders & Progression)
+      renderDomainAnalytics();
+
       // Setup Event Listeners
       setupDashboardEvents();
     });
+
+    function renderDomainAnalytics() {
+      if (typeof DomainService === 'undefined') return;
+      const analytics = DomainService.getAnalytics();
+      if (!analytics || !analytics.cylinders) return;
+
+      // 1. Render Cylinders
+      const stage = document.querySelector('.ref-cylinders-stage');
+      if (stage && Array.isArray(analytics.cylinders)) {
+        stage.innerHTML = analytics.cylinders.map(c => `
+          <div class="ref-cylinder-column">
+            <div class="ref-cylinder-track" title="${c.label}: ${c.pct}%">
+              <div class="ref-cylinder-fill ${c.class || 'fill-purple'}" style="height: ${c.pct}%;"></div>
+            </div>
+            <span class="ref-cylinder-label">${c.label}</span>
+          </div>
+        `).join('');
+      }
+
+      // 2. Render Donut Progression
+      if (analytics.donutSegments) {
+        const centerVal = document.querySelector('.ref-donut-center-val');
+        const centerSub = document.querySelector('.ref-donut-center-sub');
+        if (centerVal && centerSub && analytics.progressionSummary) {
+          const parts = analytics.progressionSummary.split('Credits');
+          centerVal.textContent = parts[0]?.trim() || '';
+          centerSub.textContent = `Credits ${parts[1] || ''}`.trim();
+        }
+
+        const legends = document.querySelector('.ref-donut-legends');
+        if (legends) {
+          legends.innerHTML = analytics.donutSegments.map(s => `
+            <div class="ref-legend-item">
+              <span class="ref-legend-dot" style="background-color: ${s.color};"></span>
+              <span>${s.label}</span>
+            </div>
+          `).join('');
+        }
+
+        const svgStage = document.querySelector('.ref-donut-svg-stage svg');
+        if (svgStage) {
+          svgStage.innerHTML = `
+            <circle cx="50" cy="50" r="38" fill="transparent" stroke="#F1F5F9" stroke-width="13" />
+            ${analytics.donutSegments.map(s => `
+              <circle cx="50" cy="50" r="38" fill="transparent" stroke="${s.color}" stroke-width="13"
+                stroke-dasharray="${s.dash}" stroke-dashoffset="${s.offset}" />
+            `).join('')}
+          `;
+        }
+      }
+    }
 
     // --- Tab Switching in Secondary Hub ---
     window.switchHubTab = function (tabName) {

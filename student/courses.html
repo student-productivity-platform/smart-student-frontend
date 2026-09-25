@@ -255,6 +255,8 @@
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
 
+  <script src="../data/domain-data.js"></script>
+  <script src="../js/domain-service.js"></script>
   <script src="../data/mock-student.js"></script>
   <script src="../js/firebase-config.js"></script>
   <script src="../js/auth.js"></script>
@@ -283,13 +285,27 @@
 
     function getCourseDomain(code) {
       const domains = {
+        // B.Tech CSE
         'CS401': 'Core Algorithms',
         'CS402': 'Database Systems',
         'CS403': 'AI & ML',
         'CS404': 'Systems & Kernel',
-        'CS405': 'Networks & Security'
+        'CS405': 'Networks & Security',
+        // BBA
+        'BBA201': 'Marketing Strategy',
+        'BBA202': 'Organizational Dynamics',
+        'BBA203': 'Managerial Economics',
+        'BBA204': 'Corporate Finance',
+        'BBA205': 'Business Law & Ethics',
+        'BBA206': 'Spreadsheet Analytics',
+        // MBA
+        'MBA501': 'Executive Strategy',
+        'MBA502': 'Financial Engineering',
+        'MBA503': 'Consumer Analytics',
+        'MBA504': 'Global Supply Chain',
+        'MBA505': 'People Analytics'
       };
-      return domains[code] || 'Computer Science';
+      return domains[code] || (code.startsWith('BBA') ? 'Business Administration' : (code.startsWith('MBA') ? 'Management Studies' : 'Computer Science'));
     }
 
     document.addEventListener('DOMContentLoaded', async () => {

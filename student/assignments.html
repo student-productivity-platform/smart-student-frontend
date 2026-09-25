@@ -313,6 +313,8 @@
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
 
+  <script src="../data/domain-data.js"></script>
+  <script src="../js/domain-service.js"></script>
   <script src="../data/mock-student.js"></script>
   <script src="../data/mock-assignments.js"></script>
   <script src="../js/firebase-config.js"></script>
@@ -333,6 +335,17 @@
       // Search & Filters
       const searchInput = document.getElementById('asg-search-input');
       const courseFilter = document.getElementById('asg-course-filter');
+
+      // Populate domain-scoped subjects
+      if (courseFilter && typeof DomainService !== 'undefined') {
+        const courses = DomainService.getCourses();
+        if (courses && courses.length > 0) {
+          courseFilter.innerHTML = `
+            <option value="all">All Subjects</option>
+            ${courses.map(c => `<option value="${c.code}">${c.name} (${c.code})</option>`).join('')}
+          `;
+        }
+      }
       const statusTabs = document.querySelectorAll('#status-tab-group .segment-tab-btn');
 
       let currentStatusFilter = 'all';

@@ -301,12 +301,14 @@
     }
 
     function applyFilters() {
-      const aud = document.getElementById('audience-filter').value;
-      const st = document.getElementById('status-filter').value;
+      const aud = (document.getElementById('audience-filter')?.value || 'all').toLowerCase();
+      const st = (document.getElementById('status-filter')?.value || 'all').toLowerCase();
 
       const filtered = announcements.filter(a => {
-        if (aud !== 'all' && a.targetAudience !== aud && a.targetAudience !== 'all') return false;
-        if (st !== 'all' && a.status !== st) return false;
+        const audVal = (a.targetAudience || a.targetRole || a.audience || 'all').toLowerCase();
+        if (aud !== 'all' && audVal !== aud && audVal !== 'all') return false;
+        const stVal = (a.status || 'published').toLowerCase();
+        if (st !== 'all' && stVal !== st) return false;
         return true;
       });
 
@@ -315,36 +317,64 @@
 
     function renderAnnouncements(list) {
       const container = document.getElementById('announcements-container');
-      if (!list.length) {
+      if (!list || !list.length) {
         container.innerHTML = `<div style="background:#fff; border-radius:16px; border:1px solid var(--border-default); padding:3rem; text-align:center; color:var(--text-muted);">No announcements match filters.</div>`;
         return;
       }
 
-      container.innerHTML = list.map(a => `
+      container.innerHTML = list.map(a => {
+        const rawAudience = a.targetAudience || a.targetRole || a.audience || 'all';
+        const audBadge = String(rawAudience).toUpperCase();
+        const audClass = String(rawAudience).toLowerCase();
+        const title = a.title || 'Untitled Announcement';
+        const msg = a.message || a.content || a.description || '';
+        const author = a.createdBy || a.author || 'Super Administrator';
+        const rawDate = a.publishDate || a.createdAt || a.date || new Date().toISOString();
+        const dateStr = typeof rawDate === 'string' && rawDate.includes('T') ? rawDate.split('T')[0] : (typeof rawDate === 'string' ? rawDate : new Date(rawDate).toISOString().split('T')[0]);
+        const status = a.status || 'Published';
+        const isUrgent = a.priority === 'high';
+
+        return `
         <div class="ann-card">
           <div class="ann-card-header">
             <div>
               <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.35rem;">
-                <span class="audience-badge ${a.targetAudience}">${a.targetAudience.toUpperCase()}</span>
-                ${a.priority === 'high' ? `<span style="font-size:0.6875rem; font-weight:700; color:#DC2626; background:#FEE2E2; padding:0.15rem 0.45rem; border-radius:4px;">URGENT</span>` : ''}
+                <span class="audience-badge ${audClass}">${audBadge}</span>
+                ${isUrgent ? `<span style="font-size:0.6875rem; font-weight:700; color:#DC2626; background:#FEE2E2; padding:0.15rem 0.45rem; border-radius:4px;">URGENT</span>` : ''}
               </div>
-              <div class="ann-title">${a.title}</div>
-              <div class="ann-msg">${a.message}</div>
+              <div class="ann-title">${escapeHtml(title)}</div>
+              <div class="ann-msg">${escapeHtml(msg)}</div>
             </div>
             <div style="display:flex; gap:0.35rem; flex-shrink:0;">
               <button class="btn-sm-action" onclick="openEditAnnModal('${a.id}')">Edit</button>
-              <button class="btn-sm-action danger" onclick="handleDeleteAnn('${a.id}', '${a.title}')">Delete</button>
+              <button class="btn-sm-action danger" onclick="handleDeleteAnn('${a.id}', '${escapeJs(title)}')">Delete</button>
             </div>
           </div>
 
           <div class="ann-meta">
-            <span>Published by: <strong>${a.createdBy || 'Super Administrator'}</strong></span>
-            <span>Date: ${a.publishDate || a.createdAt.split('T')[0]}</span>
-            ${a.expiryDate ? `<span>Expires: ${a.expiryDate}</span>` : ''}
-            <span style="margin-left:auto; text-transform:capitalize; font-weight:700; color:#16A34A;">● ${a.status || 'Published'}</span>
+            <span>Published by: <strong>${escapeHtml(author)}</strong></span>
+            <span>Date: ${escapeHtml(dateStr)}</span>
+            ${a.expiryDate ? `<span>Expires: ${escapeHtml(a.expiryDate)}</span>` : ''}
+            <span style="margin-left:auto; text-transform:capitalize; font-weight:700; color:#16A34A;">● ${escapeHtml(status)}</span>
           </div>
         </div>
-      `).join('');
+      `;
+      }).join('');
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    function escapeJs(str) {
+      if (!str) return '';
+      return String(str).replace(/'/g, "\\'").replace(/"/g, '&quot;');
     }
 
     function openCreateAnnModal() {
@@ -359,12 +389,13 @@
     function openEditAnnModal(id) {
       const a = announcements.find(x => x.id === id);
       if (!a) return;
-      document.getElementById('form-ann-id').value = a.id;
-      document.getElementById('form-ann-title').value = a.title;
-      document.getElementById('form-ann-msg').value = a.message;
-      document.getElementById('form-ann-audience').value = a.targetAudience || 'all';
+      document.getElementById('form-ann-id').value = a.id || '';
+      document.getElementById('form-ann-title').value = a.title || '';
+      document.getElementById('form-ann-msg').value = a.message || a.content || a.description || '';
+      document.getElementById('form-ann-audience').value = (a.targetAudience || a.targetRole || a.audience || 'all').toLowerCase();
       document.getElementById('form-ann-priority').value = a.priority || 'medium';
-      document.getElementById('form-ann-publishdate').value = a.publishDate || '';
+      const rawDate = a.publishDate || a.createdAt || '';
+      document.getElementById('form-ann-publishdate').value = typeof rawDate === 'string' && rawDate.includes('T') ? rawDate.split('T')[0] : (typeof rawDate === 'string' ? rawDate : '');
       document.getElementById('form-ann-expirydate').value = a.expiryDate || '';
       document.getElementById('ann-modal-title').textContent = `Edit Announcement`;
       const m = document.getElementById('ann-modal');

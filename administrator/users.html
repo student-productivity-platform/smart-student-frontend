@@ -550,20 +550,92 @@
       applyFilters();
     }
 
+    function getDisplayUserId(u) {
+      if (u.studentId) return u.studentId;
+      if (u.facultyId) return u.facultyId;
+      if (u.userId) return u.userId;
+      if (u.rollNo) return u.rollNo;
+      if (u.id && !u.id.startsWith('usr_') && u.id.length < 24) return u.id;
+      if (u.id && u.id.startsWith('usr_adm_')) return u.id.replace('usr_adm_', 'ADM-');
+      if (u.id && u.id.startsWith('usr_hod_')) return u.id.replace('usr_hod_', 'HOD-');
+      if (u.id && u.id.startsWith('usr_fac_')) return u.id.replace('usr_fac_', 'FAC-');
+      if (u.id && u.id.startsWith('usr_stu_')) return u.id.replace('usr_stu_', 'STU-');
+      return u.id || 'N/A';
+    }
+
+    function getFormattedDepartment(u) {
+      if (u.role === 'super_admin' || u.role === 'administrator') return 'Platform Administration';
+      let deptName = u.department;
+      if (!deptName || deptName === 'undefined') {
+        if (u.departmentId === 'dept_btech' || (u.program && u.program.includes('B.Tech')) || (u.course && u.course.includes('B.Tech'))) {
+          deptName = 'Department of Computer Engineering';
+        } else if (u.departmentId === 'dept_bba' || (u.program && u.program.includes('BBA')) || (u.course && u.course.includes('BBA'))) {
+          deptName = 'Department of Business Administration';
+        } else if (u.departmentId === 'dept_mba' || (u.program && u.program.includes('MBA')) || (u.course && u.course.includes('MBA'))) {
+          deptName = 'School of Management & Business Studies';
+        } else {
+          deptName = 'Department of Computer Engineering';
+        }
+      }
+      if (deptName === 'dept_btech' || deptName === 'B.Tech') deptName = 'Department of Computer Engineering';
+      if (deptName === 'dept_bba' || deptName === 'BBA') deptName = 'Department of Business Administration';
+      if (deptName === 'dept_mba' || deptName === 'MBA') deptName = 'School of Management & Business Studies';
+      if (deptName === 'dept_admin') deptName = 'Platform Administration';
+      return deptName;
+    }
+
+    function isUserActive(u) {
+      if (u.status === 'inactive' || u.status === 'suspended' || u.accountStatus === 'inactive' || u.accountStatus === 'suspended') {
+        return false;
+      }
+      return true;
+    }
+
     function applyFilters() {
       const q = document.getElementById('user-search-input').value.toLowerCase().trim();
       const dept = document.getElementById('dept-filter').value;
       const status = document.getElementById('status-filter').value;
 
       currentFiltered = allUsers.filter(u => {
-        if (activeRoleTab !== 'all' && u.role !== activeRoleTab) return false;
-        if (dept !== 'all' && u.department !== dept && u.departmentId !== dept) return false;
-        if (status !== 'all' && u.status !== status) return false;
+        // Role filter
+        if (activeRoleTab !== 'all') {
+          if (activeRoleTab === 'super_admin') {
+            if (u.role !== 'super_admin' && u.role !== 'administrator') return false;
+          } else if (u.role !== activeRoleTab) {
+            return false;
+          }
+        }
+
+        // Department filter
+        if (dept !== 'all') {
+          const userDept = (u.department || '').toLowerCase();
+          const userDeptId = (u.departmentId || '').toLowerCase();
+          const target = dept.toLowerCase();
+          const match = userDept.includes(target) || userDeptId.includes(target) ||
+            (target.includes('computer') && (userDept.includes('b.tech') || userDept.includes('computer'))) ||
+            (target.includes('business') && (userDept.includes('bba') || userDept.includes('business'))) ||
+            (target.includes('management') && (userDept.includes('mba') || userDept.includes('management')));
+          if (!match) return false;
+        }
+
+        // Status filter
+        if (status !== 'all') {
+          const active = isUserActive(u);
+          if (status === 'active' && !active) return false;
+          if (status === 'inactive' && active) return false;
+        }
+
+        // Search filter
         if (q) {
+          const displayId = getDisplayUserId(u).toLowerCase();
           const match = (u.name || '').toLowerCase().includes(q) ||
                         (u.email || '').toLowerCase().includes(q) ||
                         (u.id || '').toLowerCase().includes(q) ||
-                        (u.rollNo || '').toLowerCase().includes(q);
+                        displayId.includes(q) ||
+                        (u.rollNo || '').toLowerCase().includes(q) ||
+                        (u.department || '').toLowerCase().includes(q) ||
+                        (u.course || '').toLowerCase().includes(q) ||
+                        (u.program || '').toLowerCase().includes(q);
           if (!match) return false;
         }
         return true;
@@ -599,8 +671,24 @@
       tbody.innerHTML = paginated.map(u => {
         const initials = (u.name || 'User').split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
         const roleColor = avatarColors[u.role] || '#64748B';
-        const roleLabel = u.role === 'super_admin' ? 'Super Admin' : (u.role === 'hod' ? 'HOD' : u.role.charAt(0).toUpperCase() + u.role.slice(1));
+        const roleLabel = u.role === 'super_admin' ? 'Super Admin' : (u.role === 'administrator' ? 'Admin' : (u.role === 'hod' ? 'HOD' : u.role.charAt(0).toUpperCase() + u.role.slice(1)));
+        const displayId = getDisplayUserId(u);
+        const deptName = getFormattedDepartment(u);
+        const courseName = u.course || u.program || (u.role === 'student' ? 'B.Tech Computer Science & Engineering' : '');
+        const active = isUserActive(u);
         const joined = u.joinedAt || (u.createdAt ? u.createdAt.split('T')[0] : '2024-08-01');
+
+        let lastLoginText = 'Never';
+        if (u.lastLogin && u.lastLogin !== 'Never') {
+          if (u.lastLogin.includes('T')) {
+            const d = new Date(u.lastLogin);
+            lastLoginText = isNaN(d.getTime()) ? u.lastLogin : d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+          } else {
+            lastLoginText = u.lastLogin;
+          }
+        } else if (u.role === 'super_admin') {
+          lastLoginText = 'Just now';
+        }
 
         return `
           <tr>
@@ -613,17 +701,17 @@
                 </div>
               </div>
             </td>
-            <td><strong style="color:var(--text-primary);">${u.id || u.rollNo || 'N/A'}</strong></td>
+            <td><strong style="color:var(--text-primary); font-family:var(--font-mono, monospace); font-size:0.8125rem;">${displayId}</strong></td>
             <td><span class="role-badge ${u.role}">${roleLabel}</span></td>
             <td>
-              <div style="font-weight:600; color:var(--text-primary);">${u.department || 'General'}</div>
-              ${u.course ? `<div style="font-size:0.71875rem; color:var(--text-tertiary);">${u.course}</div>` : ''}
+              <div style="font-weight:600; color:var(--text-primary); font-size:0.8125rem;">${deptName}</div>
+              ${courseName ? `<div style="font-size:0.71875rem; color:var(--text-tertiary);">${courseName}</div>` : ''}
             </td>
             <td>
-              <span class="status-badge ${u.status === 'active' ? 'active' : 'inactive'}">${u.status === 'active' ? 'Active' : 'Inactive'}</span>
+              <span class="status-badge ${active ? 'active' : 'inactive'}">${active ? 'Active' : 'Inactive'}</span>
             </td>
-            <td style="font-size:0.75rem;">${u.lastLogin || 'Never'}</td>
-            <td style="font-size:0.75rem;">${joined}</td>
+            <td style="font-size:0.75rem; color:var(--text-secondary);">${lastLoginText}</td>
+            <td style="font-size:0.75rem; color:var(--text-secondary);">${joined}</td>
             <td>
               <div class="action-btns">
                 <button class="btn-icon-sm" title="View Profile" onclick="viewUserDetails('${u.uid || u.id}')">
@@ -639,8 +727,8 @@
                 <button class="btn-icon-sm" title="Resend Credentials" onclick="handleResendCredentials('${u.uid || u.id || u.studentId || u.facultyId}', '${u.name}', '${u.role}')" style="color:${u.role === 'faculty' ? '#2563EB' : '#7C3AED'};">
                   <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4 20-7z"/></svg>
                 </button>` : ''}
-                <button class="btn-icon-sm ${u.status === 'active' ? 'danger' : ''}" title="${u.status === 'active' ? 'Deactivate' : 'Activate'}" onclick="handleToggleStatus('${u.uid || u.id}', '${u.status === 'active' ? 'inactive' : 'active'}', '${u.name}')">
-                  ${u.status === 'active' ? `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>` : `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>`}
+                <button class="btn-icon-sm ${active ? 'danger' : ''}" title="${active ? 'Deactivate' : 'Activate'}" onclick="handleToggleStatus('${u.uid || u.id}', '${active ? 'inactive' : 'active'}', '${u.name}')">
+                  ${active ? `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>` : `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>`}
                 </button>
                 ${u.role !== 'super_admin' ? `
                 <button class="btn-icon-sm danger" title="Delete User" onclick="handleDeleteUser('${u.uid || u.id}', '${u.name}')">
@@ -885,6 +973,24 @@
       const u = allUsers.find(x => x.uid === uid || x.id === uid);
       if (!u) return;
 
+      const displayId = getDisplayUserId(u);
+      const deptName = getFormattedDepartment(u);
+      const courseName = u.course || u.program || (u.role === 'student' ? 'B.Tech Computer Science & Engineering' : '');
+      const active = isUserActive(u);
+      const joined = u.joinedAt || (u.createdAt ? u.createdAt.split('T')[0] : '2024-08-01');
+
+      let lastLoginText = 'Never';
+      if (u.lastLogin && u.lastLogin !== 'Never') {
+        if (u.lastLogin.includes('T')) {
+          const d = new Date(u.lastLogin);
+          lastLoginText = isNaN(d.getTime()) ? u.lastLogin : d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+        } else {
+          lastLoginText = u.lastLogin;
+        }
+      } else if (u.role === 'super_admin') {
+        lastLoginText = 'Just now';
+      }
+
       const body = document.getElementById('details-modal-body');
       body.innerHTML = `
         <div style="display:flex; align-items:center; gap:1rem; margin-bottom:1.25rem;">
@@ -900,25 +1006,25 @@
         <div style="background:#F8FAFC; border-radius:12px; padding:1rem; border:1px solid var(--border-default); display:flex; flex-direction:column; gap:0.6rem; font-size:0.8125rem;">
           <div style="display:flex; justify-content:space-between;">
             <span style="color:var(--text-tertiary);">Role</span>
-            <span class="role-badge ${u.role}">${u.role}</span>
+            <span class="role-badge ${u.role}">${u.role === 'super_admin' ? 'Super Admin' : (u.role === 'hod' ? 'HOD' : u.role)}</span>
           </div>
           <div style="display:flex; justify-content:space-between;">
             <span style="color:var(--text-tertiary);">User ID / Roll</span>
-            <strong style="color:var(--text-primary);">${u.id || u.rollNo || 'N/A'}</strong>
+            <strong style="color:var(--text-primary); font-family:var(--font-mono, monospace);">${displayId}</strong>
           </div>
           <div style="display:flex; justify-content:space-between;">
             <span style="color:var(--text-tertiary);">Department</span>
-            <span style="color:var(--text-primary); font-weight:600;">${u.department || 'N/A'}</span>
+            <span style="color:var(--text-primary); font-weight:600;">${deptName}</span>
           </div>
-          ${u.course ? `
+          ${courseName ? `
           <div style="display:flex; justify-content:space-between;">
             <span style="color:var(--text-tertiary);">Degree Course</span>
-            <span style="color:var(--text-primary);">${u.course}</span>
+            <span style="color:var(--text-primary);">${courseName}</span>
           </div>` : ''}
-          ${u.gpa ? `
+          ${u.cgpa || u.gpa ? `
           <div style="display:flex; justify-content:space-between;">
             <span style="color:var(--text-tertiary);">Academic CGPA</span>
-            <strong style="color:#7C3AED;">${u.gpa} / 10.0</strong>
+            <strong style="color:#7C3AED;">${u.cgpa || u.gpa} / 10.0</strong>
           </div>` : ''}
           ${u.attendance ? `
           <div style="display:flex; justify-content:space-between;">
@@ -927,15 +1033,15 @@
           </div>` : ''}
           <div style="display:flex; justify-content:space-between;">
             <span style="color:var(--text-tertiary);">Account Status</span>
-            <span class="status-badge ${u.status === 'active' ? 'active' : 'inactive'}">${u.status}</span>
+            <span class="status-badge ${active ? 'active' : 'inactive'}">${active ? 'Active' : 'Inactive'}</span>
           </div>
           <div style="display:flex; justify-content:space-between;">
             <span style="color:var(--text-tertiary);">Last Active</span>
-            <span style="color:var(--text-secondary);">${u.lastLogin || 'Never'}</span>
+            <span style="color:var(--text-secondary);">${lastLoginText}</span>
           </div>
           <div style="display:flex; justify-content:space-between;">
             <span style="color:var(--text-tertiary);">Member Since</span>
-            <span style="color:var(--text-secondary);">${u.joinedAt || '2024-08-01'}</span>
+            <span style="color:var(--text-secondary);">${joined}</span>
           </div>
         </div>
       `;
@@ -958,12 +1064,12 @@
         Name: u.name,
         Email: u.email,
         Role: u.role,
-        UserID: u.id || u.rollNo || '',
-        Department: u.department || '',
-        Course: u.course || '',
-        Status: u.status,
+        UserID: getDisplayUserId(u),
+        Department: getFormattedDepartment(u),
+        Course: u.course || u.program || '',
+        Status: isUserActive(u) ? 'Active' : 'Inactive',
         LastLogin: u.lastLogin || '',
-        JoinedDate: u.joinedAt || ''
+        JoinedDate: u.joinedAt || (u.createdAt ? u.createdAt.split('T')[0] : '')
       }));
       AdminService.exportToCsv('smart_student_users.csv', data);
       UI.showToast('success', 'Export Complete', `Exported ${data.length} user records to CSV.`);

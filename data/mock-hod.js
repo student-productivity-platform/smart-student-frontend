@@ -7,7 +7,7 @@
  * ==========================================================================
  */
 
-const mockHOD = {
+const mockHODBase = {
   profile: {
     id: "usr_hod_2001",
     name: "Dr. Anand Deshmukh",
@@ -943,6 +943,376 @@ const mockHOD = {
   }
 };
 
-if (typeof window !== 'undefined') {
+// ── MULTI-DOMAIN HOD CATALOG ──
+const allDomainHOD = {
+  dept_btech: mockHODBase,
+
+  dept_bba: {
+    profile: {
+      id: "usr_hod_bba_1",
+      uid: "usr_hod_bba_1",
+      name: "Dr. Meera Sen",
+      email: "meera.sen@university.edu",
+      role: "hod",
+      designation: "Professor & Head of Department",
+      department: "Department of Business Administration",
+      departmentCode: "BBA",
+      departmentId: "dept_bba",
+      domainId: "domain_mgmt",
+      school: "School of Management & Business Studies",
+      institution: "Smart Institute of Technology",
+      joiningYear: "2016",
+      qualification: "Ph.D. in Corporate Governance (IIM Bangalore), M.Com, LL.B.",
+      specialization: "Corporate Governance, Commercial Law, Organizational Ethics & Policy",
+      officeRoom: "Management Block B, Cabin 201",
+      phone: "+91 98230 77889",
+      officeHours: "Mon – Fri: 11:00 AM – 01:00 PM & 03:00 PM – 04:30 PM",
+      avatar: "../images/student-study.jpg",
+      status: "active"
+    },
+    department: {
+      name: "Department of Business Administration",
+      code: "BBA",
+      establishedYear: 2010,
+      currentAcademicYear: "2025–2026",
+      currentSemesterTerm: "Even Semester (Spring 2026)",
+      programs: [
+        { id: "bba_gen", name: "Bachelor of Business Administration (BBA)", code: "BBA-GEN", duration: "3 Years", totalStudents: 180, activeSemesters: [2, 4, 6] }
+      ],
+      semesters: [2, 4, 6],
+      sections: ["A", "B"],
+      kpis: {
+        totalStudents: 180,
+        totalFaculty: 12,
+        activeSubjects: 10,
+        pendingApprovals: 4,
+        avgAttendance: 86.2,
+        avgPerformanceScore: 83.5,
+        labUtilization: "82%",
+        classesCompletedPct: 78.0
+      }
+    },
+    facultyList: [
+      {
+        id: "fac_bba_001",
+        facultyId: "FAC-2024-3001",
+        name: "Prof. Priya Nair",
+        email: "bba.faculty@university.edu",
+        designation: "Associate Professor",
+        specialization: "Corporate Valuation & Financial Accounting",
+        experienceYears: 10,
+        maxWeeklyHours: 18,
+        currentWeeklyHours: 14,
+        assignedSubjectsCount: 3,
+        assignedSectionsCount: 3,
+        workloadStatus: "Optimal",
+        status: "Active",
+        phone: "+91 98220 44556",
+        officeRoom: "Management Block B, Cabin 208",
+        assignedCourses: ["BBA204 (Corporate Finance)", "BBA206 (Spreadsheet Analytics)"]
+      },
+      {
+        id: "fac_bba_002",
+        facultyId: "FAC-2024-3002",
+        name: "Prof. Vikram Saxena",
+        email: "vikram.saxena@university.edu",
+        designation: "Associate Professor",
+        specialization: "Consumer Behavior & Marketing Strategy",
+        experienceYears: 12,
+        maxWeeklyHours: 18,
+        currentWeeklyHours: 16,
+        assignedSubjectsCount: 2,
+        assignedSectionsCount: 3,
+        workloadStatus: "Optimal",
+        status: "Active",
+        phone: "+91 98220 44557",
+        officeRoom: "Management Block B, Cabin 204",
+        assignedCourses: ["BBA201 (Marketing Strategy)", "BBA401 (Brand Management)"]
+      },
+      {
+        id: "fac_bba_003",
+        facultyId: "FAC-2024-3003",
+        name: "Dr. Ananya Mukherjee",
+        email: "ananya.m@university.edu",
+        designation: "Assistant Professor",
+        specialization: "Human Resource Management & Organizational Behavior",
+        experienceYears: 7,
+        maxWeeklyHours: 20,
+        currentWeeklyHours: 14,
+        assignedSubjectsCount: 2,
+        assignedSectionsCount: 2,
+        workloadStatus: "Normal",
+        status: "Active",
+        phone: "+91 98220 44558",
+        officeRoom: "Management Block B, Cabin 205",
+        assignedCourses: ["BBA202 (Organizational Behavior)"]
+      },
+      {
+        id: "fac_bba_004",
+        facultyId: "FAC-2024-3004",
+        name: "Prof. Siddharth Joshi",
+        email: "siddharth.j@university.edu",
+        designation: "Assistant Professor",
+        specialization: "Managerial Economics & Econometrics",
+        experienceYears: 6,
+        maxWeeklyHours: 20,
+        currentWeeklyHours: 15,
+        assignedSubjectsCount: 2,
+        assignedSectionsCount: 2,
+        workloadStatus: "Optimal",
+        status: "Active",
+        phone: "+91 98220 44559",
+        officeRoom: "Management Block B, Cabin 206",
+        assignedCourses: ["BBA203 (Managerial Economics)"]
+      }
+    ],
+    allocations: [
+      { id: "alloc_bba_01", facultyName: "Prof. Priya Nair", facultyEmail: "bba.faculty@university.edu", subjectCode: "BBA204", subjectName: "Corporate Financial Accounting", program: "BBA-GEN", semester: 4, section: "A", weeklyHours: 4, status: "Active" },
+      { id: "alloc_bba_02", facultyName: "Prof. Priya Nair", facultyEmail: "bba.faculty@university.edu", subjectCode: "BBA204", subjectName: "Corporate Financial Accounting", program: "BBA-GEN", semester: 4, section: "B", weeklyHours: 4, status: "Active" },
+      { id: "alloc_bba_03", facultyName: "Prof. Vikram Saxena", facultyEmail: "vikram.saxena@university.edu", subjectCode: "BBA201", subjectName: "Principles of Marketing Strategy", program: "BBA-GEN", semester: 4, section: "A", weeklyHours: 3, status: "Active" },
+      { id: "alloc_bba_04", facultyName: "Prof. Siddharth Joshi", facultyEmail: "siddharth.j@university.edu", subjectCode: "BBA203", subjectName: "Managerial Economics", program: "BBA-GEN", semester: 4, section: "A", weeklyHours: 4, status: "Active" }
+    ],
+    students: [
+      { id: "stu_bba_001", studentId: "STU-2024-7120", rollNo: "BBA24-018", name: "Tanvi Bansal", email: "bba.student@university.edu", program: "BBA-GEN", semester: 4, section: "A", cgpa: 8.9, attendancePct: 96, status: "Healthy" },
+      { id: "stu_bba_002", studentId: "STU-2024-7101", rollNo: "BBA24-001", name: "Aarav Mehra", email: "aarav.m@university.edu", program: "BBA-GEN", semester: 4, section: "A", cgpa: 8.4, attendancePct: 92, status: "Healthy" },
+      { id: "stu_bba_003", studentId: "STU-2024-7102", rollNo: "BBA24-002", name: "Ananya Saxena", email: "ananya.s@university.edu", program: "BBA-GEN", semester: 4, section: "A", cgpa: 8.6, attendancePct: 90, status: "Healthy" },
+      { id: "stu_bba_004", studentId: "STU-2024-7119", rollNo: "BBA24-019", name: "Rohan Kapoor", email: "rohan.k@university.edu", program: "BBA-GEN", semester: 4, section: "A", cgpa: 8.2, attendancePct: 84, status: "Healthy" },
+      { id: "stu_bba_005", studentId: "STU-2024-7121", rollNo: "BBA24-021", name: "Yash Singhania", email: "yash.s@university.edu", program: "BBA-GEN", semester: 4, section: "A", cgpa: 7.1, attendancePct: 72, status: "Critical" }
+    ],
+    timetable: [
+      { id: "tt_bba_01", day: "Monday", timeSlot: "09:30 AM - 10:30 AM", subjectCode: "BBA204", subjectName: "Corporate Financial Accounting", facultyName: "Prof. Priya Nair", classroom: "Management Hall 101", section: "A" },
+      { id: "tt_bba_02", day: "Monday", timeSlot: "11:30 AM - 12:30 PM", subjectCode: "BBA201", subjectName: "Principles of Marketing Strategy", facultyName: "Prof. Vikram Saxena", classroom: "Room 205", section: "A" },
+      { id: "tt_bba_03", day: "Tuesday", timeSlot: "01:30 PM - 02:30 PM", subjectCode: "BBA203", subjectName: "Managerial Economics", facultyName: "Prof. Siddharth Joshi", classroom: "Room 208", section: "A" },
+      { id: "tt_bba_04", day: "Thursday", timeSlot: "03:00 PM - 04:30 PM", subjectCode: "BBA206", subjectName: "Business Analytics Lab", facultyName: "Prof. Priya Nair", classroom: "Analytics Lab 2", section: "A" }
+    ],
+    approvals: [
+      { id: "app_bba_01", type: "Curriculum Modification", title: "Incorporate Tableau & Power BI into BBA206 Syllabus", submittedBy: "Prof. Priya Nair", date: "2026-09-22", status: "Pending", priority: "High", description: "Modernize BBA spreadsheet course with practical business intelligence tooling." },
+      { id: "app_bba_02", type: "Guest Lecture", title: "Deloitte Advisory: Corporate Valuation Multiple Workshop", submittedBy: "Prof. Priya Nair", date: "2026-09-20", status: "Approved", priority: "Medium", description: "Invite Deloitte partner to address Sem 4 BBA students." },
+      { id: "app_bba_03", type: "Attendance Exemption", title: "Medical Leave Waiver (Student: Yash Singhania)", submittedBy: "Academic Advisor", date: "2026-09-21", status: "Pending", priority: "Normal", description: "Hospitalization exemption request for 4 sessions." },
+      { id: "app_bba_04", type: "Budget Allocation", title: "Digital Marketing Case Studies Subscription Licensing", submittedBy: "Prof. Vikram Saxena", date: "2026-09-18", status: "Pending", priority: "High", description: "HBR / Ivey publishing case package for marketing students." }
+    ],
+    reports: {
+      attendanceTrends: { currentTermAvg: 86.2, previousTermAvg: 84.8, compliantPercentage: 91.5 },
+      academicPerformance: { topGpa: 9.8, avgGpa: 8.35, passPercentage: 95.8 },
+      faculty: {
+        workloadSummary: { totalWeeklyTeachingHours: 142, avgHoursPerFaculty: 14.5, overloadedCount: 0, optimalCount: 10, underutilizedCount: 2 }
+      },
+      operational: { labUtilizationRate: "82.0%", smartClassroomHours: "28 hrs / week", totalApprovalsProcessedThisTerm: 18, avgApprovalTurnaroundHours: 14.2 }
+    },
+    settings: mockHODBase.settings
+  },
+
+  dept_mba: {
+    profile: {
+      id: "usr_hod_mba_1",
+      uid: "usr_hod_mba_1",
+      name: "Dr. Rajesh Patil",
+      email: "rajesh.patil@university.edu",
+      role: "hod",
+      designation: "Professor & Head of School",
+      department: "School of Management & Business Studies",
+      departmentCode: "MBA",
+      departmentId: "dept_mba",
+      domainId: "domain_mgmt",
+      school: "School of Management & Business Studies",
+      institution: "Smart Institute of Technology",
+      joiningYear: "2014",
+      qualification: "Ph.D. in Strategic Capital Markets (London Business School), MBA (Finance)",
+      specialization: "Strategic Governance, Global Corporate Strategy, Private Equity & Capital Markets",
+      officeRoom: "Executive Block C, Cabin 105",
+      phone: "+91 98230 99112",
+      officeHours: "Mon – Fri: 10:00 AM – 12:30 PM & 03:30 PM – 05:00 PM",
+      avatar: "../images/student-study.jpg",
+      status: "active"
+    },
+    department: {
+      name: "School of Management & Business Studies",
+      code: "MBA",
+      establishedYear: 2008,
+      currentAcademicYear: "2025–2026",
+      currentSemesterTerm: "Even Semester (Spring 2026)",
+      programs: [
+        { id: "mba_exec", name: "Master of Business Administration (Executive)", code: "MBA-EXEC", duration: "2 Years", totalStudents: 260, activeSemesters: [2, 4] }
+      ],
+      semesters: [2, 4],
+      sections: ["A", "B"],
+      kpis: {
+        totalStudents: 260,
+        totalFaculty: 20,
+        activeSubjects: 24,
+        pendingApprovals: 6,
+        avgAttendance: 91.0,
+        avgPerformanceScore: 88.4,
+        labUtilization: "92%",
+        classesCompletedPct: 81.2
+      }
+    },
+    facultyList: [
+      {
+        id: "fac_mba_001",
+        facultyId: "FAC-2024-4001",
+        name: "Prof. Arunav Roy",
+        email: "mba.faculty@university.edu",
+        designation: "Professor of Practice",
+        specialization: "Mergers & Acquisitions, Investment Banking & Private Equity",
+        experienceYears: 18,
+        maxWeeklyHours: 16,
+        currentWeeklyHours: 14,
+        assignedSubjectsCount: 2,
+        assignedSectionsCount: 2,
+        workloadStatus: "Optimal",
+        status: "Active",
+        phone: "+91 98220 77665",
+        officeRoom: "Executive Block C, Cabin 110",
+        assignedCourses: ["MBA602 (M&A Valuation)", "MBA603 (Investment Banking)"]
+      },
+      {
+        id: "fac_mba_002",
+        facultyId: "FAC-2024-4002",
+        name: "Dr. Nandini Sen",
+        email: "nandini.sen@university.edu",
+        designation: "Professor",
+        specialization: "Strategic Global Leadership & Enterprise Turnaround",
+        experienceYears: 20,
+        maxWeeklyHours: 16,
+        currentWeeklyHours: 14,
+        assignedSubjectsCount: 2,
+        assignedSectionsCount: 2,
+        workloadStatus: "Optimal",
+        status: "Active",
+        phone: "+91 98220 77666",
+        officeRoom: "Executive Block C, Cabin 112",
+        assignedCourses: ["MBA601 (Strategic Leadership)"]
+      },
+      {
+        id: "fac_mba_003",
+        facultyId: "FAC-2024-4003",
+        name: "Prof. K. V. Raman",
+        email: "kv.raman@university.edu",
+        designation: "Associate Professor",
+        specialization: "Global Supply Chain & Operations Strategy",
+        experienceYears: 14,
+        maxWeeklyHours: 18,
+        currentWeeklyHours: 15,
+        assignedSubjectsCount: 2,
+        assignedSectionsCount: 2,
+        workloadStatus: "Optimal",
+        status: "Active",
+        phone: "+91 98220 77667",
+        officeRoom: "Executive Block C, Cabin 114",
+        assignedCourses: ["MBA604 (Global Supply Chain)"]
+      },
+      {
+        id: "fac_mba_004",
+        facultyId: "FAC-2024-4004",
+        name: "Prof. Sameer Deshpande",
+        email: "sameer.d@university.edu",
+        designation: "Associate Professor",
+        specialization: "FinTech Architecture, CBDC & Digital Disruption",
+        experienceYears: 12,
+        maxWeeklyHours: 18,
+        currentWeeklyHours: 12,
+        assignedSubjectsCount: 2,
+        assignedSectionsCount: 2,
+        workloadStatus: "Normal",
+        status: "Active",
+        phone: "+91 98220 77668",
+        officeRoom: "Executive Block C, Cabin 116",
+        assignedCourses: ["MBA605 (FinTech Architecture)"]
+      }
+    ],
+    allocations: [
+      { id: "alloc_mba_01", facultyName: "Dr. Nandini Sen", facultyEmail: "nandini.sen@university.edu", subjectCode: "MBA601", subjectName: "Strategic Global Leadership", program: "MBA-EXEC", semester: 4, section: "A", weeklyHours: 4, status: "Active" },
+      { id: "alloc_mba_02", facultyName: "Prof. Arunav Roy", facultyEmail: "mba.faculty@university.edu", subjectCode: "MBA602", subjectName: "Mergers & Acquisitions", program: "MBA-EXEC", semester: 4, section: "A", weeklyHours: 4, status: "Active" },
+      { id: "alloc_mba_03", facultyName: "Dr. Rajesh Patil", facultyEmail: "rajesh.patil@university.edu", subjectCode: "MBA603", subjectName: "Investment Banking & PE", program: "MBA-EXEC", semester: 4, section: "A", weeklyHours: 4, status: "Active" },
+      { id: "alloc_mba_04", facultyName: "Prof. K. V. Raman", facultyEmail: "kv.raman@university.edu", subjectCode: "MBA604", subjectName: "Global Supply Chain", program: "MBA-EXEC", semester: 4, section: "A", weeklyHours: 3, status: "Active" }
+    ],
+    students: [
+      { id: "stu_mba_001", studentId: "STU-2024-6502", rollNo: "MBA24-007", name: "Aditya Sengupta", email: "mba.student@university.edu", program: "MBA-EXEC", semester: 4, section: "A", cgpa: 9.1, attendancePct: 96, status: "Healthy" },
+      { id: "stu_mba_002", studentId: "STU-2024-6501", rollNo: "MBA24-001", name: "Anandita Ghosh", email: "anandita.g@university.edu", program: "MBA-EXEC", semester: 4, section: "A", cgpa: 9.3, attendancePct: 95, status: "Healthy" },
+      { id: "stu_mba_003", studentId: "STU-2024-6515", rollNo: "MBA24-015", name: "Natasha Roy", email: "natasha.r@university.edu", program: "MBA-EXEC", semester: 4, section: "A", cgpa: 8.8, attendancePct: 92, status: "Healthy" },
+      { id: "stu_mba_004", studentId: "STU-2024-6523", rollNo: "MBA24-023", name: "Siddharth Menon", email: "siddharth.m@university.edu", program: "MBA-EXEC", semester: 4, section: "A", cgpa: 8.7, attendancePct: 90, status: "Healthy" },
+      { id: "stu_mba_005", studentId: "STU-2024-6541", rollNo: "MBA24-041", name: "Divya Khurana", email: "divya.k@university.edu", program: "MBA-EXEC", semester: 4, section: "A", cgpa: 8.9, attendancePct: 88, status: "Healthy" }
+    ],
+    timetable: [
+      { id: "tt_mba_01", day: "Monday", timeSlot: "10:00 AM - 11:30 AM", subjectCode: "MBA601", subjectName: "Strategic Global Leadership", facultyName: "Dr. Nandini Sen", classroom: "Executive Seminar Room A", section: "A" },
+      { id: "tt_mba_02", day: "Tuesday", timeSlot: "12:00 PM - 01:30 PM", subjectCode: "MBA602", subjectName: "Mergers & Acquisitions", facultyName: "Prof. Arunav Roy", classroom: "Room 401", section: "A" },
+      { id: "tt_mba_03", day: "Wednesday", timeSlot: "02:30 PM - 04:00 PM", subjectCode: "MBA603", subjectName: "Investment Banking & Private Equity", facultyName: "Dr. Rajesh Patil", classroom: "Executive Lab", section: "A" },
+      { id: "tt_mba_04", day: "Friday", timeSlot: "04:30 PM - 05:30 PM", subjectCode: "MBA605", subjectName: "FinTech Architecture", facultyName: "Prof. Sameer Deshpande", classroom: "Virtual Boardroom", section: "A" }
+    ],
+    approvals: [
+      { id: "app_mba_01", type: "Budget Allocation", title: "Bloomberg Professional Terminal Annual Renewal (12 Seats)", submittedBy: "Prof. Arunav Roy", date: "2026-09-23", status: "Pending", priority: "High", description: "Renewal for live market data feed for executive finance lab." },
+      { id: "app_mba_02", type: "Practicum Immersion", title: "Wharton Global Consulting Practicum Selection & Travel Grant", submittedBy: "Dr. Nandini Sen", date: "2026-09-21", status: "Approved", priority: "High", description: "Endorsement for top 5 candidates to participate in Philadelphia consulting module." },
+      { id: "app_mba_03", type: "Case Licensing", title: "Harvard Business Publishing Enterprise Case Bundle (Fall 2026)", submittedBy: "Dr. Nandini Sen", date: "2026-09-19", status: "Pending", priority: "Medium", description: "Licensing for 6 HBR cases across Strategy and Leadership courses." },
+      { id: "app_mba_04", type: "Guest Speaker", title: "Ex-Managing Director Morgan Stanley: Sovereign Wealth Funds", submittedBy: "Prof. Arunav Roy", date: "2026-09-17", status: "Approved", priority: "Medium", description: "Executive masterclass on GCC sovereign investments." }
+    ],
+    reports: {
+      attendanceTrends: { currentTermAvg: 91.0, previousTermAvg: 89.5, compliantPercentage: 96.2 },
+      academicPerformance: { topGpa: 9.9, avgGpa: 8.84, passPercentage: 98.4 },
+      faculty: {
+        workloadSummary: { totalWeeklyTeachingHours: 186, avgHoursPerFaculty: 15.5, overloadedCount: 0, optimalCount: 16, underutilizedCount: 4 }
+      },
+      operational: { labUtilizationRate: "92.0%", smartClassroomHours: "42 hrs / week", totalApprovalsProcessedThisTerm: 34, avgApprovalTurnaroundHours: 11.8 }
+    },
+    settings: mockHODBase.settings
+  }
+};
+
+function getActiveHODDomainKey() {
+  if (typeof DomainService !== 'undefined') {
+    return DomainService.getActiveDomain();
+  }
+  if (typeof localStorage !== 'undefined') {
+    const saved = localStorage.getItem('smart_student_active_domain');
+    if (saved && allDomainHOD[saved]) return saved;
+    try {
+      const raw = sessionStorage.getItem('smart_student_session') || localStorage.getItem('smart_student_session');
+      if (raw) {
+        const u = JSON.parse(raw);
+        const d = (u.departmentId || u.department || u.program || u.email || '').toLowerCase();
+        if (d.includes('bba')) return 'dept_bba';
+        if (d.includes('mba')) return 'dept_mba';
+      }
+    } catch (_) {}
+  }
+  return 'dept_btech';
+}
+
+function getHODForDomain(domainId) {
+  const d = domainId || getActiveHODDomainKey();
+  return allDomainHOD[d] || allDomainHOD.dept_btech;
+}
+
+const mockHOD = new Proxy({}, {
+  get(target, prop) {
+    const h = getHODForDomain();
+    if (prop === 'all') return allDomainHOD;
+    if (prop === 'forDomain') return (id) => getHODForDomain(id);
+    return h[prop];
+  },
+  set(target, prop, value) {
+    const h = getHODForDomain();
+    h[prop] = value;
+    return true;
+  },
+  has(target, prop) {
+    const h = getHODForDomain();
+    return prop in h;
+  },
+  ownKeys() {
+    const h = getHODForDomain();
+    return Reflect.ownKeys(h);
+  },
+  getOwnPropertyDescriptor(target, prop) {
+    const h = getHODForDomain();
+    return Reflect.getOwnPropertyDescriptor(h, prop);
+  }
+});
+
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = { mockHOD, allDomainHOD, getHODForDomain };
+} else {
   window.mockHOD = mockHOD;
+  window.allDomainHOD = allDomainHOD;
+  window.getHODForDomain = getHODForDomain;
 }

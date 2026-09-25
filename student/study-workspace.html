@@ -323,7 +323,7 @@
             <button type="button" class="btn btn-secondary btn-sm" onclick="shareMeetToChat()" style="background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.25); color: #FFF; font-size: 0.75rem;">
               Share in Chat
             </button>
-            <a href="#" target="_blank" id="live-meet-join-btn" class="btn btn-primary btn-sm" style="background-color: #10B981; border-color: #10B981; font-weight: 700; text-decoration: none;">
+            <a href="#" target="_blank" id="live-meet-join-btn" onclick="handleJoinMeetClick(event)" class="btn btn-primary btn-sm" style="background-color: #10B981; border-color: #10B981; font-weight: 700; text-decoration: none;">
               Join Call Now
             </a>
           </div>
@@ -531,7 +531,7 @@
           Once Google creates your room, copy the meeting link (e.g. <code>https://meet.google.com/xxx-yyyy-zzz</code>) and paste it below, then click <strong>Save & Share</strong> so all 5 members can join!
         </div>
 
-        <!-- Primary Live Actions: Provision via API, Join, or Start Instant -->
+        <!-- Primary Live Actions: Start Google Meet, Join, or 1-Click Instant Room -->
         <div style="display: flex; flex-direction: column; gap: 0.65rem; margin-bottom: 1.15rem;">
           <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
             <button type="button" id="gm-provision-btn" onclick="handleProvisionMeetSpace()" class="btn btn-primary" style="display: flex; align-items: center; justify-content: center; gap: 0.5rem; font-weight: 700; padding: 0.75rem 1rem;">
@@ -539,7 +539,7 @@
                 <polygon points="23 7 16 12 23 17 23 7"/>
                 <rect x="1" y="5" width="15" height="14" rx="2" ry="2"/>
               </svg>
-              <span>Provision API Space</span>
+              <span>Start Google Meet</span>
             </button>
             <a href="#" target="_blank" id="gm-modal-join-btn" onclick="handleJoinMeetClick(event)" class="btn btn-secondary" style="display: flex; align-items: center; justify-content: center; gap: 0.5rem; font-weight: 700; text-decoration: none; padding: 0.75rem 1rem;">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -549,8 +549,9 @@
               <span>Join Active Call</span>
             </a>
           </div>
-          <button type="button" id="gm-start-instant-btn" onclick="handleStartInstantMeet()" class="btn btn-outline btn-sm" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 0.4rem; font-size: 0.75rem;">
-            <span>Or open browser instant call directly (<code>meet.google.com/new</code>) &rarr;</span>
+          <button type="button" id="gm-start-instant-btn" onclick="openDirectJitsiRoom()" class="btn btn-outline btn-sm" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 0.4rem; font-size: 0.78rem; background: #F0FDF4; border-color: #86EFAC; color: #166534; font-weight: 600; padding: 0.6rem 1rem;">
+            <span style="width: 8px; height: 8px; background: #22C55E; border-radius: 50%; display: inline-block;"></span>
+            <span>Or Launch 1-Click Instant Room (No Google Sign-in needed) &rarr;</span>
           </button>
         </div>
 
@@ -694,14 +695,16 @@
       document.getElementById('ws-topic').textContent = g.topic || g.description || '';
       document.getElementById('ws-leader-name').textContent = `${g.roomLeaderName || 'Aditya S.'} ${g.roomLeaderStudentId ? `(${g.roomLeaderStudentId})` : ''}`;
 
-      const meetUrl = g.meetLink || 'https://meet.google.com/study-live-room';
+      const rawMeetUrl = g.meetLink || '';
+      const isDummy = isDummyMeetUrl(rawMeetUrl);
+      const meetUrl = isDummy ? 'https://meet.google.com/new' : rawMeetUrl;
       const meetBtn = document.getElementById('ws-meet-btn');
       if (meetBtn) {
         meetBtn.setAttribute('data-meet-url', meetUrl);
       }
       const liveMeetText = document.getElementById('live-meet-url-text');
       if (liveMeetText) {
-        liveMeetText.textContent = meetUrl;
+        liveMeetText.textContent = isDummy ? 'Google Meet (Click to Start Live Room)' : meetUrl;
       }
       const modalLinkInput = document.getElementById('gm-modal-link-display');
       if (modalLinkInput) {
@@ -717,7 +720,7 @@
       }
       const customInput = document.getElementById('gm-custom-link-input');
       if (customInput && !customInput.value) {
-        customInput.value = meetUrl;
+        customInput.value = isDummy ? '' : rawMeetUrl;
       }
 
       // Check if current student is leader
@@ -962,15 +965,53 @@
     /**
      * Google Meet Integration Helpers
      */
+    function isDummyMeetUrl(url) {
+      if (!url) return true;
+      const u = url.trim().toLowerCase();
+      if (u === 'https://meet.google.com/new' || u.endsWith('/new')) return true;
+      if (u.includes('study-live-room') || u.includes('ml-exam-prep') || u.includes('dbms-rev-room') || u.includes('os-sync-room') || u.includes('dsa-squad-live') || u.includes('cn-subnet-prep')) return true;
+      if (u.includes('qwe-rtyu-iop') || u.includes('abc-defg-hij') || u.includes('zxc-vbnm-lkj')) return true;
+      if (u.includes('ezs-nnis-qmg') || u.includes('ofp-gzpc-osv')) return true;
+      return false;
+    }
+
+    function openDirectJitsiRoom() {
+      const roomUrl = `https://meet.jit.si/SmartStudent-Cohort-${currentGroupId || 'live'}`;
+      window.open(roomUrl, '_blank');
+      UI.showToast('success', 'Live Study Room Opened', 'Instant video room launched in a new tab.');
+    }
+
     function openGoogleMeetHub() {
       if (currentGroup) {
-        const meetUrl = currentGroup.meetLink || 'https://meet.google.com/new';
+        const rawUrl = currentGroup.meetLink || '';
+        const isDummy = isDummyMeetUrl(rawUrl);
+        const meetUrl = isDummy ? 'https://meet.google.com/new' : rawUrl;
         const display = document.getElementById('gm-modal-link-display');
         const joinBtn = document.getElementById('gm-modal-join-btn');
         const customInput = document.getElementById('gm-custom-link-input');
+        const badge = document.getElementById('gm-modal-badge');
         if (display) display.value = meetUrl;
-        if (joinBtn) joinBtn.href = meetUrl;
-        if (customInput) customInput.value = (meetUrl.endsWith('/new') || meetUrl.includes('study-live-room')) ? '' : meetUrl;
+        if (joinBtn) {
+          joinBtn.href = meetUrl;
+          joinBtn.innerHTML = isDummy ? `
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polygon points="23 7 16 12 23 17 23 7"/>
+              <rect x="1" y="5" width="15" height="14" rx="2" ry="2"/>
+            </svg>
+            <span>Start Google Meet</span>
+          ` : `
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"></circle>
+              <polygon points="10 8 16 12 10 16 10 8"></polygon>
+            </svg>
+            <span>Join Active Call</span>
+          `;
+        }
+        if (badge) {
+          badge.textContent = isDummy ? 'Instant Launch Ready' : 'Saved Cohort Link';
+          badge.className = isDummy ? 'badge badge-info' : 'badge badge-success';
+        }
+        if (customInput) customInput.value = isDummy ? '' : rawUrl;
       }
       const alertBox = document.getElementById('gm-instant-alert');
       if (alertBox) alertBox.style.display = 'none';
@@ -1003,44 +1044,27 @@
       const originalText = btn ? btn.innerHTML : '';
       if (btn) {
         btn.disabled = true;
-        btn.innerHTML = '<span style="display:inline-block;animation:spin 0.8s linear infinite;">⏳</span> Provisioning...';
+        btn.innerHTML = '<span style="display:inline-block;animation:spin 0.8s linear infinite;">⏳</span> Launching...';
       }
 
       try {
-        const res = await StudyGroupService.createMeetSpace(currentGroupId, { accessType: 'OPEN', entryPointAccess: 'ALL' });
-        if (res && res.space) {
-          const space = res.space;
-          const newUrl = space.meetingUri;
-          if (currentGroup) {
-            currentGroup.meetLink = newUrl;
-            currentGroup.meetSpaceName = space.name;
-            currentGroup.meetCode = space.meetingCode;
-            currentGroup.meetProvider = space.provider;
-          }
+        // Open guaranteed live room creation endpoint in a new tab!
+        window.open('https://meet.google.com/new', '_blank');
 
-          document.getElementById('gm-modal-link-display').value = newUrl;
-          document.getElementById('gm-modal-join-btn').href = newUrl;
-          document.getElementById('gm-custom-link-input').value = newUrl;
-
-          const liveText = document.getElementById('live-meet-url-text');
-          if (liveText) liveText.textContent = newUrl;
-          const liveJoin = document.getElementById('live-meet-join-btn');
-          if (liveJoin) liveJoin.href = newUrl;
-
-          // Open the newly created space directly in Google Meet!
-          window.open(newUrl, '_blank');
-
-          // Auto-broadcast to chat
-          await shareMeetToChat();
-          copyMeetLink();
-
-          UI.showToast('success', 'Google Meet API Space Created', `Live space active! Opened in a new tab & shared to chat.`);
-        } else {
-          throw new Error('Could not provision Meet space.');
+        const alertBox = document.getElementById('gm-instant-alert');
+        if (alertBox) {
+          alertBox.style.display = 'block';
         }
+        const input = document.getElementById('gm-custom-link-input');
+        if (input) input.focus();
+
+        const banner = document.getElementById('ws-live-meet-bar');
+        if (banner) banner.style.display = 'flex';
+
+        UI.showToast('success', 'Google Meet Room Launched', 'Opened in a new tab. Paste the meeting code below so all 5 members can join.');
       } catch (err) {
-        console.error('Provisioning error:', err);
-        UI.showToast('error', 'Provisioning Failed', err.message);
+        window.open('https://meet.google.com/new', '_blank');
+        UI.showToast('info', 'Google Meet Launched', 'Opened in a new tab.');
       } finally {
         if (btn) {
           btn.disabled = false;
@@ -1050,9 +1074,9 @@
     }
 
     function handleJoinMeetClick(e) {
-      const meetUrl = (currentGroup && currentGroup.meetLink) ? currentGroup.meetLink : 'https://meet.google.com/new';
+      const rawUrl = (currentGroup && currentGroup.meetLink) ? currentGroup.meetLink : 'https://meet.google.com/new';
       // If the link is an unprovisioned placeholder or new room endpoint, launch a live instant room
-      if (!meetUrl || meetUrl.includes('study-live-room') || meetUrl.endsWith('/new')) {
+      if (isDummyMeetUrl(rawUrl)) {
         if (e && e.preventDefault) e.preventDefault();
         handleStartInstantMeet();
         return;

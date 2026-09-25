@@ -46,22 +46,37 @@ const HODService = (() => {
       : null;
   }
 
+  function resolveScopedKey(key) {
+    let domain = 'dept_btech';
+    if (typeof DomainService !== 'undefined' && DomainService.getActiveDomain) {
+      domain = DomainService.getActiveDomain();
+    } else {
+      try {
+        const saved = localStorage.getItem('smart_student_active_domain');
+        if (saved) domain = saved;
+      } catch (_) {}
+    }
+    return `${key}_${domain}`;
+  }
+
   function getStoredOrMock(storageKey, defaultData) {
-    const raw = localStorage.getItem(storageKey);
+    const scopedKey = resolveScopedKey(storageKey);
+    const raw = localStorage.getItem(scopedKey);
     if (!raw) {
-      localStorage.setItem(storageKey, JSON.stringify(defaultData));
+      localStorage.setItem(scopedKey, JSON.stringify(defaultData));
       return JSON.parse(JSON.stringify(defaultData));
     }
     try {
       return JSON.parse(raw);
     } catch (e) {
-      localStorage.setItem(storageKey, JSON.stringify(defaultData));
+      localStorage.setItem(scopedKey, JSON.stringify(defaultData));
       return JSON.parse(JSON.stringify(defaultData));
     }
   }
 
   function saveToStorage(storageKey, data) {
-    localStorage.setItem(storageKey, JSON.stringify(data));
+    const scopedKey = resolveScopedKey(storageKey);
+    localStorage.setItem(scopedKey, JSON.stringify(data));
   }
 
   function getRawMock() {
@@ -795,14 +810,31 @@ const HODService = (() => {
     const mock = getRawMock();
     const cleanId = String(studentId || '').trim();
     const idx = mock.students.findIndex(s => s.id === cleanId || s.studentId === cleanId || s.email === cleanId);
+    let removedStudent = null;
     if (idx !== -1) {
-      mock.students.splice(idx, 1);
+      removedStudent = mock.students.splice(idx, 1)[0];
     }
+
+    const user = AuthService.getCurrentUser();
+    const headers = {
+      'Content-Type': 'application/json',
+      'X-Actor-Name': user ? (user.name || 'Dr. Anand Deshmukh') : 'Dr. Anand Deshmukh',
+      'X-Actor-Email': user ? (user.email || 'hod@university.edu') : 'hod@university.edu',
+      'X-Actor-Role': user ? (user.role || 'hod') : 'hod',
+      'X-Actor-Uid': user ? (user.uid || 'usr_hod_2001') : 'usr_hod_2001'
+    };
+
+    try {
+      await fetch(resolveBackendUrl(`/api/admin/students/${encodeURIComponent(cleanId)}`), {
+        method: 'DELETE',
+        headers
+      });
+    } catch (e) {}
 
     try {
       await fetch(resolveBackendUrl(`/api/users/${encodeURIComponent(cleanId)}`), {
         method: 'DELETE',
-        headers: { 'Content-Type': 'application/json' }
+        headers
       });
     } catch (e) {}
 
@@ -811,14 +843,70 @@ const HODService = (() => {
     if (db) {
       try {
         db.collection('users').doc(cleanId).delete().catch(() => {});
-        // Also query by studentId or email in case doc id is uid
+        db.collection('students').doc(cleanId).delete().catch(() => {});
         db.collection('users').where('studentId', '==', cleanId).get().then(snap => {
           snap.forEach(d => d.ref.delete().catch(() => {}));
         }).catch(() => {});
+        if (removedStudent && removedStudent.personalEmail) {
+          db.collection('users').where('personalEmail', '==', removedStudent.personalEmail).get().then(snap => {
+            snap.forEach(d => d.ref.delete().catch(() => {}));
+          }).catch(() => {});
+        }
       } catch (e) {}
     }
 
     return { success: true, studentId: cleanId };
+  }
+
+  async function syncStudentsWithBackend() {
+    try {
+      const user = AuthService.getCurrentUser();
+      const headers = { 'Content-Type': 'application/json' };
+      if (user) {
+        headers['X-Actor-Name'] = user.name || 'Dr. Anand Deshmukh';
+        headers['X-Actor-Email'] = user.email || 'hod@university.edu';
+        headers['X-Actor-Role'] = user.role || 'hod';
+        headers['X-Actor-Uid'] = user.uid || 'usr_hod_2001';
+      }
+      const response = await fetch(resolveBackendUrl('/api/admin/students?limit=250'), { headers });
+      if (response.ok) {
+        const data = await response.json();
+        const serverStudents = data.users || data.students || [];
+        if (serverStudents.length > 0) {
+          const mock = getRawMock();
+          serverStudents.forEach(stu => {
+            const sid = stu.studentId || stu.id || stu.uid;
+            const existingIdx = mock.students.findIndex(s => s.id === sid || s.studentId === sid || (stu.email && s.email === stu.email));
+            const studentObj = {
+              id: sid,
+              studentId: sid,
+              rollNo: stu.rollNo || `2026-${Math.floor(1000 + Math.random() * 9000)}`,
+              name: stu.name,
+              email: stu.email,
+              personalEmail: stu.personalEmail || '',
+              mobile: stu.mobile || stu.phone || '',
+              program: stu.programId || stu.course || stu.program || 'B.Tech CSE',
+              semester: stu.semesterId || stu.semester || 4,
+              section: stu.sectionId || stu.section || 'A',
+              attendance: stu.attendance !== undefined ? stu.attendance : 88,
+              cgpa: stu.cgpa !== undefined ? stu.cgpa : 8.5,
+              status: (stu.status === 'inactive' || stu.accountStatus === 'inactive') ? 'Needs Attention' : (stu.status || 'Healthy'),
+              mentor: stu.mentor || 'Prof. Sunita Mehta',
+              avatarColor: '#7C3AED'
+            };
+            if (existingIdx >= 0) {
+              mock.students[existingIdx] = { ...mock.students[existingIdx], ...studentObj };
+            } else {
+              mock.students.unshift(studentObj);
+            }
+          });
+          return mock.students;
+        }
+      }
+    } catch (e) {
+      console.warn('[HODService] Sync students note:', e.message);
+    }
+    return null;
   }
 
   async function fetchStudentsFromFirestore() {
@@ -907,6 +995,7 @@ const HODService = (() => {
     createStudent,
     removeStudent,
     resendStudentCredentials,
+    syncStudentsWithBackend,
     fetchStudentsFromFirestore,
     fetchFacultyFromFirestore,
     getFacultyList,

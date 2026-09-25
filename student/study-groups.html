@@ -336,11 +336,11 @@
 
           <div class="form-group">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.35rem;">
-              <label for="new-group-meet" class="form-label" style="margin-bottom: 0;">Google Meet Video Room</label>
-              <button type="button" class="btn btn-secondary btn-sm" onclick="generateNewMeetForCreateModal()" style="padding: 0.15rem 0.5rem; font-size: 0.7rem;">Generate Code</button>
+              <label for="new-group-meet" class="form-label" style="margin-bottom: 0;">Google Meet / Video Room</label>
+              <button type="button" class="btn btn-secondary btn-sm" onclick="openMeetInNewTabForCreateModal()" style="padding: 0.15rem 0.5rem; font-size: 0.7rem;">+ Open Meet (New Tab)</button>
             </div>
-            <input type="text" id="new-group-meet" class="form-input" placeholder="https://meet.google.com/xxx-yyyy-zzz" style="font-family: monospace; font-size: 0.8125rem;">
-            <span style="font-size: 0.6875rem; color: var(--text-tertiary); margin-top: 0.25rem; display: block;">Instant video & screen share room for peer discussion</span>
+            <input type="text" id="new-group-meet" class="form-input" placeholder="Paste custom Google Meet link or leave blank for instant room" style="font-family: monospace; font-size: 0.8125rem;">
+            <span style="font-size: 0.6875rem; color: var(--text-tertiary); margin-top: 0.25rem; display: block;">Leave blank to use an instant live study room or launch Google Meet when session begins.</span>
           </div>
 
           <div class="form-group">
@@ -407,7 +407,10 @@
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+  <script src="../data/domain-data.js"></script>
+  <script src="../js/domain-service.js"></script>
+  <script src="../data/mock-student.js"></script>
+  <script src="../data/mock-study-groups.js"></script>
   <script src="../js/firebase-config.js"></script>
   <script src="../js/auth.js"></script>
   <script src="../js/student-service.js"></script>
@@ -421,14 +424,49 @@
     let currentStudent = null;
     let unsubscribeGroupsListener = null;
 
+    function renderSubjectTabs() {
+      const container = document.getElementById('subject-tabs-container');
+      if (!container) return;
+      const courses = (typeof DomainService !== 'undefined' && DomainService.getCourses) ? DomainService.getCourses() : [];
+      if (courses.length === 0) return;
+
+      container.innerHTML = `
+        <button class="segment-tab ${currentSubjectFilter === 'all' ? 'active' : ''}" data-subject="all" role="tab">All Subjects</button>
+        ${courses.map(c => `
+          <button class="segment-tab ${currentSubjectFilter === c.code ? 'active' : ''}" data-subject="${c.code}" role="tab">${c.code} (${c.name.split(' ')[0]})</button>
+        `).join('')}
+      `;
+
+      // Re-attach tab click handlers
+      container.querySelectorAll('.segment-tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+          container.querySelectorAll('.segment-tab').forEach(t => t.classList.remove('active'));
+          tab.classList.add('active');
+          currentSubjectFilter = tab.getAttribute('data-subject');
+          renderCohorts();
+        });
+      });
+
+      // Also update modal select
+      const modalSelect = document.getElementById('new-group-subject');
+      if (modalSelect && courses.length > 0) {
+        modalSelect.innerHTML = courses.map(c => `
+          <option value="${c.code}|${c.name}">${c.code} — ${c.name}</option>
+        `).join('');
+      }
+    }
+
     document.addEventListener('DOMContentLoaded', async () => {
-      // 1. Load active student profile from Firebase / Session
+      // 1. Render domain-scoped subject tabs
+      renderSubjectTabs();
+
+      // 2. Load active student profile from Firebase / Session
       await loadStudentProfile();
 
-      // 2. Setup Realtime Listener & Initial Load
+      // 3. Setup Realtime Listener & Initial Load
       setupLiveGroupsListener();
 
-      // 3. Subject filter tabs click handler
+      // 4. Subject filter tabs click handler fallback
       document.querySelectorAll('.segment-tab').forEach(tab => {
         tab.addEventListener('click', () => {
           document.querySelectorAll('.segment-tab').forEach(t => t.classList.remove('active'));
@@ -464,17 +502,16 @@
         createBtn.addEventListener('click', () => {
           const errBox = document.getElementById('create-group-error');
           if (errBox) errBox.style.display = 'none';
-          generateNewMeetForCreateModal();
+          const input = document.getElementById('new-group-meet');
+          if (input) input.value = '';
           UI.openModal('modal-create-group');
         });
       }
     });
 
-    function generateNewMeetForCreateModal() {
-      const chars = 'abcdefghijklmnopqrstuvwxyz';
-      const genPart = (len) => Array.from({ length: len }, () => chars[Math.floor(Math.random() * chars.length)]).join('');
-      const input = document.getElementById('new-group-meet');
-      if (input) input.value = `https://meet.google.com/${genPart(3)}-${genPart(4)}-${genPart(3)}`;
+    function openMeetInNewTabForCreateModal() {
+      window.open('https://meet.google.com/new', '_blank');
+      UI.showToast('info', 'Google Meet Opened', 'Copy the meeting link from the new tab and paste it into the field.');
     }
 
     /**
@@ -795,7 +832,7 @@
           subjectName: subject,
           topic: topic,
           description: description,
-          meetLink: meetLink || undefined
+          meetLink: meetLink || 'https://meet.google.com/new'
         });
 
         UI.closeModal('modal-create-group');

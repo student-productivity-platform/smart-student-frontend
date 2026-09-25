@@ -329,6 +329,12 @@ const UI = (() => {
       const options = { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' };
       dateChip.textContent = new Date().toLocaleDateString('en-US', options);
     }
+
+    // Clean up any existing topbar domain switcher widget
+    const existingDomainSwitcher = document.getElementById('topbar-domain-switcher');
+    if (existingDomainSwitcher) {
+      existingDomainSwitcher.remove();
+    }
   }
 
   /**

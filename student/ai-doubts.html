@@ -888,6 +888,8 @@
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
 
+  <script src="../data/domain-data.js"></script>
+  <script src="../js/domain-service.js"></script>
   <script src="../data/mock-student.js"></script>
   <script src="../data/mock-doubts.js"></script>
   <script src="../js/firebase-config.js"></script>
@@ -916,6 +918,17 @@
       const subjectSelect = document.getElementById('doubt-subject-select');
       const difficultySelect = document.getElementById('doubt-difficulty-select');
       const tutorModeCheck = document.getElementById('tutor-mode-checkbox');
+
+      // Populate domain-specific subjects
+      if (subjectSelect && typeof DomainService !== 'undefined') {
+        const courses = DomainService.getCourses();
+        if (courses && courses.length > 0) {
+          subjectSelect.innerHTML = `
+            <option value="Auto-Detect Domain">Auto-Detect Domain</option>
+            ${courses.map(c => `<option value="${c.name}">${c.name} (${c.code})</option>`).join('')}
+          `;
+        }
+      }
 
       const composerForm = document.getElementById('doubt-composer-form');
       const composerInput = document.getElementById('doubt-composer-input');

@@ -119,11 +119,19 @@ const CourseService = (() => {
     }
   ];
 
-  async function getEnrolledCourses() {
+  async function getEnrolledCourses(domainId) {
+    if (typeof DomainService !== 'undefined' && DomainService.getCourses) {
+      const dCourses = DomainService.getCourses(domainId);
+      if (Array.isArray(dCourses) && dCourses.length > 0) {
+        return dCourses;
+      }
+    }
+
     if (window.SmartStudentFirebase && window.SmartStudentFirebase.isInitialized()) {
       try {
         const db = window.SmartStudentFirebase.getDb();
-        const snap = await db.collection('courses').get();
+        const activeDom = domainId || ((typeof DomainService !== 'undefined') ? DomainService.getActiveDomain() : 'dept_btech');
+        const snap = await db.collection('courses').where('departmentId', '==', activeDom).get();
         if (!snap.empty) {
           return snap.docs.map(d => ({ id: d.id, ...d.data() }));
         }

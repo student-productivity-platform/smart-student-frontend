@@ -350,11 +350,39 @@
     </div>
   </div>
 
+  <!-- Interactive Student MCQ Examination Modal -->
+  <div class="modal-overlay" id="student-mcq-modal" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="modal-dialog" style="max-width: 660px;">
+      <div class="modal-header" style="background: #0F172A; color: #FFFFFF; border-bottom: none; border-radius: 16px 16px 0 0;">
+        <div>
+          <span class="badge" style="background: #2563EB; color: #FFFFFF; font-size: 0.6875rem;" id="st-mcq-badge">MCQ Examination</span>
+          <h3 class="modal-title" id="st-mcq-title" style="color: #FFFFFF; margin-top: 0.25rem; font-size: 1.15rem;">Semester 4 Mid-Term MCQ Examination</h3>
+          <div style="font-size: 0.78125rem; color: #94A3B8;" id="st-mcq-meta">CS402 — Database Management Systems • Duration: 30 Mins</div>
+        </div>
+        <button type="button" class="btn-icon" style="color: #FFFFFF; background: transparent; border: none; font-size: 1.5rem; cursor: pointer;" onclick="closeStudentMCQ()">&times;</button>
+      </div>
+
+      <div class="modal-body" style="padding: 1.5rem;" id="st-mcq-body">
+        <!-- Rendered by JS: Active Question or Result Breakdown -->
+      </div>
+
+      <div class="modal-footer" id="st-mcq-footer" style="display: flex; justify-content: space-between; align-items: center; padding: 1rem 1.5rem; background: #F8FAFC; border-top: 1px solid #E2E8F0;">
+        <button type="button" class="btn btn-secondary btn-sm" id="st-btn-prev" onclick="navigateStudentMCQ(-1)">Previous</button>
+        <div style="font-size: 0.8125rem; font-weight: 700; color: #64748B;" id="st-q-indicator">Question 1 of 20</div>
+        <div style="display: flex; gap: 0.5rem;">
+          <button type="button" class="btn btn-secondary btn-sm" id="st-btn-next" onclick="navigateStudentMCQ(1)">Next</button>
+          <button type="button" class="btn btn-primary btn-sm" id="st-btn-submit" onclick="submitStudentMCQExam()" style="font-weight: 700;">Submit Exam</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Scripts -->
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+  <script src="../data/domain-data.js"></script>
+  <script src="../js/domain-service.js"></script>
   <script src="../data/mock-student.js"></script>
   <script src="../data/mock-exams.js"></script>
   <script src="../js/firebase-config.js"></script>
@@ -427,7 +455,12 @@
       }
 
       // Render Cards
-      cardsContainer.innerHTML = exams.map(e => `
+      cardsContainer.innerHTML = exams.map(e => {
+        const isMcq = e.isMCQ || e.type === 'MCQ Examination' || e.rawType === 'mcq';
+        const userSubmission = (e.studentMarks || []).find(m => m.rollNo === 'CS24-042');
+        const isSubmitted = !!userSubmission;
+
+        return `
         <div class="exam-card-detailed">
           <div>
             <div class="exam-card-header">
@@ -436,7 +469,11 @@
                 <span class="day">${e.day}</span>
               </div>
               <div class="exam-info-main">
-                <span class="exam-badge-type">${e.type || 'Examination'}</span>
+                <div style="display: flex; gap: 0.35rem; align-items: center; margin-bottom: 0.2rem; flex-wrap: wrap;">
+                  <span class="exam-badge-type">${e.type || 'Examination'}</span>
+                  ${isMcq ? `<span class="badge" style="background: #EFF6FF; color: #1E40AF; border: 1px solid #BFDBFE; font-size: 0.6875rem;">MCQ Online Exam</span>` : ''}
+                  ${isSubmitted ? `<span class="badge badge-success" style="font-size: 0.6875rem;">Score: ${userSubmission.marks}/${e.totalMarks} (${userSubmission.grade})</span>` : ''}
+                </div>
                 <h3 style="font-size: 1.05rem; font-weight: 700; color: var(--navy-900); margin-bottom: 0.2rem;">${e.subject}</h3>
                 <span class="text-secondary" style="font-size: 0.78125rem;">Course Code: <strong>${e.subjectCode}</strong> • Max: ${e.totalMarks} Pts</span>
               </div>
@@ -455,19 +492,34 @@
             </div>
           </div>
 
-          <div class="flex-between" style="border-top: 1px solid var(--border-light); padding-top: 0.875rem;">
-            <button type="button" class="btn btn-secondary btn-sm" onclick="openExamModal('${e.id}')" style="flex: 1; margin-right: 0.5rem;">
-              Hall Ticket & Slip
-            </button>
+          <div class="flex-between" style="border-top: 1px solid var(--border-light); padding-top: 0.875rem; gap: 0.5rem;">
+            ${isMcq ? `
+              <button type="button" class="btn btn-primary btn-sm" onclick="startStudentMCQ('${e.id}')" style="flex: 1; font-weight: 700; gap: 0.35rem; background: #2563EB;">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                <span>${isSubmitted ? 'Re-attempt / Review MCQ' : 'Attempt MCQ Exam'}</span>
+              </button>
+              <button type="button" class="btn btn-secondary btn-sm" onclick="openExamModal('${e.id}')" title="Exam Details & Admit Slip">
+                Slip
+              </button>
+            ` : `
+              <button type="button" class="btn btn-secondary btn-sm" onclick="openExamModal('${e.id}')" style="flex: 1;">
+                Hall Ticket & Slip
+              </button>
+            `}
             <a href="materials.html" class="btn btn-secondary btn-sm" title="Course Revision Notes">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
             </a>
           </div>
         </div>
-      `).join('');
+      `;
+      }).join('');
 
       // Render Table View
-      tableBody.innerHTML = exams.map(e => `
+      tableBody.innerHTML = exams.map(e => {
+        const isMcq = e.isMCQ || e.type === 'MCQ Examination' || e.rawType === 'mcq';
+        const userSubmission = (e.studentMarks || []).find(m => m.rollNo === 'CS24-042');
+
+        return `
         <tr>
           <td>
             <div style="font-weight: 700; color: var(--navy-900);">${e.date}</div>
@@ -477,18 +529,178 @@
             <div style="font-weight: 600; color: var(--text-primary);">${e.subject}</div>
             <div class="text-tertiary" style="font-size: 0.75rem;">${e.subjectCode}</div>
           </td>
-          <td><span class="badge badge-info">${e.type || 'Mid-Term'}</span></td>
+          <td>
+            <span class="badge ${isMcq ? 'badge-primary' : 'badge-info'}">${e.type || 'Mid-Term'}</span>
+          </td>
           <td>
             <div>${e.venue}</div>
             <div style="font-size: 0.75rem; color: var(--blue-600); font-weight: 600;">${e.seatNumber || 'Desk Assigned'}</div>
           </td>
           <td><strong>${e.totalMarks} Marks</strong></td>
           <td style="text-align: right;">
-            <button type="button" class="btn btn-secondary btn-sm" onclick="openExamModal('${e.id}')">View Slip</button>
+            ${isMcq ? `
+              <button type="button" class="btn btn-primary btn-sm" onclick="startStudentMCQ('${e.id}')" style="font-weight: 700;">
+                ${userSubmission ? `Score: ${userSubmission.marks}/${e.totalMarks}` : 'Attempt Exam'}
+              </button>
+            ` : `
+              <button type="button" class="btn btn-secondary btn-sm" onclick="openExamModal('${e.id}')">View Slip</button>
+            `}
           </td>
         </tr>
-      `).join('');
+      `;
+      }).join('');
     }
+
+    // Student MCQ Exam State
+    let activeStudentExam = null;
+    let studentQuestionIndex = 0;
+    let studentAnswers = {};
+
+    window.startStudentMCQ = function(examId) {
+      activeStudentExam = (typeof ExamService !== 'undefined' ? ExamService.getExam(examId) : null) || examsList.find(e => e.id === examId);
+      if (!activeStudentExam || !activeStudentExam.questions || activeStudentExam.questions.length === 0) {
+        UI.showToast('warning', 'Exam Unavailable', 'This examination has no active questions configured.');
+        return;
+      }
+
+      studentQuestionIndex = 0;
+      studentAnswers = {};
+
+      const existingSub = (activeStudentExam.studentMarks || []).find(m => m.rollNo === 'CS24-042');
+      if (existingSub && existingSub.answers) {
+        studentAnswers = { ...existingSub.answers };
+      }
+
+      document.getElementById('st-mcq-title').textContent = activeStudentExam.name || activeStudentExam.title;
+      document.getElementById('st-mcq-meta').textContent = `${activeStudentExam.courseCode || activeStudentExam.subjectCode} — ${activeStudentExam.subject} • Total Marks: ${activeStudentExam.totalMarks} • Duration: ${activeStudentExam.duration || '30'} Mins`;
+
+      renderCurrentStudentQuestion();
+      UI.openModal('student-mcq-modal');
+    };
+
+    window.closeStudentMCQ = function() {
+      UI.closeModal('student-mcq-modal');
+      activeStudentExam = null;
+    };
+
+    window.renderCurrentStudentQuestion = function() {
+      if (!activeStudentExam || !activeStudentExam.questions.length) return;
+      const q = activeStudentExam.questions[studentQuestionIndex];
+      const total = activeStudentExam.questions.length;
+      const selected = studentAnswers[q.id];
+
+      document.getElementById('st-q-indicator').textContent = `Question ${studentQuestionIndex + 1} of ${total}`;
+      document.getElementById('st-btn-prev').disabled = (studentQuestionIndex === 0);
+      document.getElementById('st-btn-next').disabled = (studentQuestionIndex === total - 1);
+
+      const body = document.getElementById('st-mcq-body');
+      body.innerHTML = `
+        <div style="margin-bottom: 1.25rem;">
+          <div style="font-size: 0.78125rem; font-weight: 700; color: #2563EB; margin-bottom: 0.35rem;">QUESTION ${studentQuestionIndex + 1} • ${q.marks || 1} MARK(S)</div>
+          <div style="font-size: 1.05rem; font-weight: 700; color: #0F172A; line-height: 1.45;">${q.questionText}</div>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 0.65rem; margin-bottom: 1rem;">
+          ${['A', 'B', 'C', 'D'].map(opt => `
+            <label style="display: flex; align-items: center; gap: 0.75rem; padding: 0.85rem 1rem; border: 1px solid ${selected === opt ? '#2563EB' : '#E2E8F0'}; border-radius: 10px; background: ${selected === opt ? '#EFF6FF' : '#FFFFFF'}; cursor: pointer; transition: all 0.15s ease;">
+              <input type="radio" name="student-opt" value="${opt}" ${selected === opt ? 'checked' : ''} onchange="recordStudentAnswer('${q.id}', '${opt}')" style="width: 17px; height: 17px; accent-color: #2563EB;">
+              <span style="font-size: 0.9375rem; color: #0F172A;"><strong>${opt}.</strong> ${q.options[opt]}</span>
+            </label>
+          `).join('')}
+        </div>
+      `;
+    };
+
+    window.recordStudentAnswer = function(questionId, optionKey) {
+      studentAnswers[questionId] = optionKey;
+      renderCurrentStudentQuestion();
+    };
+
+    window.navigateStudentMCQ = function(dir) {
+      if (!activeStudentExam) return;
+      studentQuestionIndex += dir;
+      if (studentQuestionIndex < 0) studentQuestionIndex = 0;
+      if (studentQuestionIndex >= activeStudentExam.questions.length) studentQuestionIndex = activeStudentExam.questions.length - 1;
+      renderCurrentStudentQuestion();
+    };
+
+    window.submitStudentMCQExam = async function() {
+      if (!activeStudentExam) return;
+
+      const answeredCount = Object.keys(studentAnswers).length;
+      const totalCount = activeStudentExam.questions.length;
+
+      if (answeredCount < totalCount) {
+        if (!confirm(`You have answered ${answeredCount} of ${totalCount} questions. Submit anyway?`)) {
+          return;
+        }
+      }
+
+      try {
+        const studentInfo = {
+          id: 'stu_010',
+          rollNo: 'CS24-042',
+          name: 'Riddhi Zunjarrao',
+          section: 'A'
+        };
+
+        const result = await ExamService.submitStudentExam(activeStudentExam.id, studentAnswers, studentInfo);
+        const evalRes = result.evaluation;
+
+        const body = document.getElementById('st-mcq-body');
+        const footer = document.getElementById('st-mcq-footer');
+
+        body.innerHTML = `
+          <div style="text-align: center; padding: 1.5rem 0.5rem;">
+            <div style="width: 60px; height: 60px; border-radius: 50%; background: ${evalRes.status === 'Pass' ? '#DCFCE7' : '#FEE2E2'}; color: ${evalRes.status === 'Pass' ? '#16A34A' : '#DC2626'}; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; font-size: 1.75rem;">
+              ${evalRes.status === 'Pass' ? '✓' : '✕'}
+            </div>
+            <h3 style="font-size: 1.25rem; font-weight: 800; color: #0F172A; margin-bottom: 0.25rem;">
+              Assessment Submitted & Evaluated
+            </h3>
+            <p style="font-size: 0.8125rem; color: #64748B; margin-bottom: 1.5rem;">
+              Your answers have been graded automatically by the F27 academic evaluation system.
+            </p>
+
+            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.75rem; background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 12px; padding: 1rem; margin-bottom: 1.5rem;">
+              <div>
+                <div style="font-size: 1.4rem; font-weight: 800; color: #2563EB;">${evalRes.score} / ${evalRes.maxScore}</div>
+                <div style="font-size: 0.72rem; color: #64748B;">Total Marks</div>
+              </div>
+              <div>
+                <div style="font-size: 1.4rem; font-weight: 800; color: #0F172A;">${evalRes.percentage}%</div>
+                <div style="font-size: 0.72rem; color: #64748B;">Percentage</div>
+              </div>
+              <div>
+                <div style="font-size: 1.4rem; font-weight: 800; color: #7C3AED;">${evalRes.grade}</div>
+                <div style="font-size: 0.72rem; color: #64748B;">Grade</div>
+              </div>
+              <div>
+                <div style="font-size: 1.4rem; font-weight: 800; color: ${evalRes.status === 'Pass' ? '#16A34A' : '#DC2626'};">${evalRes.status}</div>
+                <div style="font-size: 0.72rem; color: #64748B;">Result</div>
+              </div>
+            </div>
+
+            <p style="font-size: 0.78125rem; color: #64748B;">
+              Marks have been published to your student grade sheet and synced to Faculty Evaluation Matrix.
+            </p>
+          </div>
+        `;
+
+        footer.innerHTML = `
+          <div></div>
+          <button type="button" class="btn btn-primary btn-sm" onclick="closeStudentMCQ()">Done & Return to Exams</button>
+        `;
+
+        UI.showToast('success', 'Exam Evaluated', `Scored ${evalRes.score}/${evalRes.maxScore} (${evalRes.percentage}%) - Grade ${evalRes.grade}`);
+
+        // Refresh exams list in background
+        examsList = await ExamService.getUpcomingExams();
+        renderExams(examsList);
+      } catch (err) {
+        UI.showToast('error', 'Submission Failed', err.message);
+      }
+    };
 
     window.openExamModal = function(id) {
       currentExam = examsList.find(e => e.id === id);

@@ -485,10 +485,7 @@
       if (meetDateInput) meetDateInput.value = tomorrow.toISOString().split('T')[0];
 
       function generateMeetCode() {
-        return 'https://meet.google.com/' +
-          Math.random().toString(36).substring(2, 5) + '-' +
-          Math.random().toString(36).substring(2, 6) + '-' +
-          Math.random().toString(36).substring(2, 5);
+        return 'https://meet.google.com/new';
       }
 
       if (meetUrlInput && !meetUrlInput.value) {

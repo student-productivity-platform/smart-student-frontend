@@ -36,48 +36,50 @@ const FacultyService = (() => {
       : null;
   }
 
+  function resolveFacultyScopedKey(key) {
+    let domain = 'dept_btech';
+    if (typeof DomainService !== 'undefined' && DomainService.getActiveDomain) {
+      domain = DomainService.getActiveDomain();
+    } else {
+      try {
+        const saved = localStorage.getItem('smart_student_active_domain');
+        if (saved) domain = saved;
+      } catch (_) {}
+    }
+    return `${key}_${domain}`;
+  }
+
   function initStorage() {
     const rawMock = (typeof mockFaculty !== 'undefined') ? mockFaculty : {};
+    const mockKeyMap = {
+      PROFILE: 'profile',
+      SUBJECTS: 'assignedSubjects',
+      STUDENTS: 'studentRoster',
+      ASSIGNMENTS: 'assignments',
+      SUBMISSIONS: 'submissions',
+      ATTENDANCE: 'attendanceHistory',
+      EXAMS: 'exams',
+      MEETINGS: 'meetings',
+      MATERIALS: 'materials',
+      ANNOUNCEMENTS: 'announcements',
+      DOUBTS: 'doubts'
+    };
 
-    if (!localStorage.getItem(STORAGE_KEYS.PROFILE) && rawMock.profile) {
-      localStorage.setItem(STORAGE_KEYS.PROFILE, JSON.stringify(rawMock.profile));
-    }
-    if (!localStorage.getItem(STORAGE_KEYS.SUBJECTS) && rawMock.assignedSubjects) {
-      localStorage.setItem(STORAGE_KEYS.SUBJECTS, JSON.stringify(rawMock.assignedSubjects));
-    }
-    if (!localStorage.getItem(STORAGE_KEYS.STUDENTS) && rawMock.studentRoster) {
-      localStorage.setItem(STORAGE_KEYS.STUDENTS, JSON.stringify(rawMock.studentRoster));
-    }
-    if (!localStorage.getItem(STORAGE_KEYS.ASSIGNMENTS) && rawMock.assignments) {
-      localStorage.setItem(STORAGE_KEYS.ASSIGNMENTS, JSON.stringify(rawMock.assignments));
-    }
-    if (!localStorage.getItem(STORAGE_KEYS.SUBMISSIONS) && rawMock.submissions) {
-      localStorage.setItem(STORAGE_KEYS.SUBMISSIONS, JSON.stringify(rawMock.submissions));
-    }
-    if (!localStorage.getItem(STORAGE_KEYS.ATTENDANCE) && rawMock.attendanceHistory) {
-      localStorage.setItem(STORAGE_KEYS.ATTENDANCE, JSON.stringify(rawMock.attendanceHistory));
-    }
-    if (!localStorage.getItem(STORAGE_KEYS.EXAMS) && rawMock.exams) {
-      localStorage.setItem(STORAGE_KEYS.EXAMS, JSON.stringify(rawMock.exams));
-    }
-    if (!localStorage.getItem(STORAGE_KEYS.MEETINGS) && rawMock.meetings) {
-      localStorage.setItem(STORAGE_KEYS.MEETINGS, JSON.stringify(rawMock.meetings));
-    }
-    if (!localStorage.getItem(STORAGE_KEYS.MATERIALS) && rawMock.materials) {
-      localStorage.setItem(STORAGE_KEYS.MATERIALS, JSON.stringify(rawMock.materials));
-    }
-    if (!localStorage.getItem(STORAGE_KEYS.ANNOUNCEMENTS) && rawMock.announcements) {
-      localStorage.setItem(STORAGE_KEYS.ANNOUNCEMENTS, JSON.stringify(rawMock.announcements));
-    }
-    if (!localStorage.getItem(STORAGE_KEYS.DOUBTS) && rawMock.doubts) {
-      localStorage.setItem(STORAGE_KEYS.DOUBTS, JSON.stringify(rawMock.doubts));
-    }
+    Object.keys(STORAGE_KEYS).forEach(k => {
+      const baseKey = STORAGE_KEYS[k];
+      const scopedKey = resolveFacultyScopedKey(baseKey);
+      const prop = mockKeyMap[k];
+      if (!localStorage.getItem(scopedKey) && rawMock[prop]) {
+        localStorage.setItem(scopedKey, JSON.stringify(rawMock[prop]));
+      }
+    });
   }
 
   function getStored(key, fallback = []) {
     initStorage();
     try {
-      const data = localStorage.getItem(key);
+      const scopedKey = resolveFacultyScopedKey(key);
+      const data = localStorage.getItem(scopedKey);
       return data ? JSON.parse(data) : fallback;
     } catch (e) {
       return fallback;
@@ -85,7 +87,8 @@ const FacultyService = (() => {
   }
 
   function setStored(key, data) {
-    localStorage.setItem(key, JSON.stringify(data));
+    const scopedKey = resolveFacultyScopedKey(key);
+    localStorage.setItem(scopedKey, JSON.stringify(data));
   }
 
   // =========================================================================
@@ -219,7 +222,7 @@ const FacultyService = (() => {
     let list = getStored(STORAGE_KEYS.ASSIGNMENTS, (typeof mockFaculty !== 'undefined' ? mockFaculty.assignments : []));
     let subs = [];
     try {
-      subs = JSON.parse(localStorage.getItem(STORAGE_KEYS.SUBMISSIONS) || '[]');
+      subs = getStored(STORAGE_KEYS.SUBMISSIONS, []);
     } catch (_) { }
 
     list.forEach(a => {
@@ -662,7 +665,7 @@ const FacultyService = (() => {
 
     const newMeeting = {
       id: 'meet_' + Date.now(),
-      meetUrl: meetingData.meetUrl || `https://meet.google.com/${randomCode}`,
+      meetUrl: meetingData.meetUrl || 'https://meet.google.com/new',
       status: 'upcoming',
       attendeeCount: meetingData.attendeeCount || 74,
       ...meetingData

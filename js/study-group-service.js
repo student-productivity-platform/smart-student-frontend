@@ -47,6 +47,8 @@ const StudyGroupService = (() => {
     let user = null;
     if (typeof AuthService !== 'undefined' && AuthService.getCurrentUser()) {
       user = AuthService.getCurrentUser();
+    } else if (typeof DomainService !== 'undefined' && DomainService.getStudentProfile) {
+      user = DomainService.getStudentProfile();
     } else if (window.mockStudent) {
       user = window.mockStudent;
     }
@@ -84,9 +86,12 @@ const StudyGroupService = (() => {
    * Fetch all study groups with optional subject/search filters
    */
   async function getStudyGroups(filters = {}) {
+    const activeDomain = filters.domainId || (typeof DomainService !== 'undefined' ? DomainService.getActiveDomain() : 'dept_btech');
+
     // 1. Try backend API first for consistent atomic state
     try {
       const queryParams = new URLSearchParams();
+      if (activeDomain && activeDomain !== 'all') queryParams.append('domainId', activeDomain);
       if (filters.subject && filters.subject !== 'all') queryParams.append('subject', filters.subject);
       if (filters.search) queryParams.append('search', filters.search);
 
@@ -115,6 +120,9 @@ const StudyGroupService = (() => {
         const db = window.SmartStudentFirebase.getDb();
         if (db) {
           let query = db.collection('studyGroups');
+          if (activeDomain && activeDomain !== 'all') {
+            query = query.where('domainId', '==', activeDomain);
+          }
           const snap = await query.get();
           if (!snap.empty) {
             let groups = [];
@@ -153,10 +161,35 @@ const StudyGroupService = (() => {
       }
     }
 
-    // 3. Fallback
+    // 3. Fallback to Domain Mock Groups
+    let fallbackGroups = [];
+    if (typeof DomainService !== 'undefined' && DomainService.getStudyGroups) {
+      fallbackGroups = DomainService.getStudyGroups(activeDomain) || [];
+    } else if (window.mockStudyGroups) {
+      fallbackGroups = window.mockStudyGroups.forDomain ? window.mockStudyGroups.forDomain(activeDomain) : [...window.mockStudyGroups];
+    }
+
+    if (filters.subject && filters.subject !== 'all') {
+      const s = filters.subject.toLowerCase();
+      fallbackGroups = fallbackGroups.filter(g =>
+        (g.subjectCode || '').toLowerCase() === s ||
+        (g.subjectId || '').toLowerCase() === s ||
+        (g.subjectName || g.subject || '').toLowerCase().includes(s)
+      );
+    }
+    if (filters.search) {
+      const q = filters.search.toLowerCase();
+      fallbackGroups = fallbackGroups.filter(g =>
+        (g.name || '').toLowerCase().includes(q) ||
+        (g.topic || '').toLowerCase().includes(q) ||
+        (g.description || '').toLowerCase().includes(q) ||
+        (g.subjectName || g.subject || '').toLowerCase().includes(q)
+      );
+    }
+
     return {
-      groups: [],
-      stats: { totalGroups: 0, activeMembers: 0, availableSeats: 0, fullRooms: 0 }
+      groups: fallbackGroups,
+      stats: calculateStats(fallbackGroups)
     };
   }
 
@@ -246,6 +279,7 @@ const StudyGroupService = (() => {
       subject: groupData.subject.trim(),
       subjectCode: groupData.subjectCode || 'CS401',
       subjectName: groupData.subjectName || groupData.subject,
+      domainId: groupData.domainId || student.departmentId || student.domainId || (typeof DomainService !== 'undefined' ? DomainService.getActiveDomain() : 'dept_btech'),
       topic: groupData.topic.trim(),
       description: (groupData.description || groupData.topic).trim(),
       program: groupData.program || student.program || 'B.Tech Computer Science & Engineering',
@@ -846,19 +880,17 @@ const StudyGroupService = (() => {
     }
 
     // Fallback: standard Meet URL update
-    const chars = 'abcdefghijklmnopqrstuvwxyz';
-    const genPart = (len) => Array.from({ length: len }, () => chars[Math.floor(Math.random() * chars.length)]).join('');
-    const code = `${genPart(3)}-${genPart(4)}-${genPart(3)}`;
-    const meetLink = `https://meet.google.com/${code}`;
+    const meetLink = 'https://meet.google.com/new';
     const space = {
-      name: `spaces/spa-${code.replace(/-/g, '')}`,
+      name: `spaces/spa-${groupId || 'live'}`,
       meetingUri: meetLink,
-      meetingCode: code,
+      meetingCode: 'instant-room',
+      directRoomUri: `https://meet.jit.si/SmartStudent-Cohort-${groupId}`,
       config: { accessType: options.accessType || 'OPEN' },
-      provider: 'Google Meet API v2'
+      provider: 'Google Meet API v2 (Instant Launch)'
     };
     await updateMeetLink(groupId, meetLink);
-    return { success: true, space, meetLink, meetCode: code };
+    return { success: true, space, meetLink, meetCode: 'instant-room' };
   }
 
   /**
