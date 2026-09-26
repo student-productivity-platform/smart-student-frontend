@@ -273,15 +273,9 @@
             </div>
             
             <form id="quick-add-task-form" style="display: grid; grid-template-columns: 2fr 1.2fr 1fr 1.1fr auto; gap: 0.75rem; align-items: center;">
-              <input type="text" id="task-title-input" class="form-input" placeholder="e.g. Implement Dijkstra Algorithm for DSA Lab..." required style="height: 42px; border-radius: 10px;">
+              <input type="text" id="task-title-input" class="form-input" placeholder="e.g. Complete academic deliverable or assignment..." required style="height: 42px; border-radius: 10px;">
               <select id="task-course-select" class="form-input" style="height: 42px; border-radius: 10px;">
                 <option value="General">General Academic</option>
-                <option value="CS401">CS401 — DSA</option>
-                <option value="CS402">CS402 — DBMS</option>
-                <option value="CS403">CS403 — Machine Learning</option>
-                <option value="CS404">CS404 — Operating Systems</option>
-                <option value="CS405">CS405 — Comp. Networks</option>
-                <option value="CS406">CS406 — Software Engg</option>
               </select>
               <input type="text" id="task-due-input" class="form-input" placeholder="Due (e.g. Tomorrow)" value="Tomorrow" style="height: 42px; border-radius: 10px;">
               <select id="task-priority-select" class="form-input" style="height: 42px; border-radius: 10px;">
@@ -317,12 +311,6 @@
           <div class="filter-group" style="display: flex; gap: 0.75rem; align-items: center;">
             <select id="course-filter-select" class="form-input" style="min-width: 160px; height: 38px; border-radius: 8px;">
               <option value="all">All Courses</option>
-              <option value="CS401">CS401 — DSA</option>
-              <option value="CS402">CS402 — DBMS</option>
-              <option value="CS403">CS403 — Machine Learning</option>
-              <option value="CS404">CS404 — Operating Systems</option>
-              <option value="CS405">CS405 — Comp. Networks</option>
-              <option value="CS406">CS406 — Software Engg</option>
               <option value="General">General</option>
             </select>
             <input type="text" id="task-search-input" class="form-input" placeholder="Search tasks..." style="min-width: 180px; height: 38px; border-radius: 8px;">
@@ -387,6 +375,8 @@
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+  <script src="../data/domain-data.js"></script>
+  <script src="../js/domain-service.js"></script>
   <script src="../data/mock-student.js"></script>
   <script src="../data/mock-tasks.js"></script>
   <script src="../js/firebase-config.js"></script>
@@ -409,6 +399,7 @@
 
     document.addEventListener('DOMContentLoaded', async () => {
       UI.syncStudentIdentity();
+      populateTaskDomainOptions();
       initPomodoro();
       await renderTasks();
 
@@ -422,25 +413,44 @@
 
         if (!title) return;
 
-        const tasks = await TaskService.getTasks();
-        const newTask = {
-          id: 'tsk_' + Date.now(),
-          title: title,
-          dueDate: due,
-          priority: priority,
-          completed: false,
-          courseId: course,
-          status: 'todo'
-        };
-        tasks.unshift(newTask);
-        try {
-          localStorage.setItem('smart_student_tasks_state', JSON.stringify(tasks));
-        } catch(e){}
-
+        await TaskService.addTask(title, due, priority, course);
         document.getElementById('task-title-input').value = '';
         UI.showToast('success', 'Task Created', `"${title}" added to your checklist.`);
         await renderTasks();
       });
+
+    function populateTaskDomainOptions() {
+      if (typeof DomainService === 'undefined') return;
+      const courses = DomainService.getCourses();
+      const activeDom = DomainService.getActiveDomain();
+
+      const quickSelect = document.getElementById('task-course-select');
+      if (quickSelect && courses && courses.length > 0) {
+        quickSelect.innerHTML = `
+          <option value="General">General Academic</option>
+          ${courses.map(c => `<option value="${c.code}">${c.code} — ${c.name}</option>`).join('')}
+        `;
+      }
+
+      const filterSelect = document.getElementById('course-filter-select');
+      if (filterSelect && courses && courses.length > 0) {
+        filterSelect.innerHTML = `
+          <option value="all">All Courses</option>
+          ${courses.map(c => `<option value="${c.code}">${c.code} — ${c.name}</option>`).join('')}
+        `;
+      }
+
+      const titleInput = document.getElementById('task-title-input');
+      if (titleInput) {
+        if (activeDom === 'dept_mba') {
+          titleInput.placeholder = "e.g. Build DCF Valuation Model for Cross-Border M&A...";
+        } else if (activeDom === 'dept_bba') {
+          titleInput.placeholder = "e.g. Complete Working Capital Spreadsheet for Accounting...";
+        } else {
+          titleInput.placeholder = "e.g. Implement Dijkstra Algorithm for DSA Lab...";
+        }
+      }
+    }
 
       // Filter tabs
       document.querySelectorAll('.segment-tab-btn[data-filter]').forEach(tab => {
@@ -721,9 +731,7 @@
       if (task) {
         task.status = newStatus;
         task.completed = (newStatus === 'done');
-        try {
-          localStorage.setItem('smart_student_tasks_state', JSON.stringify(allTasks));
-        } catch(e){}
+        TaskService.saveTasks(allTasks);
         updateKPICounters(allTasks);
         filterAndDisplayTasks();
         renderKanbanBoard();

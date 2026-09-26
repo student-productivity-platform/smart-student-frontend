@@ -75,6 +75,7 @@ const StudyGroupService = (() => {
     return {
       'Content-Type': 'application/json',
       'X-Actor-Uid': student.uid || student.id || 'usr_stu_8842',
+      'X-Actor-Student-Id': student.studentId || student.rollNo || '',
       'X-Actor-Name': student.name || 'Student',
       'X-Actor-Email': student.email || 'student@university.edu',
       'X-Actor-Role': 'student',
@@ -909,6 +910,249 @@ const StudyGroupService = (() => {
     };
   }
 
+  /**
+   * Waiting Room & Knock Admission (Students must be admitted by Leader)
+   */
+  async function requestAdmission(groupId) {
+    const student = getCurrentStudent();
+    // 1. Try Backend API
+    try {
+      const response = await fetch(resolveBackendUrl(`/api/study-groups/${encodeURIComponent(groupId)}/waiting-room/knock`), {
+        method: 'POST',
+        headers: getApiHeaders()
+      });
+      if (response.ok) {
+        const data = await response.json();
+        if (data.success && data.knock) {
+          saveLocalKnock(groupId, data.knock);
+          return data.knock;
+        }
+      }
+    } catch (e) {}
+
+    // Fallback: local storage knock sync
+    const knock = {
+      id: `knock_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`,
+      groupId,
+      studentId: student.studentId || student.rollNo || student.uid,
+      studentUid: student.uid || student.id,
+      studentName: student.name || 'Student',
+      rollNo: student.studentId || student.rollNo || student.uid,
+      requestedAt: new Date().toISOString(),
+      status: 'waiting',
+      meetLink: null
+    };
+    saveLocalKnock(groupId, knock);
+    return knock;
+  }
+
+  async function getWaitingKnocks(groupId) {
+    try {
+      const response = await fetch(resolveBackendUrl(`/api/study-groups/${encodeURIComponent(groupId)}/waiting-room`), {
+        method: 'GET',
+        headers: getApiHeaders()
+      });
+      if (response.ok) {
+        const data = await response.json();
+        if (data.success && Array.isArray(data.knocks)) {
+          // Sync to local
+          data.knocks.forEach(k => saveLocalKnock(groupId, k));
+          return data.knocks;
+        }
+      }
+    } catch (e) {}
+
+    return getLocalKnocks(groupId);
+  }
+
+  async function admitStudent(groupId, knockId) {
+    try {
+      const response = await fetch(resolveBackendUrl(`/api/study-groups/${encodeURIComponent(groupId)}/waiting-room/${encodeURIComponent(knockId)}/admit`), {
+        method: 'POST',
+        headers: getApiHeaders()
+      });
+      if (response.ok) {
+        const data = await response.json();
+        if (data.success && data.knock) {
+          updateLocalKnockStatus(groupId, knockId, 'admitted', data.knock.meetLink);
+          return data.knock;
+        }
+      }
+    } catch (e) {}
+
+    return updateLocalKnockStatus(groupId, knockId, 'admitted');
+  }
+
+  async function rejectStudent(groupId, knockId) {
+    try {
+      const response = await fetch(resolveBackendUrl(`/api/study-groups/${encodeURIComponent(groupId)}/waiting-room/${encodeURIComponent(knockId)}/reject`), {
+        method: 'POST',
+        headers: getApiHeaders()
+      });
+      if (response.ok) {
+        const data = await response.json();
+        if (data.success && data.knock) {
+          updateLocalKnockStatus(groupId, knockId, 'rejected');
+          return data.knock;
+        }
+      }
+    } catch (e) {}
+
+    return updateLocalKnockStatus(groupId, knockId, 'rejected');
+  }
+
+  async function cancelAdmission(groupId, knockId) {
+    try {
+      await fetch(resolveBackendUrl(`/api/study-groups/${encodeURIComponent(groupId)}/waiting-room/${encodeURIComponent(knockId)}/cancel`), {
+        method: 'POST',
+        headers: getApiHeaders()
+      });
+    } catch (e) {}
+    removeLocalKnock(groupId, knockId);
+    return true;
+  }
+
+  function getLocalKnocksKey(groupId) {
+    return `smart_student_waiting_room_${groupId}`;
+  }
+
+  function getLocalKnocks(groupId) {
+    try {
+      const raw = localStorage.getItem(getLocalKnocksKey(groupId));
+      return raw ? JSON.parse(raw) : [];
+    } catch (e) {
+      return [];
+    }
+  }
+
+  function saveLocalKnock(groupId, knock) {
+    try {
+      const list = getLocalKnocks(groupId);
+      const idx = list.findIndex(k => k.id === knock.id || (k.studentUid && k.studentUid === knock.studentUid));
+      if (idx >= 0) {
+        list[idx] = { ...list[idx], ...knock };
+      } else {
+        list.unshift(knock);
+      }
+      localStorage.setItem(getLocalKnocksKey(groupId), JSON.stringify(list));
+      window.dispatchEvent(new CustomEvent('waiting_room_updated', { detail: { groupId, list } }));
+    } catch (e) {}
+  }
+
+  function updateLocalKnockStatus(groupId, knockId, status, meetLink) {
+    try {
+      const list = getLocalKnocks(groupId);
+      const knock = list.find(k => k.id === knockId);
+      if (knock) {
+        knock.status = status;
+        if (meetLink) knock.meetLink = meetLink;
+        if (status === 'admitted') knock.admittedAt = new Date().toISOString();
+        localStorage.setItem(getLocalKnocksKey(groupId), JSON.stringify(list));
+        window.dispatchEvent(new CustomEvent('waiting_room_updated', { detail: { groupId, list } }));
+        return knock;
+      }
+    } catch (e) {}
+    return null;
+  }
+
+  function removeLocalKnock(groupId, knockId) {
+    try {
+      let list = getLocalKnocks(groupId);
+      list = list.filter(k => k.id !== knockId);
+      localStorage.setItem(getLocalKnocksKey(groupId), JSON.stringify(list));
+      window.dispatchEvent(new CustomEvent('waiting_room_updated', { detail: { groupId, list } }));
+    } catch (e) {}
+  }
+
+  async function uploadFile(file, folder = 'notes') {
+    if (!file) throw new Error('No file provided for upload.');
+
+    const base64Data = await new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = error => reject(error);
+      reader.readAsDataURL(file);
+    });
+
+    const fileName = (file.name || 'resource.pdf').replace(/[^a-zA-Z0-9._-]/g, '_');
+    const fileSize = (file.size / (1024 * 1024)).toFixed(2) + ' MB';
+
+    // 1. Direct Cloudinary signature check
+    try {
+      const sigResp = await fetch(resolveBackendUrl(`/api/generateUploadSignature?folder=${encodeURIComponent(folder)}`));
+      if (sigResp.ok) {
+        const sigData = await sigResp.json();
+        if (sigData.isConfigured && sigData.cloudName && sigData.apiKey && !sigData.apiKey.startsWith('demo')) {
+          const formData = new FormData();
+          formData.append('file', file);
+          formData.append('api_key', sigData.apiKey);
+          formData.append('timestamp', sigData.timestamp);
+          formData.append('signature', sigData.signature);
+          formData.append('folder', sigData.folder || folder);
+
+          const clResp = await fetch(`https://api.cloudinary.com/v1_1/${sigData.cloudName}/auto/upload`, {
+            method: 'POST',
+            body: formData
+          });
+
+          if (clResp.ok) {
+            const clData = await clResp.json();
+            if (clData.secure_url) {
+              return {
+                url: clData.secure_url,
+                publicId: clData.public_id,
+                fileName: fileName,
+                fileSize: fileSize,
+                folder: clData.asset_folder || folder,
+                provider: 'cloudinary'
+              };
+            }
+          }
+        }
+      }
+    } catch (e) {
+      console.warn('[StudyGroupService] Direct Cloudinary check note:', e);
+    }
+
+    // 2. Upload through Backend Server (/api/upload)
+    try {
+      const uploadResp = await fetch(resolveBackendUrl('/api/upload'), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          fileName: fileName,
+          fileData: base64Data,
+          folder: folder
+        })
+      });
+
+      if (uploadResp.ok) {
+        const result = await uploadResp.json();
+        if (result.success && result.url) {
+          return {
+            url: result.url,
+            publicId: result.publicId || `${folder}/${Date.now()}_${fileName}`,
+            fileName: fileName,
+            fileSize: result.fileSize || fileSize,
+            folder: result.folder || folder,
+            provider: result.provider || 'cloudinary'
+          };
+        }
+      }
+    } catch (err) {
+      console.warn('[StudyGroupService] Backend upload note:', err);
+    }
+
+    return {
+      url: base64Data,
+      publicId: `data_${Date.now()}`,
+      fileName: fileName,
+      fileSize: fileSize,
+      folder: folder,
+      provider: 'client_base64'
+    };
+  }
+
   return {
     getStudyGroups,
     getStudyGroupById,
@@ -920,6 +1164,7 @@ const StudyGroupService = (() => {
     sendMessage,
     getResources,
     addResource,
+    uploadFile,
     saveWhiteboardNotes,
     setupPresence,
     getCurrentStudent,
@@ -927,6 +1172,12 @@ const StudyGroupService = (() => {
     generateMeetLink,
     createMeetSpace,
     getMeetStatus,
+    // Waiting Room
+    requestAdmission,
+    getWaitingKnocks,
+    admitStudent,
+    rejectStudent,
+    cancelAdmission,
     MAX_CAPACITY
   };
 })();

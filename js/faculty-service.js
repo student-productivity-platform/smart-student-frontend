@@ -215,6 +215,95 @@ const FacultyService = (() => {
     return true;
   }
 
+  async function uploadFile(file, folder = 'notes') {
+    if (!file) throw new Error('No file provided for upload.');
+
+    const base64Data = await new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = error => reject(error);
+      reader.readAsDataURL(file);
+    });
+
+    const fileName = (file.name || 'document.pdf').replace(/[^a-zA-Z0-9._-]/g, '_');
+    const fileSize = (file.size / (1024 * 1024)).toFixed(2) + ' MB';
+
+    // 1. Direct Cloudinary upload check
+    try {
+      const sigResp = await fetch(resolveBackendUrl(`/api/generateUploadSignature?folder=${encodeURIComponent(folder)}`));
+      if (sigResp.ok) {
+        const sigData = await sigResp.json();
+        if (sigData.isConfigured && sigData.cloudName && sigData.apiKey && !sigData.apiKey.startsWith('demo')) {
+          const formData = new FormData();
+          formData.append('file', file);
+          formData.append('api_key', sigData.apiKey);
+          formData.append('timestamp', sigData.timestamp);
+          formData.append('signature', sigData.signature);
+          formData.append('folder', sigData.folder || folder);
+
+          const clResp = await fetch(`https://api.cloudinary.com/v1_1/${sigData.cloudName}/auto/upload`, {
+            method: 'POST',
+            body: formData
+          });
+
+          if (clResp.ok) {
+            const clData = await clResp.json();
+            if (clData.secure_url) {
+              return {
+                url: clData.secure_url,
+                publicId: clData.public_id,
+                fileName: fileName,
+                fileSize: fileSize,
+                folder: clData.asset_folder || folder,
+                provider: 'cloudinary'
+              };
+            }
+          }
+        }
+      }
+    } catch (e) {
+      console.warn('[FacultyService] Direct Cloudinary upload note:', e);
+    }
+
+    // 2. Upload through Backend Server (/api/upload)
+    try {
+      const uploadResp = await fetch(resolveBackendUrl('/api/upload'), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          fileName: fileName,
+          fileData: base64Data,
+          folder: folder
+        })
+      });
+
+      if (uploadResp.ok) {
+        const result = await uploadResp.json();
+        if (result.success && result.url) {
+          return {
+            url: result.url,
+            publicId: result.publicId || `${folder}/${Date.now()}_${fileName}`,
+            fileName: fileName,
+            fileSize: result.fileSize || fileSize,
+            folder: result.folder || folder,
+            provider: result.provider || 'cloudinary'
+          };
+        }
+      }
+    } catch (err) {
+      console.warn('[FacultyService] Backend upload note:', err);
+    }
+
+    return {
+      url: base64Data,
+      publicId: `data_${Date.now()}`,
+      fileName: fileName,
+      fileSize: fileSize,
+      folder: folder,
+      provider: 'client_base64'
+    };
+  }
+
   // =========================================================================
   // F24: Assignment Creation & Management
   // =========================================================================
@@ -946,6 +1035,7 @@ const FacultyService = (() => {
     getStudentById,
     getMaterials,
     uploadMaterial,
+    uploadFile,
     deleteMaterial,
     getAssignments,
     createAssignment,

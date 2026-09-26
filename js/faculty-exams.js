@@ -27,12 +27,19 @@
     initMCQModule();
   });
 
-  function initMCQModule() {
+  async function initMCQModule() {
     renderAssessmentTypeModal();
     renderMCQWizardDom();
     renderStudentPreviewModal();
     setupEventListeners();
     refreshExamDropdown();
+
+    if (typeof ExamService !== 'undefined' && ExamService.syncExamsFromRemote) {
+      try {
+        await ExamService.syncExamsFromRemote();
+        refreshExamDropdown();
+      } catch (_) {}
+    }
   }
 
   // =========================================================================
@@ -612,7 +619,7 @@
     startNewMCQExam();
   }
 
-  function switchViewTab(tab) {
+  function switchViewTab(tab, targetExamId) {
     activeTab = tab;
     const evalTabBtn = document.getElementById('tab-btn-evaluation');
     const mcqTabBtn = document.getElementById('tab-btn-mcq');
@@ -643,7 +650,7 @@
         wizardWs.style.display = 'none';
         wizardWs.classList.remove('active');
       }
-      refreshExamDropdown();
+      refreshExamDropdown(targetExamId || (currentExam ? currentExam.id : undefined));
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   }
@@ -1100,7 +1107,7 @@
       await ExamService.updateExam(currentExam.id, { status: 'draft' });
       currentExam = ExamService.getExam(currentExam.id);
       updateSummarySidebar();
-      refreshExamDropdown();
+      refreshExamDropdown(currentExam.id);
       UI.showToast('info', 'Draft Saved', `"${currentExam.name}" saved as draft.`);
     } catch (err) {
       UI.showToast('error', 'Save Failed', err.message);
@@ -1113,12 +1120,12 @@
       await ExamService.publishExam(currentExam.id);
       currentExam = ExamService.getExam(currentExam.id);
       updateSummarySidebar();
-      refreshExamDropdown();
 
       UI.showToast('success', 'Exam Published', `"${currentExam.name}" is published and live for students!`);
 
       // Switch to Marks Evaluation view and select this exam
-      switchViewTab('evaluation');
+      switchViewTab('evaluation', currentExam.id);
+      refreshExamDropdown(currentExam.id);
       const dropdown = document.getElementById('selected-exam-dropdown');
       if (dropdown) {
         dropdown.value = currentExam.id;
@@ -1145,7 +1152,7 @@
     const currentVal = selectId || dropdown.value;
 
     dropdown.innerHTML = exams.map(e => {
-      const isMcq = e.type === 'mcq';
+      const isMcq = isMCQExam(e);
       const typeLabel = isMcq ? '[MCQ]' : '[Standard]';
       const statusLabel = e.status === 'published' ? 'Published' : (e.status === 'evaluated' ? 'Evaluated' : 'Draft');
       return `
@@ -1161,6 +1168,12 @@
     updateMatrixTitleAndEvaluation();
   }
 
+  function isMCQExam(exam) {
+    if (!exam) return false;
+    const t = (exam.type || '').toLowerCase();
+    return t === 'mcq' || t.includes('mcq') || exam.rawType === 'mcq' || exam.isMCQ === true || (Array.isArray(exam.questions) && exam.questions.length > 0);
+  }
+
   function updateMatrixTitleAndEvaluation() {
     const dropdown = document.getElementById('selected-exam-dropdown');
     if (!dropdown) return;
@@ -1170,12 +1183,12 @@
     if (!exam) return;
 
     const titleEl = document.getElementById('marks-matrix-title');
-    const isMcq = exam.type === 'mcq';
+    const isMcq = isMCQExam(exam);
 
     if (titleEl) {
       titleEl.innerHTML = `
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
-        <span>${escapeHtml(exam.name || exam.title)} (${exam.subjectCode} • Max Marks: ${exam.totalMarks || exam.maxMarks || 25})</span>
+        <span>${escapeHtml(exam.name || exam.title)} (${exam.subjectCode || exam.courseCode} • Max Marks: ${exam.totalMarks || exam.maxMarks || 25})</span>
         ${isMcq ? `<span class="mcq-status-badge">MCQ Assessment</span>` : ''}
       `;
     }
@@ -1186,6 +1199,60 @@
       simBtn.style.display = isMcq ? 'inline-flex' : 'none';
       simBtn.onclick = () => runMCQAutoEvaluation();
     }
+  }
+
+  function loadExamIntoBuilder(examOrId) {
+    const examId = typeof examOrId === 'string' ? examOrId : (examOrId ? examOrId.id : null);
+    if (!examId) return;
+    const exam = (typeof ExamService !== 'undefined' ? ExamService.getExam(examId) : null) || (typeof FacultyService !== 'undefined' && FacultyService.getExams ? FacultyService.getExams().find(e => e.id === examId) : null);
+    if (!exam) {
+      UI.showToast('warning', 'Exam Not Found', 'Could not locate examination configuration.');
+      return;
+    }
+
+    currentExam = exam;
+    editingQuestionId = null;
+    populateSubjectDropdown();
+
+    // Populate Step 1 fields
+    const nameEl = document.getElementById('cfg-exam-name');
+    if (nameEl) nameEl.value = exam.name || exam.title || '';
+    const subjEl = document.getElementById('cfg-subject');
+    if (subjEl) subjEl.value = exam.subjectCode || exam.courseCode || '';
+    const progEl = document.getElementById('cfg-program');
+    if (progEl) progEl.value = exam.program || 'B.Tech';
+    const semEl = document.getElementById('cfg-semester');
+    if (semEl) semEl.value = exam.semester || 4;
+    const secEl = document.getElementById('cfg-section');
+    if (secEl) secEl.value = exam.section || 'A';
+    const totalQEl = document.getElementById('cfg-total-questions');
+    if (totalQEl) totalQEl.value = exam.totalQuestions || (exam.questions ? exam.questions.length : 20);
+    const marksQEl = document.getElementById('cfg-marks-per-q');
+    if (marksQEl) marksQEl.value = exam.marksPerQuestion || 1;
+    const totalMarksEl = document.getElementById('cfg-total-marks');
+    if (totalMarksEl) totalMarksEl.value = exam.totalMarks || exam.maxMarks || 20;
+    const durEl = document.getElementById('cfg-duration');
+    if (durEl) durEl.value = exam.duration || 30;
+    const passEl = document.getElementById('cfg-passing-marks');
+    if (passEl) passEl.value = exam.passingMarks !== undefined ? exam.passingMarks : 1;
+    const startEl = document.getElementById('cfg-start-time');
+    if (startEl && exam.startDateTime) startEl.value = exam.startDateTime.slice(0, 16);
+    const endEl = document.getElementById('cfg-end-time');
+    if (endEl && exam.endDateTime) endEl.value = exam.endDateTime.slice(0, 16);
+    const negCheck = document.getElementById('cfg-enable-negative');
+    if (negCheck) negCheck.checked = !!exam.negativeMarking;
+    const negMarks = document.getElementById('cfg-negative-marks');
+    if (negMarks) negMarks.value = exam.negativeMarks !== undefined ? exam.negativeMarks : 0.25;
+    const instEl = document.getElementById('cfg-instructions');
+    if (instEl) instEl.value = exam.instructions || '';
+
+    toggleNegativeMarking();
+    onSubjectChange();
+
+    // Switch to MCQ builder tab and open questions step directly
+    switchViewTab('mcq-builder');
+    goToStep('questions');
+    UI.showToast('info', 'Loaded into Builder', `Loaded "${exam.name || exam.title}" with ${(exam.questions || []).length} questions.`);
   }
 
   async function runMCQAutoEvaluation() {
@@ -1222,6 +1289,8 @@
     proceedAssessmentType,
     switchViewTab,
     startNewMCQExam,
+    loadExamIntoBuilder,
+    isMCQExam,
     onSubjectChange,
     calcTotalMarks,
     toggleNegativeMarking,
@@ -1238,3 +1307,4 @@
     runMCQAutoEvaluation
   };
 })();
+

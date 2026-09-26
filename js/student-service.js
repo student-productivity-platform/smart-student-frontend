@@ -21,9 +21,9 @@ const StudentService = (() => {
    */
   async function getProfile() {
     const activeSession = (typeof AuthService !== 'undefined') ? AuthService.getCurrentUser() : null;
-    const userId = activeSession ? (activeSession.uid || activeSession.id) : 'usr_stu_8842';
+    const userId = activeSession ? (activeSession.uid || activeSession.id) : null;
 
-    if (hasFirebaseAuth()) {
+    if (hasFirebaseAuth() && userId) {
       try {
         const db = window.SmartStudentFirebase.getDb();
         if (db) {
@@ -39,32 +39,44 @@ const StudentService = (() => {
       }
     }
 
+    const activeDomain = (typeof DomainService !== 'undefined' && DomainService.getActiveDomain)
+      ? DomainService.getActiveDomain()
+      : 'dept_btech';
+
+    let domainStudent = null;
+    if (typeof getStudentForDomain === 'function') {
+      domainStudent = getStudentForDomain(activeDomain);
+    } else if (typeof window !== 'undefined' && window.getStudentForDomain) {
+      domainStudent = window.getStudentForDomain(activeDomain);
+    } else if (typeof mockStudent !== 'undefined') {
+      domainStudent = mockStudent;
+    }
+
     if (activeSession) {
       return {
+        ...(domainStudent || {}),
         ...activeSession,
-        name: activeSession.name || 'Riddhi Zunjarrao',
-        email: activeSession.email || 'student@university.edu',
-        program: activeSession.program || 'B.Tech Computer Science & Engineering',
-        department: activeSession.department || 'B.Tech',
-        semester: activeSession.semester || 4,
-        section: activeSession.section || 'A'
+        name: activeSession.name || domainStudent?.name || 'Student',
+        email: activeSession.email || domainStudent?.email || 'student@university.edu',
+        program: activeSession.program || domainStudent?.program || 'Academic Program',
+        department: activeSession.department || domainStudent?.department || 'Department',
+        semester: activeSession.semester || domainStudent?.semester || 4,
+        section: activeSession.section || domainStudent?.section || 'A',
+        rollNo: activeSession.rollNo || domainStudent?.rollNo || 'STU-001',
+        studentId: activeSession.studentId || domainStudent?.studentId || 'STU-2024-001',
+        mentor: activeSession.mentor || domainStudent?.mentor || 'Faculty Mentor',
+        phone: activeSession.phone || domainStudent?.phone || '+91 98765 43210',
+        address: activeSession.address || domainStudent?.address || 'Campus Residence Hall',
+        cgpa: activeSession.cgpa || domainStudent?.cgpa || 8.5
       };
     }
 
-    if (window.mockStudent) {
-      return {
-        ...window.mockStudent,
-        name: activeSession ? activeSession.name : window.mockStudent.name,
-        email: activeSession ? activeSession.email : window.mockStudent.email
-      };
-    }
-
-    return {
+    return domainStudent || {
       id: "usr_stu_8842",
       name: "Riddhi Zunjarrao",
       email: "riddhi.z@university.edu",
       program: "B.Tech Computer Science & Engineering",
-      department: "B.Tech",
+      department: "Department of Computer Engineering",
       semester: 4,
       section: "A",
       academicYear: "2025–2026",

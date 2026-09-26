@@ -272,6 +272,9 @@
           </div>
         </div>
 
+        <!-- Created Exam Question Paper & Details Showcase Card -->
+        <div id="created-exam-showcase-container"></div>
+
         <!-- Exam Marks Matrix Table Card -->
         <div class="table-card" id="exam-matrix-card">
           <div class="matrix-card-header">
@@ -484,21 +487,252 @@
         newExamDate.value = new Date().toISOString().split('T')[0];
       }
 
-      function populateExamOptions() {
+      function isMCQExam(exam) {
+        if (!exam) return false;
+        const t = (exam.type || '').toLowerCase();
+        return t === 'mcq' || t.includes('mcq') || exam.rawType === 'mcq' || exam.isMCQ === true || (Array.isArray(exam.questions) && exam.questions.length > 0);
+      }
+
+      function escapeHtml(str) {
+        if (!str) return '';
+        return String(str)
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#039;');
+      }
+
+      window.toggleShowcaseQuestions = function() {
+        const list = document.getElementById('showcase-questions-list');
+        const btn = document.getElementById('btn-toggle-showcase-q');
+        if (!list || !btn) return;
+        if (list.style.display === 'none') {
+          list.style.display = 'flex';
+          btn.textContent = 'Collapse Questions';
+        } else {
+          list.style.display = 'none';
+          btn.textContent = 'Expand Questions';
+        }
+      };
+
+      function renderCreatedExamShowcase(exam) {
+        const container = document.getElementById('created-exam-showcase-container');
+        if (!container) return;
+
+        const isMcq = isMCQExam(exam);
+        const questions = Array.isArray(exam.questions) ? exam.questions : [];
+        const max = exam.totalMarks || exam.maxMarks || (questions.length ? questions.reduce((sum, q) => sum + (Number(q.marks) || 1), 0) : 25);
+        const totalQ = exam.totalQuestions || questions.length || 0;
+        const marksPerQ = exam.marksPerQuestion || (totalQ > 0 ? (max / totalQ) : 1);
+        let passMarks = exam.passingMarks !== undefined ? Number(exam.passingMarks) : Math.max(1, Math.ceil(max * 0.4));
+        if (passMarks > max) passMarks = Math.max(1, Math.ceil(max * 0.4));
+        const passPct = Math.round((passMarks / max) * 100);
+        const duration = exam.duration || 30;
+        const negPenalty = exam.negativeMarking ? `-${exam.negativeMarks || 0.25} mark` : 'None';
+        const status = exam.status || (exam.isPublished ? 'published' : 'draft');
+        const isPublished = status === 'published' || status === 'evaluated';
+
+        let statusBadgeHtml = '';
+        if (status === 'evaluated') {
+          statusBadgeHtml = `<span class="badge" style="background:#EEF2FF; color:#4338CA; border:1px solid #C7D2FE; font-weight:700;">Evaluated</span>`;
+        } else if (isPublished) {
+          statusBadgeHtml = `<span class="badge" style="background:#ECFDF5; color:#065F46; border:1px solid #A7F3D0; font-weight:700;">Published</span>`;
+        } else {
+          statusBadgeHtml = `<span class="badge" style="background:#FFFBEB; color:#92400E; border:1px solid #FDE68A; font-weight:700;">Draft</span>`;
+        }
+
+        // Format date window
+        let windowStr = 'Active Academic Window';
+        if (exam.startDateTime && exam.endDateTime) {
+          const sDate = new Date(exam.startDateTime);
+          const eDate = new Date(exam.endDateTime);
+          const fmt = d => d.toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' });
+          windowStr = `${fmt(sDate)} – ${fmt(eDate)}`;
+        } else if (exam.date) {
+          windowStr = exam.date;
+        }
+
+        const subjectCode = exam.subjectCode || exam.courseCode || 'General';
+        const subjectName = exam.subject || exam.subjectName || 'Academic Course';
+        const program = exam.program || exam.department || 'B.Tech';
+        const semester = exam.semester ? `Semester ${exam.semester}` : 'Sem 4';
+        const section = exam.section ? `Section ${exam.section}` : 'Sec A';
+
+        // Questions Paper Preview HTML
+        let questionsHtml = '';
+        if (questions.length > 0) {
+          questionsHtml = `
+            <div class="created-exam-paper-wrap">
+              <div class="created-exam-paper-head">
+                <div class="created-exam-paper-title">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                  <span>Configured Question Paper & Answer Key</span>
+                  <span class="badge badge-primary" style="font-size:0.71875rem;">${questions.length} Question${questions.length === 1 ? '' : 's'}</span>
+                </div>
+                <button type="button" class="btn btn-secondary btn-sm" id="btn-toggle-showcase-q" onclick="toggleShowcaseQuestions()" style="font-size:0.75rem; padding:0.3rem 0.65rem;">
+                  Collapse Questions
+                </button>
+              </div>
+              <div class="created-exam-questions-list" id="showcase-questions-list">
+                ${questions.map((q, idx) => {
+                  const opts = q.options || {};
+                  const keys = ['A', 'B', 'C', 'D'];
+                  const correct = q.correctAnswer;
+                  return `
+                    <div class="showcase-q-card">
+                      <div class="showcase-q-header">
+                        <span class="showcase-q-badge">Q${idx + 1}</span>
+                        <div class="showcase-q-text">${escapeHtml(q.questionText || 'Question text')}</div>
+                        <span class="showcase-q-marks">${q.marks || marksPerQ} Mark</span>
+                      </div>
+                      <div class="showcase-options-grid">
+                        ${keys.map(k => {
+                          const isKeyCorrect = correct === k;
+                          const optVal = opts[k] || '';
+                          return `
+                            <div class="showcase-opt ${isKeyCorrect ? 'is-correct' : ''}">
+                              <span class="showcase-opt-tag">${k}</span>
+                              <span style="flex:1;">${escapeHtml(optVal)}</span>
+                              ${isKeyCorrect ? `<span class="showcase-correct-tag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Correct Key</span>` : ''}
+                            </div>
+                          `;
+                        }).join('')}
+                      </div>
+                      ${q.explanation ? `
+                        <div style="margin-top:0.65rem; padding:0.45rem 0.75rem; background:#F8FAFC; border-radius:6px; font-size:0.75rem; color:#475569; display:flex; gap:0.4rem; align-items:center;">
+                          <span style="font-weight:700; color:#2563EB;">Explanation:</span>
+                          <span>${escapeHtml(q.explanation)}</span>
+                        </div>
+                      ` : ''}
+                    </div>
+                  `;
+                }).join('')}
+              </div>
+            </div>
+          `;
+        } else if (isMcq) {
+          questionsHtml = `
+            <div style="padding:1.5rem; text-align:center; background:#F8FAFC; border:1.5px dashed #CBD5E1; border-radius:12px;">
+              <div style="font-size:0.9rem; font-weight:700; color:#334155; margin-bottom:0.35rem;">No Questions Created Yet</div>
+              <p style="font-size:0.8rem; color:#64748B; margin-bottom:1rem;">Add multiple choice questions to this exam using the question builder.</p>
+              <button type="button" class="btn btn-primary btn-sm" onclick="FacultyExams.loadExamIntoBuilder('${exam.id}')">
+                Open Question Builder
+              </button>
+            </div>
+          `;
+        }
+
+        container.innerHTML = `
+          <div class="created-exam-card">
+            <div class="created-exam-header-row">
+              <div>
+                <div class="created-exam-badge-strip">
+                  <span class="badge ${isMcq ? 'badge-primary' : ''}" style="${isMcq ? '' : 'background:#F1F5F9; color:#475569;'}">
+                    ${isMcq ? 'MCQ Online Assessment' : 'Standard Examination'}
+                  </span>
+                  ${statusBadgeHtml}
+                  <span style="font-size:0.78125rem; font-weight:700; color:#475569; background:#F1F5F9; padding:0.15rem 0.5rem; border-radius:6px;">
+                    ${program} • ${semester} • ${section}
+                  </span>
+                </div>
+                <h2 class="created-exam-title">${escapeHtml(exam.name || exam.title)}</h2>
+                <div class="created-exam-subtitle">
+                  <span style="font-weight:700; color:#2563EB;">${subjectCode}</span>
+                  <span>•</span>
+                  <span>${escapeHtml(subjectName)}</span>
+                  <span>•</span>
+                  <span style="color:#64748B;">Faculty: ${escapeHtml(exam.facultyName || 'Prof. Sunita Mehta')}</span>
+                </div>
+              </div>
+
+              <div class="created-exam-action-buttons">
+                ${isMcq ? `
+                  <button type="button" class="btn btn-primary btn-sm" onclick="FacultyExams.loadExamIntoBuilder('${exam.id}')" style="gap:0.4rem; font-weight:700; box-shadow: 0 1px 3px rgba(37,99,235,0.25);">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                    <span>Edit in Question Builder</span>
+                  </button>
+                  <button type="button" class="btn btn-secondary btn-sm" onclick="FacultyExams.openPreviewModal('${exam.id}')" style="gap:0.4rem; font-weight:600;">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                    <span>Preview Student View</span>
+                  </button>
+                ` : `
+                  <button type="button" class="btn btn-secondary btn-sm" onclick="FacultyExams.openCreateExamModal()" style="gap:0.4rem;">
+                    <span>Create New Exam</span>
+                  </button>
+                `}
+              </div>
+            </div>
+
+            <div class="created-exam-grid">
+              <div class="created-exam-stat-item">
+                <span class="created-exam-stat-label">Total Questions</span>
+                <span class="created-exam-stat-val">${questions.length || totalQ} Qs</span>
+                <span class="created-exam-stat-sub">Objective format</span>
+              </div>
+              <div class="created-exam-stat-item">
+                <span class="created-exam-stat-label">Max Marks</span>
+                <span class="created-exam-stat-val">${max} Marks</span>
+                <span class="created-exam-stat-sub">${marksPerQ} mark/question</span>
+              </div>
+              <div class="created-exam-stat-item">
+                <span class="created-exam-stat-label">Duration</span>
+                <span class="created-exam-stat-val">${duration} Mins</span>
+                <span class="created-exam-stat-sub">Timed evaluation</span>
+              </div>
+              <div class="created-exam-stat-item">
+                <span class="created-exam-stat-label">Passing Criteria</span>
+                <span class="created-exam-stat-val">${passMarks} Marks</span>
+                <span class="created-exam-stat-sub">${passPct}% passing threshold</span>
+              </div>
+              <div class="created-exam-stat-item">
+                <span class="created-exam-stat-label">Negative Marking</span>
+                <span class="created-exam-stat-val" style="${exam.negativeMarking ? 'color:#B91C1C;' : 'color:#059669;'}">${negPenalty}</span>
+                <span class="created-exam-stat-sub">${exam.negativeMarking ? 'Penalty per error' : 'No penalty'}</span>
+              </div>
+              <div class="created-exam-stat-item" style="grid-column: span 1;">
+                <span class="created-exam-stat-label">Assessment Window</span>
+                <span class="created-exam-stat-val" style="font-size:0.85rem; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${windowStr}</span>
+                <span class="created-exam-stat-sub">${isPublished ? 'Live & Accepting Attempts' : 'Draft stage'}</span>
+              </div>
+            </div>
+
+            ${exam.instructions ? `
+              <div class="created-exam-instructions-box">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0; margin-top:2px;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                <div>
+                  <strong>Instructions for Students:</strong> ${escapeHtml(exam.instructions)}
+                </div>
+              </div>
+            ` : ''}
+
+            ${questionsHtml}
+          </div>
+        `;
+      }
+
+      function populateExamOptions(preferredExamId) {
         const exams = typeof ExamService !== 'undefined' ? ExamService.getExams() : FacultyService.getExams();
+        const storedPreferred = sessionStorage.getItem('last_created_exam_id');
+        const targetId = preferredExamId || storedPreferred;
         const currentVal = examDropdown.value;
+
         examDropdown.innerHTML = exams.map(e => {
-          const isMcq = e.type === 'mcq';
+          const isMcq = isMCQExam(e);
           const typeLabel = isMcq ? '[MCQ] ' : '';
-          const max = e.totalMarks || e.maxMarks || 25;
+          const max = e.totalMarks || e.maxMarks || (e.questions && e.questions.length ? e.questions.reduce((sum, q) => sum + (Number(q.marks) || 1), 0) : 25);
           const status = e.status === 'published' ? 'Published' : (e.status === 'evaluated' ? 'Evaluated' : 'Draft');
           return `
-            <option value="${e.id}">${typeLabel}${e.name || e.title} (${e.courseCode || e.subjectCode} • Max: ${max} • ${status})</option>
+            <option value="${e.id}">${typeLabel}${escapeHtml(e.name || e.title)} (${escapeHtml(e.courseCode || e.subjectCode || 'General')} • Max: ${max} • ${status})</option>
           `;
         }).join('');
 
-        if (currentVal && exams.some(e => e.id === currentVal)) {
+        if (targetId && exams.some(e => e.id === targetId)) {
+          examDropdown.value = targetId;
+        } else if (currentVal && exams.some(e => e.id === currentVal)) {
           examDropdown.value = currentVal;
+        } else if (exams.length > 0) {
+          examDropdown.value = exams[0].id;
         }
       }
 
@@ -517,14 +751,21 @@
         const exam = (typeof ExamService !== 'undefined' ? ExamService.getExam(selectedId) : null) || exams.find(e => e.id === selectedId) || exams[0];
         if (!exam) return;
 
-        const max = exam.totalMarks || exam.maxMarks || 25;
-        const isMcq = exam.type === 'mcq';
-        const passingThreshold = exam.passingMarks !== undefined ? exam.passingMarks : Math.ceil(max * 0.4);
+        const isMcq = isMCQExam(exam);
+        const questions = Array.isArray(exam.questions) ? exam.questions : [];
+        const max = exam.totalMarks || exam.maxMarks || (questions.length ? questions.reduce((sum, q) => sum + (Number(q.marks) || 1), 0) : 25);
+        let passingThreshold = exam.passingMarks !== undefined ? Number(exam.passingMarks) : Math.ceil(max * 0.4);
+        if (passingThreshold > max) {
+          passingThreshold = Math.max(1, Math.ceil(max * 0.4));
+        }
         const pageSize = parseInt(examPageSizeSelect ? examPageSizeSelect.value : '6', 10);
+
+        // Render Created Exam Overview & Question Paper Card
+        renderCreatedExamShowcase(exam);
 
         titleEl.innerHTML = `
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
-          <span>${exam.name || exam.title} (${exam.courseCode || exam.subjectCode} • Max Marks: ${max})</span>
+          <span>${escapeHtml(exam.name || exam.title)} (${escapeHtml(exam.courseCode || exam.subjectCode || 'General')} • Max Marks: ${max})</span>
           ${isMcq ? `<span class="mcq-status-badge">MCQ Assessment</span>` : ''}
         `;
 
@@ -551,15 +792,25 @@
             if (recorded) {
               examMarksCache[s.id] = recorded.marks;
             } else if (isMcq) {
-              examMarksCache[s.id] = Math.max(0, Math.floor(Math.random() * 4) + (max - 4));
+              if (max <= 2) {
+                const r = Math.random();
+                examMarksCache[s.id] = r > 0.2 ? 2 : (r > 0.05 ? 1 : 0);
+              } else if (max <= 5) {
+                const r = Math.random();
+                examMarksCache[s.id] = r > 0.3 ? max : (r > 0.1 ? max - 1 : Math.max(0, max - 2));
+              } else {
+                const pct = 0.68 + Math.random() * 0.30;
+                examMarksCache[s.id] = Math.min(max, Math.max(0, +(max * pct).toFixed(1)));
+              }
             } else {
-              examMarksCache[s.id] = Math.floor(Math.random() * 6) + (max - 6);
+              examMarksCache[s.id] = Math.min(max, Math.max(0, Math.floor(Math.random() * 6) + (max - 6)));
             }
           }
         });
 
         // Compute or update stats
-        if (exam.stats) {
+        const hasRecordedStats = exam.stats && (Number(exam.stats.average) > 0 || (existingMarks && existingMarks.length > 0));
+        if (hasRecordedStats) {
           document.getElementById('stat-avg').textContent = exam.stats.average !== undefined ? exam.stats.average : '0';
           document.getElementById('stat-high').textContent = exam.stats.highest !== undefined ? exam.stats.highest : '0';
           document.getElementById('stat-low').textContent = exam.stats.lowest !== undefined ? exam.stats.lowest : '0';
@@ -676,11 +927,12 @@
         const students = FacultyService.getStudents('all');
         const exams = typeof ExamService !== 'undefined' ? ExamService.getExams() : FacultyService.getExams();
         const exam = (typeof ExamService !== 'undefined' ? ExamService.getExam(examDropdown.value) : null) || exams.find(e => e.id === examDropdown.value);
-        const max = exam ? (exam.totalMarks || exam.maxMarks || 25) : 25;
-        const passingThreshold = exam ? (exam.passingMarks !== undefined ? exam.passingMarks : (max * 0.4)) : (max * 0.4);
+        const max = exam ? (exam.totalMarks || exam.maxMarks || (exam.questions && exam.questions.length ? exam.questions.reduce((sum, q) => sum + (Number(q.marks) || 1), 0) : 25)) : 25;
+        let passingThreshold = exam ? (exam.passingMarks !== undefined ? Number(exam.passingMarks) : Math.ceil(max * 0.4)) : Math.ceil(max * 0.4);
+        if (passingThreshold > max) passingThreshold = Math.max(1, Math.ceil(max * 0.4));
 
         return students.map(s => {
-          const score = examMarksCache[s.id] !== undefined ? examMarksCache[s.id] : (max - 5);
+          const score = examMarksCache[s.id] !== undefined ? examMarksCache[s.id] : Math.max(0, max - 1);
           const pct = (score / max) * 100;
           return {
             studentId: s.id,
@@ -700,14 +952,16 @@
         const exams = typeof ExamService !== 'undefined' ? ExamService.getExams() : FacultyService.getExams();
         const exam = exams.find(e => e.id === examId);
 
-        if (exam && exam.type === 'mcq' && typeof ExamService !== 'undefined') {
-          const max = exam.totalMarks || 20;
+        if (exam && isMCQExam(exam) && typeof ExamService !== 'undefined') {
+          const max = exam.totalMarks || exam.maxMarks || 20;
           const scores = marks.map(m => m.marks);
+          let passingThreshold = exam.passingMarks !== undefined ? Number(exam.passingMarks) : Math.ceil(max * 0.4);
+          if (passingThreshold > max) passingThreshold = Math.max(1, Math.ceil(max * 0.4));
           const stats = {
             average: +(scores.reduce((a,b)=>a+b,0)/scores.length).toFixed(1),
             highest: Math.max(...scores),
             lowest: Math.min(...scores),
-            passRate: +((scores.filter(s => s >= (exam.passingMarks || 8)).length / scores.length) * 100).toFixed(1)
+            passRate: +((scores.filter(s => s >= passingThreshold).length / scores.length) * 100).toFixed(1)
           };
           await ExamService.updateExam(examId, { studentMarks: marks, stats, status: 'draft' });
         } else {
@@ -724,14 +978,16 @@
         const exams = typeof ExamService !== 'undefined' ? ExamService.getExams() : FacultyService.getExams();
         const exam = exams.find(e => e.id === examId);
 
-        if (exam && exam.type === 'mcq' && typeof ExamService !== 'undefined') {
-          const max = exam.totalMarks || 20;
+        if (exam && isMCQExam(exam) && typeof ExamService !== 'undefined') {
+          const max = exam.totalMarks || exam.maxMarks || 20;
           const scores = marks.map(m => m.marks);
+          let passingThreshold = exam.passingMarks !== undefined ? Number(exam.passingMarks) : Math.ceil(max * 0.4);
+          if (passingThreshold > max) passingThreshold = Math.max(1, Math.ceil(max * 0.4));
           const stats = {
             average: +(scores.reduce((a,b)=>a+b,0)/scores.length).toFixed(1),
             highest: Math.max(...scores),
             lowest: Math.min(...scores),
-            passRate: +((scores.filter(s => s >= (exam.passingMarks || 8)).length / scores.length) * 100).toFixed(1)
+            passRate: +((scores.filter(s => s >= passingThreshold).length / scores.length) * 100).toFixed(1)
           };
           await ExamService.updateExam(examId, { studentMarks: marks, stats, status: 'published', isPublished: true });
         } else {
@@ -746,7 +1002,7 @@
       if (examPageSizeSelect) examPageSizeSelect.addEventListener('change', () => loadExamMatrix(true));
 
       // Standard Create Exam modal submit fallback
-      createExamForm.addEventListener('submit', (e) => {
+      createExamForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         const title = document.getElementById('new-exam-title').value.trim();
         const subjectCode = document.getElementById('new-exam-subject').value;
@@ -758,22 +1014,42 @@
         const subjects = FacultyService.getSubjects();
         const subjectObj = subjects.find(s => s.code === subjectCode);
 
-        const newExam = FacultyService.createExam({
+        const examPayload = {
+          name: title,
           title,
           subjectCode,
           subjectName: subjectObj ? subjectObj.name : subjectCode,
+          courseCode: subjectCode,
           weightage,
           date,
           time,
+          totalMarks: maxMarks,
           maxMarks,
+          type: 'standard',
+          status: 'scheduled',
           sections: ["A", "B"],
-          totalStudents: 74
-        });
+          totalStudents: 74,
+          studentMarks: []
+        };
+
+        let newExam;
+        if (typeof ExamService !== 'undefined' && ExamService.createExam) {
+          try {
+            newExam = await ExamService.createExam(examPayload);
+          } catch (_) {
+            newExam = FacultyService.createExam(examPayload);
+          }
+        } else {
+          newExam = FacultyService.createExam(examPayload);
+        }
 
         UI.closeModal('create-exam-modal');
         createExamForm.reset();
         UI.showToast('success', 'Exam Created', `"${title}" added to examination directory.`);
-        populateExamOptions();
+        try {
+          sessionStorage.setItem('last_created_exam_id', newExam.id);
+        } catch (_) {}
+        populateExamOptions(newExam.id);
         examDropdown.value = newExam.id;
         loadExamMatrix(true);
       });
@@ -784,7 +1060,7 @@
         const exams = typeof ExamService !== 'undefined' ? ExamService.getExams() : FacultyService.getExams();
         const exam = (typeof ExamService !== 'undefined' ? ExamService.getExam(examDropdown.value) : null) || exams.find(e => e.id === examDropdown.value);
         const max = exam ? (exam.totalMarks || exam.maxMarks || 25) : 25;
-        const isMcq = exam && exam.type === 'mcq';
+        const isMcq = exam && isMCQExam(exam);
 
         let csv = '';
         if (isMcq) {
@@ -815,9 +1091,17 @@
       populateExamOptions();
       loadExamMatrix();
 
+      // Automatically sync with Firestore and Backend API
+      if (typeof ExamService !== 'undefined' && ExamService.syncExamsFromRemote) {
+        ExamService.syncExamsFromRemote().then(() => {
+          populateExamOptions();
+          loadExamMatrix(false);
+        }).catch(err => console.warn('Remote sync note:', err));
+      }
+
       // Expose refresh function for MCQ module synchronization
       window.refreshF27Matrix = function(selectExamId) {
-        populateExamOptions();
+        populateExamOptions(selectExamId);
         if (selectExamId) examDropdown.value = selectExamId;
         loadExamMatrix(true);
       };

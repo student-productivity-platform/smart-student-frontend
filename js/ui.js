@@ -260,6 +260,19 @@ const UI = (() => {
     const isUserAdmin = isAdmin || (user && (user.role === 'super_admin' || user.role === 'administrator' || user.role === 'admin'));
     const displayName = user.name || (isUserAdmin ? 'Super Administrator' : 'User');
 
+    // Align active domain with authenticated user
+    if (user && typeof DomainService !== 'undefined' && DomainService.setActiveDomain) {
+      const deptStr = (user.departmentId || user.domainId || user.department || user.program || user.email || '').toLowerCase();
+      let expectedDom = 'dept_btech';
+      if (deptStr.includes('mba')) expectedDom = 'dept_mba';
+      else if (deptStr.includes('bba')) expectedDom = 'dept_bba';
+      else if (deptStr.includes('btech') || deptStr.includes('cs') || deptStr.includes('eng')) expectedDom = 'dept_btech';
+
+      if (DomainService.getActiveDomain() !== expectedDom) {
+        DomainService.setActiveDomain(expectedDom, false);
+      }
+    }
+
     // Sync Topbar Name
     const topbarNameEl = document.getElementById('topbar-user-name');
     if (topbarNameEl) topbarNameEl.textContent = displayName;

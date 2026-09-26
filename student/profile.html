@@ -189,18 +189,17 @@
           style="padding: 2rem; background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%); color: white; border: 1px solid rgba(255,255,255,0.1);">
           <div style="display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; flex-wrap: wrap;">
             <div style="display: flex; align-items: center; gap: 1.5rem; flex-wrap: wrap;">
-              <div
+              <div id="profile-avatar-initials"
                 style="width: 72px; height: 72px; border-radius: 50%; background: linear-gradient(135deg, #8B5CF6 0%, #6D28D9 100%); display: flex; align-items: center; justify-content: center; font-size: 1.75rem; font-weight: 700; border: 3px solid rgba(255,255,255,0.2); box-shadow: 0 4px 14px rgba(109, 40, 217, 0.4);">
                 RZ
               </div>
               <div>
-                <h2 style="color: white; font-size: 1.5rem; margin-bottom: 0.25rem;">Riddhi Zunjarrao</h2>
-                <p style="color: #94A3B8;">Student ID: <strong style="color: #F8FAFC;">STU-2024-8842</strong> • Roll No:
-                  CS24-042</p>
+                <h2 id="profile-display-name" style="color: white; font-size: 1.5rem; margin-bottom: 0.25rem;">Riddhi Zunjarrao</h2>
+                <p id="profile-id-roll" style="color: #94A3B8;">Student ID: <strong style="color: #F8FAFC;">STU-2024-8842</strong> • Roll No: <strong>CS24-042</strong></p>
                 <div style="display: flex; gap: 0.5rem; margin-top: 0.5rem; flex-wrap: wrap;">
                   <span class="badge badge-success">Active Enrolled Student</span>
-                  <span class="badge badge-info">Semester 4 (2025–2026)</span>
-                  <span class="badge badge-warning" style="color: #FDE68A; border-color: rgba(253, 230, 138, 0.4);">Dean's List Honoree</span>
+                  <span class="badge badge-info" id="profile-semester-badge">Semester 4 (2025–2026)</span>
+                  <span class="badge badge-warning" id="profile-honors-badge" style="color: #FDE68A; border-color: rgba(253, 230, 138, 0.4);">Dean's List Honoree</span>
                 </div>
               </div>
             </div>
@@ -229,39 +228,39 @@
             <div class="card-body">
               <div class="form-group">
                 <label class="form-label">Full Name</label>
-                <input type="text" class="form-input" value="Riddhi Zunjarrao" readonly
+                <input type="text" id="profile-inst-name" class="form-input" value="Riddhi Zunjarrao" readonly
                   style="background-color: var(--bg-surface-subtle);">
               </div>
               <div class="form-group">
                 <label class="form-label">Institutional Email</label>
-                <input type="email" class="form-input" value="riddhi.z@university.edu" readonly
+                <input type="email" id="profile-inst-email" class="form-input" value="riddhi.z@university.edu" readonly
                   style="background-color: var(--bg-surface-subtle);">
               </div>
               <div class="form-group">
                 <label class="form-label">Degree Program</label>
-                <input type="text" class="form-input" value="B.Tech Computer Science & Engineering" readonly
+                <input type="text" id="profile-inst-program" class="form-input" value="B.Tech Computer Science & Engineering" readonly
                   style="background-color: var(--bg-surface-subtle);">
               </div>
               <div class="form-group">
                 <label class="form-label">Department</label>
-                <input type="text" class="form-input" value="Department of Computer Engineering" readonly
+                <input type="text" id="profile-inst-department" class="form-input" value="Department of Computer Engineering" readonly
                   style="background-color: var(--bg-surface-subtle);">
               </div>
               <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
                 <div class="form-group">
                   <label class="form-label">Current Semester</label>
-                  <input type="text" class="form-input" value="Semester 4" readonly
+                  <input type="text" id="profile-inst-semester" class="form-input" value="Semester 4" readonly
                     style="background-color: var(--bg-surface-subtle);">
                 </div>
                 <div class="form-group">
                   <label class="form-label">Assigned Section</label>
-                  <input type="text" class="form-input" value="Section A" readonly
+                  <input type="text" id="profile-inst-section" class="form-input" value="Section A" readonly
                     style="background-color: var(--bg-surface-subtle);">
                 </div>
               </div>
               <div class="form-group">
                 <label class="form-label">Academic Faculty Mentor</label>
-                <input type="text" class="form-input" value="Prof. Rajesh Sharma (CS Dept)" readonly
+                <input type="text" id="profile-inst-mentor" class="form-input" value="Prof. Sunita Mehta" readonly
                   style="background-color: var(--bg-surface-subtle);">
               </div>
             </div>
@@ -318,45 +317,11 @@
               </svg>
               <span>Academic Distinctions & Institutional Honors</span>
             </div>
-            <span class="badge badge-success">4 Verified Credentials</span>
+            <span class="badge badge-success" id="profile-honors-count">4 Verified Credentials</span>
           </div>
           <div class="card-body">
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem;">
-              <div style="background: var(--bg-surface-subtle); border: 1px solid var(--border-light); border-radius: var(--radius-md); padding: 1rem;">
-                <div class="flex-between mb-2">
-                  <span class="badge badge-warning" style="font-size: 0.6875rem;">GPA Distinction</span>
-                  <span style="font-size: 0.75rem; color: var(--text-tertiary);">2025-2026</span>
-                </div>
-                <h4 style="font-size: 0.9125rem; font-weight: 700; color: var(--navy-900); margin-bottom: 0.25rem;">Dean's List of Excellence</h4>
-                <p style="font-size: 0.78125rem; color: var(--text-secondary); line-height: 1.4;">Recognized for maintaining cumulative GPA above 8.5 across consecutive academic terms.</p>
-              </div>
-
-              <div style="background: var(--bg-surface-subtle); border: 1px solid var(--border-light); border-radius: var(--radius-md); padding: 1rem;">
-                <div class="flex-between mb-2">
-                  <span class="badge badge-success" style="font-size: 0.6875rem;">Compliance</span>
-                  <span style="font-size: 0.75rem; color: var(--text-tertiary);">Semester 3</span>
-                </div>
-                <h4 style="font-size: 0.9125rem; font-weight: 700; color: var(--navy-900); margin-bottom: 0.25rem;">Exemplary Attendance Award</h4>
-                <p style="font-size: 0.78125rem; color: var(--text-secondary); line-height: 1.4;">Achieved 96.4% verified biometric attendance in Java and Data Structures laboratories.</p>
-              </div>
-
-              <div style="background: var(--bg-surface-subtle); border: 1px solid var(--border-light); border-radius: var(--radius-md); padding: 1rem;">
-                <div class="flex-between mb-2">
-                  <span class="badge badge-info" style="font-size: 0.6875rem;">Departmental</span>
-                  <span style="font-size: 0.75rem; color: var(--text-tertiary);">Spring 2026</span>
-                </div>
-                <h4 style="font-size: 0.9125rem; font-weight: 700; color: var(--navy-900); margin-bottom: 0.25rem;">DevSprint Hackathon Finalist</h4>
-                <p style="font-size: 0.78125rem; color: var(--text-secondary); line-height: 1.4;">1st Runner Up in University Smart Campus Solutions for automated timetable routing.</p>
-              </div>
-
-              <div style="background: var(--bg-surface-subtle); border: 1px solid var(--border-light); border-radius: var(--radius-md); padding: 1rem;">
-                <div class="flex-between mb-2">
-                  <span class="badge badge-neutral" style="font-size: 0.6875rem;">Leadership</span>
-                  <span style="font-size: 0.75rem; color: var(--text-tertiary);">Active</span>
-                </div>
-                <h4 style="font-size: 0.9125rem; font-weight: 700; color: var(--navy-900); margin-bottom: 0.25rem;">Peer Study Group Moderator</h4>
-                <p style="font-size: 0.78125rem; color: var(--text-secondary); line-height: 1.4;">Leading the DBMS Cohort for BCNF normalization practice and query optimization.</p>
-              </div>
+            <div id="profile-honors-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem;">
+              <!-- Dynamically populated by renderProfileHonors() based on active student department -->
             </div>
           </div>
         </div>
@@ -381,21 +346,21 @@
           <div class="digital-id-card">
             <div class="id-card-top">
               <div>
-                <div class="id-univ-name">State Technical University</div>
+                <div class="id-univ-name" id="modal-id-univ">State Technical University</div>
                 <div style="font-size: 0.6875rem; color: #94A3B8;">Identity & Access Control</div>
               </div>
-              <span class="id-card-badge">Valid Thru 2028</span>
+              <span class="id-card-badge" id="modal-id-validity">Valid Thru 2028</span>
             </div>
 
             <div class="id-card-middle">
-              <div class="id-avatar-box">RZ</div>
+              <div class="id-avatar-box" id="modal-id-avatar">RZ</div>
               <div>
-                <div class="id-student-name">Riddhi Zunjarrao</div>
-                <div class="id-student-dept">B.Tech Computer Science & Engineering</div>
+                <div class="id-student-name" id="modal-id-name">Riddhi Zunjarrao</div>
+                <div class="id-student-dept" id="modal-id-dept">B.Tech Computer Science & Engineering</div>
                 <div class="id-student-meta-row">
-                  <div>Roll: <strong>CS24-042</strong></div>
-                  <div>Sem: <strong>4 (Sec A)</strong></div>
-                  <div>Blood: <strong>O+ve</strong></div>
+                  <div>Roll: <strong id="modal-id-roll">CS24-042</strong></div>
+                  <div>Sem: <strong id="modal-id-sem">4 (Sec A)</strong></div>
+                  <div>Blood: <strong id="modal-id-blood">O+ve</strong></div>
                 </div>
               </div>
             </div>
@@ -405,7 +370,7 @@
                 <span class="id-chip-icon"></span>
                 <span>RFID / NFC Contactless Active</span>
               </div>
-              <span style="font-family: 'Courier New', monospace; font-size: 0.8125rem; font-weight: 700; color: #DDD6FE;">STU-8842-NFC</span>
+              <span id="modal-id-chip-code" style="font-family: 'Courier New', monospace; font-size: 0.8125rem; font-weight: 700; color: #DDD6FE;">STU-8842-NFC</span>
             </div>
           </div>
         </div>
@@ -425,43 +390,256 @@
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+  <script src="../data/domain-data.js"></script>
+  <script src="../js/domain-service.js"></script>
   <script src="../data/mock-student.js"></script>
   <script src="../js/firebase-config.js"></script>
   <script src="../js/auth.js"></script>
   <script src="../js/student-service.js"></script>
   <script src="../js/ui.js"></script>
   <script>
-    document.addEventListener('DOMContentLoaded', () => {
+    document.addEventListener('DOMContentLoaded', async () => {
       UI.syncStudentIdentity();
+      await loadProfileData();
 
       // Digital ID Modal
-      document.getElementById('btn-view-digital-id').addEventListener('click', () => {
-        UI.openModal('digital-id-modal');
-      });
+      const btnViewId = document.getElementById('btn-view-digital-id');
+      if (btnViewId) {
+        btnViewId.addEventListener('click', () => {
+          UI.openModal('digital-id-modal');
+        });
+      }
 
       const form = document.getElementById('profile-contact-form');
-      form.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const btn = document.getElementById('save-profile-btn');
-        btn.disabled = true;
-        btn.textContent = 'Saving...';
+      if (form) {
+        form.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          const btn = document.getElementById('save-profile-btn');
+          btn.disabled = true;
+          btn.textContent = 'Saving...';
 
-        try {
-          await StudentService.updateProfile({
-            phone: document.getElementById('contact-phone').value,
-            personalEmail: document.getElementById('contact-alt-email').value,
-            address: document.getElementById('contact-address').value,
-            emergencyContact: document.getElementById('contact-emergency').value
-          });
-          UI.showToast('success', 'Profile Updated', 'Contact information has been saved successfully.');
-        } catch (err) {
-          UI.showToast('error', 'Update Failed', err.message);
-        } finally {
-          btn.disabled = false;
-          btn.textContent = 'Save Contact Changes';
-        }
-      });
+          try {
+            await StudentService.updateProfile({
+              phone: document.getElementById('contact-phone').value,
+              personalEmail: document.getElementById('contact-alt-email').value,
+              address: document.getElementById('contact-address').value,
+              emergencyContact: document.getElementById('contact-emergency').value
+            });
+            UI.showToast('success', 'Profile Updated', 'Contact information has been saved successfully.');
+          } catch (err) {
+            UI.showToast('error', 'Update Failed', err.message);
+          } finally {
+            btn.disabled = false;
+            btn.textContent = 'Save Contact Changes';
+          }
+        });
+      }
     });
+
+    async function loadProfileData() {
+      const profile = await StudentService.getProfile();
+      const activeDom = (typeof DomainService !== 'undefined' && DomainService.getActiveDomain)
+        ? DomainService.getActiveDomain()
+        : 'dept_btech';
+
+      const initials = (profile.name || 'Student')
+        .split(' ')
+        .filter(Boolean)
+        .map(n => n[0])
+        .join('')
+        .substring(0, 2)
+        .toUpperCase() || 'ST';
+
+      // 1. Header Banner
+      const avatarEl = document.getElementById('profile-avatar-initials');
+      if (avatarEl) avatarEl.textContent = initials;
+
+      const nameEl = document.getElementById('profile-display-name');
+      if (nameEl) nameEl.textContent = profile.name;
+
+      const idRollEl = document.getElementById('profile-id-roll');
+      if (idRollEl) {
+        idRollEl.innerHTML = `Student ID: <strong style="color: #F8FAFC;">${profile.studentId || profile.id || 'STU-2024'}</strong> • Roll No: <strong>${profile.rollNo || 'N/A'}</strong>`;
+      }
+
+      const semBadge = document.getElementById('profile-semester-badge');
+      if (semBadge) {
+        semBadge.textContent = `Semester ${profile.semester || 4} (${profile.academicYear || '2025–2026'})`;
+      }
+
+      const honorsBadge = document.getElementById('profile-honors-badge');
+      if (honorsBadge) {
+        if (activeDom === 'dept_mba') {
+          honorsBadge.textContent = "Executive Dean's Scholar";
+        } else if (activeDom === 'dept_bba') {
+          honorsBadge.textContent = "Dean's Commendation for Finance";
+        } else {
+          honorsBadge.textContent = "Dean's List Honoree";
+        }
+      }
+
+      // 2. Institutional Details (Read-Only)
+      const setVal = (id, val) => {
+        const el = document.getElementById(id);
+        if (el) el.value = val || '';
+      };
+
+      setVal('profile-inst-name', profile.name);
+      setVal('profile-inst-email', profile.email);
+      setVal('profile-inst-program', profile.program);
+      setVal('profile-inst-department', profile.department);
+      setVal('profile-inst-semester', `Semester ${profile.semester || 4}`);
+      setVal('profile-inst-section', `Section ${profile.section || 'A'}`);
+      setVal('profile-inst-mentor', profile.mentor || 'Faculty Mentor');
+
+      // 3. Contact & Communication
+      setVal('contact-phone', profile.phone || '+91 98765 43210');
+      const defaultAltEmail = (profile.email && profile.email.includes('@'))
+        ? profile.email.replace(/@.*/, '.personal@gmail.com')
+        : 'student.personal@gmail.com';
+      setVal('contact-alt-email', profile.personalEmail || profile.secondaryEmail || defaultAltEmail);
+      setVal('contact-address', profile.address || 'University Campus Residence, Scholars Wing');
+      setVal('contact-emergency', profile.emergencyContact || '+91 98765 00000 (Guardian)');
+
+      // 4. Digital ID Modal Elements
+      const setText = (id, txt) => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = txt || '';
+      };
+
+      setText('modal-id-univ', profile.school || 'State Technical University');
+      setText('modal-id-avatar', initials);
+      setText('modal-id-name', profile.name);
+      setText('modal-id-dept', profile.program);
+      setText('modal-id-roll', profile.rollNo || 'STU-001');
+      setText('modal-id-sem', `${profile.semester || 4} (Sec ${profile.section || 'A'})`);
+      setText('modal-id-blood', profile.bloodGroup || 'O+ve');
+      
+      const chipCode = document.getElementById('modal-id-chip-code');
+      if (chipCode) {
+        chipCode.textContent = `${(profile.studentId || 'STU-8842').replace('STU-2024-', 'STU-')}-NFC`;
+      }
+
+      // 5. Academic Honors Showcase
+      renderProfileHonors(profile, activeDom);
+    }
+
+    function renderProfileHonors(profile, activeDom) {
+      const container = document.getElementById('profile-honors-container');
+      if (!container) return;
+
+      let honors = [];
+      if (activeDom === 'dept_mba') {
+        honors = [
+          {
+            badgeClass: 'badge-warning',
+            category: 'GPA Distinction',
+            term: '2025–2026',
+            title: "Executive Dean's Scholar",
+            desc: "Recognized for maintaining cumulative SGPA 9.45 across Advanced Strategic Management and Corporate Governance."
+          },
+          {
+            badgeClass: 'badge-success',
+            category: 'Case Competition',
+            term: 'Spring 2026',
+            title: "Goldman Sachs M&A Challenge Winner",
+            desc: "1st Place in Inter-B-School Mergers & Acquisitions valuation and leveraged buyout simulation."
+          },
+          {
+            badgeClass: 'badge-info',
+            category: 'Institutional',
+            term: 'Semester 3',
+            title: "Boardroom Strategy Simulation Honoree",
+            desc: "Recognized for exemplary negotiation, corporate restructuring and cross-border alliance strategy."
+          },
+          {
+            badgeClass: 'badge-neutral',
+            category: 'Leadership',
+            term: 'Active',
+            title: "Executive Consulting Club President",
+            desc: "Moderating executive roundtables on Private Equity, Venture Capital & ESG Portfolio Structuring."
+          }
+        ];
+      } else if (activeDom === 'dept_bba') {
+        honors = [
+          {
+            badgeClass: 'badge-warning',
+            category: 'GPA Distinction',
+            term: '2025–2026',
+            title: "Dean's Commendation for Finance",
+            desc: "Ranked in top 2% of cohort for Financial Statement Analysis, Corporate Valuation and Portfolio Theory."
+          },
+          {
+            badgeClass: 'badge-success',
+            category: 'Certification',
+            term: 'Spring 2026',
+            title: "Bloomberg Market Analytics Distinction",
+            desc: "Certified with distinction in Global Equity Markets, Fixed Income analysis and Derivative Valuation."
+          },
+          {
+            badgeClass: 'badge-info',
+            category: 'Departmental',
+            term: 'Semester 3',
+            title: "FinTech Innovation Hackathon Finalist",
+            desc: "1st Runner Up in Automated Algorithmic Portfolio Balancing & Robo-Advisory Prototype Challenge."
+          },
+          {
+            badgeClass: 'badge-neutral',
+            category: 'Leadership',
+            term: 'Active',
+            title: "Investment Society Research Lead",
+            desc: "Leading cohort research sessions on Discounted Cash Flow (DCF) modeling and equity research."
+          }
+        ];
+      } else {
+        honors = [
+          {
+            badgeClass: 'badge-warning',
+            category: 'GPA Distinction',
+            term: '2025–2026',
+            title: "Dean's List of Excellence",
+            desc: "Recognized for maintaining cumulative GPA above 8.5 across consecutive academic terms."
+          },
+          {
+            badgeClass: 'badge-success',
+            category: 'Compliance',
+            term: 'Semester 3',
+            title: "Exemplary Attendance Award",
+            desc: "Achieved 96.4% verified biometric attendance in Java and Data Structures laboratories."
+          },
+          {
+            badgeClass: 'badge-info',
+            category: 'Departmental',
+            term: 'Spring 2026',
+            title: "DevSprint Hackathon Finalist",
+            desc: "1st Runner Up in University Smart Campus Solutions for automated timetable routing."
+          },
+          {
+            badgeClass: 'badge-neutral',
+            category: 'Leadership',
+            term: 'Active',
+            title: "Peer Study Group Moderator",
+            desc: "Leading the DBMS Cohort for BCNF normalization practice and query optimization."
+          }
+        ];
+      }
+
+      const countBadge = document.getElementById('profile-honors-count');
+      if (countBadge) {
+        countBadge.textContent = `${honors.length} Verified Credentials`;
+      }
+
+      container.innerHTML = honors.map(h => `
+        <div style="background: var(--bg-surface-subtle); border: 1px solid var(--border-light); border-radius: var(--radius-md); padding: 1rem;">
+          <div class="flex-between mb-2">
+            <span class="badge ${h.badgeClass}" style="font-size: 0.6875rem;">${h.category}</span>
+            <span style="font-size: 0.75rem; color: var(--text-tertiary);">${h.term}</span>
+          </div>
+          <h4 style="font-size: 0.9125rem; font-weight: 700; color: var(--navy-900); margin-bottom: 0.25rem;">${h.title}</h4>
+          <p style="font-size: 0.78125rem; color: var(--text-secondary); line-height: 1.4;">${h.desc}</p>
+        </div>
+      `).join('');
+    }
   </script>
 </body>
 

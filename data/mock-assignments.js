@@ -248,18 +248,20 @@ function getActiveDomainKey() {
   if (typeof DomainService !== 'undefined' && DomainService.getActiveDomain) {
     return DomainService.getActiveDomain();
   }
-  if (typeof localStorage !== 'undefined') {
-    const saved = localStorage.getItem('smart_student_active_domain');
-    if (saved && (saved === 'dept_btech' || saved === 'dept_bba' || saved === 'dept_mba')) return saved;
+  if (typeof sessionStorage !== 'undefined') {
     try {
       const raw = sessionStorage.getItem('smart_student_session') || localStorage.getItem('smart_student_session');
       if (raw) {
         const u = JSON.parse(raw);
-        const d = (u.departmentId || u.department || u.program || '').toLowerCase();
-        if (d.includes('bba')) return 'dept_bba';
+        const d = (u.departmentId || u.department || u.program || u.email || '').toLowerCase();
         if (d.includes('mba')) return 'dept_mba';
+        if (d.includes('bba')) return 'dept_bba';
       }
     } catch (_) {}
+  }
+  if (typeof localStorage !== 'undefined') {
+    const saved = localStorage.getItem('smart_student_active_domain');
+    if (saved && (saved === 'dept_btech' || saved === 'dept_bba' || saved === 'dept_mba')) return saved;
   }
   return 'dept_btech';
 }

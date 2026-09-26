@@ -370,8 +370,13 @@
           </div>
 
           <div class="form-group">
-            <label for="asg-attach" class="form-label">Problem Sheet / Attachment File Name</label>
-            <input type="text" id="asg-attach" class="form-input" placeholder="e.g. Specification_Lab3.pdf (Optional)">
+            <label class="form-label">Attach Assignment Problem Sheet (PDF / Doc)</label>
+            <div id="asg-drop-zone" onclick="document.getElementById('asg-file-input').click()" style="border: 2px dashed #CBD5E1; border-radius: 10px; padding: 1rem; text-align: center; background: #F8FAFC; cursor: pointer; transition: all 0.2s ease;">
+              <input type="file" id="asg-file-input" style="display: none;" accept=".pdf,.doc,.docx,.zip,.txt">
+              <div style="font-size: 0.8125rem; font-weight: 700; color: #0F172A;" id="asg-file-name-label">Click to select problem sheet file</div>
+              <div style="font-size: 0.72rem; color: #64748B; margin-top: 0.2rem;">Direct upload to Cloudinary (Folder: <code>assignments</code>)</div>
+            </div>
+            <input type="text" id="asg-attach" class="form-input" placeholder="e.g. Specification_Lab3.pdf (Optional)" style="margin-top: 0.4rem; display: none;">
           </div>
         </div>
         <div class="modal-footer">
@@ -531,7 +536,25 @@
       subjectFilter.addEventListener('change', () => renderAssignments(true));
       renderAssignments(true);
 
-      form.addEventListener('submit', (e) => {
+      let selectedAsgFile = null;
+      const asgFileInput = document.getElementById('asg-file-input');
+      const asgFileLabel = document.getElementById('asg-file-name-label');
+      const asgDropZone = document.getElementById('asg-drop-zone');
+
+      if (asgFileInput) {
+        asgFileInput.addEventListener('change', (e) => {
+          if (e.target.files && e.target.files.length > 0) {
+            selectedAsgFile = e.target.files[0];
+            if (asgFileLabel) asgFileLabel.textContent = `Attached: ${selectedAsgFile.name}`;
+            if (asgDropZone) {
+              asgDropZone.style.borderColor = '#10B981';
+              asgDropZone.style.background = '#ECFDF5';
+            }
+          }
+        });
+      }
+
+      form.addEventListener('submit', async (e) => {
         e.preventDefault();
         const title = (document.getElementById('asg-title')?.value || '').trim();
         const subjectCode = document.getElementById('asg-subject')?.value || 'CS402';
@@ -540,37 +563,71 @@
         const dueTime = document.getElementById('asg-time')?.value || '23:59';
         const maxMarks = Number(document.getElementById('asg-marks')?.value) || 20;
         const description = (document.getElementById('asg-desc')?.value || '').trim();
-        const attachEl = document.getElementById('asg-attach');
-        const attachmentName = (attachEl && attachEl.value ? attachEl.value.trim() : '') || `${subjectCode}_Specification.pdf`;
+        let attachmentName = selectedAsgFile ? selectedAsgFile.name : `${subjectCode}_Specification.pdf`;
+        let attachmentUrl = null;
+        let cloudinaryPublicId = null;
 
-        const sections = [];
-        const secA = document.getElementById('asg-sec-a');
-        const secB = document.getElementById('asg-sec-b');
-        if (secA && secA.checked) sections.push('A');
-        if (secB && secB.checked) sections.push('B');
-        if (sections.length === 0) sections.push('A');
+        const submitBtn = form.querySelector('button[type="submit"]');
+        const origText = submitBtn ? submitBtn.textContent : 'Publish Assignment';
+        if (submitBtn) {
+          submitBtn.disabled = true;
+          submitBtn.textContent = 'Uploading to Cloudinary CDN...';
+        }
 
-        const subjects = FacultyService.getSubjects();
-        const subjectObj = subjects.find(s => s.code === subjectCode);
+        try {
+          if (selectedAsgFile) {
+            const uploadRes = await FacultyService.uploadFile(selectedAsgFile, 'assignments');
+            attachmentUrl = uploadRes.url;
+            cloudinaryPublicId = uploadRes.publicId;
+            attachmentName = uploadRes.fileName || selectedAsgFile.name;
+          }
 
-        FacultyService.createAssignment({
-          title,
-          subjectCode,
-          subjectName: subjectObj ? subjectObj.name : subjectCode,
-          submissionType,
-          dueDate,
-          dueTime,
-          maxMarks,
-          sections,
-          totalAssigned: sections.length === 2 ? 74 : 38,
-          description,
-          attachmentName
-        });
+          const sections = [];
+          const secA = document.getElementById('asg-sec-a');
+          const secB = document.getElementById('asg-sec-b');
+          if (secA && secA.checked) sections.push('A');
+          if (secB && secB.checked) sections.push('B');
+          if (sections.length === 0) sections.push('A');
 
-        UI.closeModal('create-asg-modal');
-        form.reset();
-        UI.showToast('success', 'Assignment Published', `"${title}" has been published to student portal.`);
-        renderAssignments();
+          const subjects = FacultyService.getSubjects();
+          const subjectObj = subjects.find(s => s.code === subjectCode);
+
+          FacultyService.createAssignment({
+            title,
+            subjectCode,
+            subjectName: subjectObj ? subjectObj.name : subjectCode,
+            submissionType,
+            dueDate,
+            dueTime,
+            maxMarks,
+            sections,
+            totalAssigned: sections.length === 2 ? 74 : 38,
+            description,
+            attachmentName,
+            attachmentUrl,
+            cloudinaryPublicId
+          });
+
+          UI.closeModal('create-asg-modal');
+          form.reset();
+          selectedAsgFile = null;
+          if (asgFileLabel) asgFileLabel.textContent = 'Click to select problem sheet file';
+          if (asgDropZone) {
+            asgDropZone.style.borderColor = '#CBD5E1';
+            asgDropZone.style.background = '#F8FAFC';
+          }
+
+          UI.showToast('success', 'Assignment Published to Cloudinary', `"${title}" and attachments saved to Cloudinary (folder: assignments).`);
+          renderAssignments();
+        } catch (err) {
+          console.error('[Assignment Upload Error]', err);
+          UI.showToast('error', 'Upload Failed', err.message || 'Could not upload to Cloudinary.');
+        } finally {
+          if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.textContent = origText;
+          }
+        }
       });
 
       window.deleteAssignmentItem = function(id) {

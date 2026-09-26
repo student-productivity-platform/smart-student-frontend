@@ -173,7 +173,7 @@
                 <line x1="8" y1="2" x2="8" y2="6" />
                 <line x1="3" y1="10" x2="21" y2="10" />
               </svg>
-              <span>Semester 4 • Academic Year 2026-2027</span>
+              <span id="cal-academic-context">Semester 4 • Academic Year 2026-2027</span>
             </div>
             <div class="page-title-row">
               <h1>University Academic Calendar & Milestones</h1>
@@ -187,13 +187,6 @@
               <button class="segment-tab-btn" id="view-mode-week" role="tab">Week View</button>
               <button class="segment-tab-btn" id="view-mode-agenda" role="tab">Agenda List</button>
             </div>
-            <button type="button" class="btn btn-primary btn-sm" id="btn-open-add-reminder" style="display: inline-flex; align-items: center; gap: 0.35rem;">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
-                <line x1="12" y1="5" x2="12" y2="19" />
-                <line x1="5" y1="12" x2="19" y2="12" />
-              </svg>
-              Add Reminder
-            </button>
           </div>
         </div>
 
@@ -209,7 +202,7 @@
             <div class="cal-stat-info">
               <div class="cal-stat-value" id="kpi-exam-count">2 Exams</div>
               <div class="cal-stat-label">Upcoming Assessments</div>
-              <div class="cal-stat-sub">Next: ML Mid-Term (Sep 14)</div>
+              <div class="cal-stat-sub" id="kpi-exam-sub">Upcoming Examinations</div>
             </div>
           </div>
 
@@ -223,7 +216,7 @@
             <div class="cal-stat-info">
               <div class="cal-stat-value" id="kpi-assign-count">3 Deadlines</div>
               <div class="cal-stat-label">Assignments Due</div>
-              <div class="cal-stat-sub">Next: DBMS Report (Sep 08)</div>
+              <div class="cal-stat-sub" id="kpi-assign-sub">Coursework Deadlines</div>
             </div>
           </div>
 
@@ -236,7 +229,7 @@
             <div class="cal-stat-info">
               <div class="cal-stat-value" id="kpi-lab-count">2 Sessions</div>
               <div class="cal-stat-label">Lab Practicals</div>
-              <div class="cal-stat-sub">OS Semaphore & Networks</div>
+              <div class="cal-stat-sub" id="kpi-lab-sub">Academic Practicals</div>
             </div>
           </div>
 
@@ -249,7 +242,7 @@
             <div class="cal-stat-info">
               <div class="cal-stat-value" id="kpi-milestone-count">2 Milestones</div>
               <div class="cal-stat-label">Departmental Events</div>
-              <div class="cal-stat-sub">DevSprint Hackathon</div>
+              <div class="cal-stat-sub" id="kpi-milestone-sub">Departmental Highlights</div>
             </div>
           </div>
         </div>
@@ -458,54 +451,7 @@
     </div>
   </div>
 
-  <!-- Add Reminder / Event Modal -->
-  <div class="modal-overlay" id="modal-add-reminder">
-    <div class="modal-dialog" style="max-width: 480px;">
-      <div class="modal-header">
-        <h3 class="modal-title">Create Academic Reminder</h3>
-        <button type="button" class="toast-close" onclick="UI.closeModal('modal-add-reminder')">&times;</button>
-      </div>
-      <div class="modal-body" style="display: flex; flex-direction: column; gap: 1rem;">
-        <div class="form-group">
-          <label class="form-label" for="reminder-title">Reminder / Task Title</label>
-          <input type="text" id="reminder-title" class="form-input" placeholder="e.g., Prepare CS402 Query Assignment">
-        </div>
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
-          <div class="form-group">
-            <label class="form-label" for="reminder-date">Date</label>
-            <input type="date" id="reminder-date" class="form-input" value="2026-09-08">
-          </div>
-          <div class="form-group">
-            <label class="form-label" for="reminder-category">Category</label>
-            <select id="reminder-category" class="form-select">
-              <option value="assignment">Assignment / Deadline</option>
-              <option value="exam">Quiz / Exam</option>
-              <option value="class">Class / Lab</option>
-              <option value="milestone">Personal Milestone</option>
-            </select>
-          </div>
-        </div>
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
-          <div class="form-group">
-            <label class="form-label" for="reminder-course">Course Code</label>
-            <input type="text" id="reminder-course" class="form-input" placeholder="e.g. CS402">
-          </div>
-          <div class="form-group">
-            <label class="form-label" for="reminder-time">Time</label>
-            <input type="text" id="reminder-time" class="form-input" placeholder="e.g. 11:59 PM">
-          </div>
-        </div>
-        <div class="form-group">
-          <label class="form-label" for="reminder-notes">Notes / Venue</label>
-          <input type="text" id="reminder-notes" class="form-input" placeholder="e.g., Review slides and submit on portal">
-        </div>
-      </div>
-      <div class="modal-footer" style="justify-content: flex-end; gap: 0.5rem;">
-        <button type="button" class="btn btn-secondary" onclick="UI.closeModal('modal-add-reminder')">Cancel</button>
-        <button type="button" class="btn btn-primary" onclick="saveCustomReminder()">Save Reminder</button>
-      </div>
-    </div>
-  </div>
+
 
   <!-- Scripts -->
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
@@ -515,8 +461,10 @@
   <script src="../js/domain-service.js"></script>
   <script src="../data/mock-student.js"></script>
   <script src="../data/mock-calendar.js"></script>
+  <script src="../data/mock-tasks.js"></script>
   <script src="../js/firebase-config.js"></script>
   <script src="../js/auth.js"></script>
+  <script src="../js/task-service.js"></script>
   <script src="../js/ui.js"></script>
 
   <script>
@@ -555,15 +503,32 @@
     }
 
     function getAllEvents() {
-      const baseEvents = window.mockCalendar || [];
+      let baseEvents = [];
+      if (typeof getCalendarForDomain === 'function') {
+        baseEvents = getCalendarForDomain();
+      } else if (window.getCalendarForDomain) {
+        baseEvents = window.getCalendarForDomain();
+      } else if (window.mockCalendar) {
+        baseEvents = Array.isArray(window.mockCalendar) ? window.mockCalendar : Array.from(window.mockCalendar);
+      }
       const custom = getCustomEvents();
       return [...baseEvents, ...custom];
     }
 
     document.addEventListener('DOMContentLoaded', () => {
       UI.syncStudentIdentity();
+
+      // Sync academic context label
+      const activeDom = (typeof DomainService !== 'undefined') ? DomainService.getActiveDomain() : 'dept_btech';
+      const domData = (typeof DOMAINS_CATALOG !== 'undefined' && DOMAINS_CATALOG[activeDom]) ? DOMAINS_CATALOG[activeDom] : null;
+      if (domData) {
+        const ctxEl = document.getElementById('cal-academic-context');
+        if (ctxEl) ctxEl.textContent = `${domData.name} • ${domData.badge} • Academic Year 2026-2027`;
+      }
+
       renderAllViews();
       renderUpcomingRail();
+      updateCalendarKPIs();
 
       // View Switcher Buttons
       document.getElementById('view-mode-month').addEventListener('click', () => switchView('month'));
@@ -589,13 +554,6 @@
           renderAllViews();
         });
       }
-
-      // Quick Add Reminder Button in Header
-      document.getElementById('btn-open-add-reminder').addEventListener('click', () => {
-        const todayInfo = getTodayInfo();
-        document.getElementById('reminder-date').value = todayInfo.dateStr;
-        UI.openModal('modal-add-reminder');
-      });
 
       // Navigation buttons
       document.getElementById('btn-today-nav').addEventListener('click', () => {
@@ -707,7 +665,6 @@
           <div class="calendar-day-cell ${cell.isOther ? 'other-month' : ''} ${cell.isToday ? 'today' : ''}" onclick="onDayCellClick('${cell.dateStr}')">
             <div class="cal-day-cell-top">
               <span class="cal-day-num">${cell.dayNum}</span>
-              <button type="button" class="cal-quick-add-btn" title="Add reminder for this date" onclick="event.stopPropagation(); promptAddReminder('${cell.dateStr}')">+</button>
             </div>
             <div class="cal-day-events-list">
               ${eventPillsHtml}
@@ -888,79 +845,80 @@
       UI.openModal('modal-event-detail');
     };
 
-    window.promptAddReminder = function (dateStr) {
-      document.getElementById('reminder-date').value = dateStr || '2026-09-08';
-      UI.openModal('modal-add-reminder');
-    };
-
-    window.saveCustomReminder = function () {
-      const title = document.getElementById('reminder-title').value.trim();
-      const date = document.getElementById('reminder-date').value;
-      const type = document.getElementById('reminder-category').value;
-      const courseId = document.getElementById('reminder-course').value.trim() || 'GEN';
-      const time = document.getElementById('reminder-time').value.trim() || '11:59 PM';
-      const notes = document.getElementById('reminder-notes').value.trim();
-
-      if (!title) {
-        UI.showToast('error', 'Missing Title', 'Please enter a reminder or task title.');
-        return;
-      }
-
-      // Format display date
-      const dObj = new Date(date + 'T00:00:00');
-      const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-      const displayDate = `${months[dObj.getMonth()]} ${dObj.getDate() < 10 ? '0' + dObj.getDate() : dObj.getDate()}, ${dObj.getFullYear()}`;
-
-      const newEvent = {
-        id: 'cust_' + Date.now(),
-        date: date,
-        displayDate: displayDate,
-        time: time,
-        title: title,
-        courseId: courseId,
-        subject: courseId + ' Course Task',
-        type: type,
-        venue: 'Personal Academic Reminder',
-        description: notes || 'Personal study reminder added via calendar.'
-      };
-
-      const customList = getCustomEvents();
-      customList.push(newEvent);
-      saveCustomEventList(customList);
-
-      UI.closeModal('modal-add-reminder');
-      UI.showToast('success', 'Reminder Added', `"${title}" has been placed on ${displayDate}.`);
-
-      // Reset fields
-      document.getElementById('reminder-title').value = '';
-      document.getElementById('reminder-notes').value = '';
-
-      renderAllViews();
-    };
-
     window.onDayCellClick = function (dateStr) {
       const dayEvents = getAllEvents().filter(e => e.date === dateStr);
       if (dayEvents.length > 0) {
         openEventModal(dayEvents[0].id);
       } else {
-        promptAddReminder(dateStr);
+        UI.showToast('info', 'Academic Schedule', `No scheduled assessments or classes on ${dateStr}.`);
       }
     };
 
-    window.addEventToTasks = function () {
+    function updateCalendarKPIs() {
+      const allEvents = getAllEvents();
+
+      // 1. Exams
+      const exams = allEvents.filter(e => e.type === 'exam');
+      const examCountEl = document.getElementById('kpi-exam-count');
+      const examSubEl = document.getElementById('kpi-exam-sub');
+      if (examCountEl) examCountEl.textContent = `${exams.length} Exam${exams.length === 1 ? '' : 's'}`;
+      if (examSubEl) {
+        if (exams.length > 0) {
+          const nextExam = exams[0];
+          examSubEl.textContent = `Next: ${nextExam.title} (${nextExam.displayDate || nextExam.date})`;
+        } else {
+          examSubEl.textContent = 'No upcoming examinations';
+        }
+      }
+
+      // 2. Deadlines / Assignments
+      const assignments = allEvents.filter(e => e.type === 'assignment');
+      const asgCountEl = document.getElementById('kpi-assign-count');
+      const asgSubEl = document.getElementById('kpi-assign-sub');
+      if (asgCountEl) asgCountEl.textContent = `${assignments.length} Deadline${assignments.length === 1 ? '' : 's'}`;
+      if (asgSubEl) {
+        if (assignments.length > 0) {
+          const nextAsg = assignments[0];
+          asgSubEl.textContent = `Next: ${nextAsg.title} (${nextAsg.displayDate || nextAsg.date})`;
+        } else {
+          asgSubEl.textContent = 'All coursework submitted';
+        }
+      }
+
+      // 3. Lab / Practical Sessions
+      const labs = allEvents.filter(e => e.type === 'class' || e.type === 'lab');
+      const labCountEl = document.getElementById('kpi-lab-count');
+      const labSubEl = document.getElementById('kpi-lab-sub');
+      if (labCountEl) labCountEl.textContent = `${labs.length} Session${labs.length === 1 ? '' : 's'}`;
+      if (labSubEl) {
+        if (labs.length > 0) {
+          labSubEl.textContent = labs.slice(0, 2).map(l => l.courseId || l.title).join(' & ');
+        } else {
+          labSubEl.textContent = 'No active practicals';
+        }
+      }
+
+      // 4. Milestones / Departmental Highlights
+      const milestones = allEvents.filter(e => e.type === 'milestone');
+      const milCountEl = document.getElementById('kpi-milestone-count');
+      const milSubEl = document.getElementById('kpi-milestone-sub');
+      if (milCountEl) milCountEl.textContent = `${milestones.length} Milestone${milestones.length === 1 ? '' : 's'}`;
+      if (milSubEl) {
+        if (milestones.length > 0) {
+          milSubEl.textContent = milestones[0].title;
+        } else {
+          milSubEl.textContent = 'Departmental events';
+        }
+      }
+    }
+
+    window.addEventToTasks = async function () {
       const ev = getAllEvents().find(e => e.id === currentOpenedEventId);
       if (ev) {
         try {
-          let tasks = JSON.parse(localStorage.getItem('smart_student_tasks') || '[]');
-          tasks.push({
-            id: 'task_' + Date.now(),
-            title: ev.title,
-            courseId: ev.courseId,
-            dueDate: ev.date,
-            priority: ev.type === 'exam' ? 'high' : 'medium',
-            status: 'pending'
-          });
-          localStorage.setItem('smart_student_tasks', JSON.stringify(tasks));
+          if (typeof TaskService !== 'undefined') {
+            await TaskService.addTask(ev.title, ev.displayDate || ev.date, ev.type === 'exam' ? 'high' : 'medium', ev.courseId || 'General');
+          }
         } catch (e) {}
         UI.showToast('success', 'Task Created', `Added "${ev.title}" to your Tasks Checklist.`);
       }

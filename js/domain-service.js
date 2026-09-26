@@ -30,23 +30,32 @@ const DomainService = (() => {
   function getActiveDomain() {
     if (typeof window === 'undefined') return 'dept_btech';
 
-    // 1. Check explicit local preference
-    const saved = localStorage.getItem(STORAGE_KEY);
-    if (saved && (saved === 'dept_btech' || saved === 'dept_bba' || saved === 'dept_mba')) {
-      return saved;
-    }
-
-    // 2. Check logged-in user profile
+    // 1. Primary Ground Truth: Active Authenticated User Session
     try {
       const rawUser = sessionStorage.getItem('smart_student_session') || localStorage.getItem('smart_student_session');
       if (rawUser) {
         const user = JSON.parse(rawUser);
-        const deptStr = (user.departmentId || user.department || user.program || user.email || '').toLowerCase();
-        if (deptStr.includes('bba')) return 'dept_bba';
-        if (deptStr.includes('mba')) return 'dept_mba';
-        if (deptStr.includes('btech') || deptStr.includes('cs') || deptStr.includes('engineering')) return 'dept_btech';
+        const deptStr = (user.departmentId || user.domainId || user.department || user.program || user.email || '').toLowerCase();
+        if (deptStr.includes('mba')) {
+          localStorage.setItem(STORAGE_KEY, 'dept_mba');
+          return 'dept_mba';
+        }
+        if (deptStr.includes('bba')) {
+          localStorage.setItem(STORAGE_KEY, 'dept_bba');
+          return 'dept_bba';
+        }
+        if (deptStr.includes('btech') || deptStr.includes('cs') || deptStr.includes('eng') || deptStr.includes('comp')) {
+          localStorage.setItem(STORAGE_KEY, 'dept_btech');
+          return 'dept_btech';
+        }
       }
     } catch (_) {}
+
+    // 2. Secondary Preference: Explicit localStorage override (e.g. for cross-domain admin testing)
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved && (saved === 'dept_btech' || saved === 'dept_bba' || saved === 'dept_mba')) {
+      return saved;
+    }
 
     return 'dept_btech';
   }

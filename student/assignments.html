@@ -181,14 +181,14 @@
         </div>
 
         <!-- Attention Notice for Upcoming Deadlines -->
-        <div class="notice-box-yellow">
+        <div class="notice-box-yellow" id="asg-deadline-alert-box">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <circle cx="12" cy="12" r="10" />
             <line x1="12" y1="8" x2="12" y2="12" />
             <line x1="12" y1="16" x2="12.01" y2="16" />
           </svg>
-          <div>
-            <strong>Upcoming Deadline Alert:</strong> Database Management Systems <em>"Normalization & Relational Schema Design"</em> is due on <strong>Sep 08, 2026 at 11:59 PM</strong>. Ensure solutions adhere to BCNF decomposition guidelines.
+          <div id="asg-deadline-alert-text">
+            <strong>Upcoming Deadline Alert:</strong> Loading scheduled coursework deadlines...
           </div>
         </div>
 
@@ -204,11 +204,6 @@
             </div>
             <select id="asg-course-filter" class="filter-select" aria-label="Filter by Subject">
               <option value="all">All Subjects</option>
-              <option value="CS401">Data Structures (CS401)</option>
-              <option value="CS402">DBMS (CS402)</option>
-              <option value="CS403">Machine Learning (CS403)</option>
-              <option value="CS404">Operating Systems (CS404)</option>
-              <option value="CS405">Computer Networks (CS405)</option>
             </select>
           </div>
 
@@ -250,8 +245,8 @@
     <div class="modal-dialog" style="max-width: 640px;">
       <div class="modal-header">
         <div>
-          <span class="badge badge-neutral mb-1" id="modal-asg-course">CS402 • Database Management Systems</span>
-          <h3 class="modal-title" id="modal-asg-title">Normalization & Relational Schema Design</h3>
+          <span class="badge badge-neutral mb-1" id="modal-asg-course">Course Code • Subject</span>
+          <h3 class="modal-title" id="modal-asg-title">Assignment Title</h3>
         </div>
         <button type="button" class="btn-icon modal-close-btn" onclick="UI.closeModal('assignment-detail-modal')" aria-label="Close modal">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
@@ -330,6 +325,7 @@
       UI.syncStudentIdentity();
       assignmentsData = await AssignmentService.getAssignments();
       updateSummaryBadges();
+      updateDeadlineNotice(assignmentsData);
       renderAssignmentsTable(assignmentsData);
 
       // Search & Filters
@@ -396,6 +392,26 @@
       document.getElementById('badge-submitted-count').textContent = `${submitted} Submitted`;
       document.getElementById('badge-graded-count').textContent = `${graded} Graded`;
       document.getElementById('badge-overdue-count').textContent = `${overdue} Overdue`;
+    }
+
+    function updateDeadlineNotice(assignments) {
+      const alertBox = document.getElementById('asg-deadline-alert-box');
+      const alertText = document.getElementById('asg-deadline-alert-text');
+      if (!alertBox || !alertText) return;
+
+      const pending = (assignments || []).filter(a => a.status === 'pending' || a.status === 'overdue');
+      if (!pending.length) {
+        alertBox.style.display = 'none';
+        return;
+      }
+
+      alertBox.style.display = 'flex';
+      const earliest = pending[0];
+      const desc = earliest.description
+        ? (earliest.description.length > 120 ? earliest.description.substring(0, 120) + '...' : earliest.description)
+        : 'Ensure solutions are prepared and submitted prior to the deadline.';
+
+      alertText.innerHTML = `<strong>Upcoming Deadline Alert:</strong> ${earliest.subject || 'Course'} (${earliest.subjectCode || ''}) <em>"${earliest.title}"</em> is due on <strong>${earliest.dueDate} at ${earliest.dueTime || '11:59 PM'}</strong>. ${desc}`;
     }
 
     function renderAssignmentsTable(items) {
@@ -517,18 +533,19 @@
       const submitBtn = document.getElementById('btn-submit-assignment');
       if (submitBtn) {
         submitBtn.disabled = true;
-        submitBtn.textContent = 'Uploading solution...';
+        submitBtn.textContent = 'Uploading to Cloudinary CDN...';
       }
 
       let fileData = {
         name: `${asg.subjectCode}_Solution.pdf`,
         size: '2.1 MB',
-        url: '/uploads/submissions/sample_submission.pdf'
+        url: 'https://res.cloudinary.com/cj2nvg1m/image/upload/v1790370095/assignments/v70xdacxvjrso9oixiss.pdf',
+        cloudinaryPublicId: 'assignments/v70xdacxvjrso9oixiss'
       };
 
       if (selectedFile) {
         try {
-          const uploaded = await AssignmentService.uploadFile(selectedFile);
+          const uploaded = await AssignmentService.uploadFile(selectedFile, 'assignments');
           fileData = {
             name: selectedFile.name,
             size: uploaded.fileSize || `${(selectedFile.size / 1024 / 1024).toFixed(2)} MB`,
@@ -556,9 +573,10 @@
       }
 
       updateSummaryBadges();
+      updateDeadlineNotice(assignmentsData);
       renderAssignmentsTable(assignmentsData);
       UI.closeModal('assignment-detail-modal');
-      UI.showToast('success', 'Assignment Submitted', `"${asg.title}" has been successfully uploaded to the institutional portal.`);
+      UI.showToast('success', 'Assignment Uploaded to Cloudinary', `"${asg.title}" has been saved to Cloudinary (folder: assignments) and submitted.`);
     };
   </script>
 </body>

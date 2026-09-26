@@ -307,6 +307,25 @@
           </div>
         </div>
 
+        <!-- Leader Live Waiting Room Knock Notification Banner -->
+        <div id="leader-waiting-banner" style="display: none; background: #FFFBEB; border: 1.5px solid #F59E0B; border-radius: 12px; padding: 0.85rem 1.25rem; margin-bottom: 1.25rem; align-items: center; justify-content: space-between; gap: 1rem; box-shadow: 0 4px 14px rgba(245, 158, 11, 0.15);">
+          <div style="display: flex; align-items: center; gap: 0.85rem;">
+            <span class="live-pulse-dot" style="width: 10px; height: 10px; background: #F59E0B; border-radius: 50%; display: inline-block; box-shadow: 0 0 8px #F59E0B;"></span>
+            <div>
+              <div style="font-weight: 700; font-size: 0.875rem; color: #92400E;" id="waiting-banner-title">🚪 Waiting Room Knock: 1 Student Waiting</div>
+              <div style="font-size: 0.75rem; color: #B45309;" id="waiting-banner-subtitle">Review and admit enrolled peers to the live Google Meet call.</div>
+            </div>
+          </div>
+          <div style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
+            <button type="button" class="btn btn-primary btn-sm" onclick="openWaitingRoomManagerModal()" style="background: #D97706; border-color: #D97706; font-size: 0.78rem; font-weight: 700;">
+              View & Admit (<span id="waiting-banner-count">1</span>)
+            </button>
+            <button type="button" class="btn btn-secondary btn-sm" onclick="handleAdmitAllWaiting()" style="background: #FEF3C7; border-color: #F59E0B; color: #92400E; font-size: 0.78rem; font-weight: 700;">
+              ✓ Quick Admit All
+            </button>
+          </div>
+        </div>
+
         <!-- Live Google Meet Call Bar -->
         <div id="ws-live-meet-bar" class="live-meet-bar" style="display: none; margin-bottom: 1.25rem; background: linear-gradient(135deg, #1E1B4B 0%, #312E81 100%); color: #FFFFFF; border-radius: var(--radius-md); padding: 0.85rem 1.25rem; align-items: center; justify-content: space-between; gap: 1rem; box-shadow: 0 4px 14px rgba(79, 70, 229, 0.2);">
           <div style="display: flex; align-items: center; gap: 0.75rem;">
@@ -434,8 +453,16 @@
             </select>
           </div>
           <div class="form-group">
-            <label class="form-label">Resource URL / Link</label>
-            <input type="url" id="res-url" class="form-input" placeholder="https://example.com/material.pdf" value="https://drive.google.com/study-cohort-resources">
+            <label class="form-label">Upload Notes / PDF Document</label>
+            <div id="res-drop-zone" onclick="document.getElementById('res-file-input').click()" style="border: 2px dashed #CBD5E1; border-radius: 10px; padding: 1rem; text-align: center; background: #F8FAFC; cursor: pointer; transition: all 0.2s ease;">
+              <input type="file" id="res-file-input" style="display: none;" accept=".pdf,.doc,.docx,.ppt,.pptx,.txt,.py,.java,.zip">
+              <div style="font-size: 0.8125rem; font-weight: 700; color: #0F172A;" id="res-file-name-label">Click to select notes or document</div>
+              <div style="font-size: 0.72rem; color: #64748B; margin-top: 0.2rem;">Direct upload to Cloudinary (Folder: <code>notes</code>)</div>
+            </div>
+          </div>
+          <div class="form-group" id="res-url-group">
+            <label class="form-label">Resource URL / Cloudinary Link</label>
+            <input type="url" id="res-url" class="form-input" placeholder="https://res.cloudinary.com/...">
           </div>
         </form>
       </div>
@@ -531,15 +558,15 @@
           Once Google creates your room, copy the meeting link (e.g. <code>https://meet.google.com/xxx-yyyy-zzz</code>) and paste it below, then click <strong>Save & Share</strong> so all 5 members can join!
         </div>
 
-        <!-- Primary Live Actions: Start Google Meet, Join, or 1-Click Instant Room -->
-        <div style="display: flex; flex-direction: column; gap: 0.65rem; margin-bottom: 1.15rem;">
+        <!-- Leader-only Actions Section: Launch Google Meet or Instant Room -->
+        <div id="gm-leader-actions-section" style="display: flex; flex-direction: column; gap: 0.65rem; margin-bottom: 1.15rem;">
           <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
             <button type="button" id="gm-provision-btn" onclick="handleProvisionMeetSpace()" class="btn btn-primary" style="display: flex; align-items: center; justify-content: center; gap: 0.5rem; font-weight: 700; padding: 0.75rem 1rem;">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <polygon points="23 7 16 12 23 17 23 7"/>
                 <rect x="1" y="5" width="15" height="14" rx="2" ry="2"/>
               </svg>
-              <span>Start Google Meet</span>
+              <span>Launch Google Meet</span>
             </button>
             <a href="#" target="_blank" id="gm-modal-join-btn" onclick="handleJoinMeetClick(event)" class="btn btn-secondary" style="display: flex; align-items: center; justify-content: center; gap: 0.5rem; font-weight: 700; text-decoration: none; padding: 0.75rem 1rem;">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -555,8 +582,11 @@
           </button>
         </div>
 
+        <!-- Member-only Notice Section (displayed when user is NOT the leader) -->
+        <div id="gm-member-notice-section" style="display: none; margin-bottom: 1.15rem;"></div>
+
         <!-- Active Call Link Card -->
-        <div style="background: var(--bg-surface-subtle); border: 1px solid var(--border-default); border-radius: var(--radius-md); padding: 1rem; margin-bottom: 1rem;">
+        <div id="gm-link-card-section" style="background: var(--bg-surface-subtle); border: 1px solid var(--border-default); border-radius: var(--radius-md); padding: 1rem; margin-bottom: 1rem;">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.45rem;">
             <span style="font-size: 0.6875rem; font-weight: 700; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.05em;">Current Cohort Meeting URL</span>
             <span class="badge badge-success" id="gm-modal-badge" style="font-size: 0.6875rem;">Assigned Link</span>
@@ -572,8 +602,8 @@
           </div>
         </div>
 
-        <!-- Update / Paste Link Section -->
-        <div style="border-top: 1px solid var(--border-light); padding-top: 0.85rem;">
+        <!-- Update / Paste Link Section (LEADER ONLY) -->
+        <div id="gm-leader-update-section" style="border-top: 1px solid var(--border-light); padding-top: 0.85rem;">
           <div style="font-size: 0.8125rem; font-weight: 700; color: var(--navy-900); margin-bottom: 0.4rem;">
             Update / Paste Active Meeting Link
           </div>
@@ -595,6 +625,104 @@
       </div>
       <div class="modal-footer" style="justify-content: flex-end;">
         <button type="button" class="btn btn-secondary" onclick="UI.closeModal('modal-google-meet')">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Student Waiting Room Modal -->
+  <div class="modal-overlay" id="modal-waiting-room" style="backdrop-filter: blur(8px);">
+    <div class="modal-dialog" style="max-width: 480px; text-align: center; border-radius: 16px; box-shadow: 0 20px 40px rgba(0,0,0,0.18);">
+      <div class="modal-body" style="padding: 2.25rem 1.75rem;">
+        <!-- State 1: In Waiting Room (Pending Admission) -->
+        <div id="wr-state-waiting">
+          <div style="position: relative; width: 72px; height: 72px; margin: 0 auto 1.25rem; display: flex; align-items: center; justify-content: center;">
+            <div style="position: absolute; inset: 0; border-radius: 50%; background: rgba(245, 158, 11, 0.15); animation: pulse 2s infinite;"></div>
+            <div style="width: 54px; height: 54px; border-radius: 50%; background: #FEF3C7; border: 2px solid #F59E0B; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; z-index: 1;">
+              ⏳
+            </div>
+          </div>
+          <h3 style="margin: 0 0 0.45rem 0; font-size: 1.3rem; color: var(--navy-900); font-weight: 800;">You're in the Waiting Room</h3>
+          <p style="color: var(--text-secondary); font-size: 0.875rem; line-height: 1.55; margin: 0 0 1.25rem 0;">
+            A knock request has been sent to Room Leader (<strong id="wr-leader-name" style="color: var(--navy-900);">Room Leader</strong>). Please wait while they accept your request to enter.
+          </p>
+          <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 10px; padding: 0.85rem; margin-bottom: 1.5rem; display: flex; align-items: center; justify-content: center; gap: 0.65rem; font-size: 0.8125rem; color: #475569;">
+            <span style="width: 8px; height: 8px; border-radius: 50%; background: #F59E0B; display: inline-block; box-shadow: 0 0 6px #F59E0B;"></span>
+            <span>Awaiting Leader's approval in real time...</span>
+          </div>
+          <button type="button" class="btn btn-secondary btn-sm" onclick="cancelWaitingRoomRequest()" style="border-radius: 8px; padding: 0.5rem 1.25rem; color: var(--text-secondary);">
+            Cancel & Return to Workspace
+          </button>
+        </div>
+
+        <!-- State 2: Admitted by Leader -->
+        <div id="wr-state-admitted" style="display: none;">
+          <div style="width: 72px; height: 72px; border-radius: 50%; background: #ECFDF5; border: 2px solid #10B981; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.25rem; color: #059669; font-size: 2rem;">
+            ✓
+          </div>
+          <h3 style="margin: 0 0 0.45rem 0; font-size: 1.3rem; color: #065F46; font-weight: 800;">Admission Approved!</h3>
+          <p style="color: var(--text-secondary); font-size: 0.875rem; line-height: 1.55; margin: 0 0 1.25rem 0;">
+            The Room Leader has accepted your request. Launching your Google Meet session now...
+          </p>
+          <a href="#" target="_blank" id="wr-enter-meet-btn" class="btn btn-primary" style="background: #059669; border-color: #059669; width: 100%; font-weight: 700; padding: 0.75rem 1rem; border-radius: 10px; display: flex; align-items: center; justify-content: center; gap: 0.5rem; text-decoration: none;">
+            <span>Enter Google Meet Call Now</span>
+            <span>&rarr;</span>
+          </a>
+        </div>
+
+        <!-- State 3: Rejected by Leader -->
+        <div id="wr-state-rejected" style="display: none;">
+          <div style="width: 72px; height: 72px; border-radius: 50%; background: #FEF2F2; border: 2px solid #EF4444; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.25rem; color: #DC2626; font-size: 1.75rem;">
+            ✕
+          </div>
+          <h3 style="margin: 0 0 0.45rem 0; font-size: 1.25rem; color: #991B1B; font-weight: 800;">Admission Denied</h3>
+          <p style="color: var(--text-secondary); font-size: 0.875rem; line-height: 1.55; margin: 0 0 1.25rem 0;">
+            The Room Leader is unable to admit new attendees to the Google Meet session right now.
+          </p>
+          <button type="button" class="btn btn-secondary" onclick="UI.closeModal('modal-waiting-room')" style="width: 100%; border-radius: 10px;">
+            Return to Cohort
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Leader Waiting Room Manager Modal -->
+  <div class="modal-overlay" id="modal-waiting-room-manager">
+    <div class="modal-dialog" style="max-width: 520px; border-radius: 16px;">
+      <div class="modal-header">
+        <div style="display: flex; align-items: center; gap: 0.6rem;">
+          <div style="width: 36px; height: 36px; border-radius: 8px; background: #FEF3C7; display: flex; align-items: center; justify-content: center; color: #D97706; font-size: 1.1rem;">
+            🚪
+          </div>
+          <div>
+            <h3 class="modal-title" style="margin: 0; font-size: 1.1rem; color: var(--navy-900);">Waiting Room Attendees</h3>
+            <span style="font-size: 0.75rem; color: var(--text-tertiary);">Admit or deny students requesting to enter your study meeting</span>
+          </div>
+        </div>
+        <button type="button" class="toast-close" onclick="UI.closeModal('modal-waiting-room-manager')">&times;</button>
+      </div>
+      <div class="modal-body" style="padding: 1.25rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.85rem;">
+          <span style="font-size: 0.75rem; font-weight: 700; color: var(--text-tertiary); text-transform: uppercase;">
+            Pending Requests (<span id="wr-manager-count">0</span>)
+          </span>
+          <button type="button" class="btn btn-secondary btn-sm" id="btn-admit-all" onclick="handleAdmitAllWaiting()" style="font-size: 0.75rem; padding: 0.25rem 0.6rem; color: #059669; font-weight: 700;">
+            ✓ Admit All
+          </button>
+        </div>
+
+        <div id="wr-manager-list" style="display: flex; flex-direction: column; gap: 0.65rem; max-height: 280px; overflow-y: auto;">
+          <!-- Rendered via JS -->
+        </div>
+
+        <div id="wr-manager-empty" style="text-align: center; padding: 2rem 1rem; color: var(--text-tertiary); font-size: 0.85rem;">
+          <div style="font-size: 1.75rem; margin-bottom: 0.35rem;">✓</div>
+          <div>No students currently waiting.</div>
+          <div style="font-size: 0.75rem; color: #94A3B8; margin-top: 0.2rem;">When an enrolled peer requests to enter, they will appear here.</div>
+        </div>
+      </div>
+      <div class="modal-footer" style="justify-content: flex-end;">
+        <button type="button" class="btn btn-secondary" onclick="UI.closeModal('modal-waiting-room-manager')">Close</button>
       </div>
     </div>
   </div>
@@ -674,6 +802,11 @@
         renderMembers();
         renderResources(data.resources || []);
         renderWhiteboard();
+
+        // Start leader monitor if current user is the room leader
+        if (isCurrentUserLeader(currentGroup, currentStudent)) {
+          startLeaderWaitingMonitor();
+        }
       } catch (err) {
         console.error('Failed to load group:', err);
         showWorkspaceError(err.message || 'Could not load group from Firebase.');
@@ -698,37 +831,94 @@
       const rawMeetUrl = g.meetLink || '';
       const isDummy = isDummyMeetUrl(rawMeetUrl);
       const meetUrl = isDummy ? 'https://meet.google.com/new' : rawMeetUrl;
+      const isLeader = isCurrentUserLeader(g, currentStudent);
+
+      // Role badge
+      const leaderBadge = document.getElementById('ws-role-badge');
+      if (leaderBadge) {
+        if (isLeader) {
+          leaderBadge.textContent = 'You are Room Lead';
+          leaderBadge.className = 'badge badge-success';
+          leaderBadge.style.display = 'inline-block';
+        } else {
+          leaderBadge.textContent = 'Cohort Member';
+          leaderBadge.className = 'badge badge-neutral';
+          leaderBadge.style.display = 'inline-block';
+        }
+      }
+
+      // Workspace Header Meet Action Button
       const meetBtn = document.getElementById('ws-meet-btn');
       if (meetBtn) {
         meetBtn.setAttribute('data-meet-url', meetUrl);
+        if (isLeader) {
+          // Leader has exclusive permission to launch / start Google Meet
+          meetBtn.innerHTML = `
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 0.35rem;">
+              <polygon points="23 7 16 12 23 17 23 7"/>
+              <rect x="1" y="5" width="15" height="14" rx="2" ry="2"/>
+            </svg>
+            Launch Google Meet
+          `;
+          meetBtn.className = 'btn btn-primary btn-sm';
+          meetBtn.style.background = '';
+          meetBtn.style.borderColor = '';
+          meetBtn.style.opacity = '1';
+          meetBtn.style.cursor = 'pointer';
+          meetBtn.title = 'Launch or configure Google Meet for this cohort';
+          meetBtn.onclick = () => openGoogleMeetHub();
+          startLeaderWaitingMonitor();
+        } else {
+          // Regular Cohort Member CANNOT launch meetings randomly (must knock in waiting room)
+          if (!isDummy && rawMeetUrl) {
+            // Meeting active -> Knock to Enter Call via Waiting Room
+            meetBtn.innerHTML = `
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 0.35rem;">
+                <circle cx="12" cy="12" r="10"></circle>
+                <polygon points="10 8 16 12 10 16 10 8"></polygon>
+              </svg>
+              Join Active Meet
+            `;
+            meetBtn.className = 'btn btn-success btn-sm';
+            meetBtn.style.background = '#059669';
+            meetBtn.style.borderColor = '#059669';
+            meetBtn.style.opacity = '1';
+            meetBtn.style.cursor = 'pointer';
+            meetBtn.title = 'Enter Waiting Room & request Leader approval to join';
+            meetBtn.onclick = () => handleStudentJoinClick();
+          } else {
+            // Meeting not started -> Disabled status
+            meetBtn.innerHTML = `
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 0.35rem;">
+                <circle cx="12" cy="12" r="10"></circle>
+                <polyline points="12 6 12 12 16 14"></polyline>
+              </svg>
+              Meeting Not Started
+            `;
+            meetBtn.className = 'btn btn-secondary btn-sm';
+            meetBtn.style.background = '';
+            meetBtn.style.borderColor = '';
+            meetBtn.style.opacity = '0.8';
+            meetBtn.style.cursor = 'pointer';
+            meetBtn.title = 'Only the room leader can start a live meeting';
+            meetBtn.onclick = () => openGoogleMeetHub();
+          }
+        }
       }
+
+      // Live Meet Call Bar
+      const liveMeetBar = document.getElementById('ws-live-meet-bar');
       const liveMeetText = document.getElementById('live-meet-url-text');
       if (liveMeetText) {
         liveMeetText.textContent = isDummy ? 'Google Meet (Click to Start Live Room)' : meetUrl;
       }
-      const modalLinkInput = document.getElementById('gm-modal-link-display');
-      if (modalLinkInput) {
-        modalLinkInput.value = meetUrl;
-      }
-      const modalJoinBtn = document.getElementById('gm-modal-join-btn');
-      if (modalJoinBtn) {
-        modalJoinBtn.href = meetUrl;
+      if (liveMeetBar && !isDummy && rawMeetUrl) {
+        liveMeetBar.style.display = 'flex';
       }
       const liveJoinBtn = document.getElementById('live-meet-join-btn');
       if (liveJoinBtn) {
-        liveJoinBtn.href = meetUrl;
-      }
-      const customInput = document.getElementById('gm-custom-link-input');
-      if (customInput && !customInput.value) {
-        customInput.value = isDummy ? '' : rawMeetUrl;
-      }
-
-      // Check if current student is leader
-      const studentUid = currentStudent ? (currentStudent.uid || currentStudent.id) : '';
-      const isLeader = (g.roomLeaderId === studentUid);
-      const leaderBadge = document.getElementById('ws-role-badge');
-      if (leaderBadge) {
-        leaderBadge.style.display = isLeader ? 'inline-block' : 'none';
+        liveJoinBtn.href = isLeader ? meetUrl : '#';
+        liveJoinBtn.onclick = (e) => handleJoinMeetClick(e);
       }
     }
 
@@ -874,26 +1064,84 @@
       });
     }
 
+    let selectedResourceFile = null;
+    document.addEventListener('DOMContentLoaded', () => {
+      const resFileInput = document.getElementById('res-file-input');
+      const resFileLabel = document.getElementById('res-file-name-label');
+      const resDropZone = document.getElementById('res-drop-zone');
+      if (resFileInput) {
+        resFileInput.addEventListener('change', (e) => {
+          if (e.target.files && e.target.files.length > 0) {
+            selectedResourceFile = e.target.files[0];
+            if (resFileLabel) resFileLabel.textContent = `Selected: ${selectedResourceFile.name}`;
+            if (resDropZone) {
+              resDropZone.style.borderColor = '#10B981';
+              resDropZone.style.background = '#ECFDF5';
+            }
+            const titleInput = document.getElementById('res-title');
+            if (titleInput && !titleInput.value) {
+              titleInput.value = selectedResourceFile.name.replace(/\.[^/.]+$/, '').replace(/[_.-]/g, ' ');
+            }
+          }
+        });
+      }
+    });
+
     async function handleAddResourceSubmit() {
       const title = document.getElementById('res-title').value.trim();
       const type = document.getElementById('res-type').value;
-      const url = document.getElementById('res-url').value.trim();
+      let url = document.getElementById('res-url').value.trim();
 
       if (!title) {
         UI.showToast('warning', 'Title Required', 'Please enter a title for the resource.');
         return;
       }
 
+      const modalEl = document.getElementById('modal-add-resource');
+      const submitBtn = modalEl ? modalEl.querySelector('.modal-footer .btn-primary') : null;
+      const origText = submitBtn ? submitBtn.textContent : 'Share Resource';
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Uploading to Cloudinary...';
+      }
+
       try {
-        await StudyGroupService.addResource(currentGroupId, { title, type, url });
+        let cloudinaryPublicId = null;
+        if (selectedResourceFile) {
+          const uploadRes = await StudyGroupService.uploadFile(selectedResourceFile, 'notes');
+          url = uploadRes.url;
+          cloudinaryPublicId = uploadRes.publicId;
+        }
+
+        await StudyGroupService.addResource(currentGroupId, {
+          title,
+          type,
+          url: url || 'https://res.cloudinary.com/demo/image/upload/sample.pdf',
+          cloudinaryPublicId,
+          fileName: selectedResourceFile ? selectedResourceFile.name : title
+        });
+
         UI.closeModal('modal-add-resource');
-        UI.showToast('success', 'Resource Added', `"${title}" has been shared with your study group.`);
+        UI.showToast('success', 'Notes Uploaded to Cloudinary', `"${title}" has been saved to Cloudinary (folder: notes) and shared.`);
         document.getElementById('add-resource-form').reset();
+        selectedResourceFile = null;
+        const resFileLabel = document.getElementById('res-file-name-label');
+        if (resFileLabel) resFileLabel.textContent = 'Click to select notes or document';
+        const resDropZone = document.getElementById('res-drop-zone');
+        if (resDropZone) {
+          resDropZone.style.borderColor = '#CBD5E1';
+          resDropZone.style.background = '#F8FAFC';
+        }
 
         const resources = await StudyGroupService.getResources(currentGroupId);
         renderResources(resources);
       } catch (e) {
         UI.showToast('error', 'Upload Error', e.message);
+      } finally {
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.textContent = origText;
+        }
       }
     }
 
@@ -963,8 +1211,42 @@
     }
 
     /**
-     * Google Meet Integration Helpers
+     * Google Meet Integration Helpers & Community Leader Permissions
      */
+    function isCurrentUserLeader(group, student) {
+      if (!group || !student) return false;
+      const sUid = String(student.uid || student.id || '');
+      const sStudentId = String(student.studentId || student.rollNo || '');
+      const sEmail = String(student.email || '').toLowerCase();
+      const sName = String(student.name || '').trim().toLowerCase();
+
+      // 1. Direct match on roomLeaderId / createdBy / roomLeaderStudentId
+      if (group.roomLeaderId && (group.roomLeaderId === sUid || group.roomLeaderId === sStudentId)) return true;
+      if (group.createdBy && (group.createdBy === sUid || group.createdBy === sStudentId)) return true;
+      if (group.roomLeaderStudentId && (group.roomLeaderStudentId === sStudentId || group.roomLeaderStudentId === sUid)) return true;
+      if (group.roomLeaderName && sName && group.roomLeaderName.trim().toLowerCase() === sName) return true;
+
+      // 2. Check members array
+      if (Array.isArray(group.members)) {
+        const myMember = group.members.find(m => {
+          if (typeof m === 'string') return m === sStudentId || m === sUid || (sName && m.toLowerCase() === sName);
+          return (m.uid && (m.uid === sUid || m.uid === sStudentId)) ||
+                 (m.studentId && (m.studentId === sStudentId || m.studentId === sUid)) ||
+                 (m.email && m.email.toLowerCase() === sEmail) ||
+                 (m.name && sName && m.name.trim().toLowerCase() === sName);
+        });
+        if (myMember && (myMember.role === 'leader' || myMember.isLeader)) return true;
+      }
+
+      // 3. Fallback check for creator string e.g. "Aditya S. (MBA24-007)"
+      if (group.creator) {
+        if (sStudentId && group.creator.includes(sStudentId)) return true;
+        if (sName && group.creator.toLowerCase().includes(sName)) return true;
+      }
+
+      return false;
+    }
+
     function isDummyMeetUrl(url) {
       if (!url) return true;
       const u = url.trim().toLowerCase();
@@ -976,49 +1258,115 @@
     }
 
     function openDirectJitsiRoom() {
+      if (!isCurrentUserLeader(currentGroup, currentStudent)) {
+        UI.showToast('warning', 'Leader Permission Required', 'Only the community room leader can launch instant study rooms.');
+        return;
+      }
       const roomUrl = `https://meet.jit.si/SmartStudent-Cohort-${currentGroupId || 'live'}`;
       window.open(roomUrl, '_blank');
       UI.showToast('success', 'Live Study Room Opened', 'Instant video room launched in a new tab.');
     }
 
     function openGoogleMeetHub() {
-      if (currentGroup) {
-        const rawUrl = currentGroup.meetLink || '';
-        const isDummy = isDummyMeetUrl(rawUrl);
-        const meetUrl = isDummy ? 'https://meet.google.com/new' : rawUrl;
-        const display = document.getElementById('gm-modal-link-display');
-        const joinBtn = document.getElementById('gm-modal-join-btn');
-        const customInput = document.getElementById('gm-custom-link-input');
-        const badge = document.getElementById('gm-modal-badge');
+      if (!currentGroup) return;
+
+      const rawUrl = currentGroup.meetLink || '';
+      const isDummy = isDummyMeetUrl(rawUrl);
+      const meetUrl = isDummy ? 'https://meet.google.com/new' : rawUrl;
+      const isLeader = isCurrentUserLeader(currentGroup, currentStudent);
+      const leaderName = currentGroup.roomLeaderName || 'Room Leader';
+
+      const leaderActions = document.getElementById('gm-leader-actions-section');
+      const leaderUpdate = document.getElementById('gm-leader-update-section');
+      const memberNotice = document.getElementById('gm-member-notice-section');
+      const linkCard = document.getElementById('gm-link-card-section');
+      const display = document.getElementById('gm-modal-link-display');
+      const joinBtn = document.getElementById('gm-modal-join-btn');
+      const customInput = document.getElementById('gm-custom-link-input');
+      const badge = document.getElementById('gm-modal-badge');
+      const alertBox = document.getElementById('gm-instant-alert');
+
+      if (alertBox) alertBox.style.display = 'none';
+
+      if (isLeader) {
+        // LEADER: Full meeting management capabilities
+        if (leaderActions) leaderActions.style.display = 'flex';
+        if (leaderUpdate) leaderUpdate.style.display = 'block';
+        if (memberNotice) memberNotice.style.display = 'none';
+        if (linkCard) linkCard.style.display = 'block';
+
         if (display) display.value = meetUrl;
         if (joinBtn) {
           joinBtn.href = meetUrl;
-          joinBtn.innerHTML = isDummy ? `
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <polygon points="23 7 16 12 23 17 23 7"/>
-              <rect x="1" y="5" width="15" height="14" rx="2" ry="2"/>
-            </svg>
-            <span>Start Google Meet</span>
-          ` : `
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <circle cx="12" cy="12" r="10"></circle>
-              <polygon points="10 8 16 12 10 16 10 8"></polygon>
-            </svg>
-            <span>Join Active Call</span>
-          `;
+          joinBtn.style.display = isDummy ? 'none' : 'flex';
         }
         if (badge) {
-          badge.textContent = isDummy ? 'Instant Launch Ready' : 'Saved Cohort Link';
+          badge.textContent = isDummy ? 'Instant Launch Ready' : 'Active Cohort Link';
           badge.className = isDummy ? 'badge badge-info' : 'badge badge-success';
         }
         if (customInput) customInput.value = isDummy ? '' : rawUrl;
+      } else {
+        // NON-LEADER (MEMBER): Cannot launch or configure meetings
+        if (leaderActions) leaderActions.style.display = 'none';
+        if (leaderUpdate) leaderUpdate.style.display = 'none';
+
+        if (memberNotice) {
+          memberNotice.style.display = 'block';
+          if (!isDummy && rawUrl) {
+            memberNotice.innerHTML = `
+              <div style="background: #ECFDF5; border: 1.5px solid #10B981; border-radius: 10px; padding: 1.15rem; margin-bottom: 0.5rem;">
+                <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.4rem;">
+                  <span style="width: 10px; height: 10px; background: #10B981; border-radius: 50%; box-shadow: 0 0 8px #10B981; display: inline-block;"></span>
+                  <strong style="color: #065F46; font-size: 0.95rem;">Study Meeting in Progress!</strong>
+                </div>
+                <p style="margin: 0 0 0.85rem 0; font-size: 0.8125rem; color: #047857; line-height: 1.45;">
+                  Room Leader <strong>${escapeHtml(leaderName)}</strong> has launched the cohort study call. Knock to enter the waiting room:
+                </p>
+                <button type="button" onclick="UI.closeModal('modal-google-meet'); handleStudentJoinClick();" class="btn btn-primary" style="background: #059669; border-color: #059669; width: 100%; display: flex; align-items: center; justify-content: center; gap: 0.5rem; font-weight: 700; padding: 0.75rem 1rem; border-radius: 8px; cursor: pointer; color: #FFF; border: none;">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polygon points="23 7 16 12 23 17 23 7"/>
+                    <rect x="1" y="5" width="15" height="14" rx="2" ry="2"/>
+                  </svg>
+                  <span>Request to Enter Meeting (Waiting Room)</span>
+                </button>
+                <div style="font-size: 0.75rem; color: #065F46; opacity: 0.85; margin-top: 0.6rem; text-align: center;">
+                  🔒 Enrolled students wait in the waiting room until admitted by the Room Leader.
+                </div>
+              </div>
+            `;
+            if (linkCard) linkCard.style.display = 'none';
+          } else {
+            memberNotice.innerHTML = `
+              <div style="background: #F8FAFC; border: 1.5px solid #E2E8F0; border-radius: 10px; padding: 1.25rem 1rem; text-align: center;">
+                <div style="width: 44px; height: 44px; margin: 0 auto 0.75rem; border-radius: 50%; background: #EEF2FF; display: flex; align-items: center; justify-content: center; color: #4F46E5;">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polyline points="12 6 12 12 16 14"></polyline>
+                  </svg>
+                </div>
+                <h4 style="margin: 0 0 0.35rem 0; font-size: 0.95rem; color: var(--navy-900);">Meeting Not Started Yet</h4>
+                <p style="margin: 0 0 0.5rem 0; font-size: 0.8125rem; color: var(--text-secondary); line-height: 1.45;">
+                  Only the Room Leader (<strong>${escapeHtml(leaderName)}</strong>) has permission to launch or schedule Google Meet study sessions.
+                </p>
+                <div style="font-size: 0.75rem; color: var(--text-tertiary); background: #FFFFFF; border: 1px dashed #CBD5E1; padding: 0.5rem 0.75rem; border-radius: 6px; display: inline-block;">
+                  🔒 You will be able to join as soon as the room leader launches the meeting.
+                </div>
+              </div>
+            `;
+            if (linkCard) linkCard.style.display = 'none';
+          }
+        }
       }
-      const alertBox = document.getElementById('gm-instant-alert');
-      if (alertBox) alertBox.style.display = 'none';
+
       UI.openModal('modal-google-meet');
     }
 
     function handleStartInstantMeet() {
+      if (!isCurrentUserLeader(currentGroup, currentStudent)) {
+        UI.showToast('warning', 'Leader Permission Required', 'Only the community room leader can launch study meetings.');
+        return;
+      }
+
       // 1. Open Google Meet guaranteed live room creation endpoint
       window.open('https://meet.google.com/new', '_blank');
 
@@ -1040,6 +1388,11 @@
     }
 
     async function handleProvisionMeetSpace() {
+      if (!isCurrentUserLeader(currentGroup, currentStudent)) {
+        UI.showToast('warning', 'Leader Permission Required', 'Only the community room leader can launch study meetings.');
+        return;
+      }
+
       const btn = document.getElementById('gm-provision-btn');
       const originalText = btn ? btn.innerHTML : '';
       if (btn) {
@@ -1074,17 +1427,26 @@
     }
 
     function handleJoinMeetClick(e) {
-      const rawUrl = (currentGroup && currentGroup.meetLink) ? currentGroup.meetLink : 'https://meet.google.com/new';
-      // If the link is an unprovisioned placeholder or new room endpoint, launch a live instant room
+      if (e && e.preventDefault) e.preventDefault();
+      const isLeader = isCurrentUserLeader(currentGroup, currentStudent);
+      const rawUrl = (currentGroup && currentGroup.meetLink) ? currentGroup.meetLink : '';
+      
       if (isDummyMeetUrl(rawUrl)) {
-        if (e && e.preventDefault) e.preventDefault();
-        handleStartInstantMeet();
+        if (isLeader) {
+          handleStartInstantMeet();
+        } else {
+          UI.showToast('info', 'Meeting Not Started', 'The room leader has not launched this study session yet.');
+        }
         return;
       }
 
-      // Show active session bar on joining call
-      const banner = document.getElementById('ws-live-meet-bar');
-      if (banner) banner.style.display = 'flex';
+      if (isLeader) {
+        window.open(rawUrl, '_blank');
+        const banner = document.getElementById('ws-live-meet-bar');
+        if (banner) banner.style.display = 'flex';
+      } else {
+        handleStudentJoinClick();
+      }
     }
 
     function copyMeetLink() {
@@ -1123,6 +1485,11 @@
     }
 
     async function handleSaveCustomMeetLink() {
+      if (!isCurrentUserLeader(currentGroup, currentStudent)) {
+        UI.showToast('warning', 'Leader Permission Required', 'Only the community room leader can update meeting links.');
+        return;
+      }
+
       const input = document.getElementById('gm-custom-link-input');
       let link = (input.value || '').trim();
       if (!link) {
@@ -1140,8 +1507,13 @@
       try {
         const updated = await StudyGroupService.updateMeetLink(currentGroupId, link);
         if (currentGroup) currentGroup.meetLink = updated;
-        document.getElementById('gm-modal-link-display').value = updated;
-        document.getElementById('gm-modal-join-btn').href = updated;
+        const display = document.getElementById('gm-modal-link-display');
+        if (display) display.value = updated;
+        const modalJoin = document.getElementById('gm-modal-join-btn');
+        if (modalJoin) {
+          modalJoin.href = updated;
+          modalJoin.style.display = 'flex';
+        }
         const liveText = document.getElementById('live-meet-url-text');
         if (liveText) liveText.textContent = updated;
         const liveJoin = document.getElementById('live-meet-join-btn');
@@ -1176,7 +1548,7 @@
                 <div style="font-size: 0.71875rem; color: var(--text-tertiary); font-family: monospace;">${escapeHtml(url)}</div>
               </div>
             </div>
-            <a href="${escapeHtml(url)}" target="_blank" onclick="handleJoinMeetClick()" class="btn btn-primary btn-sm" style="font-size: 0.75rem; padding: 0.35rem 0.75rem; text-decoration: none; display: flex; align-items: center; gap: 0.3rem;">
+            <a href="#" onclick="handleJoinMeetClick(event)" class="btn btn-primary btn-sm" style="font-size: 0.75rem; padding: 0.35rem 0.75rem; text-decoration: none; display: flex; align-items: center; gap: 0.3rem;">
               <span>Join</span>
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
             </a>
@@ -1184,6 +1556,351 @@
         `;
       }
       return escapeHtml(text);
+    }
+
+    /* ==========================================================================
+       WAITING ROOM CONTROLLER (Student Waiting Room & Leader Admission Control)
+       ========================================================================== */
+    let currentWaitingKnock = null;
+    let waitingRoomPollInterval = null;
+    let leaderWaitingMonitorInterval = null;
+    let leaderCachedKnocks = [];
+
+    async function handleStudentJoinClick() {
+      const isLeader = isCurrentUserLeader(currentGroup, currentStudent);
+      const rawUrl = (currentGroup && currentGroup.meetLink) ? currentGroup.meetLink : '';
+
+      if (isLeader) {
+        if (isDummyMeetUrl(rawUrl)) {
+          handleStartInstantMeet();
+        } else {
+          window.open(rawUrl, '_blank');
+          const banner = document.getElementById('ws-live-meet-bar');
+          if (banner) banner.style.display = 'flex';
+        }
+        return;
+      }
+
+      if (isDummyMeetUrl(rawUrl)) {
+        UI.showToast('info', 'Meeting Not Started', 'The room leader has not launched this study session yet.');
+        return;
+      }
+
+      // Reset modal views
+      const stateWaiting = document.getElementById('wr-state-waiting');
+      const stateAdmitted = document.getElementById('wr-state-admitted');
+      const stateRejected = document.getElementById('wr-state-rejected');
+      const leaderNameEl = document.getElementById('wr-leader-name');
+
+      if (stateWaiting) stateWaiting.style.display = 'block';
+      if (stateAdmitted) stateAdmitted.style.display = 'none';
+      if (stateRejected) stateRejected.style.display = 'none';
+
+      const leaderName = (currentGroup && currentGroup.leader && currentGroup.leader.name) ||
+                         (currentGroup && currentGroup.roomLeaderName) ||
+                         'Room Leader';
+      if (leaderNameEl) leaderNameEl.textContent = leaderName;
+
+      UI.openModal('modal-waiting-room');
+
+      try {
+        const res = await StudyGroupService.requestAdmission(currentGroupId);
+        if (res && res.status === 'admitted') {
+          showAdmittedState(res.meetLink || rawUrl);
+          return;
+        }
+        if (res && res.status === 'rejected') {
+          showRejectedState();
+          return;
+        }
+
+        currentWaitingKnock = (res && res.knock) ? res.knock : { id: (res && res.knockId) || 'current' };
+        startWaitingRoomPolling();
+      } catch (err) {
+        console.error('Admission knock error:', err);
+        UI.showToast('error', 'Waiting Room Error', err.message || 'Could not send knock request.');
+      }
+    }
+
+    function startWaitingRoomPolling() {
+      if (waitingRoomPollInterval) clearInterval(waitingRoomPollInterval);
+
+      // Check immediately
+      checkMyAdmissionStatus();
+
+      // Poll every 1.5 seconds
+      waitingRoomPollInterval = setInterval(checkMyAdmissionStatus, 1500);
+
+      // Instant react to storage & custom events
+      const handleImmediateUpdate = () => checkMyAdmissionStatus();
+      window.addEventListener('waiting_room_updated', handleImmediateUpdate);
+      window.addEventListener('storage', (e) => {
+        if (e.key && e.key.includes('waiting_room')) handleImmediateUpdate();
+      });
+    }
+
+    async function checkMyAdmissionStatus() {
+      if (!currentGroupId) return;
+      try {
+        const knocks = await StudyGroupService.getWaitingKnocks(currentGroupId);
+        if (!Array.isArray(knocks)) return;
+
+        const sUid = currentStudent && (currentStudent.uid || currentStudent.id);
+        const sRoll = currentStudent && (currentStudent.studentId || currentStudent.rollNo);
+
+        const myKnock = knocks.find(k => {
+          if (currentWaitingKnock && currentWaitingKnock.id && k.id === currentWaitingKnock.id) return true;
+          return (sUid && k.studentId === sUid) || (sRoll && k.studentId === sRoll);
+        });
+
+        if (myKnock) {
+          currentWaitingKnock = myKnock;
+          if (myKnock.status === 'admitted') {
+            if (waitingRoomPollInterval) {
+              clearInterval(waitingRoomPollInterval);
+              waitingRoomPollInterval = null;
+            }
+            showAdmittedState(myKnock.meetLink || (currentGroup && currentGroup.meetLink));
+          } else if (myKnock.status === 'rejected') {
+            if (waitingRoomPollInterval) {
+              clearInterval(waitingRoomPollInterval);
+              waitingRoomPollInterval = null;
+            }
+            showRejectedState();
+          }
+        }
+      } catch (err) {
+        console.warn('Failed checking knock status:', err);
+      }
+    }
+
+    function showAdmittedState(meetUrl) {
+      if (waitingRoomPollInterval) {
+        clearInterval(waitingRoomPollInterval);
+        waitingRoomPollInterval = null;
+      }
+
+      const stateWaiting = document.getElementById('wr-state-waiting');
+      const stateAdmitted = document.getElementById('wr-state-admitted');
+      const stateRejected = document.getElementById('wr-state-rejected');
+      const enterBtn = document.getElementById('wr-enter-meet-btn');
+
+      if (stateWaiting) stateWaiting.style.display = 'none';
+      if (stateRejected) stateRejected.style.display = 'none';
+      if (stateAdmitted) stateAdmitted.style.display = 'block';
+
+      const finalUrl = meetUrl || (currentGroup && currentGroup.meetLink) || 'https://meet.google.com';
+      if (enterBtn) {
+        enterBtn.href = finalUrl;
+        enterBtn.onclick = () => {
+          UI.closeModal('modal-waiting-room');
+        };
+      }
+
+      const banner = document.getElementById('ws-live-meet-bar');
+      if (banner) banner.style.display = 'flex';
+
+      UI.showToast('success', 'Admission Approved!', 'Room Leader admitted you to the study call.');
+
+      // Automatically launch meeting
+      setTimeout(() => {
+        window.open(finalUrl, '_blank');
+      }, 750);
+    }
+
+    function showRejectedState() {
+      if (waitingRoomPollInterval) {
+        clearInterval(waitingRoomPollInterval);
+        waitingRoomPollInterval = null;
+      }
+
+      const stateWaiting = document.getElementById('wr-state-waiting');
+      const stateAdmitted = document.getElementById('wr-state-admitted');
+      const stateRejected = document.getElementById('wr-state-rejected');
+
+      if (stateWaiting) stateWaiting.style.display = 'none';
+      if (stateAdmitted) stateAdmitted.style.display = 'none';
+      if (stateRejected) stateRejected.style.display = 'block';
+
+      UI.showToast('warning', 'Request Denied', 'The leader is unable to admit you to this session at this time.');
+    }
+
+    async function cancelWaitingRoomRequest() {
+      if (waitingRoomPollInterval) {
+        clearInterval(waitingRoomPollInterval);
+        waitingRoomPollInterval = null;
+      }
+      if (currentWaitingKnock && currentWaitingKnock.id) {
+        try {
+          await StudyGroupService.cancelAdmission(currentGroupId, currentWaitingKnock.id);
+        } catch (e) {
+          console.warn('Cancel knock error:', e);
+        }
+      }
+      currentWaitingKnock = null;
+      UI.closeModal('modal-waiting-room');
+      UI.showToast('info', 'Cancelled', 'Waiting room request cancelled.');
+    }
+
+    function startLeaderWaitingMonitor() {
+      if (!isCurrentUserLeader(currentGroup, currentStudent)) return;
+      if (leaderWaitingMonitorInterval) clearInterval(leaderWaitingMonitorInterval);
+
+      // Check immediately
+      checkLeaderKnocks();
+
+      // Monitor every 2.5 seconds
+      leaderWaitingMonitorInterval = setInterval(checkLeaderKnocks, 2500);
+
+      // Listen for instant cross-tab / local events
+      window.addEventListener('waiting_room_updated', checkLeaderKnocks);
+      window.addEventListener('storage', (e) => {
+        if (e.key && e.key.includes('waiting_room')) checkLeaderKnocks();
+      });
+    }
+
+    async function checkLeaderKnocks() {
+      if (!currentGroupId || !isCurrentUserLeader(currentGroup, currentStudent)) return;
+      try {
+        const knocks = await StudyGroupService.getWaitingKnocks(currentGroupId);
+        const waitingOnly = Array.isArray(knocks) ? knocks.filter(k => k.status === 'waiting') : [];
+
+        // Check if new knocks arrived
+        const prevIds = new Set(leaderCachedKnocks.map(k => k.id));
+        const hasNew = waitingOnly.some(k => !prevIds.has(k.id));
+        if (hasNew && waitingOnly.length > 0) {
+          const newest = waitingOnly[waitingOnly.length - 1];
+          UI.showToast('info', '🚪 Waiting Room Knock', `${newest.studentName || 'A student'} is waiting to join the meeting.`);
+        }
+
+        leaderCachedKnocks = waitingOnly;
+        updateLeaderWaitingBanner(waitingOnly);
+
+        const managerModal = document.getElementById('modal-waiting-room-manager');
+        if (managerModal && managerModal.classList.contains('active')) {
+          renderLeaderWaitingManagerList(waitingOnly);
+        }
+      } catch (err) {
+        console.warn('Failed to check leader knocks:', err);
+      }
+    }
+
+    function updateLeaderWaitingBanner(knocks) {
+      const banner = document.getElementById('leader-waiting-banner');
+      const title = document.getElementById('waiting-banner-title');
+      const countEl = document.getElementById('waiting-banner-count');
+      if (!banner) return;
+
+      if (knocks && knocks.length > 0) {
+        banner.style.display = 'flex';
+        if (title) title.textContent = `🚪 Waiting Room Knock: ${knocks.length} Student${knocks.length > 1 ? 's' : ''} Waiting`;
+        if (countEl) countEl.textContent = knocks.length;
+      } else {
+        banner.style.display = 'none';
+      }
+    }
+
+    function openWaitingRoomManagerModal() {
+      renderLeaderWaitingManagerList(leaderCachedKnocks);
+      UI.openModal('modal-waiting-room-manager');
+      checkLeaderKnocks();
+    }
+
+    function renderLeaderWaitingManagerList(knocks) {
+      const list = document.getElementById('wr-manager-list');
+      const count = document.getElementById('wr-manager-count');
+      const empty = document.getElementById('wr-manager-empty');
+      const admitAllBtn = document.getElementById('btn-admit-all');
+
+      const items = Array.isArray(knocks) ? knocks : [];
+      if (count) count.textContent = items.length;
+
+      if (!items || items.length === 0) {
+        if (empty) empty.style.display = 'block';
+        if (list) list.innerHTML = '';
+        if (admitAllBtn) admitAllBtn.style.display = 'none';
+        return;
+      }
+
+      if (empty) empty.style.display = 'none';
+      if (admitAllBtn) admitAllBtn.style.display = 'inline-block';
+
+      if (list) {
+        list.innerHTML = items.map(k => {
+          const initials = (k.studentName || 'Student').split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase() || 'ST';
+          const timeStr = formatTimeAgo(k.requestedAt || k.createdAt || new Date());
+          const programStr = k.program ? `${k.program}` : 'Enrolled Cohort Member';
+          return `
+            <div style="background: #FFFFFF; border: 1.5px solid #E2E8F0; border-radius: 10px; padding: 0.85rem 1rem; display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
+              <div style="display: flex; align-items: center; gap: 0.75rem;">
+                <div style="width: 38px; height: 38px; border-radius: 50%; background: #EEF2FF; color: #4F46E5; font-weight: 700; font-size: 0.875rem; display: flex; align-items: center; justify-content: center; border: 1px solid #C7D2FE; flex-shrink: 0;">
+                  ${escapeHtml(initials)}
+                </div>
+                <div>
+                  <div style="font-weight: 700; font-size: 0.875rem; color: var(--navy-900); line-height: 1.2;">
+                    ${escapeHtml(k.studentName || 'Student')}
+                  </div>
+                  <div style="font-size: 0.75rem; color: var(--text-tertiary); margin-top: 0.15rem;">
+                    ${escapeHtml(programStr)} • <span style="color: #F59E0B; font-weight: 600;">Waiting (${escapeHtml(timeStr)})</span>
+                  </div>
+                </div>
+              </div>
+              <div style="display: flex; gap: 0.4rem; align-items: center; flex-shrink: 0;">
+                <button type="button" class="btn btn-primary btn-sm" onclick="handleLeaderAdmitKnock('${escapeHtml(k.id)}')" style="background: #059669; border-color: #059669; font-size: 0.75rem; padding: 0.35rem 0.75rem; font-weight: 700;">
+                  ✓ Admit
+                </button>
+                <button type="button" class="btn btn-secondary btn-sm" onclick="handleLeaderRejectKnock('${escapeHtml(k.id)}')" style="font-size: 0.75rem; padding: 0.35rem 0.65rem; color: #DC2626; border-color: #FCA5A5;">
+                  ✕ Deny
+                </button>
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+    }
+
+    async function handleLeaderAdmitKnock(knockId) {
+      try {
+        await StudyGroupService.admitStudent(currentGroupId, knockId);
+        UI.showToast('success', 'Student Admitted', 'Granted access to the Google Meet session.');
+        await checkLeaderKnocks();
+      } catch (err) {
+        UI.showToast('error', 'Admit Failed', err.message);
+      }
+    }
+
+    async function handleLeaderRejectKnock(knockId) {
+      try {
+        await StudyGroupService.rejectStudent(currentGroupId, knockId);
+        UI.showToast('info', 'Request Denied', 'Student waiting room request rejected.');
+        await checkLeaderKnocks();
+      } catch (err) {
+        UI.showToast('error', 'Reject Failed', err.message);
+      }
+    }
+
+    async function handleAdmitAllWaiting() {
+      if (!leaderCachedKnocks || leaderCachedKnocks.length === 0) return;
+      const count = leaderCachedKnocks.length;
+      try {
+        for (const k of leaderCachedKnocks) {
+          await StudyGroupService.admitStudent(currentGroupId, k.id);
+        }
+        UI.showToast('success', 'All Admitted', `Admitted ${count} student${count > 1 ? 's' : ''} to Google Meet.`);
+        await checkLeaderKnocks();
+      } catch (err) {
+        UI.showToast('error', 'Admit All Failed', err.message);
+      }
+    }
+
+    function formatTimeAgo(dateInput) {
+      if (!dateInput) return 'just now';
+      const d = new Date(dateInput);
+      const diffSec = Math.max(0, Math.floor((Date.now() - d.getTime()) / 1000));
+      if (diffSec < 45) return 'just now';
+      if (diffSec < 120) return '1m ago';
+      if (diffSec < 3600) return `${Math.floor(diffSec / 60)}m ago`;
+      return `${Math.floor(diffSec / 3600)}h ago`;
     }
   </script>
 </body>

@@ -12,6 +12,16 @@ const AssignmentService = (() => {
       : null;
   }
 
+  function resolveBackendUrl(endpoint) {
+    if (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')) {
+      const currentPort = window.location.port;
+      if (currentPort && currentPort !== '8085') {
+        return `http://${window.location.hostname}:8085${endpoint}`;
+      }
+    }
+    return endpoint;
+  }
+
   /**
    * Get Assignments with optional status filter
    */
@@ -22,6 +32,36 @@ const AssignmentService = (() => {
   async function getAssignments(statusFilter = null) {
     let list = [];
     const db = getDb();
+    const activeDomain = (typeof DomainService !== 'undefined' && DomainService.getActiveDomain)
+      ? DomainService.getActiveDomain()
+      : 'dept_btech';
+
+    function matchesDomain(a, domId) {
+      if (a.domainId && a.domainId === domId) return true;
+      if (a.departmentId && a.departmentId === domId) return true;
+      const dept = (a.department || '').toLowerCase();
+      const code = (a.subjectCode || a.code || '').toUpperCase();
+      if (domId === 'dept_mba') {
+        return dept.includes('mba') || dept.includes('management') || code.startsWith('MBA');
+      } else if (domId === 'dept_bba') {
+        return dept.includes('bba') || dept.includes('business') || code.startsWith('BBA');
+      } else {
+        return dept.includes('b.tech') || dept.includes('btech') || dept.includes('comp') || dept.includes('cs') || code.startsWith('CS');
+      }
+    }
+
+    function normalizeAsg(a) {
+      const subject = a.subject || a.subjectName || a.title || 'Course';
+      const subjectCode = a.subjectCode || a.code || 'COURSE';
+      const faculty = a.faculty || a.facultyName || 'Course Faculty';
+      return {
+        ...a,
+        subject,
+        subjectName: subject,
+        subjectCode,
+        faculty
+      };
+    }
 
     // 1. Fetch from Firestore
     if (db) {
@@ -65,30 +105,39 @@ const AssignmentService = (() => {
           } else {
             list.push({
               ...f,
-              subject: f.subjectName || f.subjectCode || 'Computer Science',
-              faculty: f.faculty || 'Prof. Ramesh Gupta'
+              subject: f.subjectName || f.subjectCode || 'Coursework',
+              faculty: f.faculty || 'Course Faculty'
             });
           }
         });
       }
     } catch (_) {}
 
-    // 4. Fallback to mock assignments if empty
-    if (list.length === 0) {
-      list = [...(window.mockAssignments || [])];
-    } else {
-      // Ensure default mock assignments are included if missing
-      const baseMocks = window.mockAssignments || [];
-      baseMocks.forEach(m => {
-        if (!list.some(a => a.id === m.id)) {
-          list.push(m);
+    // 4. Normalize and filter remote/local items by active student domain
+    list = list.map(normalizeAsg).filter(a => matchesDomain(a, activeDomain));
+
+    // 5. Merge domain-scoped mock assignments if missing
+    let domainMocks = [];
+    if (typeof getAssignmentsForDomain === 'function') {
+      domainMocks = getAssignmentsForDomain(activeDomain);
+    } else if (typeof allDomainAssignments !== 'undefined' && allDomainAssignments[activeDomain]) {
+      domainMocks = allDomainAssignments[activeDomain];
+    } else if (typeof window !== 'undefined' && window.mockAssignments) {
+      domainMocks = window.mockAssignments;
+    }
+
+    if (Array.isArray(domainMocks)) {
+      domainMocks.forEach(m => {
+        const norm = normalizeAsg(m);
+        if (!list.some(a => a.id === norm.id || (a.title === norm.title && a.subjectCode === norm.subjectCode))) {
+          list.push(norm);
         }
       });
     }
 
-    // 5. Cross-check against student submissions
+    // 6. Cross-check against student submissions
     const activeSession = (typeof AuthService !== 'undefined' && AuthService.getCurrentUser) ? AuthService.getCurrentUser() : null;
-    const uid = activeSession ? (activeSession.uid || activeSession.id) : 'usr_stu_8842';
+    const uid = activeSession ? (activeSession.uid || activeSession.id) : (activeDomain === 'dept_mba' ? 'usr_stu_mba_1' : (activeDomain === 'dept_bba' ? 'usr_stu_bba_1' : 'usr_stu_8842'));
     const rollNo = activeSession ? (activeSession.rollNo || activeSession.studentId || 'CS24-042') : 'CS24-042';
 
     let allSubs = [];
@@ -157,9 +206,8 @@ const AssignmentService = (() => {
   }
 
   /**
-   * Upload File (Cloudinary with local server fallback)
-   */
-  async function uploadFile(file) {
+   * Upload File (Cloudinary with local server fallback    */
+  async function uploadFile(file, folder = 'assignments') {
     if (!file) throw new Error('No file provided for upload.');
 
     // Convert file to Base64
@@ -175,7 +223,7 @@ const AssignmentService = (() => {
 
     // 1. Direct Cloudinary upload check
     try {
-      const sigResp = await fetch('/api/generateUploadSignature');
+      const sigResp = await fetch(resolveBackendUrl(`/api/generateUploadSignature?folder=${encodeURIComponent(folder)}`));
       if (sigResp.ok) {
         const sigData = await sigResp.json();
         if (sigData.isConfigured && sigData.cloudName && sigData.apiKey && !sigData.apiKey.startsWith('demo')) {
@@ -184,7 +232,7 @@ const AssignmentService = (() => {
           formData.append('api_key', sigData.apiKey);
           formData.append('timestamp', sigData.timestamp);
           formData.append('signature', sigData.signature);
-          formData.append('folder', sigData.folder || 'academic_submissions');
+          formData.append('folder', sigData.folder || folder);
 
           const clResp = await fetch(`https://api.cloudinary.com/v1_1/${sigData.cloudName}/auto/upload`, {
             method: 'POST',
@@ -199,6 +247,7 @@ const AssignmentService = (() => {
                 publicId: clData.public_id,
                 fileName: fileName,
                 fileSize: fileSize,
+                folder: clData.asset_folder || folder,
                 provider: 'cloudinary'
               };
             }
@@ -211,13 +260,13 @@ const AssignmentService = (() => {
 
     // 2. Upload through Backend Server (/api/upload)
     try {
-      const uploadResp = await fetch('/api/upload', {
+      const uploadResp = await fetch(resolveBackendUrl('/api/upload'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           fileName: fileName,
           fileData: base64Data,
-          folder: 'academic_submissions'
+          folder: folder
         })
       });
 
@@ -226,10 +275,11 @@ const AssignmentService = (() => {
         if (result.success && result.url) {
           return {
             url: result.url,
-            publicId: result.publicId || `academic_submissions/${Date.now()}_${fileName}`,
+            publicId: result.publicId || `${folder}/${Date.now()}_${fileName}`,
             fileName: fileName,
             fileSize: result.fileSize || fileSize,
-            provider: result.provider || 'local'
+            folder: result.folder || folder,
+            provider: result.provider || 'cloudinary'
           };
         }
       }
@@ -243,6 +293,7 @@ const AssignmentService = (() => {
       publicId: `data_${Date.now()}`,
       fileName: fileName,
       fileSize: fileSize,
+      folder: folder,
       provider: 'client_base64'
     };
   }

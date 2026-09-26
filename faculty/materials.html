@@ -481,8 +481,20 @@
           </div>
 
           <div class="form-group">
+            <label class="form-label">Upload Document / Notes File <span class="required">*</span></label>
+            <div id="mat-drop-zone" onclick="document.getElementById('mat-file-input').click()" style="border: 2px dashed #CBD5E1; border-radius: 12px; padding: 1.25rem 1rem; text-align: center; background: #F8FAFC; cursor: pointer; transition: all 0.2s ease;">
+              <input type="file" id="mat-file-input" style="display: none;" accept=".pdf,.ppt,.pptx,.doc,.docx,.zip,.txt,.py,.java,.cpp">
+              <div style="width: 42px; height: 42px; margin: 0 auto 0.4rem; border-radius: 50%; background: #EEF2FF; display: flex; align-items: center; justify-content: center; color: #4F46E5;">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+              </div>
+              <div style="font-size: 0.875rem; font-weight: 700; color: #0F172A;" id="mat-file-name-label">Click to select PDF or Lecture Notes</div>
+              <div style="font-size: 0.75rem; color: #64748B; margin-top: 0.2rem;">Direct upload to Cloudinary CDN (Folder: <code>notes</code>)</div>
+            </div>
+          </div>
+
+          <div class="form-group" id="mat-url-group" style="display: none;">
             <label for="mat-url" class="form-label">Document / Cloud Storage Link</label>
-            <input type="url" id="mat-url" class="form-input" placeholder="https://res.cloudinary.com/university/notes.pdf" value="https://res.cloudinary.com/demo/image/upload/sample.pdf" required>
+            <input type="url" id="mat-url" class="form-input" placeholder="https://res.cloudinary.com/...">
           </div>
 
           <div class="form-group">
@@ -766,35 +778,105 @@
         });
       };
 
-      uploadForm.addEventListener('submit', (e) => {
+      let selectedMaterialFile = null;
+      const matFileInput = document.getElementById('mat-file-input');
+      const matFileLabel = document.getElementById('mat-file-name-label');
+      const matDropZone = document.getElementById('mat-drop-zone');
+
+      if (matFileInput) {
+        matFileInput.addEventListener('change', (e) => {
+          if (e.target.files && e.target.files.length > 0) {
+            selectedMaterialFile = e.target.files[0];
+            if (matFileLabel) matFileLabel.textContent = `Selected: ${selectedMaterialFile.name}`;
+            if (matDropZone) {
+              matDropZone.style.borderColor = '#10B981';
+              matDropZone.style.background = '#ECFDF5';
+            }
+
+            // Auto-fill title, size, and filetype
+            const titleInput = document.getElementById('mat-title');
+            if (titleInput && (!titleInput.value || titleInput.value.trim() === '')) {
+              titleInput.value = selectedMaterialFile.name.replace(/\.[^/.]+$/, '').replace(/[_.-]/g, ' ');
+            }
+            const sizeInput = document.getElementById('mat-size');
+            if (sizeInput) {
+              sizeInput.value = (selectedMaterialFile.size / (1024 * 1024)).toFixed(2) + ' MB';
+            }
+            const ext = selectedMaterialFile.name.split('.').pop().toLowerCase();
+            const typeInput = document.getElementById('mat-filetype');
+            if (typeInput) {
+              if (['ppt', 'pptx'].includes(ext)) typeInput.value = 'ppt';
+              else if (['py', 'java', 'cpp', 'c', 'js', 'html', 'css'].includes(ext)) typeInput.value = 'code';
+              else if (['zip', 'rar', 'tar', 'gz'].includes(ext)) typeInput.value = 'zip';
+              else typeInput.value = 'pdf';
+            }
+          }
+        });
+      }
+
+      uploadForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         const title = document.getElementById('mat-title').value.trim();
         const subjectCode = document.getElementById('mat-subject').value;
         const category = document.getElementById('mat-category').value;
         const fileType = document.getElementById('mat-filetype').value;
-        const fileSize = document.getElementById('mat-size').value.trim();
-        const fileUrl = document.getElementById('mat-url').value.trim();
+        let fileSize = document.getElementById('mat-size').value.trim();
+        let fileUrl = (document.getElementById('mat-url')?.value || '').trim();
         const description = document.getElementById('mat-desc').value.trim();
 
-        const subjects = FacultyService.getSubjects();
-        const subjectObj = subjects.find(s => s.code === subjectCode);
+        const submitBtn = uploadForm.querySelector('button[type="submit"]');
+        const origText = submitBtn ? submitBtn.textContent : 'Upload & Publish';
+        if (submitBtn) {
+          submitBtn.disabled = true;
+          submitBtn.textContent = 'Uploading to Cloudinary CDN...';
+        }
 
-        FacultyService.uploadMaterial({
-          title,
-          subjectCode,
-          subjectName: subjectObj ? subjectObj.name : subjectCode,
-          category,
-          fileType,
-          fileSize,
-          fileUrl,
-          description,
-          sections: ["A", "B"]
-        });
+        let cloudinaryPublicId = null;
 
-        UI.closeModal('upload-material-modal');
-        uploadForm.reset();
-        UI.showToast('success', 'Material Uploaded', `"${title}" has been published to student portal.`);
-        renderMaterials(true);
+        try {
+          if (selectedMaterialFile) {
+            const uploadRes = await FacultyService.uploadFile(selectedMaterialFile, 'notes');
+            fileUrl = uploadRes.url;
+            cloudinaryPublicId = uploadRes.publicId;
+            fileSize = uploadRes.fileSize || fileSize;
+          }
+
+          const subjects = FacultyService.getSubjects();
+          const subjectObj = subjects.find(s => s.code === subjectCode);
+
+          FacultyService.uploadMaterial({
+            title,
+            subjectCode,
+            subjectName: subjectObj ? subjectObj.name : subjectCode,
+            category,
+            fileType,
+            fileSize,
+            fileUrl: fileUrl || 'https://res.cloudinary.com/demo/image/upload/sample.pdf',
+            cloudinaryPublicId: cloudinaryPublicId,
+            description,
+            sections: ["A", "B"]
+          });
+
+          UI.closeModal('upload-material-modal');
+          uploadForm.reset();
+          selectedMaterialFile = null;
+          if (matFileLabel) matFileLabel.textContent = 'Click to select PDF or Lecture Notes';
+          if (matDropZone) {
+            matDropZone.style.borderColor = '#CBD5E1';
+            matDropZone.style.background = '#F8FAFC';
+          }
+
+          UI.showToast('success', 'Notes Uploaded to Cloudinary', `"${title}" has been saved to Cloudinary (folder: notes) and published.`);
+          renderMaterials(true);
+        } catch (uploadErr) {
+          console.error('[Material Upload Error]', uploadErr);
+          UI.showToast('error', 'Upload Failed', uploadErr.message || 'Could not upload to Cloudinary.');
+        } finally {
+          if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.textContent = origText;
+          }
+        }
       });
 
       window.deleteMaterialItem = function(id) {

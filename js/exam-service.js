@@ -25,13 +25,7 @@ const ExamService = (() => {
       if (raw) {
         const parsed = JSON.parse(raw);
         if (Array.isArray(parsed) && parsed.length > 0) {
-          // If existing exam_001 is from older version with only 3 questions or low scores, upgrade it
-          const e1 = parsed.find(e => e.id === 'exam_001');
-          if (e1 && (e1.questions?.length < 5 || (e1.stats && e1.stats.average < 10))) {
-            localStorage.removeItem(STORAGE_KEY);
-          } else {
-            return parsed;
-          }
+          return parsed;
         }
       }
     } catch (e) {
@@ -39,6 +33,7 @@ const ExamService = (() => {
     }
 
     // Initialize with existing faculty exams from mockFaculty or defaults
+    const mockList = (typeof mockFaculty !== 'undefined' && Array.isArray(mockFaculty.exams)) ? mockFaculty.exams : [];
     const fallbackExams = [
       {
         id: 'exam_001',
@@ -216,6 +211,12 @@ const ExamService = (() => {
       }
     ];
 
+    mockList.forEach(m => {
+      if (!fallbackExams.some(f => f.id === m.id)) {
+        fallbackExams.push(m);
+      }
+    });
+
     localStorage.setItem(STORAGE_KEY, JSON.stringify(fallbackExams));
     return fallbackExams;
   }
@@ -226,6 +227,62 @@ const ExamService = (() => {
     } catch (e) {
       console.warn('[ExamService] LocalStorage write note:', e);
     }
+  }
+
+  /**
+   * Sync examinations from Firestore and Backend API into Local Storage
+   */
+  async function syncExamsFromRemote() {
+    let remoteList = [];
+    // 1. Fetch from backend API /api/exams
+    try {
+      const apiUrl = (typeof window !== 'undefined' && window.location && window.location.origin)
+        ? `${window.location.origin}/api/exams`
+        : 'http://localhost:8085/api/exams';
+      const resp = await fetch(apiUrl);
+      if (resp.ok) {
+        const data = await resp.json();
+        if (Array.isArray(data) && data.length > 0) {
+          data.forEach(d => {
+            if (!remoteList.some(r => r.id === d.id)) remoteList.push(d);
+          });
+        }
+      }
+    } catch (_) {}
+
+    // 2. Fetch directly from Firestore
+    const db = getDb();
+    if (db) {
+      try {
+        const snap = await db.collection('exams').get();
+        if (!snap.empty) {
+          snap.forEach(doc => {
+            const d = { ...doc.data(), id: doc.id };
+            const idx = remoteList.findIndex(r => r.id === d.id);
+            if (idx >= 0) remoteList[idx] = { ...remoteList[idx], ...d };
+            else remoteList.push(d);
+          });
+        }
+      } catch (err) {
+        console.warn('[ExamService] Firestore exams fetch note:', err.message);
+      }
+    }
+
+    // 3. Merge into local stored exams
+    if (remoteList.length > 0) {
+      const local = getStoredExams();
+      remoteList.forEach(rem => {
+        const idx = local.findIndex(l => l.id === rem.id);
+        if (idx >= 0) {
+          local[idx] = { ...local[idx], ...rem };
+        } else {
+          local.unshift(rem);
+        }
+      });
+      setStoredExams(local);
+    }
+
+    return getStoredExams();
   }
 
   /**
@@ -294,7 +351,14 @@ const ExamService = (() => {
    */
   function getExam(examId) {
     const list = getStoredExams();
-    return list.find(e => e.id === examId) || null;
+    let found = list.find(e => e.id === examId);
+    if (!found) {
+      const allExams = (typeof allDomainExams !== 'undefined')
+        ? [...(allDomainExams.dept_btech || []), ...(allDomainExams.dept_bba || []), ...(allDomainExams.dept_mba || [])]
+        : [];
+      found = allExams.find(e => e.id === examId);
+    }
+    return found ? normalizeExamForStudent(found) : null;
   }
 
   /**
@@ -346,6 +410,10 @@ const ExamService = (() => {
     list.unshift(newExam);
     setStoredExams(list);
 
+    try {
+      sessionStorage.setItem('last_created_exam_id', newExam.id);
+    } catch (_) {}
+
     // Sync to Firestore if available
     const db = getDb();
     if (db) {
@@ -355,6 +423,15 @@ const ExamService = (() => {
         console.warn('[ExamService] Firestore create exam note:', err.message);
       }
     }
+
+    // Sync to backend API
+    try {
+      await fetch('/api/exams', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newExam)
+      });
+    } catch (_) {}
 
     return newExam;
   }
@@ -395,6 +472,14 @@ const ExamService = (() => {
         console.warn('[ExamService] Firestore update note:', err.message);
       }
     }
+
+    try {
+      await fetch('/api/exams/' + encodeURIComponent(examId), {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(current)
+      });
+    } catch (_) {}
 
     return current;
   }
@@ -524,6 +609,10 @@ const ExamService = (() => {
     exam.isPublished = true;
     exam.publishedAt = new Date().toISOString();
 
+    try {
+      sessionStorage.setItem('last_created_exam_id', examId);
+    } catch (_) {}
+
     await updateExam(examId, {
       status: 'published',
       isPublished: true,
@@ -589,7 +678,10 @@ const ExamService = (() => {
     else if (percentage >= 40) grade = 'C';
     else grade = 'F';
 
-    const passingMarks = exam.passingMarks !== undefined ? exam.passingMarks : (maxScore * 0.4);
+    let passingMarks = exam.passingMarks !== undefined ? Number(exam.passingMarks) : Math.ceil(maxScore * 0.4);
+    if (passingMarks > maxScore) {
+      passingMarks = Math.max(1, Math.ceil(maxScore * 0.4));
+    }
     const status = totalScore >= passingMarks ? 'Pass' : 'Fail';
 
     return {
@@ -714,7 +806,7 @@ const ExamService = (() => {
   function normalizeExamForStudent(e) {
     const isMcq = e.type === 'mcq' || e.rawType === 'mcq';
     const sub = e.subject || e.subjectName || e.title || e.name || 'Academic Assessment';
-    const code = e.subjectCode || e.courseCode || 'CS402';
+    const code = e.subjectCode || e.courseCode || 'ASSESS';
     const max = Number(e.totalMarks || e.maxMarks) || (isMcq ? 20 : 25);
 
     let dt = null;
@@ -728,8 +820,20 @@ const ExamService = (() => {
     const monthStr = e.month || (isValidDate ? dt.toLocaleString('en-US', { month: 'short' }).toUpperCase() : 'OCT');
     const dayStr = e.day || (isValidDate ? String(dt.getDate()) : '02');
     const dateFormatted = e.date || (isValidDate ? dt.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) : 'October 2, 2026');
-    const timeFormatted = e.time || (isValidDate ? dt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '10:00 AM – 10:30 AM');
+    const timeFormatted = e.time || (isValidDate ? dt.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }) : '10:00 AM – 10:30 AM');
     const durationFormatted = e.duration ? (typeof e.duration === 'number' ? `${e.duration} Mins` : e.duration) : (isMcq ? '30 Mins' : '2 Hours');
+
+    let curUser = null;
+    try {
+      if (typeof AuthService !== 'undefined' && AuthService.getCurrentUser) {
+        curUser = AuthService.getCurrentUser();
+      } else if (typeof sessionStorage !== 'undefined') {
+        const raw = sessionStorage.getItem('smart_student_session') || localStorage.getItem('smart_student_session');
+        if (raw) curUser = JSON.parse(raw);
+      }
+    } catch (_) {}
+
+    const rollNo = curUser?.rollNo || 'STU-001';
 
     return {
       ...e,
@@ -751,8 +855,8 @@ const ExamService = (() => {
       time: timeFormatted,
       duration: durationFormatted,
       venue: e.venue || (isMcq ? 'Online Assessment Portal / Web Portal' : 'Main Examination Hall A'),
-      seatNumber: e.seatNumber || 'Desk CS24-042',
-      hallTicketNo: e.hallTicketNo || 'HT-2026-CS4-042',
+      seatNumber: e.seatNumber || `Desk ${rollNo}`,
+      hallTicketNo: e.hallTicketNo || `HT-2026-${rollNo}`,
       syllabus: e.syllabus || e.instructions || 'Comprehensive objective evaluation according to syllabus.',
       status: e.status || (e.isPublished ? 'published' : 'scheduled'),
       isPublished: e.isPublished !== false && e.status !== 'draft',
@@ -765,13 +869,32 @@ const ExamService = (() => {
    * Merges base curriculum exams with published faculty exams
    */
   async function getUpcomingExams() {
+    await syncExamsFromRemote().catch(() => {});
     const list = [];
     const seenIds = new Set();
+
+    const activeDomain = (typeof DomainService !== 'undefined' && DomainService.getActiveDomain)
+      ? DomainService.getActiveDomain()
+      : 'dept_btech';
+
+    function matchesDomain(exam) {
+      if (exam.domainId && exam.domainId === activeDomain) return true;
+      const code = (exam.subjectCode || exam.courseCode || '').toUpperCase();
+      const prog = (exam.program || '').toLowerCase();
+      if (activeDomain === 'dept_mba') {
+        return code.startsWith('MBA') || prog.includes('mba');
+      } else if (activeDomain === 'dept_bba') {
+        return code.startsWith('BBA') || prog.includes('bba');
+      } else {
+        return code.startsWith('CS') || prog.includes('tech') || prog.includes('b.tech') || prog.includes('cse');
+      }
+    }
 
     // 1. Fetch published faculty exams (MCQ exams created & published by faculty)
     const stored = getStoredExams();
     const publishedFacultyExams = stored.filter(e => {
-      return e.isPublished === true || e.status === 'published' || e.status === 'evaluated';
+      const isPub = e.isPublished === true || e.status === 'published' || e.status === 'evaluated';
+      return isPub && matchesDomain(e);
     });
 
     publishedFacultyExams.forEach(fe => {
@@ -782,9 +905,14 @@ const ExamService = (() => {
     });
 
     // 2. Fetch base student scheduled curriculum exams from mockExams
-    const baseExams = (typeof window !== 'undefined' && window.mockExams)
-      ? window.mockExams
-      : (typeof mockExams !== 'undefined' ? mockExams : []);
+    let baseExams = [];
+    if (typeof getExamsForDomain === 'function') {
+      baseExams = getExamsForDomain(activeDomain);
+    } else if (typeof window !== 'undefined' && window.getExamsForDomain) {
+      baseExams = window.getExamsForDomain(activeDomain);
+    } else if (typeof mockExams !== 'undefined') {
+      baseExams = mockExams;
+    }
 
     baseExams.forEach(be => {
       if (!seenIds.has(be.id)) {
@@ -911,6 +1039,46 @@ const ExamService = (() => {
 
     if (results.length > 0) return results;
 
+    const activeDomain = (typeof DomainService !== 'undefined' && DomainService.getActiveDomain)
+      ? DomainService.getActiveDomain()
+      : 'dept_btech';
+
+    if (activeDomain === 'dept_mba') {
+      return [
+        {
+          id: `res_mba_001_${rollNo}`,
+          examId: "exm_mba_2",
+          examTitle: "Mid-Term Case Defense: Strategic Global Leadership (MBA601)",
+          subjectCode: "MBA601",
+          subjectName: "Strategic Global Leadership",
+          studentRollNo: rollNo,
+          studentName: "Aditya Sengupta",
+          marksObtained: 46,
+          maxMarks: 50,
+          grade: "O",
+          isPublished: true,
+          publishedAt: "2026-09-16T10:00:00Z"
+        }
+      ];
+    } else if (activeDomain === 'dept_bba') {
+      return [
+        {
+          id: `res_bba_001_${rollNo}`,
+          examId: "exm_bba_1",
+          examTitle: "Mid-Term Examination: Corporate Financial Accounting (BBA204)",
+          subjectCode: "BBA204",
+          subjectName: "Corporate Financial Accounting",
+          studentRollNo: rollNo,
+          studentName: "Tanvi Bansal",
+          marksObtained: 44,
+          maxMarks: 50,
+          grade: "A+",
+          isPublished: true,
+          publishedAt: "2026-09-16T10:00:00Z"
+        }
+      ];
+    }
+
     return [
       {
         id: "res_exam_001_CS24-042",
@@ -934,6 +1102,7 @@ const ExamService = (() => {
     getExam,
     getAuthorizedSubjects,
     isSubjectAuthorized,
+    syncExamsFromRemote,
     createExam,
     updateExam,
     addQuestion,
@@ -949,6 +1118,8 @@ const ExamService = (() => {
   };
 })();
 
-if (typeof window !== 'undefined') {
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = ExamService;
+} else if (typeof window !== 'undefined') {
   window.ExamService = ExamService;
 }

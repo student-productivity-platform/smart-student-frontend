@@ -689,49 +689,7 @@
               <h3 class="ref-previous-title">Previous Assessments</h3>
 
               <div class="ref-previous-list" id="ref-previous-container">
-                <div class="ref-previous-item">
-                  <div class="ref-previous-icon ref-prev-icon-red">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                      stroke-width="2">
-                      <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z" />
-                    </svg>
-                  </div>
-                  <div class="ref-previous-info">
-                    <div class="ref-previous-item-title">DBMS Quiz 1 — Graded</div>
-                    <div class="ref-previous-item-sub">05 Sep, 10:00 AM • Score: 19/20</div>
-                  </div>
-                  <a href="assignments.html" class="ref-previous-link">View Report</a>
-                </div>
-
-                <div class="ref-previous-item">
-                  <div class="ref-previous-icon ref-prev-icon-yellow">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                      stroke-width="2">
-                      <circle cx="12" cy="12" r="10" />
-                      <polyline points="12 6 12 12 14 14" />
-                    </svg>
-                  </div>
-                  <div class="ref-previous-info">
-                    <div class="ref-previous-item-title">OS Semaphore Lab Report</div>
-                    <div class="ref-previous-item-sub">03 Sep, 02:00 PM • Score: 10/10</div>
-                  </div>
-                  <a href="assignments.html" class="ref-previous-link">View Report</a>
-                </div>
-
-                <div class="ref-previous-item">
-                  <div class="ref-previous-icon ref-prev-icon-green">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                      stroke-width="2">
-                      <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
-                      <polyline points="22 4 12 14.01 9 11.01" />
-                    </svg>
-                  </div>
-                  <div class="ref-previous-info">
-                    <div class="ref-previous-item-title">CN Subnetting Practice</div>
-                    <div class="ref-previous-item-sub">01 Sep, 04:00 PM • Score: 95%</div>
-                  </div>
-                  <a href="assignments.html" class="ref-previous-link">View Report</a>
-                </div>
+                <!-- Dynamically populated by renderPreviousAssessments() based on active domain -->
               </div>
 
               <div class="ref-previous-footer">
@@ -761,7 +719,7 @@
         <div class="form-group">
           <label for="task-title-input" class="form-label">Task Title <span class="required">*</span></label>
           <input type="text" id="task-title-input" class="form-input"
-            placeholder="e.g. Complete DBMS normalization assignment" required>
+            placeholder="e.g. Complete course assignment or term project deliverable" required>
         </div>
         <div class="form-group">
           <label for="task-due-input" class="form-label">Due Timeline</label>
@@ -951,6 +909,7 @@
 
       // 4. Render AI Doubts
       renderRecentDoubts();
+      renderAIDoubtSuggestions();
 
       // 5. Render Tasks
       renderTasks();
@@ -966,6 +925,10 @@
 
       // 9. Render Domain Scoped Analytics (Cylinders & Progression)
       renderDomainAnalytics();
+
+      // 10. Render Previous Assessments & Update Deadlines KPI
+      renderPreviousAssessments();
+      updateDashboardKPIs();
 
       // Setup Event Listeners
       setupDashboardEvents();
@@ -1373,6 +1336,169 @@
       UI.showToast('success', 'Calendar Exported', `Downloaded .ics invitation for "${ev.title}".`);
     };
 
+    // --- Dynamic Previous Assessments Renderer ---
+    async function renderPreviousAssessments() {
+      const container = document.getElementById('ref-previous-container');
+      if (!container) return;
+
+      const activeDom = (typeof DomainService !== 'undefined') ? DomainService.getActiveDomain() : 'dept_btech';
+      let items = [];
+
+      try {
+        if (typeof AssignmentService !== 'undefined') {
+          const asgs = await AssignmentService.getAssignments();
+          const gradedOrSubmitted = asgs.filter(a => a.status === 'graded' || a.status === 'submitted');
+          gradedOrSubmitted.forEach(a => {
+            items.push({
+              title: `${a.subjectCode} — ${a.title}`,
+              sub: a.status === 'graded'
+                ? `${a.dueDate} • Score: ${a.score}/${a.maxMarks} (${a.grade || 'A'})`
+                : `Submitted on ${a.submittedAt || a.dueDate} • Under Review`,
+              isGraded: a.status === 'graded',
+              id: a.id,
+              type: 'assignment'
+            });
+          });
+        }
+      } catch (_) {}
+
+      try {
+        if (typeof ExamService !== 'undefined' && items.length < 3) {
+          const exams = await ExamService.getUpcomingExams();
+          const studentInfo = (typeof AuthService !== 'undefined' && AuthService.getCurrentUser) ? AuthService.getCurrentUser() : null;
+          const roll = studentInfo?.rollNo || 'STU-001';
+          exams.forEach(e => {
+            const sub = (e.studentMarks || []).find(m => m.rollNo === roll);
+            if (sub) {
+              items.unshift({
+                title: `${e.subjectCode} — ${e.name || e.title}`,
+                sub: `Score: ${sub.marks}/${e.totalMarks} (${sub.grade})`,
+                isGraded: true,
+                id: e.id,
+                type: 'exam'
+              });
+            } else if (items.length < 3) {
+              items.push({
+                title: `${e.subjectCode} — ${e.name || e.title}`,
+                sub: `${e.date} • ${e.venue || 'Exam Center'}`,
+                isGraded: false,
+                id: e.id,
+                type: 'exam'
+              });
+            }
+          });
+        }
+      } catch (_) {}
+
+      // Fallback domain-tailored if empty
+      if (items.length === 0) {
+        if (activeDom === 'dept_mba') {
+          items = [
+            { title: "MBA601 — Boardroom Strategy Simulation", sub: "05 Sep, 10:00 AM • Score: 24/25 (O)", isGraded: true },
+            { title: "MBA602 — M&A Synergies Valuation Lab", sub: "03 Sep, 02:00 PM • Score: 19/20 (A+)", isGraded: true },
+            { title: "MBA603 — Private Equity Term Sheet", sub: "01 Sep, 04:00 PM • Score: 96%", isGraded: true }
+          ];
+        } else if (activeDom === 'dept_bba') {
+          items = [
+            { title: "BBA204 — Corporate Accounting Quiz", sub: "05 Sep, 10:00 AM • Score: 18/20", isGraded: true },
+            { title: "BBA201 — Marketing Strategy Teardown", sub: "03 Sep, 02:00 PM • Score: 28/30", isGraded: true },
+            { title: "BBA203 — Managerial Economics Problem Set", sub: "01 Sep, 04:00 PM • Score: 92%", isGraded: true }
+          ];
+        } else {
+          items = [
+            { title: "CS402 — DBMS Quiz 1 — Graded", sub: "05 Sep, 10:00 AM • Score: 19/20", isGraded: true },
+            { title: "CS404 — OS Semaphore Lab Report", sub: "03 Sep, 02:00 PM • Score: 10/10", isGraded: true },
+            { title: "CS405 — CN Subnetting Practice", sub: "01 Sep, 04:00 PM • Score: 95%", isGraded: true }
+          ];
+        }
+      }
+
+      container.innerHTML = items.slice(0, 3).map((item, idx) => {
+        const iconColors = ['ref-prev-icon-red', 'ref-prev-icon-yellow', 'ref-prev-icon-green'];
+        const iconBg = iconColors[idx % 3];
+        return `
+          <div class="ref-previous-item">
+            <div class="ref-previous-icon ${iconBg}">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                <polyline points="22 4 12 14.01 9 11.01" />
+              </svg>
+            </div>
+            <div class="ref-previous-info">
+              <div class="ref-previous-item-title">${escapeHtml(item.title)}</div>
+              <div class="ref-previous-item-sub">${escapeHtml(item.sub)}</div>
+            </div>
+            <a href="assignments.html" class="ref-previous-link">View Report</a>
+          </div>
+        `;
+      }).join('');
+    }
+
+    async function updateDashboardKPIs() {
+      try {
+        if (typeof AssignmentService !== 'undefined') {
+          const asgs = await AssignmentService.getAssignments();
+          const pending = asgs.filter(a => a.status === 'pending' || a.status === 'overdue').length;
+          const kpiEl = document.getElementById('kpi-assignments-val');
+          if (kpiEl) kpiEl.innerHTML = `${pending}<span class="ref-pinned-unit">Due</span>`;
+
+          const asgSelect = document.getElementById('assignment-select');
+          if (asgSelect && asgs.length > 0) {
+            asgSelect.innerHTML = asgs.map(a => `
+              <option value="${a.id}">${escapeHtml(a.subjectCode || '')} — ${escapeHtml(a.title)} (${a.dueDate ? 'Due ' + a.dueDate : a.status})</option>
+            `).join('');
+          }
+        }
+      } catch (_) {}
+
+      try {
+        if (typeof StudentService !== 'undefined') {
+          const profile = await StudentService.getProfile();
+          if (profile) {
+            const perfEl = document.getElementById('kpi-performance-val');
+            if (perfEl && profile.sgpa) {
+              perfEl.textContent = Number(profile.sgpa).toFixed(2);
+            }
+            const attEl = document.getElementById('kpi-attendance-val');
+            if (attEl) {
+              const activeDom = (typeof DomainService !== 'undefined' && DomainService.getActiveDomain)
+                ? DomainService.getActiveDomain()
+                : 'dept_btech';
+              const attVal = activeDom === 'dept_mba' ? '91.4' : (activeDom === 'dept_bba' ? '89.2' : '86.4');
+              attEl.innerHTML = `${profile.attendance || attVal}<span class="ref-pinned-unit">%</span>`;
+            }
+          }
+        }
+      } catch (_) {}
+    }
+
+    function renderAIDoubtSuggestions() {
+      const container = document.querySelector('.ai-suggestions-chips');
+      if (!container || typeof DomainService === 'undefined') return;
+      const doubtTopics = DomainService.getDoubtTopics();
+      if (!doubtTopics || doubtTopics.length === 0) return;
+
+      container.innerHTML = `
+        <span class="ai-suggestions-label">Suggestions:</span>
+        ${doubtTopics.slice(0, 3).map(dt => {
+          const shortLabel = dt.question.length > 25 ? dt.question.substring(0, 25) + '...' : dt.question;
+          return `<button type="button" class="ai-chip" data-query="${escapeHtml(dt.question)}">${escapeHtml(shortLabel)}</button>`;
+        }).join('')}
+      `;
+
+      container.querySelectorAll('.ai-chip').forEach(chip => {
+        chip.addEventListener('click', () => {
+          const q = chip.getAttribute('data-query');
+          const input = document.getElementById('ai-doubt-query');
+          if (input) {
+            input.value = q;
+            const form = document.getElementById('ai-doubt-form');
+            if (form) form.dispatchEvent(new Event('submit'));
+          }
+        });
+      });
+    }
+
     // --- Learning Materials Renderer ---
     async function renderMaterials() {
       const container = document.getElementById('materials-container');
@@ -1762,12 +1888,12 @@
 
           const file = subFileInput.files[0];
           confirmSubBtn.disabled = true;
-          confirmSubBtn.textContent = 'Uploading file...';
+          confirmSubBtn.textContent = 'Uploading to Cloudinary CDN...';
 
           try {
             let uploadedFile = null;
             if (typeof AssignmentService.uploadFile === 'function') {
-              uploadedFile = await AssignmentService.uploadFile(file);
+              uploadedFile = await AssignmentService.uploadFile(file, 'assignments');
             }
 
             await AssignmentService.submitAssignment(asgSelect.value, {
@@ -1775,11 +1901,11 @@
               size: (file.size / (1024 * 1024)).toFixed(1) + ' MB',
               url: uploadedFile ? uploadedFile.url : null,
               fileUrl: uploadedFile ? uploadedFile.url : null,
-              cloudinaryPublicId: uploadedFile ? uploadedFile.publicId : null
+              cloudinaryPublicId: uploadedFile ? (uploadedFile.publicId || uploadedFile.cloudinaryPublicId) : null
             });
 
             UI.closeModal('submit-assignment-modal');
-            UI.showToast('success', 'Assignment Submitted', `"${file.name}" uploaded and recorded to Firestore successfully.`);
+            UI.showToast('success', 'Assignment Uploaded to Cloudinary', `"${file.name}" uploaded to Cloudinary (folder: assignments) and submitted.`);
           } catch (e) {
             UI.showToast('error', 'Submission Failed', e.message);
           } finally {

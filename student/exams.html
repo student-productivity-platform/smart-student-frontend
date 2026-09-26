@@ -11,6 +11,39 @@
   <link rel="stylesheet" href="../css/dashboard.css">
   <link rel="stylesheet" href="../css/responsive.css">
   <script src="../js/auth-guard.js"></script>
+  <style>
+    .faculty-exam-card {
+      border: 1.5px solid #93C5FD !important;
+      box-shadow: 0 4px 10px -2px rgba(37, 99, 235, 0.12), 0 2px 4px -2px rgba(37, 99, 235, 0.06);
+      position: relative;
+      transition: all 0.2s ease;
+    }
+    .faculty-exam-card:hover {
+      border-color: #3B82F6 !important;
+      transform: translateY(-2px);
+      box-shadow: 0 10px 18px -3px rgba(37, 99, 235, 0.18);
+    }
+    .faculty-exam-card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, #2563EB, #3B82F6, #F59E0B);
+      border-radius: 12px 12px 0 0;
+    }
+    .badge-faculty {
+      background: #FEF3C7;
+      color: #92400E;
+      border: 1px solid #FCD34D;
+      font-size: 0.6875rem;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
+  </style>
 </head>
 
 <body>
@@ -203,6 +236,8 @@
             </div>
             <select id="exam-type-filter" class="filter-select" aria-label="Filter by Assessment Type">
               <option value="all">All Assessment Types</option>
+              <option value="faculty-created">Faculty Created Assessments</option>
+              <option value="MCQ Examination">MCQ Online Exams</option>
               <option value="Mid-Term">Mid-Term Examinations</option>
               <option value="Internal Assessment">Internal Assessments</option>
               <option value="Lab Assessment">Practical Lab Exams</option>
@@ -271,19 +306,19 @@
             <div class="admit-fields">
               <div>
                 <div class="admit-field-label">Candidate Name</div>
-                <div class="admit-field-val">Riddhi Zunjarrao</div>
+                <div class="admit-field-val" id="modal-admit-candidate-name">Candidate Name</div>
               </div>
               <div>
                 <div class="admit-field-label">Roll Number</div>
-                <div class="admit-field-val">CS24-042</div>
+                <div class="admit-field-val" id="modal-admit-roll-no">Roll Number</div>
               </div>
               <div>
                 <div class="admit-field-label">Degree & Branch</div>
-                <div class="admit-field-val">B.Tech (CSE) • Sem 4</div>
+                <div class="admit-field-val" id="modal-admit-degree">Degree & Branch</div>
               </div>
               <div>
                 <div class="admit-field-label">Admit Card No</div>
-                <div class="admit-field-val" id="modal-ht-number">HT-2026-CS4-042</div>
+                <div class="admit-field-val" id="modal-ht-number">HT-2026-001</div>
               </div>
               <div>
                 <div class="admit-field-label">Allocated Center</div>
@@ -291,11 +326,11 @@
               </div>
               <div>
                 <div class="admit-field-label">Assigned Desk</div>
-                <div class="admit-field-val" style="color: #6D28D9;" id="modal-exam-seat">Row 4 • Desk 18</div>
+                <div class="admit-field-val" style="color: #6D28D9;" id="modal-exam-seat">Desk 01</div>
               </div>
             </div>
             <div class="admit-photo-box">
-              <div style="font-size: 1.5rem; font-weight: 800; color: #6D28D9; margin-bottom: 0.15rem;">RZ</div>
+              <div id="modal-admit-photo-initials" style="font-size: 1.5rem; font-weight: 800; color: #6D28D9; margin-bottom: 0.15rem;">ST</div>
               <span>PHOTO</span>
             </div>
           </div>
@@ -408,8 +443,22 @@
         const type = typeFilter.value;
 
         let filtered = examsList.filter(e => {
-          const matchQ = !q || e.subject.toLowerCase().includes(q) || e.subjectCode.toLowerCase().includes(q) || (e.venue && e.venue.toLowerCase().includes(q));
-          const matchType = type === 'all' || e.type === type;
+          const titleMatch = (e.title || '').toLowerCase().includes(q) || (e.name || '').toLowerCase().includes(q);
+          const subMatch = (e.subject || '').toLowerCase().includes(q) || (e.subjectCode || '').toLowerCase().includes(q);
+          const venueMatch = (e.venue || '').toLowerCase().includes(q);
+          const facultyMatch = (e.facultyName || '').toLowerCase().includes(q);
+          const matchQ = !q || titleMatch || subMatch || venueMatch || facultyMatch;
+
+          let matchType = true;
+          if (type === 'all') {
+            matchType = true;
+          } else if (type === 'faculty-created') {
+            matchType = Boolean(e.facultyName || e.facultyId || e.isMCQ || e.rawType === 'mcq');
+          } else if (type === 'MCQ Examination') {
+            matchType = Boolean(e.isMCQ || e.type === 'MCQ Examination' || e.rawType === 'mcq');
+          } else {
+            matchType = e.type === type || (e.type || '').includes(type);
+          }
           return matchQ && matchType;
         });
 
@@ -435,9 +484,41 @@
       });
     });
 
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    function getActiveStudentInfo() {
+      let u = null;
+      try {
+        if (typeof AuthService !== 'undefined' && AuthService.getCurrentUser) {
+          u = AuthService.getCurrentUser();
+        } else if (typeof sessionStorage !== 'undefined') {
+          const raw = sessionStorage.getItem('smart_student_session') || localStorage.getItem('smart_student_session');
+          if (raw) u = JSON.parse(raw);
+        }
+      } catch (_) {}
+      if (!u && window.mockStudent) u = window.mockStudent;
+      return {
+        id: u?.id || u?.uid || 'stu_001',
+        name: u?.name || 'Student',
+        rollNo: u?.rollNo || 'STU-001',
+        program: u?.program ? `${u.program} • Sem ${u.semester || 4}` : 'Academic Program',
+        section: u?.section || 'A',
+        initials: (u?.name || 'ST').split(' ').filter(Boolean).map(n => n[0]).join('').substring(0, 2).toUpperCase() || 'ST'
+      };
+    }
+
     function renderExams(exams) {
       const cardsContainer = document.getElementById('exams-cards-container');
       const tableBody = document.getElementById('exams-table-body');
+      const studentInfo = getActiveStudentInfo();
 
       if (!exams.length) {
         const emptyHtml = `
@@ -457,11 +538,13 @@
       // Render Cards
       cardsContainer.innerHTML = exams.map(e => {
         const isMcq = e.isMCQ || e.type === 'MCQ Examination' || e.rawType === 'mcq';
-        const userSubmission = (e.studentMarks || []).find(m => m.rollNo === 'CS24-042');
+        const userSubmission = (e.studentMarks || []).find(m => m.rollNo === studentInfo.rollNo);
         const isSubmitted = !!userSubmission;
+        const examTitle = e.title || e.name || e.subject;
+        const isFacultyCreated = Boolean(e.facultyName || e.facultyId || isMcq);
 
         return `
-        <div class="exam-card-detailed">
+        <div class="exam-card-detailed ${isFacultyCreated ? 'faculty-exam-card' : ''}">
           <div>
             <div class="exam-card-header">
               <div class="exam-calendar-date-box">
@@ -469,30 +552,39 @@
                 <span class="day">${e.day}</span>
               </div>
               <div class="exam-info-main">
-                <div style="display: flex; gap: 0.35rem; align-items: center; margin-bottom: 0.2rem; flex-wrap: wrap;">
-                  <span class="exam-badge-type">${e.type || 'Examination'}</span>
-                  ${isMcq ? `<span class="badge" style="background: #EFF6FF; color: #1E40AF; border: 1px solid #BFDBFE; font-size: 0.6875rem;">MCQ Online Exam</span>` : ''}
+                <div style="display: flex; gap: 0.35rem; align-items: center; margin-bottom: 0.3rem; flex-wrap: wrap;">
+                  <span class="exam-badge-type">${escapeHtml(e.type || 'Examination')}</span>
+                  ${isMcq ? `<span class="badge" style="background: #EFF6FF; color: #1E40AF; border: 1px solid #BFDBFE; font-size: 0.6875rem; font-weight: 700;">MCQ Online Exam</span>` : ''}
+                  ${isFacultyCreated ? `<span class="badge badge-faculty">Faculty Assessment</span>` : ''}
                   ${isSubmitted ? `<span class="badge badge-success" style="font-size: 0.6875rem;">Score: ${userSubmission.marks}/${e.totalMarks} (${userSubmission.grade})</span>` : ''}
                 </div>
-                <h3 style="font-size: 1.05rem; font-weight: 700; color: var(--navy-900); margin-bottom: 0.2rem;">${e.subject}</h3>
-                <span class="text-secondary" style="font-size: 0.78125rem;">Course Code: <strong>${e.subjectCode}</strong> • Max: ${e.totalMarks} Pts</span>
+                <h3 style="font-size: 1.08rem; font-weight: 800; color: var(--navy-900); margin-bottom: 0.25rem; line-height: 1.35;">${escapeHtml(examTitle)}</h3>
+                <div style="font-size: 0.8125rem; color: #475569; margin-bottom: 0.2rem;">
+                  <strong style="color: #2563EB;">${escapeHtml(e.subjectCode)}</strong> • <span>${escapeHtml(e.subject)}</span> • Max: <strong>${e.totalMarks} Pts</strong>
+                </div>
+                ${e.facultyName ? `
+                  <div style="font-size: 0.75rem; color: #64748B; margin-bottom: 0.35rem; display: flex; align-items: center; gap: 0.35rem;">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                    <span>Created by: <strong style="color: #1E293B;">${escapeHtml(e.facultyName)}</strong></span>
+                  </div>
+                ` : ''}
               </div>
             </div>
 
             <div class="exam-details-list">
               <div class="flex-between">
-                <span><strong>Timing:</strong> ${e.time}</span>
-                <span class="text-muted">(${e.duration || '2 Hours'})</span>
+                <span><strong>Timing:</strong> ${escapeHtml(e.time)}</span>
+                <span class="text-muted">(${escapeHtml(e.duration || '2 Hours')})</span>
               </div>
-              <div><strong>Venue:</strong> ${e.venue}</div>
-              ${e.seatNumber ? `<div><strong>Seat:</strong> <span style="color: var(--blue-600); font-weight: 700;">${e.seatNumber}</span></div>` : ''}
+              <div><strong>Venue:</strong> ${escapeHtml(e.venue)}</div>
+              ${e.seatNumber ? `<div><strong>Seat:</strong> <span style="color: var(--blue-600); font-weight: 700;">${escapeHtml(e.seatNumber)}</span></div>` : ''}
               <div style="font-size: 0.75rem; color: var(--text-tertiary); margin-top: 0.25rem;">
-                <strong>Syllabus:</strong> ${e.syllabus}
+                <strong>Syllabus / Instructions:</strong> ${escapeHtml(e.syllabus)}
               </div>
             </div>
           </div>
 
-          <div class="flex-between" style="border-top: 1px solid var(--border-light); padding-top: 0.875rem; gap: 0.5rem;">
+          <div class="flex-between" style="border-top: 1px solid var(--border-light); padding-top: 0.875rem; gap: 0.5rem; margin-top: auto;">
             ${isMcq ? `
               <button type="button" class="btn btn-primary btn-sm" onclick="startStudentMCQ('${e.id}')" style="flex: 1; font-weight: 700; gap: 0.35rem; background: #2563EB;">
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
@@ -517,24 +609,36 @@
       // Render Table View
       tableBody.innerHTML = exams.map(e => {
         const isMcq = e.isMCQ || e.type === 'MCQ Examination' || e.rawType === 'mcq';
-        const userSubmission = (e.studentMarks || []).find(m => m.rollNo === 'CS24-042');
+        const userSubmission = (e.studentMarks || []).find(m => m.rollNo === studentInfo.rollNo);
+        const examTitle = e.title || e.name || e.subject;
+        const isFacultyCreated = Boolean(e.facultyName || e.facultyId || isMcq);
 
         return `
         <tr>
           <td>
-            <div style="font-weight: 700; color: var(--navy-900);">${e.date}</div>
-            <div class="text-muted" style="font-size: 0.75rem;">${e.time} (${e.duration || '2h'})</div>
+            <div style="font-weight: 700; color: var(--navy-900);">${escapeHtml(e.date)}</div>
+            <div class="text-muted" style="font-size: 0.75rem;">${escapeHtml(e.time)} (${escapeHtml(e.duration || '2h')})</div>
           </td>
           <td>
-            <div style="font-weight: 600; color: var(--text-primary);">${e.subject}</div>
-            <div class="text-tertiary" style="font-size: 0.75rem;">${e.subjectCode}</div>
+            <div style="font-weight: 700; color: var(--text-primary); font-size: 0.95rem;">${escapeHtml(examTitle)}</div>
+            <div class="text-secondary" style="font-size: 0.78125rem;">
+              <strong style="color: #2563EB;">${escapeHtml(e.subjectCode)}</strong> — ${escapeHtml(e.subject)}
+            </div>
+            ${e.facultyName ? `
+              <div style="font-size: 0.71875rem; color: #64748B;">
+                Faculty: <strong>${escapeHtml(e.facultyName)}</strong>
+              </div>
+            ` : ''}
           </td>
           <td>
-            <span class="badge ${isMcq ? 'badge-primary' : 'badge-info'}">${e.type || 'Mid-Term'}</span>
+            <div style="display: flex; gap: 0.25rem; flex-direction: column; align-items: flex-start;">
+              <span class="badge ${isMcq ? 'badge-primary' : 'badge-info'}">${escapeHtml(e.type || 'Mid-Term')}</span>
+              ${isFacultyCreated ? `<span class="badge badge-faculty" style="font-size: 0.65rem;">Faculty Created</span>` : ''}
+            </div>
           </td>
           <td>
-            <div>${e.venue}</div>
-            <div style="font-size: 0.75rem; color: var(--blue-600); font-weight: 600;">${e.seatNumber || 'Desk Assigned'}</div>
+            <div>${escapeHtml(e.venue)}</div>
+            <div style="font-size: 0.75rem; color: var(--blue-600); font-weight: 600;">${escapeHtml(e.seatNumber || 'Desk Assigned')}</div>
           </td>
           <td><strong>${e.totalMarks} Marks</strong></td>
           <td style="text-align: right;">
@@ -566,7 +670,8 @@
       studentQuestionIndex = 0;
       studentAnswers = {};
 
-      const existingSub = (activeStudentExam.studentMarks || []).find(m => m.rollNo === 'CS24-042');
+      const studentInfo = getActiveStudentInfo();
+      const existingSub = (activeStudentExam.studentMarks || []).find(m => m.rollNo === studentInfo.rollNo);
       if (existingSub && existingSub.answers) {
         studentAnswers = { ...existingSub.answers };
       }
@@ -637,12 +742,7 @@
       }
 
       try {
-        const studentInfo = {
-          id: 'stu_010',
-          rollNo: 'CS24-042',
-          name: 'Riddhi Zunjarrao',
-          section: 'A'
-        };
+        const studentInfo = getActiveStudentInfo();
 
         const result = await ExamService.submitStudentExam(activeStudentExam.id, studentAnswers, studentInfo);
         const evalRes = result.evaluation;
@@ -707,20 +807,33 @@
       if (!currentExam) return;
       isConsolidatedSlip = false;
 
+      const studentInfo = getActiveStudentInfo();
+      const nameEl = document.getElementById('modal-admit-candidate-name');
+      if (nameEl) nameEl.textContent = studentInfo.name;
+      const rollEl = document.getElementById('modal-admit-roll-no');
+      if (rollEl) rollEl.textContent = studentInfo.rollNo;
+      const degEl = document.getElementById('modal-admit-degree');
+      if (degEl) degEl.textContent = studentInfo.program;
+      const photoEl = document.getElementById('modal-admit-photo-initials');
+      if (photoEl) photoEl.textContent = studentInfo.initials;
+
       document.getElementById('modal-exam-type-badge').textContent = currentExam.type || 'Examination';
-      document.getElementById('modal-exam-title').textContent = `${currentExam.subject} (${currentExam.subjectCode})`;
+      document.getElementById('modal-exam-title').textContent = `${currentExam.title || currentExam.name || currentExam.subject} (${currentExam.subjectCode})`;
       document.getElementById('modal-slip-heading').textContent = 'OFFICIAL COURSE EXAMINATION ADMIT CARD';
-      document.getElementById('modal-ht-number').textContent = currentExam.hallTicketNo || 'HT-2026-CS4-042';
+      document.getElementById('modal-ht-number').textContent = currentExam.hallTicketNo || `HT-2026-${studentInfo.rollNo}`;
       document.getElementById('modal-exam-venue').textContent = currentExam.venue;
-      document.getElementById('modal-exam-seat').textContent = currentExam.seatNumber || 'Standard Allocation';
+      document.getElementById('modal-exam-seat').textContent = currentExam.seatNumber || `Desk ${studentInfo.rollNo}`;
 
       const tbody = document.getElementById('modal-admit-table-body');
       tbody.innerHTML = `
         <tr>
-          <td><strong>${currentExam.subjectCode}</strong></td>
-          <td>${currentExam.subject}</td>
-          <td>${currentExam.date} • ${currentExam.time}</td>
-          <td>${currentExam.duration || '2 Hours'}</td>
+          <td><strong>${escapeHtml(currentExam.subjectCode)}</strong></td>
+          <td>
+            <div style="font-weight: 700;">${escapeHtml(currentExam.title || currentExam.name || currentExam.subject)}</div>
+            <div style="font-size: 0.75rem; color: #64748B;">${escapeHtml(currentExam.subject)}${currentExam.facultyName ? ` • Faculty: ${escapeHtml(currentExam.facultyName)}` : ''}</div>
+          </td>
+          <td>${escapeHtml(currentExam.date)} • ${escapeHtml(currentExam.time)}</td>
+          <td>${escapeHtml(currentExam.duration || '2 Hours')}</td>
         </tr>
       `;
 
@@ -729,12 +842,23 @@
 
     window.downloadAllHallTickets = function() {
       isConsolidatedSlip = true;
-      document.getElementById('modal-exam-type-badge').textContent = 'Semester 4 Consolidated';
+      const studentInfo = getActiveStudentInfo();
+
+      const nameEl = document.getElementById('modal-admit-candidate-name');
+      if (nameEl) nameEl.textContent = studentInfo.name;
+      const rollEl = document.getElementById('modal-admit-roll-no');
+      if (rollEl) rollEl.textContent = studentInfo.rollNo;
+      const degEl = document.getElementById('modal-admit-degree');
+      if (degEl) degEl.textContent = studentInfo.program;
+      const photoEl = document.getElementById('modal-admit-photo-initials');
+      if (photoEl) photoEl.textContent = studentInfo.initials;
+
+      document.getElementById('modal-exam-type-badge').textContent = 'Semester Timetable Consolidated';
       document.getElementById('modal-exam-title').textContent = 'All Examinations Timetable Admit Card';
       document.getElementById('modal-slip-heading').textContent = 'CONSOLIDATED SEMESTER EXAMINATION ADMIT CARD';
-      document.getElementById('modal-ht-number').textContent = 'HT-2026-CS4-FULL';
-      document.getElementById('modal-exam-venue').textContent = 'Main Campus Block 2';
-      document.getElementById('modal-exam-seat').textContent = 'Desk CS24-042 (All Halls)';
+      document.getElementById('modal-ht-number').textContent = `HT-2026-${studentInfo.rollNo}-FULL`;
+      document.getElementById('modal-exam-venue').textContent = 'Main University Examination Complex';
+      document.getElementById('modal-exam-seat').textContent = `Desk ${studentInfo.rollNo} (All Examination Halls)`;
 
       const tbody = document.getElementById('modal-admit-table-body');
       tbody.innerHTML = examsList.map(e => `
@@ -747,7 +871,7 @@
       `).join('');
 
       UI.openModal('exam-detail-modal');
-      UI.showToast('info', 'Consolidated Admit Card', 'Official Semester 4 Hall Ticket Package ready to print/save.');
+      UI.showToast('info', 'Consolidated Admit Card', 'Official Semester Hall Ticket Package ready to print/save.');
     };
 
     window.downloadSingleHallTicket = function() {
